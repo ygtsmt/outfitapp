@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "793286859298",
+    "firebase_url": "https://disciplify-26970-default-rtdb.firebaseio.com",
+    "project_id": "disciplify-26970",
+    "storage_bucket": "disciplify-26970.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793286859298:android:448dbed13209aa825a887b",
+        "android_client_info": {
+          "package_name": "com.ginowl.ginlyai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "793286859298-7qail9qga7401jhc48h37ta0qgarf4pg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ginowl.ginlyai",
+            "certificate_hash": "e73fb941990813439e9a6b4e43f897eecb5be2ac"
+          }
+        },
+        {
+          "client_id": "793286859298-jtmlti3nl4g8icej9air6nec4i6gk8ut.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ginowl.ginlyai",
+            "certificate_hash": "0599a78e09ed11c558c585181646e5f6f31366d6"
+          }
+        },
+        {
+          "client_id": "793286859298-l2kr92rrvd3k6g5u3h7e4o5st8qo0u51.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3QUYqjoFMKBs6UDB4HdFs7qINiOgwYKg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "793286859298-l2kr92rrvd3k6g5u3h7e4o5st8qo0u51.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "793286859298-2kelmucamopudne30rhr8cnqohs7hkom.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ginowl.ginlyai"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

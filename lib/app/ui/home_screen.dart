@@ -1,0 +1,239 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+
+import "package:auto_route/auto_route.dart";
+import "package:firebase_auth/firebase_auth.dart";
+import "package:flutter/material.dart";
+import "package:flutter_adaptive_ui/flutter_adaptive_ui.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
+import "package:flutter_screenutil/flutter_screenutil.dart";
+
+import "package:ginly/app/bloc/app_bloc.dart";
+import "package:ginly/app/data/models/multi_lang_file.dart";
+import "package:ginly/app/features/auth/features/login/bloc/login_bloc.dart";
+import "package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart";
+import "package:ginly/app/features/library/bloc/library_bloc.dart";
+import "package:ginly/app/features/payment/ui/payment_screen.dart";
+import "package:ginly/app/ui/custom_drawer.dart";
+import "package:package_info_plus/package_info_plus.dart";
+import "package:url_launcher/url_launcher.dart";
+import "package:ginly/app/ui/widgets/feedback_screen.dart";
+
+import "package:ginly/app/ui/widgets/ginly_logo_small.dart";
+import "package:ginly/app/ui/widgets/language_dropdown.dart";
+import "package:ginly/app/ui/widgets/total_credit_widget.dart";
+import "package:ginly/app/features/payment/ui/documents_webview_screen.dart";
+import "package:ginly/core/constants/layout_constants.dart";
+import "package:ginly/core/core.dart";
+
+import "package:ginly/core/services/paywall_manager.dart";
+import "package:ginly/generated/l10n.dart";
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    getIt<ProfileBloc>()
+        .add(FetchProfileInfoEvent(auth.currentUser?.uid ?? ''));
+
+    // App dilini initialize et
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getIt<AppBloc>().add(InitializeLanguageEvent());
+
+      // 🎯 PAYWALL KONTROLÜ - Session başına 1 kez
+      _checkAndShowPaywall();
+    });
+
+    super.initState();
+  }
+
+  /// Paywall gösterilmeli mi kontrol et ve göster
+  Future<void> _checkAndShowPaywall() async {
+    // Biraz bekle (UX için - ekran tam yüklendikten sonra)
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    // PaywallManager'dan kontrol et
+    final shouldShow = await PaywallManager().shouldShowPaywall();
+
+    if (shouldShow && mounted) {
+      // Bottom sheet olarak göster
+      _showPaywallBottomSheet();
+
+      // İşaretle ki bu session'da bir daha gösterilmesin
+      PaywallManager().markAsShown();
+    }
+  }
+
+  /// Payment screen'i bottom sheet olarak göster
+  void _showPaywallBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Full height
+      backgroundColor:
+          Colors.transparent, // Transparan yap ki backdrop görünsün
+      barrierColor: Colors.black.withOpacity(0.5), // Backdrop (sabit kalır!)
+      isDismissible: true, // Dışarı tıklayarak kapatılabilir
+      enableDrag: true, // Aşağı çekip kapatılabilir
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9, // Ekranın %90'ı
+        minChildSize: 0.5, // Minimum %50
+        maxChildSize: 0.95, // Maximum %95
+        snap: true, // Snap özelliği (kapatırken otomatik kapanır)
+        snapSizes: const [0.9], // Snap noktası
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Drag handle (kapatma çubuğu)
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Payment screen - isPaywall: true (back button gizli)
+              const Expanded(
+                child: PaymentsScreen(isPaywall: true),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(final BuildContext context) {
+    return BlocBuilder<AppBloc, AppState>(
+      builder: (final context, final state) {
+        return AutoTabsRouter(
+          routes: const [
+            DashbordTabRouter(),
+            LibraryTabRouter(),
+            ProfileTabRouter(),
+          ],
+          builder: (final context, final child, final animation) {
+            final tabsRouter = AutoTabsRouter.of(context);
+            return Theme(
+              data: Theme.of(context).copyWith(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+                child: BlocBuilder<LoginBloc, LoginState>(
+                  builder: (context, loginBuilderState) {
+                    return Scaffold(
+                        floatingActionButtonAnimator:
+                            FloatingActionButtonAnimator.scaling,
+                        floatingActionButtonLocation:
+                            FloatingActionButtonLocation.endFloat,
+                        key: _scaffoldKey,
+                        drawer: CustomDrawer(state: state),
+                        resizeToAvoidBottomInset: true,
+                        appBar: AppBar(
+                          forceMaterialTransparency: true,
+                          leading: GestureDetector(
+                            onTap: () {
+                              _scaffoldKey.currentState?.openDrawer();
+                            },
+                            child: Icon(
+                              Icons.menu,
+                              color: context.baseColor,
+                            ),
+                          ),
+                          leadingWidth: 64.w,
+                          centerTitle: true,
+                          title: GinlyLogoSmall(
+                            themeMode: state.themeMode,
+                            haveText: true,
+                          ),
+                          actionsPadding: EdgeInsets.only(right: 12.w),
+                          actions: [
+                            TotalCreditWidget(
+                              navigateAvailable: true,
+                            ),
+                          ],
+                        ),
+                        body: SafeArea(
+                          child: AdaptiveBuilder(
+                            defaultBuilder: (final BuildContext context,
+                                final Screen screen) {
+                              return child;
+                            },
+                          ),
+                        ),
+                        bottomNavigationBar: Container(
+                          decoration: const BoxDecoration(),
+                          child: BottomNavigationBar(
+                            enableFeedback: true,
+                            type: BottomNavigationBarType.fixed,
+                            showSelectedLabels: true,
+                            selectedFontSize: 10.sp,
+                            unselectedFontSize: 9.sp,
+                            showUnselectedLabels: true,
+                            selectedLabelStyle:
+                                const TextStyle(fontWeight: FontWeight.bold),
+                            unselectedLabelStyle:
+                                const TextStyle(fontWeight: FontWeight.w500),
+                            items: <BottomNavigationBarItem>[
+                              BottomNavigationBarItem(
+                                icon: tabsRouter.activeIndex == 0
+                                    ? const Icon(Icons.dashboard)
+                                    : const Icon(Icons.dashboard_outlined),
+                                label: 'Dashboard',
+                              ),
+                              BottomNavigationBarItem(
+                                icon: tabsRouter.activeIndex == 1
+                                    ? const Icon(
+                                        Icons.local_library,
+                                      )
+                                    : const Icon(Icons.local_library_outlined),
+                                label: AppLocalizations.of(context).library,
+                              ),
+                              BottomNavigationBarItem(
+                                icon: tabsRouter.activeIndex == 2
+                                    ? const Icon(
+                                        Icons.person,
+                                      )
+                                    : const Icon(Icons.person_outline),
+                                label: AppLocalizations.of(context).profile,
+                              ),
+                            ],
+                            currentIndex: tabsRouter.activeIndex,
+                            onTap: (value) {
+                              tabsRouter.setActiveIndex(value);
+
+                              // Tab değişimini logla
+                            },
+                          ),
+                        ));
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}

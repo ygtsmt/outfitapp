@@ -1,0 +1,2 @@
+/Users/yigitsametolmez/finxpert-mobile/android/app/.cxx/Debug/4m384j1g/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/yigitsametolmez/finxpert-mobile/android/app/.cxx/Debug/4m384j1g/arm64-v8a/CMakeFiles/rebuild_cache.dir

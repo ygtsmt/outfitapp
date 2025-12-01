@@ -1,0 +1,1 @@
+/Users/yigitsametolmez/finxpert-mobile/build/app/intermediates/cxx/RelWithDebInfo/292e5kky/obj/arm64-v8a

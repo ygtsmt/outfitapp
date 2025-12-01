@@ -1,0 +1,109 @@
+name: ginly
+description: GINLY AI
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.3.0+65
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+dependencies:
+  animated_text_kit: ^4.2.2
+  auto_route: ^5.0.4
+  cached_network_image: ^3.3.1
+
+  carousel_slider: ^4.2.1
+  cloud_firestore: ^5.5.0
+  cloud_functions: ^5.2.0
+  country_code_picker: ^3.3.0
+  cupertino_icons: ^1.0.2
+  custom_radio_grouped_button: ^2.1.2+2
+  device_info_plus: ^10.1.2
+  dio: ^5.1.1
+  duration_picker: ^1.2.0
+  equatable: ^2.0.5
+  firebase_auth: ^5.3.3
+  firebase_core: ^3.6.0
+  firebase_storage: ^12.4.4
+  flutter:
+    sdk: flutter
+  flutter_adaptive_ui: ^0.8.0+1
+  flutter_bloc: ^8.1.2
+  flutter_conditional_rendering: ^2.0.0
+  flutter_datetime_picker_plus: ^2.1.0
+  flutter_localizations:
+    sdk: flutter
+  flutter_screenutil: ^5.9.3
+  flutter_secure_storage: ^8.0.0
+  flutter_staggered_grid_view: ^0.7.0
+  flutter_svg: ^2.0.9
+  fluttertoast: ^8.2.8
+  form_field_validator: ^1.1.0
+  full_screen_image: ^2.0.0
+  get_it: ^7.2.0
+  google_mobile_ads: ^6.0.0
+  google_sign_in: ^6.2.2
+  group_button: ^5.2.2
+  sign_in_with_apple: ^6.0.0
+  group_radio_button: ^1.3.0
+  http: ^1.1.0
+  image: ^4.2.0
+  image_cropper: ^9.1.0
+  image_picker: ^0.8.7
+  in_app_review: ^2.0.9
+  injectable: ^2.1.0
+  intl: ^0.17.0
+  intl_utils: ^2.8.5
+  json_annotation: ^4.8.0
+  loading_animation_widget: ^1.3.0
+  mask_text_input_formatter: ^2.4.0
+  path_provider: ^2.1.5
+  path: ^1.9.0
+  permission_handler: ^11.3.1
+  purchases_flutter: ^9.2.1
+  share_plus: ^11.0.0
+  shimmer: ^3.0.0
+  slide_countdown: ^0.5.0
+  url_launcher: ^6.3.1
+  url_strategy: ^0.2.0
+  uuid: ^3.0.7
+  video_player: ^2.9.5
+  cached_video_player_plus: ^3.0.3
+  webview_flutter: ^4.7.0
+  package_info_plus: ^8.0.2
+flutter_intl:
+  enabled: true
+  class_name: AppLocalizations
+  template_arbs:
+    - lib/l10n/intl_en.arb
+
+dev_dependencies:
+  auto_route_generator: ^5.0.3
+  build_runner: ^2.3.3
+  flutter_launcher_icons: ^0.13.0
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+  injectable_generator: ^2.1.4
+
+  json_serializable: ^6.6.1
+  lints: ^2.0.1
+dependency_overrides:
+  web: ^0.5.1
+  intl: ^0.17.0
+flutter:
+  disable-swift-package-manager: true
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/
+    - assets/png/
+    - assets/svg/
+flutter_launcher_icons:
+  android: true
+  ios: true
+  # Android için
+  image_path_android: assets/png/launcher_icon_android.png
+  adaptive_icon_foreground: assets/png/launcher_icon_android.png
+  adaptive_icon_background: "#FFFFFF"  # veya resim yolu da verebilirsin
+
+  # iOS için
+  image_path_ios: assets/png/launcher_icon_ios.png

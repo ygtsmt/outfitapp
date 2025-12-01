@@ -1,0 +1,1709 @@
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+const crypto = require('crypto');
+
+admin.initializeApp();
+
+exports.polloWebhook = functions.https.onRequest(async (req, res) => {
+  // CORS headers
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, X-Webhook-Id, X-Webhook-Timestamp, X-Webhook-Signature');
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  if (req.method !== 'POST') {
+    res.status(405).send('Method Not Allowed');
+    return;
+  }
+
+  try {
+    // Webhook headers'ı al
+    const webhookId = req.headers['x-webhook-id'];
+    const webhookTimestamp = req.headers['x-webhook-timestamp'];
+    const signature = req.headers['x-webhook-signature'];
+
+    if (!webhookId || !webhookTimestamp || !signature) {
+      console.error('Missing webhook headers');
+      res.status(400).send('Missing webhook headers');
+      return;
+    }
+
+    // Webhook secret'ı environment variable'dan al
+    const secret = functions.config().pollo?.webhook_secret;
+    if (!secret) {
+      console.error('Webhook secret not configured');
+      res.status(500).send('Webhook secret not configured');
+      return;
+    }
+
+    // Request body'yi al
+    const body = JSON.stringify(req.body);
+    
+    // Signature'ı doğrula
+    const signedContent = `${webhookId}.${webhookTimestamp}.${body}`;
+    const secretBytes = Buffer.from(secret, 'base64');
+    const computedSignature = crypto
+      .createHmac('sha256', secretBytes)
+      .update(signedContent)
+      .digest('base64');
+
+    // Signature'ları karşılaştır (timing-safe comparison)
+    if (!crypto.timingSafeEqual(
+      Buffer.from(signature, 'base64'),
+      Buffer.from(computedSignature, 'base64')
+    )) {
+      console.error('Invalid webhook signature');
+      res.status(401).send('Invalid signature');
+      return;
+    }
+
+    // Webhook data'sını parse et
+    const event = req.body;
+    const { taskId, status } = event;
+
+    if (!taskId || !status) {
+      console.error('Invalid webhook payload');
+      res.status(400).send('Invalid webhook payload');
+      return;
+    }
+
+    console.log(`Webhook received: taskId=${taskId}, status=${status}`);
+
+    // Eğer video başarılı olduysa, userGeneratedVideos array'ini güncelle
+    if (status === 'succeed') {
+      try {
+        // Firestore database referansını al
+        const db = admin.firestore();
+        
+        // Webhook'tan video URL'ini al
+        let videoUrl = null;
+        if (event.generations && event.generations.length > 0) {
+          const generation = event.generations[0];
+          if (generation.url && generation.url.length > 0) {
+            videoUrl = generation.url;
+            console.log(`Video URL from webhook: ${videoUrl}`);
+          }
+        }
+        
+        if (videoUrl) {
+          console.log(`📥 Downloading video from temporary URL: ${videoUrl}`);
+          
+          try {
+            // Videoyu indir ve Firebase Storage'a yükle
+            const firebaseUrl = await downloadAndUploadVideoToFirebase(videoUrl, taskId);
+            
+            if (firebaseUrl) {
+              console.log(`✅ Video uploaded to Firebase Storage: ${firebaseUrl}`);
+              
+              // Tüm kullanıcıları kontrol et ve userGeneratedVideos array'inde video'yu bul
+              const usersSnapshot = await db.collection('users').get();
+              let videoFound = false;
+              
+              for (const userDoc of usersSnapshot.docs) {
+                const userId = userDoc.id;
+                const userData = userDoc.data();
+                const userGeneratedVideos = userData?.userGeneratedVideos || [];
+                
+                // userGeneratedVideos array'inde video'yu bul
+                const updatedVideos = userGeneratedVideos.map(video => {
+                  if (video.id === taskId) {
+                    videoFound = true;
+                    console.log(`Found matching video for user ${userId}! Updating output from '${video.output}' to '${firebaseUrl}'`);
+                    return {
+                      ...video,
+                      output: firebaseUrl, // Firebase Storage URL'i kullan
+                      status: 'succeeded',
+                      completedAt: new Date().toISOString()
+                    };
+                  }
+                  return video;
+                });
+                
+                if (videoFound) {
+                                        // Firebase'i güncelle
+                      await db.collection('users').doc(userId).update({
+                        userGeneratedVideos: updatedVideos,
+                        lastVideoUpdate: new Date().toISOString() // Library update trigger
+                      });
+                      console.log(`✅ Successfully updated video output in userGeneratedVideos for taskId: ${taskId}, URL: ${firebaseUrl}, User: ${userId}`);
+                      
+                      // Library update trigger set edildi
+                  
+                  // Video bulundu, diğer kullanıcıları kontrol etmeye gerek yok
+                  break;
+                }
+              }
+              
+              if (!videoFound) {
+                console.log(`❌ Video not found in any user's userGeneratedVideos array for taskId: ${taskId}`);
+              }
+            } else {
+              console.log(`❌ Failed to upload video to Firebase Storage`);
+            }
+          } catch (uploadError) {
+            console.error('Error uploading video to Firebase Storage:', uploadError);
+          }
+        } else {
+          console.log(`❌ No video URL found in webhook generations`);
+        }
+      } catch (updateError) {
+        console.error('Error updating userGeneratedVideos:', updateError);
+      }
+    }
+    
+    // Eğer video failed olduysa, userGeneratedVideos array'inde status'u güncelle
+    if (status === 'failed') {
+      try {
+        console.log(`❌ Video failed for taskId: ${taskId}`);
+        
+        // Firestore database referansını al
+        const db = admin.firestore();
+        
+        // Hata mesajını al (yeni format: result array)
+        let failMsg = '';
+        if (event.result && event.result.length > 0) {
+          failMsg = event.result[0].failMsg || '';
+        }
+        console.log(`Fail message: ${failMsg}`);
+        
+        // Tüm kullanıcıları kontrol et ve userGeneratedVideos array'inde video'yu bul
+        const usersSnapshot = await db.collection('users').get();
+        let videoFound = false;
+        
+        for (const userDoc of usersSnapshot.docs) {
+          const userId = userDoc.id;
+          const userData = userDoc.data();
+          const userGeneratedVideos = userData?.userGeneratedVideos || [];
+          
+          // userGeneratedVideos array'inde video'yu bul
+          const updatedVideos = userGeneratedVideos.map(video => {
+            if (video.id === taskId) {
+              videoFound = true;
+              console.log(`Found matching failed video for user ${userId}! Updating status to 'failed'`);
+              return {
+                ...video,
+                status: 'failed',
+                error: failMsg, // Hata mesajını ekle
+                completedAt: new Date().toISOString()
+              };
+            }
+            return video;
+          });
+          
+          if (videoFound) {
+            // Firebase'i güncelle
+            await db.collection('users').doc(userId).update({
+              userGeneratedVideos: updatedVideos,
+              lastVideoUpdate: new Date().toISOString() // Library update trigger
+            });
+            console.log(`✅ Successfully updated failed video status in userGeneratedVideos for taskId: ${taskId}, User: ${userId}`);
+            
+            // Library update trigger set edildi
+            break;
+          }
+        }
+        
+        if (!videoFound) {
+          console.log(`❌ Failed video not found in any user's userGeneratedVideos array for taskId: ${taskId}`);
+        }
+      } catch (updateError) {
+        console.error('Error updating failed video status:', updateError);
+      }
+    }
+
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error('Webhook processing error:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// ===== FAL AI WEBHOOK =====
+exports.falWebhook = functions.https.onRequest(async (req, res) => {
+  // CORS headers
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  if (req.method !== 'POST') {
+    res.status(405).send('Method Not Allowed');
+    return;
+  }
+
+  try {
+    console.log('🎯 Fal AI Webhook received:', JSON.stringify(req.body, null, 2));
+    
+    const event = req.body;
+    const { request_id, status, payload } = event;
+
+    if (!request_id) {
+      console.error('Invalid Fal AI webhook payload - missing request_id');
+      res.status(400).send('Invalid webhook payload');
+      return;
+    }
+
+    console.log(`Fal AI Webhook received: requestId=${request_id}, status=${status}`);
+
+    // Eğer video başarılı olduysa, userGeneratedVideos array'ini güncelle
+    if (status === 'OK' && payload) {
+      try {
+        // Firestore database referansını al
+        const db = admin.firestore();
+        
+        // Webhook'tan video URL'ini al (Fal AI format: payload.video.url)
+        let videoUrl = null;
+        if (payload && payload.video && payload.video.url) {
+          videoUrl = payload.video.url;
+          console.log(`Fal AI Video URL from webhook: ${videoUrl}`);
+        }
+        
+        if (videoUrl) {
+          console.log(`📥 Downloading Fal AI video from temporary URL: ${videoUrl}`);
+          
+          try {
+            // Videoyu indir ve Firebase Storage'a yükle
+            const firebaseUrl = await downloadAndUploadVideoToFirebase(videoUrl, request_id);
+            
+            if (firebaseUrl) {
+              console.log(`✅ Fal AI Video uploaded to Firebase Storage: ${firebaseUrl}`);
+              
+              // Tüm kullanıcıları kontrol et ve userGeneratedVideos array'inde video'yu bul
+              const usersSnapshot = await db.collection('users').get();
+              let videoFound = false;
+              
+              for (const userDoc of usersSnapshot.docs) {
+                const userId = userDoc.id;
+                const userData = userDoc.data();
+                const userGeneratedVideos = userData?.userGeneratedVideos || [];
+                
+                // userGeneratedVideos array'inde video'yu bul
+                const updatedVideos = userGeneratedVideos.map(video => {
+                  if (video.id === request_id) {
+                    videoFound = true;
+                    console.log(`Found matching Fal AI video for user ${userId}! Updating output from '${video.output}' to '${firebaseUrl}'`);
+                    return {
+                      ...video,
+                      output: firebaseUrl, // Firebase Storage URL'i kullan
+                      status: 'succeeded',
+                      completedAt: new Date().toISOString()
+                    };
+                  }
+                  return video;
+                });
+                
+                if (videoFound) {
+                  // Firebase'i güncelle
+                  await db.collection('users').doc(userId).update({
+                    userGeneratedVideos: updatedVideos,
+                    lastVideoUpdate: new Date().toISOString() // Library update trigger
+                  });
+                  console.log(`✅ Successfully updated Fal AI video output in userGeneratedVideos for requestId: ${request_id}, URL: ${firebaseUrl}, User: ${userId}`);
+                  
+                  // Video bulundu, diğer kullanıcıları kontrol etmeye gerek yok
+                  break;
+                }
+              }
+              
+              if (!videoFound) {
+                console.log(`❌ Fal AI Video not found in any user's userGeneratedVideos array for requestId: ${request_id}`);
+              }
+            } else {
+              console.log(`❌ Failed to upload Fal AI video to Firebase Storage`);
+            }
+          } catch (uploadError) {
+            console.error('Error uploading Fal AI video to Firebase Storage:', uploadError);
+          }
+        } else {
+          console.log(`❌ No video URL found in Fal AI webhook output`);
+        }
+      } catch (updateError) {
+        console.error('Error updating Fal AI userGeneratedVideos:', updateError);
+      }
+    }
+    
+    // Eğer video failed olduysa, userGeneratedVideos array'inde status'u güncelle
+    if (status === 'ERROR') {
+      try {
+        console.log(`❌ Fal AI Video failed for requestId: ${request_id}`);
+        
+        // Firestore database referansını al
+        const db = admin.firestore();
+        
+        // Hata mesajını al (Fal AI format: error field)
+        let failMsg = '';
+        if (event.error) {
+          failMsg = event.error;
+        }
+        console.log(`Fal AI Fail message: ${failMsg}`);
+        
+        // Tüm kullanıcıları kontrol et ve userGeneratedVideos array'inde video'yu bul
+        const usersSnapshot = await db.collection('users').get();
+        let videoFound = false;
+        
+        for (const userDoc of usersSnapshot.docs) {
+          const userId = userDoc.id;
+          const userData = userDoc.data();
+          const userGeneratedVideos = userData?.userGeneratedVideos || [];
+          
+          // userGeneratedVideos array'inde video'yu bul
+          const updatedVideos = userGeneratedVideos.map(video => {
+            if (video.id === request_id) {
+              videoFound = true;
+              console.log(`Found matching failed Fal AI video for user ${userId}! Updating status to 'failed'`);
+              return {
+                ...video,
+                status: 'failed',
+                error: failMsg, // Hata mesajını ekle
+                completedAt: new Date().toISOString()
+              };
+            }
+            return video;
+          });
+          
+          if (videoFound) {
+            // Firebase'i güncelle
+            await db.collection('users').doc(userId).update({
+              userGeneratedVideos: updatedVideos,
+              lastVideoUpdate: new Date().toISOString() // Library update trigger
+            });
+            console.log(`✅ Successfully updated failed Fal AI video status in userGeneratedVideos for requestId: ${request_id}, User: ${userId}`);
+            
+            break;
+          }
+        }
+        
+        if (!videoFound) {
+          console.log(`❌ Failed Fal AI video not found in any user's userGeneratedVideos array for requestId: ${request_id}`);
+        }
+      } catch (updateError) {
+        console.error('Error updating failed Fal AI video status:', updateError);
+      }
+    }
+
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error('Fal AI Webhook processing error:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Videoyu indir ve Firebase Storage'a yükle
+async function downloadAndUploadVideoToFirebase(videoUrl, taskId) {
+  try {
+    console.log(`📥 Starting download for taskId: ${taskId}`);
+    
+    // HTTP request ile videoyu indir
+    const https = require('https');
+    const http = require('http');
+    
+    const protocol = videoUrl.startsWith('https:') ? https : http;
+    
+    const videoBuffer = await new Promise((resolve, reject) => {
+      protocol.get(videoUrl, (response) => {
+        if (response.statusCode !== 200) {
+          reject(new Error(`Failed to download video: ${response.statusCode}`));
+          return;
+        }
+        
+        const chunks = [];
+        response.on('data', (chunk) => chunks.push(chunk));
+        response.on('end', () => resolve(Buffer.concat(chunks)));
+        response.on('error', reject);
+      }).on('error', reject);
+    });
+    
+    console.log(`📥 Video downloaded, size: ${videoBuffer.length} bytes`);
+    
+    // Firebase Storage'a yükle
+    const bucket = admin.storage().bucket();
+    const fileName = `user_videos/${taskId}/${Date.now()}.mp4`;
+    const file = bucket.file(fileName);
+    
+    await file.save(videoBuffer, {
+      metadata: {
+        contentType: 'video/mp4',
+        metadata: {
+          taskId: taskId,
+          uploadedAt: new Date().toISOString()
+        }
+      }
+    });
+    
+    console.log(`📤 Video uploaded to Firebase Storage: ${fileName}`);
+    
+    // Public URL oluştur
+    await file.makePublic();
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+    
+    console.log(`🔗 Public URL created: ${publicUrl}`);
+    return publicUrl;
+    
+  } catch (error) {
+    console.error('Error in downloadAndUploadVideoToFirebase:', error);
+    return null;
+  }
+}
+
+// Webhook secret'ı set etmek için helper function
+exports.setWebhookSecret = functions.https.onRequest(async (req, res) => {
+  if (req.method !== 'POST') {
+    res.status(405).send('Method Not Allowed');
+    return;
+  }
+
+  try {
+    const { secret } = req.body;
+    if (!secret) {
+      res.status(400).send('Secret is required');
+      return;
+    }
+
+    // Webhook secret'ı set et
+    await functions.config().set({
+      pollo: {
+        webhook_secret: secret
+      }
+    });
+
+    res.status(200).send('Webhook secret configured successfully');
+  } catch (error) {
+    console.error('Error setting webhook secret:', error);
+    res.status(500).send('Error setting webhook secret');
+  }
+});
+
+// ===== REVENUECAT PAYMENT SYSTEM =====
+
+// Cloud Tasks client
+const {CloudTasksClient} = require('@google-cloud/tasks');
+const tasksClient = new CloudTasksClient();
+
+// RevenueCat proje bilgileri
+const project = 'disciplify-26970'; // Firebase proje ID'n
+const queue = 'payment-processing';
+const location = 'us-central1';
+
+// Test function kaldırıldı
+
+// RevenueCat Webhook Handler
+exports.revenueCatWebhook = functions.https.onRequest(async (req, res) => {
+  // CORS headers
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  try {
+    console.log(' RevenueCat Webhook received:', req.body);
+    
+    // RevenueCat test event'leri için özel handling
+    let eventData = req.body;
+    
+    // Eğer test event ise, event objesi içinden al
+    if (req.body.event && req.body.event.type === 'TEST') {
+      eventData = {
+        event_type: 'TEST_INITIAL_PURCHASE', // Test için özel event type
+        app_user_id: req.body.event.app_user_id,
+        product_id: req.body.event.product_id,
+        entitlement_id: null,
+        cancellation_reason: null,
+        refund_reason: null
+      };
+      console.log('🧪 Test event detected, using event data');
+    } else {
+      // Normal webhook event
+      eventData = {
+        event_type: req.body.event_type || req.body.event?.type,
+        app_user_id: req.body.app_user_id || req.body.event?.app_user_id,
+        product_id: req.body.product_id || req.body.event?.product_id,
+        entitlement_id: req.body.entitlement_id || req.body.event?.entitlement_id,
+        cancellation_reason: req.body.cancellation_reason,
+        refund_reason: req.body.refund_reason
+      };
+    }
+
+    // Gerekli alanları kontrol et
+    if (!eventData.app_user_id || !eventData.event_type || !eventData.product_id) {
+      console.error('❌ Missing required fields:', req.body);
+      return res.status(400).json({ 
+        error: 'Missing required fields',
+        required: ['app_user_id', 'event_type', 'product_id'],
+        received: eventData
+      });
+    }
+
+    // Cloud Task oluştur
+    const taskResult = await _createPaymentTask({
+      userId: eventData.app_user_id,
+      eventType: eventData.event_type,
+      productId: eventData.product_id,
+      entitlementId: eventData.entitlement_id,
+      cancellationReason: eventData.cancellation_reason,
+      refundReason: eventData.refund_reason,
+      timestamp: Date.now(),
+      webhookData: req.body
+    });
+
+    console.log('✅ Payment task created successfully:', taskResult.name);
+
+    // Başarılı response
+    res.status(200).json({ 
+      success: true, 
+      message: 'Payment event queued for processing',
+      taskId: taskResult.name,
+      eventType: eventData.event_type,
+      userId: eventData.app_user_id
+    });
+
+  } catch (error) {
+    console.error('❌ Webhook processing error:', error);
+    
+    // Error response
+    res.status(500).json({ 
+      error: 'Failed to process webhook',
+      details: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Cloud Task oluşturma fonksiyonu
+async function _createPaymentTask(eventData) {
+  try {
+    console.log('📝 Creating payment task for:', eventData);
+    
+    const parent = tasksClient.queuePath(project, location, queue);
+    
+    const task = {
+      httpRequest: {
+        httpMethod: 'POST',
+        url: `https://${location}-${project}.cloudfunctions.net/processPaymentEvent`,
+        body: Buffer.from(JSON.stringify(eventData)).toString('base64'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // Task timeout: 10 dakika
+        timeout: { seconds: 600 },
+        // Retry ayarları
+        retryConfig: {
+          maxAttempts: 3,
+          maxRetryDuration: { seconds: 300 },
+          minBackoff: { seconds: 1 },
+          maxBackoff: { seconds: 60 },
+          maxDoublings: 3
+        }
+      },
+      // Task priority
+      dispatchDeadline: { seconds: 600 }
+    };
+    
+    const [response] = await tasksClient.createTask({parent, task});
+    console.log(`✅ Payment task created: ${response.name}`);
+    
+    return response;
+    
+  } catch (error) {
+    console.error('❌ Failed to create Cloud Task:', error);
+    throw error;
+  }
+}
+
+// Payment event'i işleyen function
+exports.processPaymentEvent = functions.https.onRequest(async (req, res) => {
+  try {
+    console.log(' Processing payment event:', req.body);
+    
+    const eventData = req.body;
+    
+    // Gerekli alanları kontrol et
+    if (!eventData.userId || !eventData.eventType || !eventData.productId) {
+      console.error('❌ Missing required fields in payment event:', eventData);
+      return res.status(400).json({ 
+        error: 'Missing required fields',
+        required: ['userId', 'eventType', 'productId']
+      });
+    }
+
+    // Payment event'i işle
+    const result = await _processPaymentEvent(eventData);
+    
+    console.log('✅ Payment event processed successfully:', result);
+    
+    // Başarılı response
+    res.status(200).json({ 
+      success: true, 
+      message: 'Payment processed successfully',
+      userId: eventData.userId,
+      eventType: eventData.eventType,
+      result: result
+    });
+    
+  } catch (error) {
+    console.error('❌ Payment processing error:', error);
+    
+    // Error response (Cloud Tasks retry yapar)
+    res.status(500).json({ 
+      error: 'Payment processing failed',
+      details: error.message,
+      retry: true,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// Ana payment processing logic - User payment data yazıyor
+async function _processPaymentEvent(eventData) {
+  const { 
+    userId, 
+    eventType, 
+    productId, 
+    entitlementId, 
+    cancellationReason, 
+    refundReason,
+    webhookData 
+  } = eventData;
+  
+  console.log(`📝 Processing ${eventType} for user ${userId}, product ${productId}`);
+  console.log(`📊 Event data:`, eventData);
+  
+  try {
+    // User dokümanına payment bilgilerini yaz
+    const userRef = admin.firestore().collection('users').doc(userId);
+    
+    // Event type'a göre farklı işlemler
+    switch (eventType) {
+      case 'INITIAL_PURCHASE':
+        await _handleInitialPurchase(userRef, productId, entitlementId, webhookData);
+        break;
+        
+      case 'RENEWAL':
+        await _handleRenewal(userRef, productId, webhookData);
+        break;
+        
+      case 'CANCELLATION':
+        await _handleCancellation(userRef, productId, cancellationReason, webhookData);
+        break;
+        
+      case 'EXPIRATION':
+        await _handleExpiration(userRef, productId, webhookData);
+        break;
+        
+      case 'REFUND':
+        await _handleRefund(userRef, productId, refundReason, webhookData);
+        break;
+        
+      // One-time purchase event'leri
+      case 'NON_RENEWING_PURCHASE':
+      case 'ONE_TIME_PURCHASE':
+        await _handleOneTimePurchase(userRef, productId, webhookData);
+        break;
+        
+      default:
+        console.log(`⚠️ Unknown event type: ${eventType}, only logging`);
+        return { 
+          status: 'unknown_event', 
+          eventType, 
+          userId, 
+          productId,
+          message: 'Unknown event type, only logged'
+        };
+    }
+    
+    console.log(`✅ Payment data written to Firestore for ${eventType}`);
+    return { 
+      status: 'payment_data_written', 
+      eventType, 
+      userId, 
+      productId,
+      message: 'Payment data written to user document'
+    };
+    
+  } catch (error) {
+    console.error('❌ Error writing payment data:', error);
+    throw error;
+  }
+}
+
+// Credit Management Helper Functions
+
+// Firebase'den plan bilgilerini çek
+async function _getPlanFromFirebase(productId) {
+  try {
+    const planDoc = await admin.firestore().collection('plans').doc(productId).get();
+    if (planDoc.exists) {
+      const planData = planDoc.data();
+      return {
+        purchasedCredit: planData.purchased_credit || 0,
+        benefits: planData.benefits || {}
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('❌ Error getting plan from Firebase:', error);
+    return null;
+  }
+}
+
+// Plan tipine göre haftalık kredi hesapla (Firebase'den)
+async function _getWeeklyCredits(productId) {
+  const plan = await _getPlanFromFirebase(productId);
+  if (plan && plan.purchasedCredit > 0) {
+    return plan.purchasedCredit;
+  }
+  
+  // Firebase'de plan bulunamazsa hata logla
+  console.error(`❌ Plan not found in Firebase: ${productId}`);
+  return 0; // Plan bulunamazsa 0 döndür
+}
+
+// One-time purchase için kredi hesapla (Firebase'den)
+async function _getOneTimePurchaseCredits(productId) {
+  const plan = await _getPlanFromFirebase(productId);
+  if (plan && plan.purchasedCredit > 0) {
+    return plan.purchasedCredit;
+  }
+  
+  // Firebase'de plan bulunamazsa hata logla
+  console.error(`❌ One-time plan not found in Firebase: ${productId}`);
+  return 0; // Plan bulunamazsa 0 döndür
+}
+
+// Kullanıcının mevcut kredilerini al
+async function _getCurrentCredits(userRef) {
+  try {
+    const userDoc = await userRef.get();
+    if (userDoc.exists) {
+      const profileInfo = userDoc.data()?.profile_info;
+      return profileInfo?.totalCredit || 0;
+    }
+    return 0;
+  } catch (error) {
+    console.error('❌ Error getting current credits:', error);
+    return 0;
+  }
+}
+
+// Kredileri güncelle
+async function _updateCredits(userRef, creditChange, reason) {
+  try {
+    const currentCredits = await _getCurrentCredits(userRef);
+    const newCredits = Math.max(0, currentCredits + creditChange); // Negatif olmasın
+    
+    await userRef.update({
+      'profile_info.totalCredit': newCredits,
+      'profile_info.lastCreditUpdate': admin.firestore.FieldValue.serverTimestamp()
+    });
+    
+    console.log(`✅ Credits updated: ${currentCredits} → ${newCredits} (${reason})`);
+    return newCredits;
+  } catch (error) {
+    console.error('❌ Error updating credits:', error);
+    throw error;
+  }
+}
+
+// Log ekleme helper function
+async function _addLog(userRef, logMessage) {
+  try {
+    const timestamp = new Date().toLocaleString('tr-TR', {
+      timeZone: 'Europe/Istanbul',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    
+    const fullLogMessage = `[${timestamp}] ${logMessage}`;
+    
+    await userRef.update({
+      'purchased_info.logs': admin.firestore.FieldValue.arrayUnion(fullLogMessage)
+    });
+    
+    console.log(`📝 Log added: ${fullLogMessage}`);
+  } catch (error) {
+    console.error('❌ Error adding log:', error);
+  }
+}
+
+// One-time purchase log ekleme helper function
+async function _addOneTimePurchaseLog(userRef, logMessage) {
+  try {
+    const timestamp = new Date().toLocaleString('tr-TR', {
+      timeZone: 'Europe/Istanbul',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    
+    const fullLogMessage = `[${timestamp}] ${logMessage}`;
+    
+    await userRef.update({
+      'one_time_purchased_logs': admin.firestore.FieldValue.arrayUnion(fullLogMessage)
+    });
+    
+    console.log(`📝 One-time purchase log added: ${fullLogMessage}`);
+  } catch (error) {
+    console.error('❌ Error adding one-time purchase log:', error);
+  }
+}
+
+// Mevcut refund counter'ı al
+async function _getCurrentRefundCount(userRef) {
+  try {
+    const userDoc = await userRef.get();
+    if (userDoc.exists) {
+      const purchasedInfo = userDoc.data()?.purchased_info;
+      return purchasedInfo?.refund_from_store || 0;
+    }
+    return 0;
+  } catch (error) {
+    console.error('❌ Error getting refund count:', error);
+    return 0;
+  }
+}
+
+// Handler Functions - User payment data yazıyor
+
+async function _handleInitialPurchase(userRef, productId, entitlementId, webhookData) {
+  const event = webhookData.event;
+  
+  // Haftalık kredileri hesapla (Firebase'den)
+  const weeklyCredits = await _getWeeklyCredits(productId);
+  
+  // Kredileri ekle
+  await _updateCredits(userRef, weeklyCredits, `Initial purchase: ${productId}`);
+  
+  // Plan adını belirle
+  const planName = productId.includes('plus') ? 'Plus' : productId.includes('pro') ? 'Pro' : 'Ultra';
+  
+  await userRef.set({
+    'purchased_info': {
+      'current_plan_id': productId,
+      'subscription_status': 'active',
+      'entitlement_id': entitlementId,
+      'subscription_start_date': admin.firestore.FieldValue.serverTimestamp(),
+      'last_updated': admin.firestore.FieldValue.serverTimestamp(),
+      'weekly_credits': weeklyCredits, // Haftalık kredi miktarı
+      'refund_from_store': 0, // Refund counter başlat
+      'logs': [], // Log array'i başlat
+      'plan_history': [{
+        'action': 'initial_purchase',
+        'product_id': productId,
+        'timestamp': new Date().toISOString(),
+        'status': 'active',
+        'transaction_id': event.transaction_id,
+        'price': event.price,
+        'currency': event.currency,
+        'country_code': event.country_code,
+        'store': event.store,
+        'credits_added': weeklyCredits
+      }],
+      'subscription_details': {
+        'product_id': productId,
+        'status': 'active',
+        'start_date': admin.firestore.FieldValue.serverTimestamp(),
+        'auto_renew': true,
+        'renewal_number': event.renewal_number || 1,
+        'expiration_date': new Date(event.expiration_at_ms),
+        'purchase_date': new Date(event.purchased_at_ms)
+      }
+    },
+
+  }, { merge: true });
+  
+  // Detaylı log ekle
+  const environment = event.environment || 'UNKNOWN';
+  await _addLog(userRef, `🎉 İlk abonelik başarıyla oluşturuldu! Plan: ${planName}, Haftalık Kredi: ${weeklyCredits}, Fiyat: ${event.price} ${event.currency}, Ülke: ${event.country_code}, Store: ${event.store === 'PLAY_STORE' ? 'Google Play' : 'App Store'}, Environment: ${environment}, Periyot: ${environment === 'SANDBOX' ? 'TEST (Hızlı)' : 'PRODUCTION (1 Hafta)'}`);
+  
+  console.log('✅ Initial purchase data written to user document');
+}
+
+async function _handleRenewal(userRef, productId, webhookData) {
+  const event = webhookData.event;
+  
+  // Haftalık kredileri hesapla ve ekle (Firebase'den)
+  const weeklyCredits = await _getWeeklyCredits(productId);
+  await _updateCredits(userRef, weeklyCredits, `Weekly renewal: ${productId}`);
+  
+  // Plan adını belirle
+  const planName = productId.includes('plus') ? 'Plus' : productId.includes('pro') ? 'Pro' : 'Ultra';
+  
+  await userRef.update({
+    'purchased_info.subscription_status': 'active',
+    'purchased_info.last_renewal_date': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.last_updated': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.plan_history': admin.firestore.FieldValue.arrayUnion({
+      'action': 'renewal',
+      'product_id': productId,
+      'timestamp': new Date().toISOString(),
+      'status': 'active',
+      'transaction_id': event.transaction_id,
+      'price': event.price,
+      'currency': event.currency,
+      'credits_added': weeklyCredits
+    }),
+    'purchased_info.subscription_details.status': 'active',
+    'purchased_info.subscription_details.last_renewal': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.subscription_details.renewal_number': event.renewal_number || 1
+  });
+  
+  // Detaylı log ekle
+  const environment = event.environment || 'UNKNOWN';
+  const timeSinceLastRenewal = event.purchased_at_ms ? `(${Math.round((Date.now() - event.purchased_at_ms) / 1000 / 60)} dakika)` : '';
+  await _addLog(userRef, `🔄 Haftalık yenileme başarılı! Plan: ${planName}, Eklenen Kredi: ${weeklyCredits}, Fiyat: ${event.price} ${event.currency}, Yenileme Sayısı: ${event.renewal_number || 1}, Environment: ${environment}, Periyot: ${environment === 'SANDBOX' ? 'TEST (Hızlı)' : 'PRODUCTION (1 Hafta)'} ${timeSinceLastRenewal}`);
+  
+  console.log('✅ Renewal data updated in user document');
+}
+
+async function _handleCancellation(userRef, productId, cancellationReason, webhookData) {
+  // Cancellation'da kredi ekleme, sadece status güncelle
+  // Mevcut periyot bitene kadar kredi alacak, sonra duracak
+  
+  await userRef.update({
+    'purchased_info.subscription_status': 'cancelled',
+    'purchased_info.cancellation_date': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.cancellation_reason': cancellationReason || 'user_cancelled',
+    'purchased_info.last_updated': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.plan_history': admin.firestore.FieldValue.arrayUnion({
+      'action': 'cancellation',
+      'product_id': productId,
+      'timestamp': new Date().toISOString(),
+      'status': 'cancelled',
+      'reason': cancellationReason,
+      'credits_added': 0 // Cancellation'da kredi eklenmez
+    }),
+    'purchased_info.subscription_details.status': 'cancelled'
+  });
+  
+  // Detaylı log ekle
+  const planName = productId.includes('plus') ? 'Plus' : productId.includes('pro') ? 'Pro' : 'Ultra';
+  const reasonText = cancellationReason || 'Kullanıcı tarafından iptal edildi';
+  await _addLog(userRef, `❌ Abonelik iptal edildi! Plan: ${planName}, İptal Sebebi: ${reasonText}, Not: Mevcut periyot bitene kadar kredi almaya devam edeceksiniz`);
+  
+  console.log('✅ Cancellation data updated in user document - No credits added');
+}
+
+async function _handleExpiration(userRef, productId, webhookData) {
+  // Expiration'da son periyot kredisi eklenmiş, artık ekleme yok
+  
+  await userRef.update({
+    'purchased_info.subscription_status': 'expired',
+    'purchased_info.expiration_date': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.last_updated': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.plan_history': admin.firestore.FieldValue.arrayUnion({
+      'action': 'expiration',
+      'product_id': productId,
+      'timestamp': new Date().toISOString(),
+      'status': 'expired',
+      'credits_added': 0 // Expiration'da kredi eklenmez
+    }),
+    'purchased_info.subscription_details.status': 'expired'
+  });
+  
+  console.log('✅ Expiration data updated in user document - No credits added');
+}
+
+async function _handleRefund(userRef, productId, refundReason, webhookData) {
+  // Refund'da akıllı kredi hesaplama
+  const weeklyCredits = await _getWeeklyCredits(productId);
+  const currentCredits = await _getCurrentCredits(userRef);
+  
+  // Harcanmamış kredileri hesapla
+  const unusedCredits = Math.min(weeklyCredits, currentCredits);
+  
+  // Sadece harcanmamış kredileri geri al
+  if (unusedCredits > 0) {
+    await _updateCredits(userRef, -unusedCredits, `Refund: ${productId} - Unused credits removed`);
+  }
+  
+  await userRef.update({
+    'purchased_info.subscription_status': 'refunded',
+    'purchased_info.refund_date': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.refund_reason': refundReason || 'user_requested',
+    'purchased_info.last_updated': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.refund_from_store': admin.firestore.FieldValue.increment(1), // Refund counter +1
+    'purchased_info.plan_history': admin.firestore.FieldValue.arrayUnion({
+      'action': 'refund',
+      'product_id': productId,
+      'timestamp': new Date().toISOString(),
+      'status': 'refunded',
+      'reason': refundReason,
+      'credits_removed': unusedCredits, // Gerçekte geri alınan kredi
+      'total_credits_from_plan': weeklyCredits, // Plandan gelen toplam kredi
+      'unused_credits_refunded': unusedCredits, // Geri alınan kullanılmamış kredi
+      'spent_credits': weeklyCredits - unusedCredits // Harcanan kredi
+    }),
+    'purchased_info.subscription_details.status': 'refunded'
+  });
+  
+  // Detaylı log ekle
+  const planName = productId.includes('plus') ? 'Plus' : productId.includes('pro') ? 'Pro' : 'Ultra';
+  const reasonText = refundReason || 'Kullanıcı tarafından talep edildi';
+  
+  // Mevcut refund counter'ı al
+  const currentRefundCount = await _getCurrentRefundCount(userRef);
+  const newRefundCount = currentRefundCount + 1;
+  
+  await _addLog(userRef, `💰 İade işlemi gerçekleşti! Plan: ${planName}, İade Sebebi: ${reasonText}, Plandan Gelen Kredi: ${weeklyCredits}, Harcanan Kredi: ${weeklyCredits - unusedCredits}, Geri Alınan Kredi: ${unusedCredits}, Toplam İade Sayısı: ${newRefundCount}, Not: Sadece kullanılmamış krediler geri alındı`);
+  
+  console.log('✅ Refund data updated in user document - Smart credits calculation');
+}
+
+async function _handleRestoration(userRef, productId, entitlementId, webhookData) {
+  // Restoration'da kredileri tekrar ekle
+  const weeklyCredits = await _getWeeklyCredits(productId);
+  await _updateCredits(userRef, weeklyCredits, `Restoration: ${productId} - Credits restored`);
+  
+  // Plan adını belirle
+  const planName = productId.includes('plus') ? 'Plus' : productId.includes('pro') ? 'Pro' : 'Ultra';
+  
+  await userRef.update({
+    'purchased_info.subscription_status': 'active',
+    'purchased_info.restoration_date': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.last_updated': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.plan_history': admin.firestore.FieldValue.arrayUnion({
+      'action': 'restoration',
+      'product_id': productId,
+      'timestamp': new Date().toISOString(),
+      'status': 'active',
+      'credits_added': weeklyCredits
+    }),
+    'purchased_info.subscription_details.status': 'active',
+    'purchased_info.subscription_details.restoration_date': admin.firestore.FieldValue.serverTimestamp()
+  });
+  
+  console.log('✅ Restoration data updated in user document - Credits restored');
+}
+
+async function _handleTransfer(userRef, productId, webhookData) {
+  // Transfer'da kredi ekleme, sadece status güncelle
+  await userRef.update({
+    'purchased_info.subscription_status': 'transferred',
+    'purchased_info.transfer_date': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.last_updated': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.plan_history': admin.firestore.FieldValue.arrayUnion({
+      'action': 'transfer',
+      'product_id': productId,
+      'timestamp': new Date().toISOString(),
+      'status': 'transferred',
+      'credits_added': 0
+    }),
+    'purchased_info.subscription_details.status': 'transferred'
+  });
+  
+  console.log('✅ Transfer data updated in user document - No credits added');
+}
+
+async function _handleUncancellation(userRef, productId, webhookData) {
+  // Uncancellation'da kredileri tekrar ekle
+  const weeklyCredits = await _getWeeklyCredits(productId);
+  await _updateCredits(userRef, weeklyCredits, `Uncancellation: ${productId} - Credits restored`);
+  
+  // Plan adını belirle
+  const planName = productId.includes('plus') ? 'Plus' : productId.includes('pro') ? 'Pro' : 'Ultra';
+  
+  await userRef.update({
+    'purchased_info.subscription_status': 'active',
+    'purchased_info.uncancellation_date': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.last_updated': admin.firestore.FieldValue.serverTimestamp(),
+    'purchased_info.plan_history': admin.firestore.FieldValue.arrayUnion({
+      'action': 'uncancellation',
+      'product_id': productId,
+      'timestamp': new Date().toISOString(),
+      'status': 'active',
+      'credits_added': weeklyCredits
+    }),
+    'purchased_info.subscription_details.status': 'active'
+  });
+  
+  console.log('✅ Uncancellation data updated in user document - Credits restored');
+}
+
+// One-time purchase handler
+async function _handleOneTimePurchase(userRef, productId, webhookData) {
+  const event = webhookData.event;
+  
+  // One-time purchase kredilerini hesapla (Firebase'den)
+  const creditAmount = await _getOneTimePurchaseCredits(productId);
+  
+  // Mevcut kredileri al
+  const currentCredits = await _getCurrentCredits(userRef);
+  const newCredits = currentCredits + creditAmount;
+  
+  // Kredileri ekle
+  await _updateCredits(userRef, creditAmount, `One-time purchase: ${productId}`);
+  
+  // Paket adını belirle
+  const packageName = _getOneTimePackageName(productId);
+  
+  const updateData = {
+    'one_time_purchases': admin.firestore.FieldValue.arrayUnion({
+      'product_id': productId,
+      'package_name': packageName,
+      'credit_amount': creditAmount,
+      'transaction_id': event.transaction_id,
+      'purchase_date': new Date(),
+      'price': event.price,
+      'currency': event.currency,
+      'status': 'completed'
+    }),
+    'profile_info.lastOneTimePurchase': admin.firestore.FieldValue.serverTimestamp(),
+    'profile_info.totalOneTimePurchases': admin.firestore.FieldValue.increment(1)
+  };
+  
+  // Hızlı kredi ekleme ve temel bilgiler
+  await userRef.update(updateData);
+  
+  // One-time purchase için ayrı log sistemi
+  const environment = event.environment || 'UNKNOWN';
+  await _addOneTimePurchaseLog(userRef, `🎁 Tek seferlik kredi paketi satın alındı! Paket: ${packageName}, Önceki Kredi: ${currentCredits}, Eklenen Kredi: ${creditAmount}, Yeni Kredi: ${newCredits}, Fiyat: ${event.price} ${event.currency}, Ülke: ${event.country_code}, Store: ${event.store === 'PLAY_STORE' ? 'Google Play' : 'App Store'}, Environment: ${environment}`);
+  
+  console.log('✅ One-time purchase data written to user document');
+}
+
+// One-time purchase paket adını belirle
+function _getOneTimePackageName(productId) {
+  if (productId.includes('extra')) return 'Ginly AI Extra';
+  if (productId.includes('boost')) return 'Ginly AI Boost';
+  if (productId.includes('mega')) return 'Ginly AI Mega';
+  return 'Unknown Package';
+}
+
+// ===== PIXVERSE ORIGINAL API POLLING =====
+// Pixverse URL'den videoyu indir ve Firebase Storage'a yükle
+async function uploadPixverseVideoToFirebase(pixverseUrl, userId, videoId) {
+  try {
+    console.log(`📥 Downloading video from Pixverse: ${pixverseUrl}`);
+    const axios = require('axios');
+    
+    // Videoyu indir
+    const response = await axios.get(pixverseUrl, {
+      responseType: 'arraybuffer',
+      timeout: 60000 // 60 saniye timeout
+    });
+    
+    const videoBuffer = Buffer.from(response.data);
+    console.log(`✅ Video downloaded, size: ${videoBuffer.length} bytes`);
+    
+    // Firebase Storage'a yükle
+    const bucket = admin.storage().bucket();
+    const fileName = `pixverse_videos/${userId}/${videoId}_${Date.now()}.mp4`;
+    const file = bucket.file(fileName);
+    
+    await file.save(videoBuffer, {
+      metadata: {
+        contentType: 'video/mp4',
+        metadata: {
+          userId: userId,
+          videoId: videoId,
+          source: 'pixverse-original',
+          uploadedAt: new Date().toISOString()
+        }
+      }
+    });
+    
+    // Public URL oluştur
+    await file.makePublic();
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+    
+    console.log(`✅ Video uploaded to Firebase Storage: ${publicUrl}`);
+    return publicUrl;
+    
+  } catch (error) {
+    console.error(`❌ Error uploading video to Firebase Storage:`, error.message);
+    throw error;
+  }
+}
+
+// Her 2 dakikada bir pending Pixverse Original videoları kontrol et
+exports.checkPendingPixverseVideos = functions.pubsub
+  .schedule('every 2 minutes')
+  .onRun(async (context) => {
+    try {
+      console.log('🔍 Checking pending Pixverse Original videos...');
+      
+      const db = admin.firestore();
+      const axios = require('axios');
+      
+      // Pixverse API key'i environment variable'dan al
+      const pixverseApiKey = functions.config().pixverse?.apikey;
+      if (!pixverseApiKey) {
+        console.error('❌ Pixverse API key not configured');
+        return null;
+      }
+      
+      // Sadece pending videoları olan kullanıcıları kontrol et
+      const usersSnapshot = await db.collection('users')
+        .where('hasPendingVideos', '==', true)
+        .get();
+      
+      // Eğer hiç pending video yoksa, tüm kullanıcıları kontrol et (fallback)
+      if (usersSnapshot.empty) {
+        console.log('📭 No users with pending videos flag, checking all users...');
+        const allUsersSnapshot = await db.collection('users').get();
+        let totalPendingVideos = 0;
+        let totalCheckedVideos = 0;
+        let totalCompletedVideos = 0;
+        
+        for (const userDoc of allUsersSnapshot.docs) {
+          const userId = userDoc.id;
+          const userData = userDoc.data();
+          const videos = userData.userGeneratedVideos || [];
+          
+          // Processing statusundeki Pixverse Original videoları filtrele
+          const pendingVideos = videos.filter(v =>
+            v.model === 'pixverse-original-4.5' &&
+            v.status === 'processing' &&
+            (v.output === null || v.output === '') &&
+            v.id != null &&
+            v.trace_id != null
+          );
+          
+          if (pendingVideos.length === 0) continue;
+          
+          totalPendingVideos += pendingVideos.length;
+          console.log(`📋 User ${userId}: Found ${pendingVideos.length} pending videos`);
+          
+          // Her pending video için status check
+          for (const video of pendingVideos) {
+            const videoId = video.id;
+            const traceId = video.trace_id;
+            
+            try {
+              totalCheckedVideos++;
+              console.log(`🔍 Checking video ${videoId} for user ${userId}`);
+              
+              // Pixverse API'ye status check
+              const response = await axios.get(
+                `https://app-api.pixverse.ai/openapi/v2/video/result/${videoId}`,
+                {
+                  headers: {
+                    'API-KEY': pixverseApiKey,
+                    'Ai-trace-id': traceId
+                  }
+                }
+              );
+              
+              if (response.status === 200 && response.data.ErrCode === 0) {
+                const resp = response.data.Resp;
+                
+                // Status: 0 = processing, 1 = succeeded, 2 = failed
+                if (resp.status === 1 && resp.url) {
+                  // ✅ Video başarılı
+                  console.log(`✅ Video ${videoId} completed! URL: ${resp.url}`);
+                  
+                  // Videoyu Firebase Storage'a yükle
+                  const firebaseUrl = await uploadPixverseVideoToFirebase(resp.url, userId, videoId);
+                  
+                  if (firebaseUrl) {
+                    const updatedVideos = videos.map(v => {
+                      if (v.id === videoId) {
+                        return {
+                          ...v,
+                          output: firebaseUrl,
+                          status: 'succeeded',
+                          completedAt: new Date().toISOString()
+                        };
+                      }
+                      return v;
+                    });
+                    
+                    await db.collection('users').doc(userId).update({
+                      userGeneratedVideos: updatedVideos,
+                      lastVideoUpdate: new Date().toISOString(),
+                      hasPendingVideos: false // Pending video yok artık
+                    });
+                    
+                    totalCompletedVideos++;
+                    console.log(`💾 Completed video ${videoId} updated in Firebase for user ${userId}`);
+                  }
+                  
+                } else if (resp.status === 2) {
+                  // ❌ Video başarısız
+                  console.log(`❌ Video ${videoId} failed!`);
+                  
+                  const updatedVideos = videos.map(v => {
+                    if (v.id === videoId) {
+                      return {
+                        ...v,
+                        status: 'failed',
+                        error: 'Video generation failed',
+                        completedAt: new Date().toISOString()
+                      };
+                    }
+                    return v;
+                  });
+                  
+                  await db.collection('users').doc(userId).update({
+                    userGeneratedVideos: updatedVideos,
+                    lastVideoUpdate: new Date().toISOString(),
+                    hasPendingVideos: false // Pending video yok artık
+                  });
+                  
+                  console.log(`💾 Failed video ${videoId} updated in Firebase for user ${userId}`);
+                  
+                } else {
+                  // ⏳ Hala processing
+                  console.log(`⏳ Video ${videoId} still processing (status: ${resp.status})`);
+                }
+              }
+              
+            } catch (error) {
+              console.error(`⚠️ Error checking video ${videoId}:`, error.message);
+              // Continue with next video
+            }
+          }
+        }
+        
+        console.log(`✅ Fallback polling completed! Pending: ${totalPendingVideos}, Checked: ${totalCheckedVideos}, Completed: ${totalCompletedVideos}`);
+        return null;
+      }
+      
+      let totalPendingVideos = 0;
+      let totalCheckedVideos = 0;
+      let totalCompletedVideos = 0;
+      
+      for (const userDoc of usersSnapshot.docs) {
+        const userId = userDoc.id;
+        const userData = userDoc.data();
+        const videos = userData.userGeneratedVideos || [];
+        
+            // Processing statusundeki Pixverse Original videoları filtrele
+            const pendingVideos = videos.filter(v =>
+              v.model === 'pixverse-original-4.5' &&
+              v.status === 'processing' &&
+              (v.output === null || v.output === '') &&
+              v.id != null &&
+              v.trace_id != null
+            );
+        
+        if (pendingVideos.length === 0) continue;
+        
+        totalPendingVideos += pendingVideos.length;
+        console.log(`📋 User ${userId}: Found ${pendingVideos.length} pending videos`);
+        
+            // Her pending video için status check
+            for (const video of pendingVideos) {
+              const videoId = video.id;
+              const traceId = video.trace_id;
+          
+          try {
+            totalCheckedVideos++;
+            console.log(`🔍 Checking video ${videoId} for user ${userId}`);
+            
+            // Pixverse API'ye status check
+            const response = await axios.get(
+              `https://app-api.pixverse.ai/openapi/v2/video/result/${videoId}`,
+              {
+                headers: {
+                  'API-KEY': pixverseApiKey,
+                  'Ai-trace-id': traceId
+                }
+              }
+            );
+            
+            if (response.status === 200 && response.data.ErrCode === 0) {
+              const resp = response.data.Resp;
+              
+              // Status: 0 = processing, 1 = succeeded, 2 = failed
+              if (resp.status === 1 && resp.url) {
+                // ✅ Video tamamlandı!
+                console.log(`✅ Video ${videoId} completed! Pixverse URL: ${resp.url}`);
+                totalCompletedVideos++;
+                
+                // Pixverse URL'den videoyu Firebase Storage'a yükle
+                let firebaseUrl;
+                try {
+                  firebaseUrl = await uploadPixverseVideoToFirebase(resp.url, userId, videoId);
+                  console.log(`✅ Video uploaded to Firebase Storage: ${firebaseUrl}`);
+                } catch (uploadError) {
+                  console.error(`⚠️ Failed to upload to Firebase Storage, using Pixverse URL: ${uploadError.message}`);
+                  firebaseUrl = resp.url; // Fallback to Pixverse URL
+                }
+                
+                // Firebase'i güncelle
+                const updatedVideos = videos.map(v => {
+                  if (v.id === videoId) {
+                    return {
+                      ...v,
+                      status: 'succeeded',
+                      output: firebaseUrl,
+                      pixverseUrl: resp.url, // Orijinal URL'i de sakla
+                      completedAt: new Date().toISOString()
+                    };
+                  }
+                  return v;
+                });
+                
+                await db.collection('users').doc(userId).update({
+                  userGeneratedVideos: updatedVideos,
+                  lastVideoUpdate: new Date().toISOString(),
+                  hasPendingVideos: false // Pending video yok artık
+                });
+                
+                console.log(`💾 Video ${videoId} updated in Firebase for user ${userId}`);
+                
+              } else if (resp.status === 2) {
+                // ❌ Video başarısız
+                console.log(`❌ Video ${videoId} failed!`);
+                
+                const updatedVideos = videos.map(v => {
+                  if (v.id === videoId) {
+                    return {
+                      ...v,
+                      status: 'failed',
+                      error: 'Video generation failed',
+                      completedAt: new Date().toISOString()
+                    };
+                  }
+                  return v;
+                });
+                
+                await db.collection('users').doc(userId).update({
+                  userGeneratedVideos: updatedVideos,
+                  lastVideoUpdate: new Date().toISOString(),
+                  hasPendingVideos: false // Pending video yok artık
+                });
+                
+                console.log(`💾 Failed video ${videoId} updated in Firebase for user ${userId}`);
+                
+              } else {
+                // ⏳ Hala processing
+                console.log(`⏳ Video ${videoId} still processing (status: ${resp.status})`);
+              }
+            }
+            
+          } catch (error) {
+            console.error(`⚠️ Error checking video ${videoId}:`, error.message);
+            // Continue with next video
+          }
+        }
+      }
+      
+      console.log(`✅ Polling completed! Pending: ${totalPendingVideos}, Checked: ${totalCheckedVideos}, Completed: ${totalCompletedVideos}`);
+      return null;
+      
+    } catch (error) {
+      console.error('❌ Error in checkPendingPixverseVideos:', error);
+      return null;
+    }
+  });
+
+// ===== BONUS CREDIT SYSTEM =====
+
+// First Install Bonus - İlk yüklemede kredi verme
+exports.claimFirstInstallBonus = functions.https.onCall(async (data, context) => {
+  try {
+    // 1. Auth kontrolü
+    if (!context.auth) {
+      console.error('❌ Unauthenticated request for first install bonus');
+      throw new functions.https.HttpsError('unauthenticated', 'Kullanıcı girişi gerekli');
+    }
+    
+    const userId = context.auth.uid;
+    const deviceId = data.deviceId;
+    const authProvider = data.authProvider || 'unknown';
+    
+    console.log(`🎁 First install bonus request: userId=${userId}, deviceId=${deviceId}, provider=${authProvider}`);
+    
+    // 2. Parametreleri kontrol et
+    if (!deviceId || typeof deviceId !== 'string' || deviceId.length < 10) {
+      console.error('❌ Invalid device ID:', deviceId);
+      throw new functions.https.HttpsError('invalid-argument', 'Geçersiz cihaz ID');
+    }
+    
+    const db = admin.firestore();
+    
+    // 3. Kullanıcı kontrolü - BU KULLANICI DAHA ÖNCE ALDI MI?
+    const userDoc = await db.collection('users').doc(userId).get();
+    if (userDoc.exists) {
+      const userData = userDoc.data();
+      const hasUserBonus = userData?.profile_info?.hasReceivedFirstInstallBonus || false;
+      if (hasUserBonus) {
+        console.log(`❌ User already received first install bonus: ${userId}`);
+        throw new functions.https.HttpsError('already-exists', 'Bu kullanıcı daha önce bonus aldı');
+      }
+    }
+    
+    // 4. Cihaz kontrolü - BU CİHAZ DAHA ÖNCE KULLANILDI MI?
+    const deviceDoc = await db.collection('device_first_install_bonus').doc(deviceId).get();
+    if (deviceDoc.exists && deviceDoc.data()?.claimed === true) {
+      console.log(`❌ Device already used for first install bonus: ${deviceId}`);
+      throw new functions.https.HttpsError('already-exists', 'Bu cihazdan daha önce bonus alındı');
+    }
+    
+    // 5. Firebase'den bonus miktarını al
+    const creditDoc = await db.collection('generate_credit').doc('credit_campaign').get();
+    let bonusAmount = 120; // Default fallback
+    
+    if (creditDoc.exists && creditDoc.data()) {
+      bonusAmount = creditDoc.data().opened_credit_count || 120;
+    }
+    
+    console.log(`💰 First install bonus amount: ${bonusAmount}`);
+    
+    // 6. Transaction ile atomik işlem
+    await db.runTransaction(async (transaction) => {
+      // User'a kredi ekle ve flag güncelle
+      const userRef = db.collection('users').doc(userId);
+      transaction.update(userRef, {
+        'profile_info.totalCredit': admin.firestore.FieldValue.increment(bonusAmount),
+        'profile_info.hasReceivedFirstInstallBonus': true,
+        'profile_info.firstInstallBonusDate': admin.firestore.FieldValue.serverTimestamp()
+      });
+      
+      // Cihazı işaretle - BU CİHAZ ARTIK KULLANILAMAZ
+      const deviceRef = db.collection('device_first_install_bonus').doc(deviceId);
+      transaction.set(deviceRef, {
+        claimed: true,
+        claimedAt: admin.firestore.FieldValue.serverTimestamp(),
+        deviceId: deviceId,
+        userId: userId,
+        authProvider: authProvider,
+        creditAmount: bonusAmount,
+        userAgent: context.rawRequest?.headers?.['user-agent'] || 'unknown',
+        ipAddress: context.rawRequest?.ip || 'unknown'
+      });
+    });
+    
+    console.log(`🎉 First install bonus granted: ${userId}, ${bonusAmount} credits`);
+    
+    return {
+      success: true,
+      creditAmount: bonusAmount,
+      message: 'İlk yükleme bonusu başarıyla eklendi!'
+    };
+    
+  } catch (error) {
+    console.error('❌ Error in claimFirstInstallBonus:', error);
+    
+    // Eğer zaten HttpsError ise, direkt throw et
+    if (error instanceof functions.https.HttpsError) {
+      throw error;
+    }
+    
+    // Diğer hatalar için genel hata mesajı
+    throw new functions.https.HttpsError('internal', 'Bonus eklenirken hata oluştu');
+  }
+});
+
+// Review Credit - Yorum sonrası kredi verme
+exports.claimReviewCredit = functions.https.onCall(async (data, context) => {
+  try {
+    // 1. Auth kontrolü
+    if (!context.auth) {
+      console.error('❌ Unauthenticated request for review credit');
+      throw new functions.https.HttpsError('unauthenticated', 'Kullanıcı girişi gerekli');
+    }
+    
+    const userId = context.auth.uid;
+    const deviceId = data.deviceId;
+    const rating = data.rating;
+    
+    console.log(`⭐ Review credit request: userId=${userId}, deviceId=${deviceId}, rating=${rating}`);
+    
+    // 2. Parametreleri kontrol et
+    if (!deviceId || typeof deviceId !== 'string' || deviceId.length < 10) {
+      console.error('❌ Invalid device ID:', deviceId);
+      throw new functions.https.HttpsError('invalid-argument', 'Geçersiz cihaz ID');
+    }
+    
+    if (!rating || typeof rating !== 'number' || rating < 1 || rating > 5) {
+      console.error('❌ Invalid rating:', rating);
+      throw new functions.https.HttpsError('invalid-argument', 'Geçersiz rating değeri');
+    }
+    
+    const db = admin.firestore();
+    
+    // 3. Kullanıcı kontrolü - BU KULLANICI DAHA ÖNCE ALDI MI?
+    const userDoc = await db.collection('users').doc(userId).get();
+    if (userDoc.exists) {
+      const userData = userDoc.data();
+      const hasReviewCredit = userData?.profile_info?.hasReceivedReviewCredit || false;
+      if (hasReviewCredit) {
+        console.log(`❌ User already received review credit: ${userId}`);
+        throw new functions.https.HttpsError('already-exists', 'Bu kullanıcı daha önce review kredisi aldı');
+      }
+    }
+    
+    // 4. Cihaz kontrolü - BU CİHAZ DAHA ÖNCE KULLANILDI MI?
+    const deviceDoc = await db.collection('device_review_credits').doc(deviceId).get();
+    if (deviceDoc.exists && deviceDoc.data()?.claimed === true) {
+      console.log(`❌ Device already used for review credit: ${deviceId}`);
+      throw new functions.https.HttpsError('already-exists', 'Bu cihazdan daha önce review kredisi alındı');
+    }
+    
+    // 5. Firebase'den review credit miktarını al
+    const creditDoc = await db.collection('generate_credit').doc('credit_campaign').get();
+    let reviewCreditAmount = 120; // Default fallback
+    
+    if (creditDoc.exists && creditDoc.data()) {
+      reviewCreditAmount = creditDoc.data().review_credit || 120;
+    }
+    
+    console.log(`💰 Review credit amount: ${reviewCreditAmount}`);
+    
+    // 6. Transaction ile atomik işlem
+    await db.runTransaction(async (transaction) => {
+      // User'a kredi ekle ve flag güncelle
+      const userRef = db.collection('users').doc(userId);
+      transaction.update(userRef, {
+        'profile_info.totalCredit': admin.firestore.FieldValue.increment(reviewCreditAmount),
+        'profile_info.hasReceivedReviewCredit': true,
+        'profile_info.reviewCreditDate': admin.firestore.FieldValue.serverTimestamp(),
+        'profile_info.reviewRating': rating
+      });
+      
+      // Cihazı işaretle - BU CİHAZ ARTIK KULLANILAMAZ
+      const deviceRef = db.collection('device_review_credits').doc(deviceId);
+      transaction.set(deviceRef, {
+        claimed: true,
+        claimedAt: admin.firestore.FieldValue.serverTimestamp(),
+        deviceId: deviceId,
+        userId: userId,
+        userEmail: context.auth.token.email || 'unknown',
+        creditAmount: reviewCreditAmount,
+        rating: rating,
+        userAgent: context.rawRequest?.headers?.['user-agent'] || 'unknown',
+        ipAddress: context.rawRequest?.ip || 'unknown'
+      });
+    });
+    
+    console.log(`🎉 Review credit granted: ${userId}, ${reviewCreditAmount} credits`);
+    
+    return {
+      success: true,
+      creditAmount: reviewCreditAmount,
+      message: 'Review kredisi başarıyla eklendi!'
+    };
+    
+  } catch (error) {
+    console.error('❌ Error in claimReviewCredit:', error);
+    
+    // Eğer zaten HttpsError ise, direkt throw et
+    if (error instanceof functions.https.HttpsError) {
+      throw error;
+    }
+    
+    // Diğer hatalar için genel hata mesajı
+    throw new functions.https.HttpsError('internal', 'Review kredisi eklenirken hata oluştu');
+  }
+});
