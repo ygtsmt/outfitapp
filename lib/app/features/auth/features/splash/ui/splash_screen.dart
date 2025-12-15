@@ -16,6 +16,7 @@ import "package:ginly/app/core/services/revenue_cat_service.dart";
 import "package:ginly/generated/l10n.dart";
 import "package:google_mobile_ads/google_mobile_ads.dart";
 import "package:package_info_plus/package_info_plus.dart";
+import "package:photo_manager/photo_manager.dart";
 import "package:url_launcher/url_launcher.dart";
 
 class SplashScreen extends StatefulWidget {
@@ -66,6 +67,10 @@ class _SplashScreenState extends State<SplashScreen> {
         // Progress güncellemeleri
         _updateProgress(0.5);
 
+        // Fotoğraf erişim izni iste (tam erişim)
+        _updateProgress(0.6);
+        await _requestPhotoPermission();
+
         _updateProgress(0.7);
 
         _updateProgress(0.85);
@@ -115,6 +120,20 @@ class _SplashScreenState extends State<SplashScreen> {
       setState(() {
         _progress = progress;
       });
+    }
+  }
+
+  /// Fotoğraf erişim izni ister (tam erişim)
+  Future<void> _requestPhotoPermission() async {
+    try {
+      if (kIsWeb) return; // Web platformunda izin kontrolü yok
+
+      final PermissionState ps = await PhotoManager.requestPermissionExtend();
+      // İzin durumu kontrol edilir, ancak uygulama akışını engellemez
+      debugPrint("Photo permission state: ${ps.toString()}");
+    } catch (e) {
+      debugPrint("Photo permission request error: $e");
+      // Hata olsa bile devam et
     }
   }
 

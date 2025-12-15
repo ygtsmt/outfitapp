@@ -1,11 +1,15 @@
 // ignore_for_file: unused_import
 
+import "dart:io";
+
 import "package:auto_route/auto_route.dart";
 import "package:auto_route/empty_router_widgets.dart";
 import "package:ginly/app/bloc/app_bloc.dart";
 import "package:ginly/app/data/models/features_doc_model.dart";
 import "package:ginly/app/features/auth/features/profile/ui/profile_screen.dart";
 import "package:ginly/app/features/auth/features/splash/ui/splash_screen.dart";
+import "package:ginly/app/features/closet/models/closet_item_model.dart";
+import "package:ginly/app/features/closet/ui/closet_screen.dart";
 import "package:ginly/app/features/auth/features/create_account/ui/create_account_screen.dart";
 import "package:ginly/app/features/auth/features/login/ui/login_screen.dart";
 import "package:ginly/app/features/create_tab/ui/create_tab_screen.dart";
@@ -27,6 +31,14 @@ import "package:ginly/app/features/payment/ui/free_credit_screen.dart";
 import "package:ginly/app/ui/widgets/feedback_screen.dart";
 import "package:ginly/app/features/realtime/ui/realtime_screen.dart";
 import "package:ginly/app/features/library/ui/screens/library_screen.dart";
+import "package:ginly/app/features/closet/ui/screens/gallery_selection_screen.dart";
+import "package:ginly/app/features/closet/ui/screens/closet_item_form_screen.dart";
+import "package:ginly/app/features/closet/ui/screens/closet_item_detail_screen.dart";
+import "package:ginly/app/features/closet/ui/screens/model_gallery_selection_screen.dart";
+import "package:ginly/app/features/closet/ui/screens/model_item_form_screen.dart";
+import "package:ginly/app/features/closet/ui/screens/model_item_detail_screen.dart";
+import "package:ginly/app/features/closet/ui/screens/try_on_screen.dart";
+import "package:ginly/app/features/closet/models/model_item_model.dart";
 import "package:ginly/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart";
 import "package:ginly/app/features/text_to_image/ui/text_to_image_screen.dart";
 import "package:ginly/app/features/video_generate/model/video_generate_response_model.dart";
@@ -135,6 +147,34 @@ part "app_router.gr.dart";
             ),
           ],
         ),
+        CustomRoute(
+          page: EmptyRouterPage,
+          name: "ClosetTabRouter",
+          path: "closet",
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+          children: [
+            CustomRoute(
+              page: ClosetScreen,
+              path: "closet-screen",
+              initial: true,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
+          ],
+        ),
+        CustomRoute(
+          page: EmptyRouterPage,
+          name: "TryOnTabRouter",
+          path: "try-on",
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+          children: [
+            CustomRoute(
+              page: TryOnScreen,
+              path: "try-on-screen",
+              initial: true,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
+          ],
+        ),
       ],
     ),
     // AI Generation Route Group - Benzer işlevsellik
@@ -216,6 +256,38 @@ part "app_router.gr.dart";
       page: GenerateRealtimeScreen,
       path: "/generate-realtime-screen",
       transitionsBuilder: TransitionsBuilders.slideBottom,
+    ),
+    // Closet screens
+    CustomRoute(
+      page: GallerySelectionScreen,
+      path: "/gallery-selection-screen",
+      transitionsBuilder: TransitionsBuilders.slideLeft,
+    ),
+    CustomRoute(
+      page: ClosetItemFormScreen,
+      path: "/closet-item-form-screen",
+      transitionsBuilder: TransitionsBuilders.slideLeft,
+    ),
+    CustomRoute(
+      page: ClosetItemDetailScreen,
+      path: "/closet-item-detail-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    // Model screens
+    CustomRoute(
+      page: ModelGallerySelectionScreen,
+      path: "/model-gallery-selection-screen",
+      transitionsBuilder: TransitionsBuilders.slideLeft,
+    ),
+    CustomRoute(
+      page: ModelItemFormScreen,
+      path: "/model-item-form-screen",
+      transitionsBuilder: TransitionsBuilders.slideLeft,
+    ),
+    CustomRoute(
+      page: ModelItemDetailScreen,
+      path: "/model-item-detail-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
   ],
 )

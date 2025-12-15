@@ -221,6 +221,76 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    GallerySelectionScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const GallerySelectionScreen(),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    ClosetItemFormScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ClosetItemFormScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: ClosetItemFormScreen(
+          key: args.key,
+          imageFile: args.imageFile,
+        ),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    ClosetItemDetailScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ClosetItemDetailScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: ClosetItemDetailScreen(
+          key: args.key,
+          closetItem: args.closetItem,
+        ),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    ModelGallerySelectionScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const ModelGallerySelectionScreen(),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    ModelItemFormScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ModelItemFormScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: ModelItemFormScreen(
+          key: args.key,
+          imageFile: args.imageFile,
+        ),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    ModelItemDetailScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ModelItemDetailScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: ModelItemDetailScreen(
+          key: args.key,
+          modelItem: args.modelItem,
+        ),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -258,6 +328,24 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     ProfileTabRouter.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const EmptyRouterPage(),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    ClosetTabRouter.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const EmptyRouterPage(),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    TryOnTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
         child: const EmptyRouterPage(),
@@ -317,6 +405,24 @@ class _$AppRouter extends RootStackRouter {
       return CustomPage<dynamic>(
         routeData: routeData,
         child: ProfileScreen(key: args.key),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    ClosetScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const ClosetScreen(),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    TryOnScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const TryOnScreen(),
         transitionsBuilder: TransitionsBuilders.fadeIn,
         opaque: true,
         barrierDismissible: false,
@@ -443,6 +549,44 @@ class _$AppRouter extends RootStackRouter {
                 ),
               ],
             ),
+            RouteConfig(
+              ClosetTabRouter.name,
+              path: 'closet',
+              parent: HomeScreenRoute.name,
+              children: [
+                RouteConfig(
+                  '#redirect',
+                  path: '',
+                  parent: ClosetTabRouter.name,
+                  redirectTo: 'closet-screen',
+                  fullMatch: true,
+                ),
+                RouteConfig(
+                  ClosetScreenRoute.name,
+                  path: 'closet-screen',
+                  parent: ClosetTabRouter.name,
+                ),
+              ],
+            ),
+            RouteConfig(
+              TryOnTabRouter.name,
+              path: 'try-on',
+              parent: HomeScreenRoute.name,
+              children: [
+                RouteConfig(
+                  '#redirect',
+                  path: '',
+                  parent: TryOnTabRouter.name,
+                  redirectTo: 'try-on-screen',
+                  fullMatch: true,
+                ),
+                RouteConfig(
+                  TryOnScreenRoute.name,
+                  path: 'try-on-screen',
+                  parent: TryOnTabRouter.name,
+                ),
+              ],
+            ),
           ],
         ),
         RouteConfig(
@@ -505,6 +649,30 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           GenerateRealtimeScreenRoute.name,
           path: '/generate-realtime-screen',
+        ),
+        RouteConfig(
+          GallerySelectionScreenRoute.name,
+          path: '/gallery-selection-screen',
+        ),
+        RouteConfig(
+          ClosetItemFormScreenRoute.name,
+          path: '/closet-item-form-screen',
+        ),
+        RouteConfig(
+          ClosetItemDetailScreenRoute.name,
+          path: '/closet-item-detail-screen',
+        ),
+        RouteConfig(
+          ModelGallerySelectionScreenRoute.name,
+          path: '/model-gallery-selection-screen',
+        ),
+        RouteConfig(
+          ModelItemFormScreenRoute.name,
+          path: '/model-item-form-screen',
+        ),
+        RouteConfig(
+          ModelItemDetailScreenRoute.name,
+          path: '/model-item-detail-screen',
         ),
       ];
 }
@@ -911,6 +1079,170 @@ class GenerateRealtimeScreenRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [GallerySelectionScreen]
+class GallerySelectionScreenRoute extends PageRouteInfo<void> {
+  const GallerySelectionScreenRoute()
+      : super(
+          GallerySelectionScreenRoute.name,
+          path: '/gallery-selection-screen',
+        );
+
+  static const String name = 'GallerySelectionScreenRoute';
+}
+
+/// generated route for
+/// [ClosetItemFormScreen]
+class ClosetItemFormScreenRoute
+    extends PageRouteInfo<ClosetItemFormScreenRouteArgs> {
+  ClosetItemFormScreenRoute({
+    Key? key,
+    required File imageFile,
+  }) : super(
+          ClosetItemFormScreenRoute.name,
+          path: '/closet-item-form-screen',
+          args: ClosetItemFormScreenRouteArgs(
+            key: key,
+            imageFile: imageFile,
+          ),
+        );
+
+  static const String name = 'ClosetItemFormScreenRoute';
+}
+
+class ClosetItemFormScreenRouteArgs {
+  const ClosetItemFormScreenRouteArgs({
+    this.key,
+    required this.imageFile,
+  });
+
+  final Key? key;
+
+  final File imageFile;
+
+  @override
+  String toString() {
+    return 'ClosetItemFormScreenRouteArgs{key: $key, imageFile: $imageFile}';
+  }
+}
+
+/// generated route for
+/// [ClosetItemDetailScreen]
+class ClosetItemDetailScreenRoute
+    extends PageRouteInfo<ClosetItemDetailScreenRouteArgs> {
+  ClosetItemDetailScreenRoute({
+    Key? key,
+    required ClosetItem closetItem,
+  }) : super(
+          ClosetItemDetailScreenRoute.name,
+          path: '/closet-item-detail-screen',
+          args: ClosetItemDetailScreenRouteArgs(
+            key: key,
+            closetItem: closetItem,
+          ),
+        );
+
+  static const String name = 'ClosetItemDetailScreenRoute';
+}
+
+class ClosetItemDetailScreenRouteArgs {
+  const ClosetItemDetailScreenRouteArgs({
+    this.key,
+    required this.closetItem,
+  });
+
+  final Key? key;
+
+  final ClosetItem closetItem;
+
+  @override
+  String toString() {
+    return 'ClosetItemDetailScreenRouteArgs{key: $key, closetItem: $closetItem}';
+  }
+}
+
+/// generated route for
+/// [ModelGallerySelectionScreen]
+class ModelGallerySelectionScreenRoute extends PageRouteInfo<void> {
+  const ModelGallerySelectionScreenRoute()
+      : super(
+          ModelGallerySelectionScreenRoute.name,
+          path: '/model-gallery-selection-screen',
+        );
+
+  static const String name = 'ModelGallerySelectionScreenRoute';
+}
+
+/// generated route for
+/// [ModelItemFormScreen]
+class ModelItemFormScreenRoute
+    extends PageRouteInfo<ModelItemFormScreenRouteArgs> {
+  ModelItemFormScreenRoute({
+    Key? key,
+    required File imageFile,
+  }) : super(
+          ModelItemFormScreenRoute.name,
+          path: '/model-item-form-screen',
+          args: ModelItemFormScreenRouteArgs(
+            key: key,
+            imageFile: imageFile,
+          ),
+        );
+
+  static const String name = 'ModelItemFormScreenRoute';
+}
+
+class ModelItemFormScreenRouteArgs {
+  const ModelItemFormScreenRouteArgs({
+    this.key,
+    required this.imageFile,
+  });
+
+  final Key? key;
+
+  final File imageFile;
+
+  @override
+  String toString() {
+    return 'ModelItemFormScreenRouteArgs{key: $key, imageFile: $imageFile}';
+  }
+}
+
+/// generated route for
+/// [ModelItemDetailScreen]
+class ModelItemDetailScreenRoute
+    extends PageRouteInfo<ModelItemDetailScreenRouteArgs> {
+  ModelItemDetailScreenRoute({
+    Key? key,
+    required ModelItem modelItem,
+  }) : super(
+          ModelItemDetailScreenRoute.name,
+          path: '/model-item-detail-screen',
+          args: ModelItemDetailScreenRouteArgs(
+            key: key,
+            modelItem: modelItem,
+          ),
+        );
+
+  static const String name = 'ModelItemDetailScreenRoute';
+}
+
+class ModelItemDetailScreenRouteArgs {
+  const ModelItemDetailScreenRouteArgs({
+    this.key,
+    required this.modelItem,
+  });
+
+  final Key? key;
+
+  final ModelItem modelItem;
+
+  @override
+  String toString() {
+    return 'ModelItemDetailScreenRouteArgs{key: $key, modelItem: $modelItem}';
+  }
+}
+
+/// generated route for
 /// [EmptyRouterPage]
 class DashbordTabRouter extends PageRouteInfo<void> {
   const DashbordTabRouter({List<PageRouteInfo>? children})
@@ -973,6 +1305,32 @@ class ProfileTabRouter extends PageRouteInfo<void> {
         );
 
   static const String name = 'ProfileTabRouter';
+}
+
+/// generated route for
+/// [EmptyRouterPage]
+class ClosetTabRouter extends PageRouteInfo<void> {
+  const ClosetTabRouter({List<PageRouteInfo>? children})
+      : super(
+          ClosetTabRouter.name,
+          path: 'closet',
+          initialChildren: children,
+        );
+
+  static const String name = 'ClosetTabRouter';
+}
+
+/// generated route for
+/// [EmptyRouterPage]
+class TryOnTabRouter extends PageRouteInfo<void> {
+  const TryOnTabRouter({List<PageRouteInfo>? children})
+      : super(
+          TryOnTabRouter.name,
+          path: 'try-on',
+          initialChildren: children,
+        );
+
+  static const String name = 'TryOnTabRouter';
 }
 
 /// generated route for
@@ -1057,4 +1415,28 @@ class ProfileScreenRouteArgs {
   String toString() {
     return 'ProfileScreenRouteArgs{key: $key}';
   }
+}
+
+/// generated route for
+/// [ClosetScreen]
+class ClosetScreenRoute extends PageRouteInfo<void> {
+  const ClosetScreenRoute()
+      : super(
+          ClosetScreenRoute.name,
+          path: 'closet-screen',
+        );
+
+  static const String name = 'ClosetScreenRoute';
+}
+
+/// generated route for
+/// [TryOnScreen]
+class TryOnScreenRoute extends PageRouteInfo<void> {
+  const TryOnScreenRoute()
+      : super(
+          TryOnScreenRoute.name,
+          path: 'try-on-screen',
+        );
+
+  static const String name = 'TryOnScreenRoute';
 }
