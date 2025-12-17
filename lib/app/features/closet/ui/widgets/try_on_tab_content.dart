@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ginly/app/features/closet/bloc/closet_bloc.dart';
+import 'package:ginly/app/features/closet/bloc/try_on_bloc.dart';
+import 'package:ginly/app/features/closet/data/try_on_usecase.dart';
 import 'package:ginly/app/features/closet/models/closet_item_model.dart';
 import 'package:ginly/app/features/closet/models/model_item_model.dart';
 import 'package:ginly/core/core.dart';
@@ -27,15 +29,76 @@ class _TryOnTabContentState extends State<TryOnTabContent> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SizedBox(height: 16.h),
-          // 3 kutu
-          _buildSelectionBoxes(),
-        ],
+    return BlocListener<TryOnBloc, TryOnState>(
+      listener: (context, state) {
+        if (state.generatingTryOnStatus == EventStatus.success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content:
+                  Text('Try-On başlatıldı. Request ID: ${state.requestId}'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else if (state.generatingTryOnStatus == EventStatus.failure &&
+            state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Hata: ${state.errorMessage}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 16.h),
+            // 3 kutu
+            _buildSelectionBoxes(),
+            SizedBox(height: 24.h),
+            // Try-On butonu
+            BlocBuilder<TryOnBloc, TryOnState>(
+              builder: (context, state) {
+                final isLoading =
+                    state.generatingTryOnStatus == EventStatus.processing;
+                final canGenerate = selectedModelImageUrl != null &&
+                    selectedClosetItem1ImageUrl != null &&
+                    selectedClosetItem2ImageUrl != null;
+
+                return ElevatedButton(
+                  onPressed:
+                      (canGenerate && !isLoading) ? _generateTryOn : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: context.baseColor,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                  child: isLoading
+                      ? SizedBox(
+                          height: 20.h,
+                          width: 20.w,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          'Try-On Oluştur',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -124,8 +187,8 @@ class _TryOnTabContentState extends State<TryOnTabContent> {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: imageUrl.startsWith('http') ||
-                              imageUrl.startsWith('https')
+                      child: (imageUrl.startsWith('http') ||
+                              imageUrl.startsWith('https'))
                           ? CachedNetworkImage(
                               imageUrl: imageUrl,
                               fit: BoxFit.cover,
@@ -196,6 +259,59 @@ class _TryOnTabContentState extends State<TryOnTabContent> {
               ),
       ),
     );
+  }
+
+  Future<void> _generateTryOn() async {
+    // Tüm fotoğrafların URL'lerini hazırla
+    final useCase = getIt<TryOnUseCase>();
+    final imageUrls = <String>[];
+
+    try {
+      // Model fotoğrafı
+      String? modelUrl = selectedModelImageUrl;
+      if (modelUrl != null && !modelUrl.startsWith('http')) {
+        // Local file path ise upload et
+        modelUrl = await useCase.uploadImage(File(modelUrl));
+      }
+      if (modelUrl != null) imageUrls.add(modelUrl);
+
+      // Closet 1 fotoğrafı
+      String? closet1Url = selectedClosetItem1ImageUrl;
+      if (closet1Url != null && !closet1Url.startsWith('http')) {
+        // Local file path ise upload et
+        closet1Url = await useCase.uploadImage(File(closet1Url));
+      }
+      if (closet1Url != null) imageUrls.add(closet1Url);
+
+      // Closet 2 fotoğrafı
+      String? closet2Url = selectedClosetItem2ImageUrl;
+      if (closet2Url != null && !closet2Url.startsWith('http')) {
+        // Local file path ise upload et
+        closet2Url = await useCase.uploadImage(File(closet2Url));
+      }
+      if (closet2Url != null) imageUrls.add(closet2Url);
+
+      // API'ye istek at
+      if (imageUrls.length == 3 && mounted) {
+        getIt<TryOnBloc>().add(GenerateTryOnEvent(imageUrls));
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Tüm fotoğrafları seçmelisiniz'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Hata: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _showSelectionBottomSheet(int boxIndex) {
