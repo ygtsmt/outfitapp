@@ -256,6 +256,45 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    BatchUploadProgressScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<BatchUploadProgressScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: BatchUploadProgressScreen(
+          key: args.key,
+          imageFiles: args.imageFiles,
+        ),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    BatchUploadResultScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<BatchUploadResultScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: BatchUploadResultScreen(
+          key: args.key,
+          result: args.result,
+        ),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    FailedPhotoReviewScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<FailedPhotoReviewScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: FailedPhotoReviewScreen(
+          key: args.key,
+          failedPhotos: args.failedPhotos,
+        ),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     ModelGallerySelectionScreenRoute.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -661,6 +700,18 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           ClosetItemDetailScreenRoute.name,
           path: '/closet-item-detail-screen',
+        ),
+        RouteConfig(
+          BatchUploadProgressScreenRoute.name,
+          path: '/batch-upload-progress-screen',
+        ),
+        RouteConfig(
+          BatchUploadResultScreenRoute.name,
+          path: '/batch-upload-result-screen',
+        ),
+        RouteConfig(
+          FailedPhotoReviewScreenRoute.name,
+          path: '/failed-photo-review-screen',
         ),
         RouteConfig(
           ModelGallerySelectionScreenRoute.name,
@@ -1157,6 +1208,111 @@ class ClosetItemDetailScreenRouteArgs {
   @override
   String toString() {
     return 'ClosetItemDetailScreenRouteArgs{key: $key, closetItem: $closetItem}';
+  }
+}
+
+/// generated route for
+/// [BatchUploadProgressScreen]
+class BatchUploadProgressScreenRoute
+    extends PageRouteInfo<BatchUploadProgressScreenRouteArgs> {
+  BatchUploadProgressScreenRoute({
+    Key? key,
+    required List<File> imageFiles,
+  }) : super(
+          BatchUploadProgressScreenRoute.name,
+          path: '/batch-upload-progress-screen',
+          args: BatchUploadProgressScreenRouteArgs(
+            key: key,
+            imageFiles: imageFiles,
+          ),
+        );
+
+  static const String name = 'BatchUploadProgressScreenRoute';
+}
+
+class BatchUploadProgressScreenRouteArgs {
+  const BatchUploadProgressScreenRouteArgs({
+    this.key,
+    required this.imageFiles,
+  });
+
+  final Key? key;
+
+  final List<File> imageFiles;
+
+  @override
+  String toString() {
+    return 'BatchUploadProgressScreenRouteArgs{key: $key, imageFiles: $imageFiles}';
+  }
+}
+
+/// generated route for
+/// [BatchUploadResultScreen]
+class BatchUploadResultScreenRoute
+    extends PageRouteInfo<BatchUploadResultScreenRouteArgs> {
+  BatchUploadResultScreenRoute({
+    Key? key,
+    required BatchUploadResult result,
+  }) : super(
+          BatchUploadResultScreenRoute.name,
+          path: '/batch-upload-result-screen',
+          args: BatchUploadResultScreenRouteArgs(
+            key: key,
+            result: result,
+          ),
+        );
+
+  static const String name = 'BatchUploadResultScreenRoute';
+}
+
+class BatchUploadResultScreenRouteArgs {
+  const BatchUploadResultScreenRouteArgs({
+    this.key,
+    required this.result,
+  });
+
+  final Key? key;
+
+  final BatchUploadResult result;
+
+  @override
+  String toString() {
+    return 'BatchUploadResultScreenRouteArgs{key: $key, result: $result}';
+  }
+}
+
+/// generated route for
+/// [FailedPhotoReviewScreen]
+class FailedPhotoReviewScreenRoute
+    extends PageRouteInfo<FailedPhotoReviewScreenRouteArgs> {
+  FailedPhotoReviewScreenRoute({
+    Key? key,
+    required List<FailedPhotoInfo> failedPhotos,
+  }) : super(
+          FailedPhotoReviewScreenRoute.name,
+          path: '/failed-photo-review-screen',
+          args: FailedPhotoReviewScreenRouteArgs(
+            key: key,
+            failedPhotos: failedPhotos,
+          ),
+        );
+
+  static const String name = 'FailedPhotoReviewScreenRoute';
+}
+
+class FailedPhotoReviewScreenRouteArgs {
+  const FailedPhotoReviewScreenRouteArgs({
+    this.key,
+    required this.failedPhotos,
+  });
+
+  final Key? key;
+
+  final List<FailedPhotoInfo> failedPhotos;
+
+  @override
+  String toString() {
+    return 'FailedPhotoReviewScreenRouteArgs{key: $key, failedPhotos: $failedPhotos}';
   }
 }
 
