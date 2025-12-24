@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -174,6 +175,40 @@ class ClosetUseCase {
     } catch (e) {
       log('uploadClosetImage error: $e');
       throw Exception('Error uploading image: $e');
+    }
+  }
+
+  /// Upload transparent (background-removed) image bytes to Firebase Storage
+  /// Returns the Firebase Storage URL of the uploaded transparent image
+  Future<String> uploadTransparentClosetImage(List<int> imageBytes) async {
+    try {
+      final userId = auth.currentUser?.uid;
+      if (userId == null) throw Exception('User not logged in');
+
+      final ref = storage.ref().child(
+          "closet_images/$userId/${DateTime.now().millisecondsSinceEpoch}.png");
+
+      final uploadTask = await ref.putData(
+        Uint8List.fromList(imageBytes),
+        SettableMetadata(contentType: 'image/png'),
+      );
+      final url = await uploadTask.ref.getDownloadURL();
+      return url;
+    } catch (e) {
+      log('uploadTransparentClosetImage error: $e');
+      throw Exception('Error uploading transparent image: $e');
+    }
+  }
+
+  /// Delete an image from Firebase Storage by its download URL
+  Future<void> deleteImageFromStorage(String imageUrl) async {
+    try {
+      final ref = storage.refFromURL(imageUrl);
+      await ref.delete();
+      log('Image deleted from storage: $imageUrl');
+    } catch (e) {
+      log('deleteImageFromStorage error: $e');
+      // Don't throw - if delete fails, it's not critical
     }
   }
 

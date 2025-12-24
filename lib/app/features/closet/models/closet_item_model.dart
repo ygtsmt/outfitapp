@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ClosetItem {
   final String id; // Firestore doc ID
-  final String imageUrl; // Kıyafetin fotoğrafı (Firebase Storage URL)
+  final String
+      imageUrl; // Kıyafetin fotoğrafı (Firebase Storage URL) - arka planı kaldırılmış
   final String?
       category; // Ana kategori: top, bottom, shoes, outerwear, accessory
   final String?

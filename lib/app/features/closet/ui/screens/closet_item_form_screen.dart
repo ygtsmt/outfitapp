@@ -7,6 +7,7 @@ import 'package:ginly/app/features/closet/data/closet_usecase.dart';
 import 'package:ginly/app/features/closet/models/closet_item_model.dart';
 import 'package:ginly/app/features/closet/services/clothing_analysis_service.dart';
 import 'package:ginly/core/core.dart';
+import 'package:ginly/core/services/background_removal_service.dart';
 import 'package:flutter_image_map/flutter_image_map.dart';
 
 class ClosetItemFormScreen extends StatefulWidget {
@@ -32,6 +33,15 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
   bool isDebugMode = false; // Toggle to see clickable regions
   bool isAnalyzing = false; // AI analysis in progress
   final ClothingAnalysisService _analysisService = ClothingAnalysisService();
+  final BackgroundRemovalService _backgroundRemovalService =
+      BackgroundRemovalService();
+  final TextEditingController _brandController = TextEditingController();
+
+  @override
+  void dispose() {
+    _brandController.dispose();
+    super.dispose();
+  }
 
   // Vücut bölgelerine göre subcategory'leri organize et
   final Map<String, List<String>> bodyRegionCategories = {
@@ -39,11 +49,13 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
       'hat',
       'sunglasses',
       'scarf',
+      'earrings',
     ],
     'hands': [
       'gloves',
       'watch',
-      'jewelry',
+      'ring',
+      'bracelet',
     ],
     'upper_body': [
       'blazer',
@@ -78,6 +90,10 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
     'accessories': [
       'bag',
       'belt',
+      'necklace',
+      'pendant',
+      'chain',
+      'jewelry',
     ],
   };
 
@@ -106,6 +122,8 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
     'brown',
     'navy',
     'khaki',
+    'gold',
+    'silver',
   ];
 
   final List<String> patterns = [
@@ -137,6 +155,10 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
     'linen',
     'cashmere',
     'synthetic',
+    'gold',
+    'silver',
+    'metal',
+    'plastic',
   ];
 
   Widget _buildBodyMapSelector() {
@@ -596,6 +618,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
 
   Widget _buildBrandTextField() {
     return TextFormField(
+      controller: _brandController,
       decoration: InputDecoration(
         labelText: 'Marka (Opsiyonel)',
         border: OutlineInputBorder(
@@ -612,6 +635,85 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
     );
   }
 
+  /// Helper method to validate if a value exists in a list
+  /// Returns the value if it exists, otherwise null
+  String? _validateDropdownValue(String? value, List<String> validOptions) {
+    if (value == null || value.isEmpty) return null;
+    final lowerValue = value.toLowerCase();
+    // Try exact match first
+    if (validOptions.contains(value)) return value;
+    // Try case-insensitive match
+    for (final option in validOptions) {
+      if (option.toLowerCase() == lowerValue) return option;
+    }
+    return null; // Value not found in options
+  }
+
+  /// Show dialog when uploaded image is not a valid fashion item
+  void _showInvalidItemDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        icon: Icon(
+          Icons.warning_amber_rounded,
+          color: Colors.orange,
+          size: 48.sp,
+        ),
+        title: Text(
+          'Geçersiz Fotoğraf',
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'Lütfen sadece giyim, ayakkabı, çanta, takı veya aksesuar fotoğrafı yükleyin.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: Colors.grey[700],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+              context.router.pop(); // Go back to previous screen
+            },
+            child: Text(
+              'Geri Dön',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog, stay on form
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: context.baseColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              'Manuel Devam Et',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Analyze clothing image with Gemini AI and auto-fill form
   Future<void> _analyzeWithAI() async {
     setState(() {
@@ -622,20 +724,57 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
       final result = await _analysisService.analyzeClothing(widget.imageFile);
 
       if (mounted) {
+        // Check if this is a valid fashion item
+        final isValid = result['isValidFashionItem']?.toLowerCase() == 'true';
+
+        if (!isValid) {
+          setState(() {
+            isAnalyzing = false;
+          });
+
+          // Show dialog explaining this is not a fashion item
+          _showInvalidItemDialog();
+          return;
+        }
+
         setState(() {
-          selectedSubcategory = result['subcategory'];
-          selectedColor = result['color'];
-          selectedPattern = result['pattern'];
-          selectedSeason = result['season'];
-          selectedMaterial = result['material'];
+          // Validate each value against its dropdown options
+          selectedSubcategory = _validateDropdownValue(
+            result['subcategory'],
+            allSubcategories,
+          );
+          selectedColor = _validateDropdownValue(
+            result['color'],
+            colors,
+          );
+          selectedPattern = _validateDropdownValue(
+            result['pattern'],
+            patterns,
+          );
+          selectedSeason = _validateDropdownValue(
+            result['season'],
+            seasons,
+          );
+          selectedMaterial = _validateDropdownValue(
+            result['material'],
+            materials,
+          );
+          // Brand is free-form text, no validation needed
+          final detectedBrand = result['brand'];
+          if (detectedBrand != null && detectedBrand.isNotEmpty) {
+            selectedBrand = detectedBrand;
+            _brandController.text = detectedBrand;
+          }
           isAnalyzing = false;
         });
 
         // Show success message
+        final brandInfo =
+            selectedBrand != null ? ' | Brand: $selectedBrand' : '';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              '✨ AI Analysis Complete! Found: ${selectedSubcategory?.toUpperCase()}',
+              '✨ AI Analysis Complete! Found: ${selectedSubcategory?.toUpperCase()}$brandInfo',
             ),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 2),
@@ -781,9 +920,34 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
     });
 
     try {
-      // Firebase Storage'a yükle
       final closetUseCase = getIt<ClosetUseCase>();
-      final imageUrl = await closetUseCase.uploadClosetImage(widget.imageFile);
+
+      // 1. Upload original image to Firebase Storage (temporary - for fal.ai to access)
+      final tempOriginalUrl =
+          await closetUseCase.uploadClosetImage(widget.imageFile);
+
+      // 2. Remove background using fal.ai API
+      String finalImageUrl;
+      try {
+        // Get temporary transparent image URL from fal.ai
+        final falAiTransparentUrl =
+            await _backgroundRemovalService.removeBackground(tempOriginalUrl);
+
+        // Download the transparent image bytes
+        final transparentBytes = await _backgroundRemovalService
+            .downloadImageBytes(falAiTransparentUrl);
+
+        // Upload transparent version to our Firebase Storage
+        finalImageUrl =
+            await closetUseCase.uploadTransparentClosetImage(transparentBytes);
+
+        // 3. Delete the original image from Firebase (we only need transparent)
+        await closetUseCase.deleteImageFromStorage(tempOriginalUrl);
+      } catch (e) {
+        // Background removal failed, keep the original image
+        debugPrint('Background removal failed: $e');
+        finalImageUrl = tempOriginalUrl;
+      }
 
       // Subcategory'den category'yi otomatik belirle
       final autoCategory =
@@ -791,7 +955,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
 
       final item = ClosetItem(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        imageUrl: imageUrl,
+        imageUrl: finalImageUrl,
         category: autoCategory,
         subcategory: selectedSubcategory,
         color: selectedColor,
@@ -808,8 +972,12 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
 
         // Başarı mesajı
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Closet item başarıyla eklendi'),
+          SnackBar(
+            content: Text(
+              finalImageUrl.contains('.png')
+                  ? 'Closet item başarıyla eklendi (transparent ✓)'
+                  : 'Closet item başarıyla eklendi',
+            ),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -817,8 +985,6 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
 
         // Return the created item
         if (context.mounted) {
-          // context.router.pop(); // Form ekranını kapat - REMOVED
-          // context.router.pop(); // Galeri ekranını kapat - REMOVED
           context.router.pop(item);
         }
       }
