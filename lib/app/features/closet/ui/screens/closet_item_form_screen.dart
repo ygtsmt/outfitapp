@@ -5,7 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ginly/app/features/closet/bloc/closet_bloc.dart';
 import 'package:ginly/app/features/closet/data/closet_usecase.dart';
 import 'package:ginly/app/features/closet/models/closet_item_model.dart';
+import 'package:ginly/app/features/closet/services/clothing_analysis_service.dart';
 import 'package:ginly/core/core.dart';
+import 'package:flutter_image_map/flutter_image_map.dart';
 
 class ClosetItemFormScreen extends StatefulWidget {
   final File imageFile;
@@ -27,39 +29,67 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
   String? selectedMaterial;
   String? selectedBrand;
   bool isUploading = false;
+  bool isDebugMode = false; // Toggle to see clickable regions
+  bool isAnalyzing = false; // AI analysis in progress
+  final ClothingAnalysisService _analysisService = ClothingAnalysisService();
 
-  // Tüm subcategory'leri alfabetik sıralı tek listede topla
-  final List<String> allSubcategories = [
-    'bag',
-    'belt',
-    'blazer',
-    'blouse',
-    'boots',
-    'cardigan',
-    'coat',
-    'flats',
-    'hat',
-    'heels',
-    'hoodie',
-    'jacket',
-    'jeans',
-    'jewelry',
-    'leggings',
-    'pants',
-    'sandals',
-    'scarf',
-    'shirt',
-    'shorts',
-    'skirt',
-    'slippers',
-    'sneakers',
-    'sweater',
-    'tank top',
-    't-shirt',
-    'trousers',
-    'vest',
-    'watch',
-  ];
+  // Vücut bölgelerine göre subcategory'leri organize et
+  final Map<String, List<String>> bodyRegionCategories = {
+    'head': [
+      'hat',
+      'sunglasses',
+      'scarf',
+    ],
+    'hands': [
+      'gloves',
+      'watch',
+      'jewelry',
+    ],
+    'upper_body': [
+      'blazer',
+      'blouse',
+      'cardigan',
+      'coat',
+      'hoodie',
+      'jacket',
+      'shirt',
+      'sweater',
+      'tank top',
+      't-shirt',
+      'vest',
+    ],
+    'legs': [
+      'jeans',
+      'leggings',
+      'pants',
+      'shorts',
+      'skirt',
+      'trousers',
+    ],
+    'feet': [
+      'boots',
+      'flats',
+      'heels',
+      'sandals',
+      'shoes',
+      'slippers',
+      'sneakers',
+    ],
+    'accessories': [
+      'bag',
+      'belt',
+    ],
+  };
+
+  // Tüm subcategory'leri alfabetik sıralı tek listede topla (dropdown için)
+  List<String> get allSubcategories {
+    final all = <String>[];
+    bodyRegionCategories.forEach((key, value) {
+      all.addAll(value);
+    });
+    all.sort();
+    return all;
+  }
 
   final List<String> colors = [
     'black',
@@ -109,7 +139,218 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
     'synthetic',
   ];
 
-  @override
+  Widget _buildBodyMapSelector() {
+    return Container(
+      height: 400.h,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // ImageMap with polygon-based region detection
+          Padding(
+            padding: EdgeInsets.all(16.w),
+            child: ImageMap(
+              image: Image.asset(
+                'assets/png/body_map.png',
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Center(child: Text('Body Map Image Not Found'));
+                },
+              ),
+              isDebug: isDebugMode,
+              onTap: (region) {
+                // Show bottom sheet with region-specific subcategories
+                final regionKey = region.title;
+                if (regionKey == null ||
+                    !bodyRegionCategories.containsKey(regionKey)) {
+                  return;
+                }
+
+                final categories = bodyRegionCategories[regionKey]!;
+                _showCategoryBottomSheet(regionKey, categories);
+              },
+              regions: [
+                // ------------------------------------------------------------
+                // 🧑 HEAD AREA (for hats, hair items, face accessories)
+                // - Head/face zone. Keep above torso.
+                // ------------------------------------------------------------
+                ImageMapRegion.fromPoly(
+                  title: 'head',
+                  color: isDebugMode
+                      ? Colors.red.withOpacity(0.30)
+                      : Colors.transparent,
+                  points: const [
+                    Offset(220, 50), // top-left
+                    Offset(462, 50), // top-right
+                    Offset(480, 150), // right-mid
+                    Offset(462, 205), // bottom-right
+                    Offset(220, 205), // bottom-left
+                    Offset(202, 150), // left-mid
+                  ],
+                ),
+
+                // ------------------------------------------------------------
+                // 👕 UPPER BODY / TORSO (for tshirts, jackets, hoodies)
+                // - Covers chest + waist. Avoids arms & pants overlap.
+                // ------------------------------------------------------------
+                ImageMapRegion.fromPoly(
+                  title: 'upper_body',
+                  color: isDebugMode
+                      ? Colors.amber.withOpacity(0.30)
+                      : Colors.transparent,
+                  points: const [
+                    Offset(200, 215), // left shoulder
+                    Offset(480, 215), // right shoulder
+                    Offset(515, 300), // right side (avoid arm)
+                    Offset(470, 470), // right waist
+                    Offset(210, 470), // left waist
+                    Offset(165, 300), // left side (avoid arm)
+                  ],
+                ),
+
+                // ------------------------------------------------------------
+                // ✋ LEFT HAND (for rings, watch, glove — left)
+                // - Separate region to prevent spilling onto shorts/torso.
+                // ------------------------------------------------------------
+                ImageMapRegion.fromPoly(
+                  title: 'hands',
+                  color: isDebugMode
+                      ? Colors.purple.withOpacity(0.30)
+                      : Colors.transparent,
+                  points: const [
+                    Offset(118, 452),
+                    Offset(155, 455),
+                    Offset(210, 490),
+                    Offset(190, 560),
+                    Offset(160, 590),
+                    Offset(125, 570),
+                    Offset(110, 520),
+                    Offset(108, 478),
+                  ],
+                ),
+
+                // ------------------------------------------------------------
+                // ✋ RIGHT HAND (for rings, watch, glove — right)
+                // - Separate region to prevent spilling onto shorts/torso.
+                // ------------------------------------------------------------
+                ImageMapRegion.fromPoly(
+                  title: 'hands',
+                  color: isDebugMode
+                      ? Colors.purple.withOpacity(0.30)
+                      : Colors.transparent,
+                  points: const [
+                    Offset(500, 470),
+                    Offset(540, 455),
+                    Offset(580, 485),
+                    Offset(575, 525),
+                    Offset(552, 565),
+                    Offset(520, 585),
+                    Offset(498, 545),
+                    Offset(495, 500),
+                  ],
+                ),
+
+                // ------------------------------------------------------------
+                // 👖 PANTS / SHORTS AREA (for pants, jeans, shorts)
+                // - Starts at waist, ends above knees. Avoids upper_body overlap.
+                // ------------------------------------------------------------
+
+                // ------------------------------------------------------------
+                // 🦵 LEGS AREA (for legwear/skin edits, leggings etc.)
+                // - From hips down to ankles (keep feet separate).
+                // ------------------------------------------------------------
+                ImageMapRegion.fromPoly(
+                  title: 'legs',
+                  color: isDebugMode
+                      ? Colors.green.withOpacity(0.30)
+                      : Colors.transparent,
+                  points: const [
+                    Offset(220, 470), // left waist
+                    Offset(450, 470), // right waist
+                    Offset(450, 720), // right thigh
+                    Offset(390, 720), // right above-knee
+                    Offset(300, 720), // left above-knee
+                    Offset(235, 720), // left thigh
+                    Offset(200, 720), // left hip
+                    Offset(450, 720), // right hip
+                    Offset(450, 870), // right ankle
+                    Offset(380, 870), // right leg bottom
+                    Offset(302, 870), // left leg bottom
+                    Offset(232, 870), // left ankle
+                  ],
+                ),
+
+                // ------------------------------------------------------------
+                // 👟 LEFT FOOT (for shoes — left)
+                // - Separate from right to avoid distortion/cross polygons.
+                // ------------------------------------------------------------
+                ImageMapRegion.fromPoly(
+                  title: 'feet',
+                  color: isDebugMode
+                      ? Colors.orange.withOpacity(0.30)
+                      : Colors.transparent,
+                  points: const [
+                    Offset(245, 925),
+                    Offset(305, 925),
+                    Offset(322, 975),
+                    Offset(315, 1020),
+                    Offset(255, 1023),
+                    Offset(232, 1005),
+                    Offset(232, 960),
+                  ],
+                ),
+
+                // ------------------------------------------------------------
+                // 👟 RIGHT FOOT (for shoes — right)
+                // - Separate from left to avoid distortion/cross polygons.
+                // ------------------------------------------------------------
+                ImageMapRegion.fromPoly(
+                  title: 'feet',
+                  color: isDebugMode
+                      ? Colors.orange.withOpacity(0.30)
+                      : Colors.transparent,
+                  points: const [
+                    Offset(395, 930),
+                    Offset(465, 930),
+                    Offset(482, 975),
+                    Offset(472, 1020),
+                    Offset(410, 1023),
+                    Offset(382, 1005),
+                    Offset(382, 960),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // Selection Indicator Overlay (Optional Visual Feedback)
+          if (selectedSubcategory != null)
+            Positioned(
+              top: 10,
+              right: 10,
+              child: Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 20.sp,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -134,64 +375,164 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
                 fit: BoxFit.cover,
               ),
             ),
+            SizedBox(height: 16.h),
+
+            // AI ANALYZE BUTTON
+            ElevatedButton.icon(
+              onPressed: isAnalyzing || isUploading ? null : _analyzeWithAI,
+              icon: isAnalyzing
+                  ? SizedBox(
+                      width: 20.w,
+                      height: 20.h,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Icon(Icons.auto_awesome, size: 20.sp),
+              label: Text(
+                isAnalyzing ? 'Analyzing...' : '✨ Analyze with AI',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: context.baseColor,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 14.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+              ),
+            ),
             SizedBox(height: 24.h),
-            // Form fields
-            _buildDropdown(
-              label: 'Kategori * (Zorunlu)',
-              value: selectedSubcategory,
-              items: allSubcategories,
-              onChanged: (value) {
-                setState(() {
-                  selectedSubcategory = value;
-                });
-              },
+
+            // INTERACTIVE BODY MAP SELECTOR
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Select Item Type',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Debug Mode',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Switch(
+                      value: isDebugMode,
+                      onChanged: (value) {
+                        setState(() {
+                          isDebugMode = value;
+                        });
+                      },
+                      activeColor: context.baseColor,
+                    ),
+                  ],
+                ),
+              ],
             ),
             SizedBox(height: 12.h),
-            _buildDropdown(
-              label: 'Renk (Opsiyonel)',
-              value: selectedColor,
-              items: colors,
-              onChanged: (value) {
-                setState(() {
-                  selectedColor = value;
-                });
-              },
-            ),
+            _buildBodyMapSelector(),
             SizedBox(height: 12.h),
-            _buildDropdown(
-              label: 'Desen (Opsiyonel)',
-              value: selectedPattern,
-              items: patterns,
-              onChanged: (value) {
-                setState(() {
-                  selectedPattern = value;
-                });
-              },
+
+            Center(
+              child: Text(
+                selectedSubcategory != null
+                    ? 'Selected: ${(selectedSubcategory ?? "").toUpperCase()}'
+                    : 'Tap a body part to select category',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: context.baseColor,
+                ),
+              ),
             ),
-            SizedBox(height: 12.h),
-            _buildDropdown(
-              label: 'Mevsim (Opsiyonel)',
-              value: selectedSeason,
-              items: seasons,
-              onChanged: (value) {
-                setState(() {
-                  selectedSeason = value;
-                });
-              },
+
+            SizedBox(height: 24.h),
+
+            // Collapsible Details
+            ExpansionTile(
+              title: const Text('Item Details (Optional)'),
+              initiallyExpanded: false,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+                  child: Column(
+                    children: [
+                      _buildDropdown(
+                        label: 'Kategori * (Zorunlu)',
+                        value: selectedSubcategory,
+                        items: allSubcategories,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedSubcategory = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 12.h),
+                      _buildDropdown(
+                        label: 'Renk (Opsiyonel)',
+                        value: selectedColor,
+                        items: colors,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedColor = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 12.h),
+                      _buildDropdown(
+                        label: 'Desen (Opsiyonel)',
+                        value: selectedPattern,
+                        items: patterns,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedPattern = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 12.h),
+                      _buildDropdown(
+                        label: 'Mevsim (Opsiyonel)',
+                        value: selectedSeason,
+                        items: seasons,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedSeason = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 12.h),
+                      _buildDropdown(
+                        label: 'Kumaş (Opsiyonel)',
+                        value: selectedMaterial,
+                        items: materials,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedMaterial = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 12.h),
+                      _buildBrandTextField(),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 12.h),
-            _buildDropdown(
-              label: 'Kumaş (Opsiyonel)',
-              value: selectedMaterial,
-              items: materials,
-              onChanged: (value) {
-                setState(() {
-                  selectedMaterial = value;
-                });
-              },
-            ),
-            SizedBox(height: 12.h),
-            _buildBrandTextField(),
+
             SizedBox(height: 24.h),
             // Kaydet butonu
             ElevatedButton(
@@ -271,6 +612,155 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
     );
   }
 
+  /// Analyze clothing image with Gemini AI and auto-fill form
+  Future<void> _analyzeWithAI() async {
+    setState(() {
+      isAnalyzing = true;
+    });
+
+    try {
+      final result = await _analysisService.analyzeClothing(widget.imageFile);
+
+      if (mounted) {
+        setState(() {
+          selectedSubcategory = result['subcategory'];
+          selectedColor = result['color'];
+          selectedPattern = result['pattern'];
+          selectedSeason = result['season'];
+          selectedMaterial = result['material'];
+          isAnalyzing = false;
+        });
+
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '✨ AI Analysis Complete! Found: ${selectedSubcategory?.toUpperCase()}',
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isAnalyzing = false;
+        });
+
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('AI Analysis Failed: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: Colors.white,
+              onPressed: _analyzeWithAI,
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  void _showCategoryBottomSheet(String regionKey, List<String> categories) {
+    // Region display names
+    final regionNames = {
+      'head': 'Baş / Yüz',
+      'hands': 'Eller / Bileklik',
+      'torso': 'Üst Gövde',
+      'legs': 'Alt Gövde',
+      'feet': 'Ayaklar',
+      'accessories': 'Aksesuarlar',
+      'upper_body': 'Üst Gövde',
+    };
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Kategori Seç: ${regionNames[regionKey] ?? regionKey}',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Flexible(
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 12.w,
+                    mainAxisSpacing: 12.h,
+                    childAspectRatio: 2.5,
+                  ),
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+                    final isSelected = selectedSubcategory == category;
+
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          selectedSubcategory = category;
+                        });
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Seçildi: ${category.toUpperCase()}'),
+                            duration: const Duration(milliseconds: 500),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color:
+                              isSelected ? context.baseColor : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8.r),
+                          border: Border.all(
+                            color: isSelected
+                                ? context.baseColor
+                                : Colors.grey[300]!,
+                            width: 2,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          category,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: isSelected ? Colors.white : Colors.black87,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 16.h),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   bool _canSave() {
     return selectedSubcategory != null && selectedSubcategory!.isNotEmpty;
   }
@@ -296,7 +786,8 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
       final imageUrl = await closetUseCase.uploadClosetImage(widget.imageFile);
 
       // Subcategory'den category'yi otomatik belirle
-      final autoCategory = ClosetItem.getCategoryFromSubcategory(selectedSubcategory);
+      final autoCategory =
+          ClosetItem.getCategoryFromSubcategory(selectedSubcategory);
 
       final item = ClosetItem(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -324,10 +815,11 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
           ),
         );
 
-        // Geri dön - 2 ekran geri (form ve galeri)
+        // Return the created item
         if (context.mounted) {
-          context.router.pop(); // Form ekranını kapat
-          context.router.pop(); // Galeri ekranını kapat
+          // context.router.pop(); // Form ekranını kapat - REMOVED
+          // context.router.pop(); // Galeri ekranını kapat - REMOVED
+          context.router.pop(item);
         }
       }
     } catch (e) {
@@ -345,4 +837,3 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
     }
   }
 }
-

@@ -6,6 +6,7 @@ import 'package:ginly/core/core.dart';
 import 'package:ginly/generated/l10n.dart';
 import 'package:ginly/app/features/closet/ui/widgets/closet_tab_content.dart';
 import 'package:ginly/app/features/closet/ui/widgets/models_tab_content.dart';
+import 'package:ginly/app/features/closet/ui/widgets/combines_tab_content.dart';
 
 class ClosetScreen extends StatefulWidget {
   const ClosetScreen({super.key});
@@ -21,7 +22,7 @@ class _ClosetScreenState extends State<ClosetScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -95,6 +96,17 @@ class _ClosetScreenState extends State<ClosetScreen>
                     ),
                   ),
                 ),
+                Tab(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Combines'),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -106,6 +118,7 @@ class _ClosetScreenState extends State<ClosetScreen>
               children: const [
                 ClosetTabContent(),
                 ModelsTabContent(),
+                CombinesTabContent(),
               ],
             ),
           ),

@@ -131,10 +131,9 @@ class _ModelItemFormScreenState extends State<ModelItemFormScreen> {
           ),
         );
 
-        // Geri dön - 2 ekran geri (form ve galeri)
+        // Return the created item to the previous screen
         if (context.mounted) {
-          context.router.pop(); // Form ekranını kapat
-          context.router.pop(); // Galeri ekranını kapat
+          context.router.pop(item);
         }
       }
     } catch (e) {

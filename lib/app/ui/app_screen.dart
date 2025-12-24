@@ -1,10 +1,8 @@
-import "package:flutter_screenutil/flutter_screenutil.dart";
 import "package:ginly/app/bloc/app_bloc.dart";
 import "package:ginly/app/features/auth/features/create_account/bloc/create_account_bloc.dart";
 import "package:ginly/app/features/auth/features/login/bloc/login_bloc.dart";
 import "package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart";
 import "package:ginly/app/features/auth/features/splash/bloc/splash_bloc.dart";
-import "package:ginly/app/features/closet/bloc/try_on_bloc.dart";
 import "package:ginly/app/features/library/bloc/library_bloc.dart";
 import "package:ginly/app/features/closet/bloc/closet_bloc.dart";
 import "package:ginly/app/features/payment/bloc/payment_bloc.dart";
@@ -85,9 +83,6 @@ class _AppScreenState extends State<AppScreen> {
         ),
         BlocProvider<ClosetBloc>(
           create: (final context) => getIt<ClosetBloc>(),
-        ),
-        BlocProvider<TryOnBloc>(
-          create: (final context) => getIt<TryOnBloc>(),
         ),
         BlocProvider<PaymentBloc>(
           create: (final context) => getIt<PaymentBloc>(),

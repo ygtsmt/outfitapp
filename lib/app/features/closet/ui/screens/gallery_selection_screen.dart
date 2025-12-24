@@ -201,11 +201,15 @@ class _GallerySelectionScreenState extends State<GallerySelectionScreen> {
 
     final croppedImageFile = File(croppedFile.path);
 
-    // Form ekranına git
+    // Form ekranına git ve sonucu bekle
     if (context.mounted) {
-      context.router.push(
+      final result = await context.router.push(
         ClosetItemFormScreenRoute(imageFile: croppedImageFile),
       );
+
+      if (result != null && context.mounted) {
+        context.router.pop(result);
+      }
     }
   }
 

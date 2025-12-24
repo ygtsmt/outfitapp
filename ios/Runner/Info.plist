@@ -60,6 +60,8 @@
 	<string>793286859298-h2sv8kjtv9lc0n2iu72rqrld2tk2hhht.apps.googleusercontent.com</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to your photo library to select and use images for AI content generation.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to your camera to take photos for AI content generation.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app needs permission to save generated images to your photo library.</string>
 	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>

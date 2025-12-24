@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
       getIt<AppBloc>().add(InitializeLanguageEvent());
 
       // 🎯 PAYWALL KONTROLÜ - Session başına 1 kez
-    //  _checkAndShowPaywall();
+      //  _checkAndShowPaywall();
     });
 
     super.initState();
@@ -126,9 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
           routes: const [
             DashbordTabRouter(),
             LibraryTabRouter(),
-            ProfileTabRouter(),
             ClosetTabRouter(),
             TryOnTabRouter(),
+            ProfileTabRouter(),
           ],
           builder: (final context, final child, final animation) {
             final tabsRouter = AutoTabsRouter.of(context);
@@ -152,7 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         key: _scaffoldKey,
                         drawer: CustomDrawer(state: state),
                         resizeToAvoidBottomInset: true,
-                        appBar: (tabsRouter.activeIndex == 3 || tabsRouter.activeIndex == 4)
+                        appBar: (tabsRouter.activeIndex == 2 ||
+                                tabsRouter.activeIndex == 3)
                             ? null
                             : AppBar(
                                 forceMaterialTransparency: true,
@@ -216,23 +217,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 2
-                                    ? const Icon(
-                                        Icons.person,
-                                      )
-                                    : const Icon(Icons.person_outline),
-                                label: AppLocalizations.of(context).profile,
-                              ),
-                              BottomNavigationBarItem(
-                                icon: tabsRouter.activeIndex == 3
                                     ? const Icon(Icons.checkroom)
                                     : const Icon(Icons.checkroom_outlined),
                                 label: 'Closet',
                               ),
                               BottomNavigationBarItem(
-                                icon: tabsRouter.activeIndex == 4
+                                icon: tabsRouter.activeIndex == 3
                                     ? const Icon(Icons.camera_alt)
                                     : const Icon(Icons.camera_alt_outlined),
                                 label: 'Try-On',
+                              ),
+                              BottomNavigationBarItem(
+                                icon: tabsRouter.activeIndex == 4
+                                    ? const Icon(
+                                        Icons.person,
+                                      )
+                                    : const Icon(Icons.person_outline),
+                                label: AppLocalizations.of(context).profile,
                               ),
                             ],
                             currentIndex: tabsRouter.activeIndex,

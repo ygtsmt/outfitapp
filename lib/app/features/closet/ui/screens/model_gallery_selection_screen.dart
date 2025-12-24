@@ -192,11 +192,16 @@ class _ModelGallerySelectionScreenState
 
     final croppedImageFile = File(croppedFile.path);
 
-    // Model form ekranına git
+    // Model form ekranına git ve sonucu bekle
     if (context.mounted) {
-      context.router.push(
+      final result = await context.router.push(
         ModelItemFormScreenRoute(imageFile: croppedImageFile),
       );
+
+      // Eğer başarılı bir şekilde model eklendiyse, bu ekranı da kapat ve sonucu ilet
+      if (result != null && context.mounted) {
+        context.router.pop(result);
+      }
     }
   }
 

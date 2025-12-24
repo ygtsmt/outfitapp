@@ -70,6 +70,8 @@ dependencies:
   cached_video_player_plus: ^3.0.3
   webview_flutter: ^4.7.0
   package_info_plus: ^8.0.2
+  flutter_image_map: ^1.0.1
+  google_generative_ai: ^0.4.6
 flutter_intl:
   enabled: true
   class_name: AppLocalizations

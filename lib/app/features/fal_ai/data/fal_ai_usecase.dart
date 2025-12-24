@@ -696,4 +696,85 @@ class FalAiUsecase {
         return '768P'; // Default: 768P
     }
   }
+
+  /// Gemini 2.5 Flash Image Edit
+  /// Generates edited images based on prompt and input images
+  Future<Map<String, dynamic>?> generateGeminiImageEdit({
+    required List<String> imageUrls,
+    required String prompt,
+  }) async {
+    try {
+      // Webhook URL'i query parameter olarak ekle
+      final webhookUrl =
+          "https://us-central1-disciplify-26970.cloudfunctions.net/falWebhook";
+      final uri =
+          Uri.parse('https://queue.fal.run/fal-ai/gemini-25-flash-image/edit')
+              .replace(queryParameters: {'fal_webhook': webhookUrl});
+
+      final apiKey = await getFalAiApiKey();
+      final response = await http.post(
+        uri,
+        headers: {
+          "Authorization": "Key $apiKey",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "prompt": 'Kıyafetleri kadına giydir',
+          "image_urls": imageUrls,
+        }),
+      );
+
+      log('Gemini Image Edit Response Status: ${response.statusCode}');
+      log('Gemini Image Edit Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        final requestId = responseData['request_id'];
+
+        if (requestId != null) {
+          // Create image data for Firestore
+          final imageData = {
+            'id': requestId,
+            'prompt': prompt,
+            'inputImages': imageUrls,
+            'output': null, // Will be filled by webhook
+            'status': 'processing',
+            'createdAt': DateTime.now().toIso8601String(),
+            'completedAt': null,
+            'model': 'gemini-2.5-flash-image-edit',
+          };
+
+          // Add to user's Firestore document
+          final userId = auth.currentUser!.uid;
+          await firestore.collection('users').doc(userId).update({
+            'userGeneratedImages': FieldValue.arrayUnion([imageData]),
+          });
+
+          log('✅ Gemini Image Edit request created: $requestId');
+          return imageData;
+        }
+      } else if (response.statusCode == 400) {
+        final errorBody = jsonDecode(response.body);
+        final errorMessage = errorBody['message'] ?? 'Bad Request';
+        log('Gemini Image Edit 400 Error: $errorMessage');
+        throw Exception('Gemini Image Edit Error (400): $errorMessage');
+      } else if (response.statusCode == 422) {
+        final errorBody = jsonDecode(response.body);
+        final errorMessage = errorBody['message'] ?? 'Validation Error';
+        final errorDetails = errorBody['detail'] ?? 'No details provided';
+        log('Gemini Image Edit 422 Error: $errorMessage');
+        log('Gemini Image Edit 422 Details: $errorDetails');
+        throw Exception(
+            'Gemini Image Edit Validation Error (422): $errorMessage - $errorDetails');
+      } else {
+        log('Gemini Image Edit Unexpected Error (${response.statusCode}): ${response.body}');
+        throw Exception(
+            'Gemini Image Edit Error (${response.statusCode}): ${response.body}');
+      }
+    } catch (e) {
+      log('Error occurred while generating Gemini Image Edit: $e');
+      throw Exception('Error occurred while generating Gemini Image Edit: $e');
+    }
+    return null;
+  }
 }
