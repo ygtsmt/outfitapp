@@ -35,9 +35,15 @@ class _AddClosetItemFormDialogState extends State<AddClosetItemFormDialog> {
     'blazer',
     'blouse',
     'boots',
+    'bracelet',
     'cardigan',
+    'chain',
     'coat',
+    'dress',
+    'earrings',
     'flats',
+    'glasses',
+    'gloves',
     'hat',
     'heels',
     'hoodie',
@@ -45,15 +51,21 @@ class _AddClosetItemFormDialogState extends State<AddClosetItemFormDialog> {
     'jeans',
     'jewelry',
     'leggings',
+    'necklace',
     'pants',
+    'pendant',
+    'ring',
     'sandals',
     'scarf',
     'shirt',
+    'shoes',
     'shorts',
     'skirt',
     'slippers',
     'sneakers',
+    'sunglasses',
     'sweater',
+    'swimwear',
     'tank top',
     't-shirt',
     'trousers',
@@ -76,6 +88,8 @@ class _AddClosetItemFormDialogState extends State<AddClosetItemFormDialog> {
     'brown',
     'navy',
     'khaki',
+    'gold',
+    'silver',
   ];
 
   final List<String> patterns = [
@@ -107,6 +121,9 @@ class _AddClosetItemFormDialogState extends State<AddClosetItemFormDialog> {
     'linen',
     'cashmere',
     'synthetic',
+    'gold',
+    'silver',
+    'metal',
   ];
 
   @override
@@ -116,7 +133,8 @@ class _AddClosetItemFormDialogState extends State<AddClosetItemFormDialog> {
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Container(
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
+        constraints:
+            BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
         padding: EdgeInsets.all(16.w),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -297,7 +315,9 @@ class _AddClosetItemFormDialogState extends State<AddClosetItemFormDialog> {
 
   bool _canSave() {
     // Subcategory zorunlu, diğerleri opsiyonel
-    return widget.imageUrl.isNotEmpty && selectedSubcategory != null && selectedSubcategory!.isNotEmpty;
+    return widget.imageUrl.isNotEmpty &&
+        selectedSubcategory != null &&
+        selectedSubcategory!.isNotEmpty;
   }
 
   void _saveItem() {
@@ -312,7 +332,8 @@ class _AddClosetItemFormDialogState extends State<AddClosetItemFormDialog> {
     }
 
     // Subcategory'den category'yi otomatik belirle
-    final autoCategory = ClosetItem.getCategoryFromSubcategory(selectedSubcategory);
+    final autoCategory =
+        ClosetItem.getCategoryFromSubcategory(selectedSubcategory);
 
     final item = ClosetItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -330,4 +351,3 @@ class _AddClosetItemFormDialogState extends State<AddClosetItemFormDialog> {
     Navigator.of(context).pop(item);
   }
 }
-

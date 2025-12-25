@@ -330,6 +330,45 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    BatchModelUploadProgressScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<BatchModelUploadProgressScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: BatchModelUploadProgressScreen(
+          key: args.key,
+          imageFiles: args.imageFiles,
+        ),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    BatchModelUploadResultScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<BatchModelUploadResultScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: BatchModelUploadResultScreen(
+          key: args.key,
+          result: args.result,
+        ),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    FailedModelReviewScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<FailedModelReviewScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: FailedModelReviewScreen(
+          key: args.key,
+          failedPhotos: args.failedPhotos,
+        ),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -724,6 +763,18 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           ModelItemDetailScreenRoute.name,
           path: '/model-item-detail-screen',
+        ),
+        RouteConfig(
+          BatchModelUploadProgressScreenRoute.name,
+          path: '/batch-model-upload-progress-screen',
+        ),
+        RouteConfig(
+          BatchModelUploadResultScreenRoute.name,
+          path: '/batch-model-upload-result-screen',
+        ),
+        RouteConfig(
+          FailedModelReviewScreenRoute.name,
+          path: '/failed-model-review-screen',
         ),
       ];
 }
@@ -1395,6 +1446,111 @@ class ModelItemDetailScreenRouteArgs {
   @override
   String toString() {
     return 'ModelItemDetailScreenRouteArgs{key: $key, modelItem: $modelItem}';
+  }
+}
+
+/// generated route for
+/// [BatchModelUploadProgressScreen]
+class BatchModelUploadProgressScreenRoute
+    extends PageRouteInfo<BatchModelUploadProgressScreenRouteArgs> {
+  BatchModelUploadProgressScreenRoute({
+    Key? key,
+    required List<File> imageFiles,
+  }) : super(
+          BatchModelUploadProgressScreenRoute.name,
+          path: '/batch-model-upload-progress-screen',
+          args: BatchModelUploadProgressScreenRouteArgs(
+            key: key,
+            imageFiles: imageFiles,
+          ),
+        );
+
+  static const String name = 'BatchModelUploadProgressScreenRoute';
+}
+
+class BatchModelUploadProgressScreenRouteArgs {
+  const BatchModelUploadProgressScreenRouteArgs({
+    this.key,
+    required this.imageFiles,
+  });
+
+  final Key? key;
+
+  final List<File> imageFiles;
+
+  @override
+  String toString() {
+    return 'BatchModelUploadProgressScreenRouteArgs{key: $key, imageFiles: $imageFiles}';
+  }
+}
+
+/// generated route for
+/// [BatchModelUploadResultScreen]
+class BatchModelUploadResultScreenRoute
+    extends PageRouteInfo<BatchModelUploadResultScreenRouteArgs> {
+  BatchModelUploadResultScreenRoute({
+    Key? key,
+    required BatchModelUploadResult result,
+  }) : super(
+          BatchModelUploadResultScreenRoute.name,
+          path: '/batch-model-upload-result-screen',
+          args: BatchModelUploadResultScreenRouteArgs(
+            key: key,
+            result: result,
+          ),
+        );
+
+  static const String name = 'BatchModelUploadResultScreenRoute';
+}
+
+class BatchModelUploadResultScreenRouteArgs {
+  const BatchModelUploadResultScreenRouteArgs({
+    this.key,
+    required this.result,
+  });
+
+  final Key? key;
+
+  final BatchModelUploadResult result;
+
+  @override
+  String toString() {
+    return 'BatchModelUploadResultScreenRouteArgs{key: $key, result: $result}';
+  }
+}
+
+/// generated route for
+/// [FailedModelReviewScreen]
+class FailedModelReviewScreenRoute
+    extends PageRouteInfo<FailedModelReviewScreenRouteArgs> {
+  FailedModelReviewScreenRoute({
+    Key? key,
+    required List<FailedModelInfo> failedPhotos,
+  }) : super(
+          FailedModelReviewScreenRoute.name,
+          path: '/failed-model-review-screen',
+          args: FailedModelReviewScreenRouteArgs(
+            key: key,
+            failedPhotos: failedPhotos,
+          ),
+        );
+
+  static const String name = 'FailedModelReviewScreenRoute';
+}
+
+class FailedModelReviewScreenRouteArgs {
+  const FailedModelReviewScreenRouteArgs({
+    this.key,
+    required this.failedPhotos,
+  });
+
+  final Key? key;
+
+  final List<FailedModelInfo> failedPhotos;
+
+  @override
+  String toString() {
+    return 'FailedModelReviewScreenRouteArgs{key: $key, failedPhotos: $failedPhotos}';
   }
 }
 

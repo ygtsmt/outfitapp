@@ -47,6 +47,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
   final Map<String, List<String>> bodyRegionCategories = {
     'head': [
       'hat',
+      'glasses',
       'sunglasses',
       'scarf',
       'earrings',
@@ -62,10 +63,12 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
       'blouse',
       'cardigan',
       'coat',
+      'dress',
       'hoodie',
       'jacket',
       'shirt',
       'sweater',
+      'swimwear',
       'tank top',
       't-shirt',
       'vest',

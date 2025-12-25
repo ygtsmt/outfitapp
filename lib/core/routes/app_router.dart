@@ -40,6 +40,9 @@ import "package:ginly/app/features/closet/ui/screens/model_item_detail_screen.da
 import "package:ginly/app/features/closet/ui/screens/batch_upload_progress_screen.dart";
 import "package:ginly/app/features/closet/ui/screens/batch_upload_result_screen.dart";
 import "package:ginly/app/features/closet/ui/screens/failed_photo_review_screen.dart";
+import "package:ginly/app/features/closet/ui/screens/batch_model_upload_progress_screen.dart";
+import "package:ginly/app/features/closet/ui/screens/batch_model_upload_result_screen.dart";
+import "package:ginly/app/features/closet/ui/screens/failed_model_review_screen.dart";
 import "package:ginly/app/features/closet/models/model_item_model.dart";
 import "package:ginly/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart";
 import "package:ginly/app/features/text_to_image/ui/text_to_image_screen.dart";
@@ -307,6 +310,22 @@ part "app_router.gr.dart";
       page: ModelItemDetailScreen,
       path: "/model-item-detail-screen",
       transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    // Model batch upload screens
+    CustomRoute(
+      page: BatchModelUploadProgressScreen,
+      path: "/batch-model-upload-progress-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      page: BatchModelUploadResultScreen,
+      path: "/batch-model-upload-result-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      page: FailedModelReviewScreen,
+      path: "/failed-model-review-screen",
+      transitionsBuilder: TransitionsBuilders.slideLeft,
     ),
   ],
 )
