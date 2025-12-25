@@ -8,7 +8,7 @@ import 'package:ginly/core/core.dart';
 class UserSelectionSheet extends StatefulWidget {
   final String title;
   final Future<List<dynamic>> Function() fetchItems;
-  final Function(String imageUrl) onSelected;
+  final Function(dynamic item) onSelected; // Changed to pass full item
   final List<Widget>? leadingItems;
 
   const UserSelectionSheet({
@@ -122,7 +122,7 @@ class _UserSelectionSheetState extends State<UserSelectionSheet> {
 
                           return GestureDetector(
                             onTap: () {
-                              widget.onSelected(imageUrl);
+                              widget.onSelected(item); // Pass full item
                               Navigator.pop(context);
                             },
                             child: ClipRRect(

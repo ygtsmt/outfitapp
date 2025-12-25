@@ -38,7 +38,8 @@ Return ONLY a valid JSON object with these exact fields:
   "bodyType": "one of: slim, average, athletic, curvy, plus-size, mixed. Based on visible body shape. null if isValidModel is false or only face visible",
   "pose": "one of: standing, sitting, walking, lying, casual, formal, action. Describe the person's pose. null if isValidModel is false",
   "skinTone": "one of: fair, light, medium, tan, dark, mixed. Based on visible skin. null if isValidModel is false",
-  "suggestedName": "a descriptive name for this model based on appearance and visible body parts (e.g. 'Casual Summer Look', 'Feet Model', 'Group Photo - 3 People', 'Face Portrait'). null if isValidModel is false"
+  "suggestedName": "a descriptive name for this model based on appearance and visible body parts (e.g. 'Casual Summer Look', 'Feet Model', 'Group Photo - 3 People', 'Face Portrait'). null if isValidModel is false",
+  "aiPrompt": "a detailed English description of the PERSON/MODEL in this image that can be used to identify them for outfit try-on. Be VERY specific about their physical appearance: hair color and style, face features, skin tone, body type, pose, background, lighting, etc. Example: 'A young woman with long brown hair, fair skin, slim body type, standing in a neutral pose against a white background, wearing minimal makeup with natural lighting'. This description should be detailed enough to distinguish this specific person from any clothing items in other photos. null if isValidModel is false"
 }
 
 IMPORTANT RULES:
@@ -47,6 +48,7 @@ IMPORTANT RULES:
 - The ONLY invalid case is when there is NO human at all
 - Return ONLY the JSON object, no other text
 - Use exact values from the lists above
+- The aiPrompt field is CRITICAL - it should be a detailed, unique description of the person that can be used in prompt engineering
 
 JSON:''';
 
@@ -125,6 +127,7 @@ JSON:''';
         'pose': json['pose'] as String?,
         'skinTone': json['skinTone'] as String?,
         'suggestedName': json['suggestedName'] as String?,
+        'aiPrompt': json['aiPrompt'] as String?,
       };
 
       return result;

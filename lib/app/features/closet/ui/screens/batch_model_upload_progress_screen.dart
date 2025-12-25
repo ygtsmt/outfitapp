@@ -154,6 +154,7 @@ class _BatchModelUploadProgressScreenState
         bodyType: analysisResult['bodyType'],
         pose: analysisResult['pose'],
         skinTone: analysisResult['skinTone'],
+        aiPrompt: analysisResult['aiPrompt'],
         createdAt: DateTime.now(),
       );
 

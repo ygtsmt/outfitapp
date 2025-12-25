@@ -32,7 +32,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
   final FalAiUsecase _falAiUsecase = GetIt.I<FalAiUsecase>();
   final ClosetUseCase _closetUseCase = GetIt.I<ClosetUseCase>();
 
-  String? _selectedModelUrl;
+  ModelItem? _selectedModel; // Changed from String? _selectedModelUrl
   final List<String> _selectedClothesUrls = [];
 
   bool _isLoading = false;
@@ -40,7 +40,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
   String? _requestId;
 
   Future<void> _generateImage() async {
-    if (_selectedModelUrl == null || _selectedClothesUrls.isEmpty) {
+    if (_selectedModel == null || _selectedClothesUrls.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text('Please select a model and at least one cloth')),
@@ -57,13 +57,14 @@ class _TryOnScreenState extends State<TryOnScreen> {
     try {
       // Create list: [Model URL, Cloth URL 1, Cloth URL 2, ...]
       final List<String> imageUrls = [
-        _selectedModelUrl!,
+        _selectedModel!.imageUrl,
         ..._selectedClothesUrls
       ];
 
       final result = await _falAiUsecase.generateGeminiImageEdit(
         imageUrls: imageUrls,
-        prompt: "Wear clothes", // Fixed prompt as per request
+        prompt: "Wear clothes", // Base prompt
+        modelAiPrompt: _selectedModel!.aiPrompt, // Pass the model's AI prompt
       );
 
       if (result != null && result['status'] == 'processing') {
@@ -174,7 +175,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
 
     if (result is ModelItem) {
       setState(() {
-        _selectedModelUrl = result.imageUrl;
+        _selectedModel = result;
         // Optionally show success message
         _statusMessage = 'Model selected from gallery';
       });
@@ -200,7 +201,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
 
         if (result is ModelItem) {
           setState(() {
-            _selectedModelUrl = result.imageUrl;
+            _selectedModel = result;
             _statusMessage = 'Model added from camera';
           });
         }
@@ -235,10 +236,12 @@ class _TryOnScreenState extends State<TryOnScreen> {
               onTap: _openModelCameraSelection,
             ),
           ],
-          onSelected: (imageUrl) {
-            setState(() {
-              _selectedModelUrl = imageUrl;
-            });
+          onSelected: (item) {
+            if (item is ModelItem) {
+              setState(() {
+                _selectedModel = item;
+              });
+            }
           },
         );
       },
@@ -267,11 +270,13 @@ class _TryOnScreenState extends State<TryOnScreen> {
             onTap: _openClosetCameraSelection,
           ),
         ],
-        onSelected: (imageUrl) {
-          if (!_selectedClothesUrls.contains(imageUrl)) {
-            setState(() {
-              _selectedClothesUrls.add(imageUrl);
-            });
+        onSelected: (item) {
+          if (item is ClosetItem) {
+            if (!_selectedClothesUrls.contains(item.imageUrl)) {
+              setState(() {
+                _selectedClothesUrls.add(item.imageUrl);
+              });
+            }
           }
         },
       ),
@@ -341,7 +346,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
                         context, "MODEL", "Select who will try on the clothes"),
                     const SizedBox(height: 16),
                     _ModelSelector(
-                      imageUrl: _selectedModelUrl,
+                      imageUrl: _selectedModel?.imageUrl,
                       onTap: _showModelSelection,
                     ),
                     const SizedBox(height: 32),
@@ -479,7 +484,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
         top: false,
         child: ElevatedButton(
           onPressed: _isLoading ||
-                  _selectedModelUrl == null ||
+                  _selectedModel == null ||
                   _selectedClothesUrls.isEmpty
               ? null
               : _generateImage,

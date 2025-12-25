@@ -10,6 +10,7 @@ class ModelItem {
   final String? bodyType;
   final String? pose;
   final String? skinTone;
+  final String? aiPrompt; // AI-generated description for outfit generation
   final DateTime createdAt;
 
   ModelItem({
@@ -23,6 +24,7 @@ class ModelItem {
     this.bodyType,
     this.pose,
     this.skinTone,
+    this.aiPrompt,
   });
 
   /// Check if this model has multiple people
@@ -53,6 +55,7 @@ class ModelItem {
       bodyType: map['bodyType'] as String?,
       pose: map['pose'] as String?,
       skinTone: map['skinTone'] as String?,
+      aiPrompt: map['aiPrompt'] as String?,
       createdAt: createdAt,
     );
   }
@@ -68,6 +71,7 @@ class ModelItem {
       'bodyType': bodyType,
       'pose': pose,
       'skinTone': skinTone,
+      'aiPrompt': aiPrompt,
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
@@ -82,6 +86,7 @@ class ModelItem {
     String? bodyType,
     String? pose,
     String? skinTone,
+    String? aiPrompt,
     DateTime? createdAt,
   }) {
     return ModelItem(
@@ -94,6 +99,7 @@ class ModelItem {
       bodyType: bodyType ?? this.bodyType,
       pose: pose ?? this.pose,
       skinTone: skinTone ?? this.skinTone,
+      aiPrompt: aiPrompt ?? this.aiPrompt,
       createdAt: createdAt ?? this.createdAt,
     );
   }

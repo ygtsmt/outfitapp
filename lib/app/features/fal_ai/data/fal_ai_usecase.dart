@@ -702,6 +702,7 @@ class FalAiUsecase {
   Future<Map<String, dynamic>?> generateGeminiImageEdit({
     required List<String> imageUrls,
     required String prompt,
+    String? modelAiPrompt, // AI-generated description of the model
   }) async {
     try {
       // Webhook URL'i query parameter olarak ekle
@@ -711,6 +712,18 @@ class FalAiUsecase {
           Uri.parse('https://queue.fal.run/fal-ai/gemini-25-flash-image/edit')
               .replace(queryParameters: {'fal_webhook': webhookUrl});
 
+      // Create a detailed prompt using the model's AI description
+      String finalPrompt;
+      if (modelAiPrompt != null && modelAiPrompt.isNotEmpty) {
+        // Use the model's AI description to create a specific prompt
+        finalPrompt =
+            'The first image shows $modelAiPrompt. Put the clothing items from the other images onto this person. Make sure to only transfer the clothing items, not any people wearing them in the source images.';
+      } else {
+        // Fallback to simple prompt
+        finalPrompt =
+            'Put the clothing items from the other images onto the person in the first image. Transfer only the clothes, not any people wearing them.';
+      }
+
       final apiKey = await getFalAiApiKey();
       final response = await http.post(
         uri,
@@ -719,7 +732,7 @@ class FalAiUsecase {
           "Content-Type": "application/json",
         },
         body: jsonEncode({
-          "prompt": 'Kıyafetleri kadına giydir',
+          "prompt": finalPrompt,
           "image_urls": imageUrls,
         }),
       );
