@@ -258,11 +258,14 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
   }
 
   Widget _buildAppBar(BuildContext context) {
+    final item = widget.closetItem;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Geri butonu
           IconButton(
             icon: Container(
               padding: EdgeInsets.all(8.w),
@@ -284,28 +287,182 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
             ),
             onPressed: () => context.router.pop(),
           ),
-          IconButton(
-            icon: Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.95),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 12,
+
+          // Sağ taraftaki butonlar
+          Row(
+            children: [
+              // Fullscreen butonu - scroll ilerleyince görünür
+              AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: _progress > 0.5 ? 1.0 : 0.0,
+                child: AnimatedScale(
+                  duration: const Duration(milliseconds: 200),
+                  scale: _progress > 0.5 ? 1.0 : 0.8,
+                  child: IconButton(
+                    icon: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.95),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 12,
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.fullscreen,
+                        color: context.baseColor,
+                        size: 20.sp,
+                      ),
+                    ),
+                    onPressed: _progress > 0.5
+                        ? () => _openFullscreenViewer(context, item)
+                        : null,
+                  ),
+                ),
+              ),
+
+              // Sil butonu
+              IconButton(
+                icon: Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.95),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 12,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.delete_outline,
+                    color: Colors.grey[600],
+                    size: 20.sp,
+                  ),
+                ),
+                onPressed: () => _deleteItem(context),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _openFullscreenViewer(BuildContext context, ClosetItem item) {
+    // Renk bazlı arka plan belirleme
+    final itemColor = item.color?.toLowerCase() ?? '';
+    final isDarkColor = itemColor.contains('black') ||
+        itemColor.contains('navy') ||
+        itemColor.contains('dark');
+    final backgroundColor = isDarkColor ? Colors.white : Colors.black;
+    final iconColor = isDarkColor ? Colors.black : Colors.white;
+
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        barrierColor: Colors.black87,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return FadeTransition(
+            opacity: animation,
+            child: Scaffold(
+              backgroundColor: backgroundColor,
+              body: Stack(
+                children: [
+                  // Zoomable image
+                  Center(
+                    child: InteractiveViewer(
+                      minScale: 0.5,
+                      maxScale: 4.0,
+                      child: Hero(
+                        tag: 'fullscreen_${item.id}',
+                        child: CachedNetworkImage(
+                          imageUrl: item.imageUrl,
+                          fit: BoxFit.contain,
+                          placeholder: (context, url) => Center(
+                            child: CircularProgressIndicator(
+                              color: iconColor,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                          errorWidget: (_, __, ___) => Icon(
+                            Icons.broken_image_outlined,
+                            color: iconColor.withOpacity(0.5),
+                            size: 64.sp,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Close button
+                  Positioned(
+                    top: MediaQuery.of(context).padding.top + 16.h,
+                    right: 16.w,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: iconColor.withOpacity(0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: iconColor,
+                          size: 24.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Zoom hint
+                  Positioned(
+                    bottom: MediaQuery.of(context).padding.bottom + 32.h,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: iconColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.pinch,
+                              color: iconColor.withOpacity(0.7),
+                              size: 16.sp,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              'Yakınlaştırmak için çimdikle',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: iconColor.withOpacity(0.7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
-              child: Icon(
-                Icons.delete_outline,
-                color: Colors.grey[600],
-                size: 20.sp,
-              ),
             ),
-            onPressed: () => _deleteItem(context),
-          ),
-        ],
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 200),
       ),
     );
   }
