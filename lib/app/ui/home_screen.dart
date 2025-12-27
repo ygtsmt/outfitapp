@@ -11,7 +11,7 @@ import "package:ginly/app/bloc/app_bloc.dart";
 import "package:ginly/app/data/models/multi_lang_file.dart";
 import "package:ginly/app/features/auth/features/login/bloc/login_bloc.dart";
 import "package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart";
-import "package:ginly/app/features/library/bloc/library_bloc.dart";
+
 import "package:ginly/app/features/payment/ui/payment_screen.dart";
 import "package:ginly/app/ui/custom_drawer.dart";
 import "package:package_info_plus/package_info_plus.dart";
@@ -125,7 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
         return AutoTabsRouter(
           routes: const [
             DashbordTabRouter(),
-            LibraryTabRouter(),
             ClosetTabRouter(),
             TryOnTabRouter(),
             ProfileTabRouter(),
@@ -152,8 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         key: _scaffoldKey,
                         drawer: CustomDrawer(state: state),
                         resizeToAvoidBottomInset: true,
-                        appBar: (tabsRouter.activeIndex == 2 ||
-                                tabsRouter.activeIndex == 3)
+                        // Update indices: Closet is now 1, Try-On is now 2
+                        appBar: (tabsRouter.activeIndex == 1 ||
+                                tabsRouter.activeIndex == 2)
                             ? null
                             : AppBar(
                                 forceMaterialTransparency: true,
@@ -209,26 +209,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 1
-                                    ? const Icon(
-                                        Icons.local_library,
-                                      )
-                                    : const Icon(Icons.local_library_outlined),
-                                label: AppLocalizations.of(context).library,
-                              ),
-                              BottomNavigationBarItem(
-                                icon: tabsRouter.activeIndex == 2
                                     ? const Icon(Icons.checkroom)
                                     : const Icon(Icons.checkroom_outlined),
                                 label: 'Closet',
                               ),
                               BottomNavigationBarItem(
-                                icon: tabsRouter.activeIndex == 3
+                                icon: tabsRouter.activeIndex == 2
                                     ? const Icon(Icons.camera_alt)
                                     : const Icon(Icons.camera_alt_outlined),
                                 label: 'Try-On',
                               ),
                               BottomNavigationBarItem(
-                                icon: tabsRouter.activeIndex == 4
+                                icon: tabsRouter.activeIndex == 3
                                     ? const Icon(
                                         Icons.person,
                                       )
