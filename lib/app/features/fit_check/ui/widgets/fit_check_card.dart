@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ginly/app/features/fit_check/models/fit_check_model.dart';
 import 'package:ginly/app/features/fit_check/services/fit_check_service.dart';
+import 'package:ginly/app/features/fit_check/ui/widgets/streak_widget.dart';
+import 'package:ginly/core/routes/app_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -114,53 +117,99 @@ class _FitCheckCardState extends State<FitCheckCard> {
           borderRadius: BorderRadius.circular(20.r),
           child: Padding(
             padding: EdgeInsets.all(20.w),
-            child: Row(
+            child: Column(
+              spacing: 8.h,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: _isProcessing
-                      ? LoadingAnimationWidget.fourRotatingDots(
-                          color: Colors.white,
-                          size: 24.w,
-                        )
-                      : Icon(
-                          Icons.camera_alt_rounded,
-                          color: Colors.white,
-                          size: 24.sp,
-                        ),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(12.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: _isProcessing
+                          ? LoadingAnimationWidget.fourRotatingDots(
+                              color: Colors.white,
+                              size: 24.w,
+                            )
+                          : Icon(
+                              Icons.camera_alt_rounded,
+                              color: Colors.white,
+                              size: 24.sp,
+                            ),
+                    ),
+                    SizedBox(width: 16.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Günlük Fit Check',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                            ],
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            'Bugün ne giydin? Kaydet ve analiz et! 📸',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Günlük Fit Check',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const StreakWidget(isOverlay: true),
+                    GestureDetector(
+                      onTap: () {
+                        context.router
+                            .push(const FitCheckCalendarScreenRoute());
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(
+                              color: Colors.white.withOpacity(0.4), width: 1.5),
+                        ),
+                        child: Row(
+                          spacing: 4.w,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "History",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                            Icon(
+                              Icons.calendar_month_rounded,
+                              color: Colors.white,
+                              size: 20.sp,
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        'Bugün ne giydin? Kaydet ve analiz et! 📸',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
-                          fontSize: 12.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Colors.white70,
-                  size: 16.sp,
+                    ),
+                  ],
                 ),
               ],
             ),

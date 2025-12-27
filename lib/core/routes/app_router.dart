@@ -44,6 +44,7 @@ import "package:ginly/app/features/closet/ui/screens/batch_model_upload_progress
 import "package:ginly/app/features/closet/ui/screens/batch_model_upload_result_screen.dart";
 import "package:ginly/app/features/closet/ui/screens/failed_model_review_screen.dart";
 import "package:ginly/app/features/closet/models/model_item_model.dart";
+import "package:ginly/app/features/fit_check/ui/screens/fit_check_calendar_screen.dart";
 import "package:ginly/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart";
 import "package:ginly/app/features/text_to_image/ui/text_to_image_screen.dart";
 import "package:ginly/app/features/try_on/ui/try_on_screen.dart";
@@ -325,6 +326,12 @@ part "app_router.gr.dart";
     CustomRoute(
       page: FailedModelReviewScreen,
       path: "/failed-model-review-screen",
+      transitionsBuilder: TransitionsBuilders.slideLeft,
+    ),
+    // Fit Check
+    CustomRoute(
+      page: FitCheckCalendarScreen,
+      path: "/fit-check-calendar-screen",
       transitionsBuilder: TransitionsBuilders.slideLeft,
     ),
   ],

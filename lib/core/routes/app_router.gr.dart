@@ -369,6 +369,15 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    FitCheckCalendarScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const FitCheckCalendarScreen(),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -775,6 +784,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           FailedModelReviewScreenRoute.name,
           path: '/failed-model-review-screen',
+        ),
+        RouteConfig(
+          FitCheckCalendarScreenRoute.name,
+          path: '/fit-check-calendar-screen',
         ),
       ];
 }
@@ -1552,6 +1565,18 @@ class FailedModelReviewScreenRouteArgs {
   String toString() {
     return 'FailedModelReviewScreenRouteArgs{key: $key, failedPhotos: $failedPhotos}';
   }
+}
+
+/// generated route for
+/// [FitCheckCalendarScreen]
+class FitCheckCalendarScreenRoute extends PageRouteInfo<void> {
+  const FitCheckCalendarScreenRoute()
+      : super(
+          FitCheckCalendarScreenRoute.name,
+          path: '/fit-check-calendar-screen',
+        );
+
+  static const String name = 'FitCheckCalendarScreenRoute';
 }
 
 /// generated route for

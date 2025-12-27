@@ -138,4 +138,88 @@ class FitCheckService {
 
     return snapshot.docs.map((doc) => FitCheckLog.fromMap(doc.data())).toList();
   }
+
+  /// Stream fit checks for a specific month
+  Stream<List<FitCheckLog>> getFitChecksForMonthStream(DateTime month) {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) return Stream.value([]);
+
+    // Calculate start and end of the month
+    final startOfMonth = DateTime(month.year, month.month, 1);
+    final endOfMonth = DateTime(month.year, month.month + 1, 0, 23, 59, 59);
+
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('fit_checks')
+        .where('createdAt',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startOfMonth))
+        .where('createdAt', isLessThanOrEqualTo: Timestamp.fromDate(endOfMonth))
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => FitCheckLog.fromMap(doc.data()))
+          .toList();
+    });
+  }
+
+  /// Calculates the current streak of consecutive days with Fit Checks
+  Future<int> calculateStreak() async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) return 0;
+
+    // improved query: fetch only needed fields (createdAt) and limited to recent past
+    // However, for simplicity and strictness, we fetch recent 30 logs.
+    final snapshot = await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('fit_checks')
+        .orderBy('createdAt', descending: true)
+        .limit(30)
+        .get();
+
+    if (snapshot.docs.isEmpty) return 0;
+
+    final logs = snapshot.docs.map((doc) {
+      final data = doc.data();
+      return (data['createdAt'] as Timestamp).toDate();
+    }).toList();
+
+    if (logs.isEmpty) return 0;
+
+    // Normalize dates to remove time
+    final normalizedDates = logs
+        .map((date) {
+          return DateTime(date.year, date.month, date.day);
+        })
+        .toSet()
+        .toList()
+      ..sort((a, b) => b.compareTo(a)); // Descending
+
+    if (normalizedDates.isEmpty) return 0;
+
+    final today = DateTime.now();
+    final todayNormalized = DateTime(today.year, today.month, today.day);
+    final yesterdayNormalized =
+        todayNormalized.subtract(const Duration(days: 1));
+
+    // Check if streak is active (has entry for today or yesterday)
+    if (!normalizedDates.contains(todayNormalized) &&
+        !normalizedDates.contains(yesterdayNormalized)) {
+      return 0;
+    }
+
+    int streak = 0;
+    // Start checking from today (or yesterday if today is missing)
+    DateTime checkDate = normalizedDates.contains(todayNormalized)
+        ? todayNormalized
+        : yesterdayNormalized;
+
+    while (normalizedDates.contains(checkDate)) {
+      streak++;
+      checkDate = checkDate.subtract(const Duration(days: 1));
+    }
+
+    return streak;
+  }
 }
