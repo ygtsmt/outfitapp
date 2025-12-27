@@ -6,7 +6,7 @@ class ClothingAnalysisService {
   late final GenerativeModel _model;
 
   // Gemini API Key
-  static const String _apiKey = 'AIzaSyDLlCDOs_bE4YmOxwjiGtZMyhOl6jD-vaA';
+  static const String _apiKey = 'AIzaSyAkFWcwsPZ8hlHW5r4aMe1a5tmXYjm_024';
 
   ClothingAnalysisService() {
     _model = GenerativeModel(

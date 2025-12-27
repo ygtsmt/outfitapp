@@ -68,6 +68,8 @@
 	<true/>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-9293946059678095~1449445209</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Bulunduğunuz konuma göre hava durumu bilgisi göstermek için konum erişimi gereklidir.</string>
 
 </dict>
 </plist>

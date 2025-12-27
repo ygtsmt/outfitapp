@@ -12,63 +12,65 @@ import 'package:cloud_firestore/cloud_firestore.dart' as _i7;
 import 'package:dio/dio.dart' as _i5;
 import 'package:firebase_auth/firebase_auth.dart' as _i6;
 import 'package:firebase_storage/firebase_storage.dart' as _i8;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i10;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i11;
 import 'package:get_it/get_it.dart' as _i1;
-import 'package:ginly/app/bloc/app_bloc.dart' as _i39;
+import 'package:ginly/app/bloc/app_bloc.dart' as _i40;
 import 'package:ginly/app/core/services/first_install_bonus_service.dart'
     as _i9;
-import 'package:ginly/app/data/app_usecase.dart' as _i26;
+import 'package:ginly/app/data/app_usecase.dart' as _i27;
 import 'package:ginly/app/features/auth/features/create_account/bloc/create_account_bloc.dart'
-    as _i41;
-import 'package:ginly/app/features/auth/features/create_account/data/create_account_usecase.dart'
-    as _i28;
-import 'package:ginly/app/features/auth/features/login/bloc/login_bloc.dart'
-    as _i31;
-import 'package:ginly/app/features/auth/features/login/data/login_usecase.dart'
-    as _i14;
-import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart'
     as _i42;
+import 'package:ginly/app/features/auth/features/create_account/data/create_account_usecase.dart'
+    as _i29;
+import 'package:ginly/app/features/auth/features/login/bloc/login_bloc.dart'
+    as _i32;
+import 'package:ginly/app/features/auth/features/login/data/login_usecase.dart'
+    as _i15;
+import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart'
+    as _i43;
 import 'package:ginly/app/features/auth/features/profile/data/profile_usecase.dart'
-    as _i33;
+    as _i34;
 import 'package:ginly/app/features/auth/features/splash/bloc/splash_bloc.dart'
-    as _i20;
-import 'package:ginly/app/features/auth/features/splash/data/splash_usecase.dart'
     as _i21;
-import 'package:ginly/app/features/closet/bloc/closet_bloc.dart' as _i40;
-import 'package:ginly/app/features/closet/data/closet_usecase.dart' as _i27;
-import 'package:ginly/app/features/fal_ai/data/fal_ai_usecase.dart' as _i29;
-import 'package:ginly/app/features/library/bloc/library_bloc.dart' as _i30;
-import 'package:ginly/app/features/library/data/library_usecase.dart' as _i13;
-import 'package:ginly/app/features/payment/bloc/payment_bloc.dart' as _i32;
-import 'package:ginly/app/features/payment/data/payment_usecase.dart' as _i15;
-import 'package:ginly/app/features/realtime/bloc/realtime_bloc.dart' as _i34;
-import 'package:ginly/app/features/realtime/data/realtime_usecase.dart' as _i16;
-import 'package:ginly/app/features/report/bloc/report_bloc.dart' as _i35;
-import 'package:ginly/app/features/report/data/report_usecase.dart' as _i17;
-import 'package:ginly/app/features/template_generate/bloc/template_generate_bloc.dart'
-    as _i36;
-import 'package:ginly/app/features/template_generate/data/template_generate_usecase.dart'
+import 'package:ginly/app/features/auth/features/splash/data/splash_usecase.dart'
     as _i22;
-import 'package:ginly/app/features/text_to_image/bloc/text_to_image_bloc.dart'
+import 'package:ginly/app/features/closet/bloc/closet_bloc.dart' as _i41;
+import 'package:ginly/app/features/closet/data/closet_usecase.dart' as _i28;
+import 'package:ginly/app/features/fal_ai/data/fal_ai_usecase.dart' as _i30;
+import 'package:ginly/app/features/fit_check/services/fit_check_service.dart'
+    as _i10;
+import 'package:ginly/app/features/library/bloc/library_bloc.dart' as _i31;
+import 'package:ginly/app/features/library/data/library_usecase.dart' as _i14;
+import 'package:ginly/app/features/payment/bloc/payment_bloc.dart' as _i33;
+import 'package:ginly/app/features/payment/data/payment_usecase.dart' as _i16;
+import 'package:ginly/app/features/realtime/bloc/realtime_bloc.dart' as _i35;
+import 'package:ginly/app/features/realtime/data/realtime_usecase.dart' as _i17;
+import 'package:ginly/app/features/report/bloc/report_bloc.dart' as _i36;
+import 'package:ginly/app/features/report/data/report_usecase.dart' as _i18;
+import 'package:ginly/app/features/template_generate/bloc/template_generate_bloc.dart'
     as _i37;
-import 'package:ginly/app/features/text_to_image/data/text_to_image_usecase.dart'
+import 'package:ginly/app/features/template_generate/data/template_generate_usecase.dart'
     as _i23;
-import 'package:ginly/app/features/video_generate/bloc/video_generate_bloc.dart'
+import 'package:ginly/app/features/text_to_image/bloc/text_to_image_bloc.dart'
     as _i38;
+import 'package:ginly/app/features/text_to_image/data/text_to_image_usecase.dart'
+    as _i24;
+import 'package:ginly/app/features/video_generate/bloc/video_generate_bloc.dart'
+    as _i39;
 import 'package:ginly/app/features/video_generate/data/video_generate_usecase.dart'
-    as _i25;
-import 'package:ginly/core/data_sources/firebase_module_firestore.dart' as _i44;
+    as _i26;
+import 'package:ginly/core/data_sources/firebase_module_firestore.dart' as _i45;
 import 'package:ginly/core/data_sources/local_data_source/secure_data_storage.dart'
-    as _i18;
-import 'package:ginly/core/injection/modules/dio_module.dart' as _i43;
+    as _i19;
+import 'package:ginly/core/injection/modules/dio_module.dart' as _i44;
 import 'package:ginly/core/injection/modules/secure_storage_module.dart'
-    as _i45;
+    as _i46;
 import 'package:ginly/core/routes/app_router.dart' as _i3;
 import 'package:ginly/core/services/bottom_sheet_service.dart' as _i4;
-import 'package:ginly/core/services/language_service.dart' as _i12;
-import 'package:ginly/core/services/snackbar_service.dart' as _i19;
-import 'package:ginly/core/services/theme_service.dart' as _i24;
-import 'package:google_sign_in/google_sign_in.dart' as _i11;
+import 'package:ginly/core/services/language_service.dart' as _i13;
+import 'package:ginly/core/services/snackbar_service.dart' as _i20;
+import 'package:ginly/core/services/theme_service.dart' as _i25;
+import 'package:google_sign_in/google_sign_in.dart' as _i12;
 import 'package:injectable/injectable.dart' as _i2;
 
 extension GetItInjectableX on _i1.GetIt {
@@ -96,125 +98,130 @@ extension GetItInjectableX on _i1.GetIt {
     gh.singleton<_i8.FirebaseStorage>(() => registerModule.firebaseStorage);
     gh.factory<_i9.FirstInstallBonusService>(
         () => _i9.FirstInstallBonusService(gh<_i7.FirebaseFirestore>()));
-    gh.singleton<_i10.FlutterSecureStorage>(
+    gh.factory<_i10.FitCheckService>(() => _i10.FitCheckService(
+          gh<_i6.FirebaseAuth>(),
+          gh<_i7.FirebaseFirestore>(),
+          gh<_i8.FirebaseStorage>(),
+        ));
+    gh.singleton<_i11.FlutterSecureStorage>(
         () => secureStorageModule.storage());
-    gh.lazySingleton<_i11.GoogleSignIn>(() => firebaseModule.googleSignIn);
-    gh.factory<_i12.LanguageService>(() => _i12.LanguageService());
-    gh.factory<_i13.LibraryUsecase>(() => _i13.LibraryUsecase(
+    gh.lazySingleton<_i12.GoogleSignIn>(() => firebaseModule.googleSignIn);
+    gh.factory<_i13.LanguageService>(() => _i13.LanguageService());
+    gh.factory<_i14.LibraryUsecase>(() => _i14.LibraryUsecase(
           firestore: gh<_i7.FirebaseFirestore>(),
           auth: gh<_i6.FirebaseAuth>(),
         ));
-    gh.factory<_i14.LoginUseCase>(() => _i14.LoginUseCase(
+    gh.factory<_i15.LoginUseCase>(() => _i15.LoginUseCase(
           auth: gh<_i6.FirebaseAuth>(),
-          googleSignIn: gh<_i11.GoogleSignIn>(),
+          googleSignIn: gh<_i12.GoogleSignIn>(),
         ));
-    gh.factory<_i15.PaymentUsecase>(() => _i15.PaymentUsecase(
+    gh.factory<_i16.PaymentUsecase>(() => _i16.PaymentUsecase(
           gh<_i6.FirebaseAuth>(),
           gh<_i8.FirebaseStorage>(),
           firestore: gh<_i7.FirebaseFirestore>(),
         ));
-    gh.factory<_i16.RealtimeUsecase>(() => _i16.RealtimeUsecase(
+    gh.factory<_i17.RealtimeUsecase>(() => _i17.RealtimeUsecase(
           gh<_i6.FirebaseAuth>(),
           gh<_i8.FirebaseStorage>(),
           firestore: gh<_i7.FirebaseFirestore>(),
         ));
-    gh.factory<_i17.ReportUsecase>(() => _i17.ReportUsecase(
+    gh.factory<_i18.ReportUsecase>(() => _i18.ReportUsecase(
           gh<_i6.FirebaseAuth>(),
           firestore: gh<_i7.FirebaseFirestore>(),
         ));
-    gh.singleton<_i18.SecureDataStorage>(
-        () => _i18.SecureDataStorage(gh<_i10.FlutterSecureStorage>()));
-    gh.factory<_i19.SnackBarService>(() => _i19.SnackBarService());
-    gh.singleton<_i20.SplashBloc>(() => _i20.SplashBloc());
-    gh.factory<_i21.SplashUseCase>(() => const _i21.SplashUseCase());
-    gh.factory<_i22.TemplateGenerateUsecase>(() => _i22.TemplateGenerateUsecase(
+    gh.singleton<_i19.SecureDataStorage>(
+        () => _i19.SecureDataStorage(gh<_i11.FlutterSecureStorage>()));
+    gh.factory<_i20.SnackBarService>(() => _i20.SnackBarService());
+    gh.singleton<_i21.SplashBloc>(() => _i21.SplashBloc());
+    gh.factory<_i22.SplashUseCase>(() => const _i22.SplashUseCase());
+    gh.factory<_i23.TemplateGenerateUsecase>(() => _i23.TemplateGenerateUsecase(
           firestore: gh<_i7.FirebaseFirestore>(),
           auth: gh<_i6.FirebaseAuth>(),
           storage: gh<_i8.FirebaseStorage>(),
         ));
-    gh.factory<_i23.TextToImageUsecase>(() => _i23.TextToImageUsecase(
+    gh.factory<_i24.TextToImageUsecase>(() => _i24.TextToImageUsecase(
           gh<_i6.FirebaseAuth>(),
           gh<_i8.FirebaseStorage>(),
           firestore: gh<_i7.FirebaseFirestore>(),
         ));
-    gh.factory<_i24.ThemeService>(() => _i24.ThemeService());
-    gh.factory<_i25.VideoGenerateUsecase>(() => _i25.VideoGenerateUsecase(
+    gh.factory<_i25.ThemeService>(() => _i25.ThemeService());
+    gh.factory<_i26.VideoGenerateUsecase>(() => _i26.VideoGenerateUsecase(
           firestore: gh<_i7.FirebaseFirestore>(),
           auth: gh<_i6.FirebaseAuth>(),
           storage: gh<_i8.FirebaseStorage>(),
         ));
-    gh.factory<_i26.AppUseCase>(() => _i26.AppUseCase(
-          gh<_i18.SecureDataStorage>(),
+    gh.factory<_i27.AppUseCase>(() => _i27.AppUseCase(
+          gh<_i19.SecureDataStorage>(),
           firestore: gh<_i7.FirebaseFirestore>(),
         ));
-    gh.factory<_i27.ClosetUseCase>(() => _i27.ClosetUseCase(
+    gh.factory<_i28.ClosetUseCase>(() => _i28.ClosetUseCase(
           firestore: gh<_i7.FirebaseFirestore>(),
           auth: gh<_i6.FirebaseAuth>(),
           storage: gh<_i8.FirebaseStorage>(),
         ));
-    gh.factory<_i28.CreateAccountUseCase>(() => _i28.CreateAccountUseCase(
+    gh.factory<_i29.CreateAccountUseCase>(() => _i29.CreateAccountUseCase(
           auth: gh<_i6.FirebaseAuth>(),
-          googleSignIn: gh<_i11.GoogleSignIn>(),
+          googleSignIn: gh<_i12.GoogleSignIn>(),
           firestore: gh<_i7.FirebaseFirestore>(),
           bonusService: gh<_i9.FirstInstallBonusService>(),
         ));
-    gh.factory<_i29.FalAiUsecase>(() => _i29.FalAiUsecase(
+    gh.factory<_i30.FalAiUsecase>(() => _i30.FalAiUsecase(
           firestore: gh<_i7.FirebaseFirestore>(),
           auth: gh<_i6.FirebaseAuth>(),
           storage: gh<_i8.FirebaseStorage>(),
         ));
-    gh.singleton<_i30.LibraryBloc>(() => _i30.LibraryBloc(
-          generateUseCase: gh<_i13.LibraryUsecase>(),
-          videoGenerateUsecase: gh<_i25.VideoGenerateUsecase>(),
+    gh.singleton<_i31.LibraryBloc>(() => _i31.LibraryBloc(
+          generateUseCase: gh<_i14.LibraryUsecase>(),
+          videoGenerateUsecase: gh<_i26.VideoGenerateUsecase>(),
         ));
-    gh.singleton<_i31.LoginBloc>(() => _i31.LoginBloc(
-          loginUseCase: gh<_i14.LoginUseCase>(),
-          createAccountUseCase: gh<_i28.CreateAccountUseCase>(),
+    gh.singleton<_i32.LoginBloc>(() => _i32.LoginBloc(
+          loginUseCase: gh<_i15.LoginUseCase>(),
+          createAccountUseCase: gh<_i29.CreateAccountUseCase>(),
         ));
-    gh.singleton<_i32.PaymentBloc>(
-        () => _i32.PaymentBloc(generateUseCase: gh<_i15.PaymentUsecase>()));
-    gh.factory<_i33.ProfileUseCase>(() => _i33.ProfileUseCase(
+    gh.singleton<_i33.PaymentBloc>(
+        () => _i33.PaymentBloc(generateUseCase: gh<_i16.PaymentUsecase>()));
+    gh.factory<_i34.ProfileUseCase>(() => _i34.ProfileUseCase(
           auth: gh<_i6.FirebaseAuth>(),
-          googleSignIn: gh<_i11.GoogleSignIn>(),
+          googleSignIn: gh<_i12.GoogleSignIn>(),
           firestore: gh<_i7.FirebaseFirestore>(),
-          secureDataStorage: gh<_i18.SecureDataStorage>(),
+          secureDataStorage: gh<_i19.SecureDataStorage>(),
         ));
-    gh.singleton<_i34.RealtimeBloc>(
-        () => _i34.RealtimeBloc(generateUseCase: gh<_i16.RealtimeUsecase>()));
-    gh.singleton<_i35.ReportBloc>(
-        () => _i35.ReportBloc(reportUsecase: gh<_i17.ReportUsecase>()));
-    gh.singleton<_i36.TemplateGenerateBloc>(() => _i36.TemplateGenerateBloc(
-          templateUseCase: gh<_i22.TemplateGenerateUsecase>(),
-          falAiUsecase: gh<_i29.FalAiUsecase>(),
-          videoGenerateUsecase: gh<_i25.VideoGenerateUsecase>(),
+    gh.singleton<_i35.RealtimeBloc>(
+        () => _i35.RealtimeBloc(generateUseCase: gh<_i17.RealtimeUsecase>()));
+    gh.singleton<_i36.ReportBloc>(
+        () => _i36.ReportBloc(reportUsecase: gh<_i18.ReportUsecase>()));
+    gh.singleton<_i37.TemplateGenerateBloc>(() => _i37.TemplateGenerateBloc(
+          templateUseCase: gh<_i23.TemplateGenerateUsecase>(),
+          falAiUsecase: gh<_i30.FalAiUsecase>(),
+          videoGenerateUsecase: gh<_i26.VideoGenerateUsecase>(),
         ));
-    gh.singleton<_i37.TextToImageBloc>(() =>
-        _i37.TextToImageBloc(generateUseCase: gh<_i23.TextToImageUsecase>()));
-    gh.singleton<_i38.VideoGenerateBloc>(() => _i38.VideoGenerateBloc(
-          generateUseCase: gh<_i25.VideoGenerateUsecase>(),
-          falAiUsecase: gh<_i29.FalAiUsecase>(),
+    gh.singleton<_i38.TextToImageBloc>(() =>
+        _i38.TextToImageBloc(generateUseCase: gh<_i24.TextToImageUsecase>()));
+    gh.singleton<_i39.VideoGenerateBloc>(() => _i39.VideoGenerateBloc(
+          generateUseCase: gh<_i26.VideoGenerateUsecase>(),
+          falAiUsecase: gh<_i30.FalAiUsecase>(),
         ));
-    gh.singleton<_i39.AppBloc>(
-        () => _i39.AppBloc(appUsecase: gh<_i26.AppUseCase>()));
-    gh.singleton<_i40.ClosetBloc>(
-        () => _i40.ClosetBloc(closetUseCase: gh<_i27.ClosetUseCase>()));
-    gh.singleton<_i41.CreateAccountBloc>(() => _i41.CreateAccountBloc(
-        createAccountUseCase: gh<_i28.CreateAccountUseCase>()));
-    gh.singleton<_i42.ProfileBloc>(() => _i42.ProfileBloc(
-          loginUseCase: gh<_i14.LoginUseCase>(),
-          createAccountUseCase: gh<_i28.CreateAccountUseCase>(),
-          profileUseCase: gh<_i33.ProfileUseCase>(),
+    gh.singleton<_i40.AppBloc>(
+        () => _i40.AppBloc(appUsecase: gh<_i27.AppUseCase>()));
+    gh.singleton<_i41.ClosetBloc>(
+        () => _i41.ClosetBloc(closetUseCase: gh<_i28.ClosetUseCase>()));
+    gh.singleton<_i42.CreateAccountBloc>(() => _i42.CreateAccountBloc(
+        createAccountUseCase: gh<_i29.CreateAccountUseCase>()));
+    gh.singleton<_i43.ProfileBloc>(() => _i43.ProfileBloc(
+          loginUseCase: gh<_i15.LoginUseCase>(),
+          createAccountUseCase: gh<_i29.CreateAccountUseCase>(),
+          profileUseCase: gh<_i34.ProfileUseCase>(),
         ));
     return this;
   }
 }
 
-class _$DioModule extends _i43.DioModule {}
+class _$DioModule extends _i44.DioModule {}
 
-class _$FirebaseModule extends _i14.FirebaseModule {}
+class _$FirebaseModule extends _i15.FirebaseModule {}
 
-class _$FirebaseModuleFirestore extends _i44.FirebaseModuleFirestore {}
+class _$FirebaseModuleFirestore extends _i45.FirebaseModuleFirestore {}
 
-class _$RegisterModule extends _i43.RegisterModule {}
+class _$RegisterModule extends _i44.RegisterModule {}
 
-class _$SecureStorageModule extends _i45.SecureStorageModule {}
+class _$SecureStorageModule extends _i46.SecureStorageModule {}

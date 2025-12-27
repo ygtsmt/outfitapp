@@ -1,0 +1,141 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:ginly/app/features/fit_check/models/fit_check_model.dart';
+import 'package:injectable/injectable.dart';
+
+@injectable
+class FitCheckService {
+  final FirebaseAuth _auth;
+  final FirebaseFirestore _firestore;
+  final FirebaseStorage _storage;
+  late final GenerativeModel _geminiModel;
+
+  // Using the same API key as other services for consistency
+  static const String _apiKey = 'AIzaSyAkFWcwsPZ8hlHW5r4aMe1a5tmXYjm_024';
+
+  FitCheckService(this._auth, this._firestore, this._storage) {
+    _geminiModel = GenerativeModel(
+      model: 'gemini-2.5-flash',
+      apiKey: _apiKey,
+    );
+  }
+
+  /// Uploads the image to Firebase Storage and returns the download URL
+  Future<String> uploadFitCheckImage(File imageFile) async {
+    try {
+      final userId = _auth.currentUser?.uid;
+      if (userId == null) throw Exception('User not logged in');
+
+      final fileName = 'fit_check_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final ref = _storage.ref().child('users/$userId/fit_checks/$fileName');
+
+      final uploadTask = await ref.putFile(
+        imageFile,
+        SettableMetadata(contentType: 'image/jpeg'),
+      );
+
+      return await uploadTask.ref.getDownloadURL();
+    } catch (e) {
+      throw Exception('Failed to upload image: $e');
+    }
+  }
+
+  /// Analyzes the image using Gemini Vision to extract metadata
+  Future<Map<String, dynamic>> analyzeFitCheckImage(File imageFile) async {
+    try {
+      final imageBytes = await imageFile.readAsBytes();
+
+      const prompt = '''
+      Analyze this outfit photo strictly for fashion analytics.
+      Return ONLY a valid JSON object with the following fields:
+      
+      1. "colorPalette": A map where keys are color names (e.g., "Black", "Navy", "Beige") and values are their approximate percentage dominance in the outfit (0.0 to 1.0). Total should sum to roughly 1.0. Ignore background colors, focus on clothing.
+      2. "overallStyle": A single string describing the style (e.g., "Casual", "Formal", "Streetwear", "Athleisure", "Business Casual", "Vintage", "Minimalist").
+      3. "detectedItems": A list of strings naming the visible clothing items (e.g., ["Leather Jacket", "White T-Shirt", "Blue Jeans", "Sneakers"]).
+      4. "aiDescription": A cheerful, short styling compliment or observation (max 1 sentence).
+      
+      Example JSON:
+      {
+        "colorPalette": {"Black": 0.6, "Red": 0.4},
+        "overallStyle": "Streetwear",
+        "detectedItems": ["Black Hoodie", "Red Joggers", "Sneakers"],
+        "aiDescription": "Love the bold red and black contrast, looks very energetic!"
+      }
+      ''';
+
+      final content = [
+        Content.multi([
+          TextPart(prompt),
+          DataPart('image/jpeg', imageBytes),
+        ])
+      ];
+
+      final response = await _geminiModel.generateContent(content);
+      final responseText = response.text?.trim() ?? '';
+
+      return _parseJsonResponse(responseText);
+    } catch (e) {
+      // In case of error (e.g., safety block), return empty metadata but don't crash
+      print('Gemini Analysis Error: $e');
+      return {
+        'colorPalette': <String, double>{},
+        'overallStyle': 'Unknown',
+        'detectedItems': <String>[],
+        'aiDescription': 'Looking good!',
+      };
+    }
+  }
+
+  /// Saves the FitCheckLog to the user's sub-collection
+  Future<void> saveFitCheck(FitCheckLog log) async {
+    try {
+      final userId = _auth.currentUser?.uid;
+      if (userId == null) throw Exception('User not logged in');
+
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('fit_checks')
+          .doc(log.id)
+          .set(log.toMap());
+    } catch (e) {
+      throw Exception('Failed to save fit check: $e');
+    }
+  }
+
+  /// Helper to parse JSON from Markdown code blocks
+  Map<String, dynamic> _parseJsonResponse(String text) {
+    try {
+      String jsonString = text;
+      if (jsonString.contains('```json')) {
+        jsonString = jsonString.split('```json')[1].split('```')[0].trim();
+      } else if (jsonString.contains('```')) {
+        jsonString = jsonString.split('```')[1].split('```')[0].trim();
+      }
+      return jsonDecode(jsonString) as Map<String, dynamic>;
+    } catch (e) {
+      print('JSON Parse Error: $e');
+      return {};
+    }
+  }
+
+  /// Get recent fit checks
+  Future<List<FitCheckLog>> getRecentFitChecks({int limit = 10}) async {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) return [];
+
+    final snapshot = await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('fit_checks')
+        .orderBy('createdAt', descending: true)
+        .limit(limit)
+        .get();
+
+    return snapshot.docs.map((doc) => FitCheckLog.fromMap(doc.data())).toList();
+  }
+}
