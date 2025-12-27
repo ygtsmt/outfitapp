@@ -140,7 +140,7 @@ class _FitCheckCardState extends State<FitCheckCard> {
                               size: 24.sp,
                             ),
                     ),
-                    SizedBox(width: 16.w),
+                    SizedBox(width: 8.w),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,12 +155,11 @@ class _FitCheckCardState extends State<FitCheckCard> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              SizedBox(width: 8.w),
                             ],
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'Bugün ne giydin? Kaydet ve analiz et! 📸',
+                            'Bugün ne giydin? Outfit check yapalım mı?',
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.9),
                               fontSize: 12.sp,

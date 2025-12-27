@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
+import 'package:ginly/app/features/closet/ui/widgets/closet_analytics_widget.dart';
 import "package:ginly/app/features/dashboard/ui/widgets/weather_widget.dart";
 import 'package:ginly/app/features/fit_check/ui/widgets/fit_check_card.dart';
 import "package:ginly/core/extensions.dart";
@@ -42,7 +43,13 @@ class DashboardScreen extends StatelessWidget {
               SizedBox(height: 24.h),
 
               // Fit Check Card
+              // FitCheckWidget content
               const FitCheckCard(),
+
+              SizedBox(height: 24.h),
+
+              // Closet Analytics
+              const ClosetAnalyticsWidget(),
             ],
           ),
         ),
