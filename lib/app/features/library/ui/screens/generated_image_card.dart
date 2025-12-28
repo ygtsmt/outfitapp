@@ -2,8 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class GeneratedImageCard extends StatefulWidget {

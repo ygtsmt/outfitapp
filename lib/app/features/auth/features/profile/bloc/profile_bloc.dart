@@ -1,10 +1,10 @@
 import "dart:developer";
 import "dart:io";
-import "package:ginly/app/features/auth/features/create_account/data/create_account_usecase.dart";
-import "package:ginly/app/features/auth/features/login/data/login_usecase.dart";
-import "package:ginly/app/features/auth/features/profile/data/models/user_model.dart";
-import "package:ginly/app/features/auth/features/profile/data/profile_usecase.dart";
-import "package:ginly/core/core.dart";
+import "package:ginfit/app/features/auth/features/create_account/data/create_account_usecase.dart";
+import "package:ginfit/app/features/auth/features/login/data/login_usecase.dart";
+import "package:ginfit/app/features/auth/features/profile/data/models/user_model.dart";
+import "package:ginfit/app/features/auth/features/profile/data/profile_usecase.dart";
+import "package:ginfit/core/core.dart";
 import "package:equatable/equatable.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter_bloc/flutter_bloc.dart";

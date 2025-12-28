@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ginly/app/core/services/email_verification_service.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/core/services/email_verification_service.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class EmailVerificationDialog extends StatefulWidget {
   final VoidCallback? onVerified;

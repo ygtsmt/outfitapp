@@ -1,14 +1,14 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart';
-import 'package:ginly/app/features/realtime/bloc/realtime_bloc.dart';
-import 'package:ginly/app/features/realtime/ui/realtime_history_listview_widget.dart';
-import 'package:ginly/app/features/realtime/ui/widgets/realtime_generated_image_widget.dart';
-import 'package:ginly/app/features/realtime/ui/widgets/realtime_header_widget.dart';
-import 'package:ginly/app/features/realtime/ui/widgets/realtime_input_section_widget.dart';
-import 'package:ginly/app/features/realtime/ui/widgets/realtime_placeholder_widget.dart';
-import 'package:ginly/core/ui/widgets/report_dialog.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:ginfit/app/features/realtime/bloc/realtime_bloc.dart';
+import 'package:ginfit/app/features/realtime/ui/realtime_history_listview_widget.dart';
+import 'package:ginfit/app/features/realtime/ui/widgets/realtime_generated_image_widget.dart';
+import 'package:ginfit/app/features/realtime/ui/widgets/realtime_header_widget.dart';
+import 'package:ginfit/app/features/realtime/ui/widgets/realtime_input_section_widget.dart';
+import 'package:ginfit/app/features/realtime/ui/widgets/realtime_placeholder_widget.dart';
+import 'package:ginfit/core/ui/widgets/report_dialog.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
+import 'package:ginfit/core/core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';

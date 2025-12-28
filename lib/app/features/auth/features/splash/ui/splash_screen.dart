@@ -6,14 +6,14 @@ import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
-import "package:ginly/app/bloc/app_bloc.dart";
-import "package:ginly/app/features/auth/features/splash/bloc/splash_bloc.dart";
-import "package:ginly/app/ui/widgets/ginly_logo.dart";
-import "package:ginly/core/core.dart";
-import "package:ginly/core/services/language_service.dart";
-import "package:ginly/core/services/theme_service.dart";
-import "package:ginly/app/core/services/revenue_cat_service.dart";
-import "package:ginly/generated/l10n.dart";
+import "package:ginfit/app/bloc/app_bloc.dart";
+import "package:ginfit/app/features/auth/features/splash/bloc/splash_bloc.dart";
+import "package:ginfit/app/ui/widgets/ginly_logo.dart";
+import "package:ginfit/core/core.dart";
+import "package:ginfit/core/services/language_service.dart";
+import "package:ginfit/core/services/theme_service.dart";
+import "package:ginfit/app/core/services/revenue_cat_service.dart";
+import "package:ginfit/generated/l10n.dart";
 import "package:google_mobile_ads/google_mobile_ads.dart";
 import "package:package_info_plus/package_info_plus.dart";
 import "package:photo_manager/photo_manager.dart";
@@ -239,8 +239,8 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _showForceUpdateDialog() async {
     // Store URL'lerini belirle
     final storeUrl = Platform.isIOS
-        ? 'https://apps.apple.com/us/app/ginly-ai-ai-video-effects/id6749809985' // iOS App Store
-        : 'https://play.google.com/store/apps/details?id=com.ginowl.ginlyai'; // Android Play Store
+        ? 'https://apps.apple.com/us/app/ginfit.ai-ai-video-effects/id6749809985' // iOS App Store
+        : 'https://play.google.com/store/apps/details?id=com.ginfit.ai.outfit.generator.fitcheck'; // Android Play Store
 
     return showDialog<void>(
       context: context,

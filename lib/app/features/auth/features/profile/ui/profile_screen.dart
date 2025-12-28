@@ -1,15 +1,15 @@
 import "package:firebase_auth/firebase_auth.dart";
-import "package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart";
-import "package:ginly/app/features/auth/features/profile/ui/profile_info_screen.dart";
-import "package:ginly/app/features/auth/ui/side_image.dart";
+import "package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart";
+import "package:ginfit/app/features/auth/features/profile/ui/profile_info_screen.dart";
+import "package:ginfit/app/features/auth/ui/side_image.dart";
 import "package:auto_route/auto_route.dart";
 import "package:flutter/material.dart";
 import "package:flutter_adaptive_ui/flutter_adaptive_ui.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
-import "package:ginly/core/core.dart";
+import "package:ginfit/core/core.dart";
 
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class ProfileScreen extends StatelessWidget {
    ProfileScreen({super.key});

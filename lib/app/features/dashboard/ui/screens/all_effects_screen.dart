@@ -2,15 +2,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/bloc/app_bloc.dart';
-import 'package:ginly/app/features/dashboard/ui/widgets/app_bar_actions_widget.dart';
-import 'package:ginly/app/features/dashboard/ui/widgets/category_manager.dart';
-import 'package:ginly/app/features/dashboard/ui/widgets/effects_grid_widget.dart';
-import 'package:ginly/app/features/dashboard/ui/widgets/filter_dialog_widget.dart';
-import 'package:ginly/app/features/dashboard/ui/widgets/grid_layout_constants.dart';
-import 'package:ginly/app/features/dashboard/ui/widgets/search_bar_widget.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/bloc/app_bloc.dart';
+import 'package:ginfit/app/features/dashboard/ui/widgets/app_bar_actions_widget.dart';
+import 'package:ginfit/app/features/dashboard/ui/widgets/category_manager.dart';
+import 'package:ginfit/app/features/dashboard/ui/widgets/effects_grid_widget.dart';
+import 'package:ginfit/app/features/dashboard/ui/widgets/filter_dialog_widget.dart';
+import 'package:ginfit/app/features/dashboard/ui/widgets/grid_layout_constants.dart';
+import 'package:ginfit/app/features/dashboard/ui/widgets/search_bar_widget.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class AllEffectsScreen extends StatefulWidget {
   const AllEffectsScreen({super.key});

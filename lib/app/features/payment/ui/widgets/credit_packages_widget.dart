@@ -4,15 +4,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/payment/bloc/payment_bloc.dart';
-import 'package:ginly/app/bloc/app_bloc.dart';
-import 'package:ginly/app/features/payment/ui/widgets/payment_plan_card.dart';
-import 'package:ginly/app/data/models/plan_model.dart';
-import 'package:ginly/app/core/services/revenue_cat_service.dart';
-import 'package:ginly/app/ui/widgets/custom_gradient_button.dart';
-import 'package:ginly/core/utils.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/features/payment/bloc/payment_bloc.dart';
+import 'package:ginfit/app/bloc/app_bloc.dart';
+import 'package:ginfit/app/features/payment/ui/widgets/payment_plan_card.dart';
+import 'package:ginfit/app/data/models/plan_model.dart';
+import 'package:ginfit/app/core/services/revenue_cat_service.dart';
+import 'package:ginfit/app/ui/widgets/custom_gradient_button.dart';
+import 'package:ginfit/core/utils.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/generated/l10n.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io' show Platform;
@@ -211,7 +211,7 @@ class _CreditPackagesWidgetState extends State<CreditPackagesWidget>
                                   onPressed: () {
                                     context.router
                                         .push(DocumentsWebViewScreenRoute(
-                                      pdfUrl: 'https://ginly.ai/terms',
+                                      pdfUrl: 'https://ginfit.ai/terms',
                                       title: 'Terms of Use',
                                     ));
                                   },
@@ -233,7 +233,7 @@ class _CreditPackagesWidgetState extends State<CreditPackagesWidget>
                                   onPressed: () {
                                     context.router
                                         .push(DocumentsWebViewScreenRoute(
-                                      pdfUrl: 'https://ginly.ai/privacy',
+                                      pdfUrl: 'https://ginfit.ai/privacy',
                                       title: 'Privacy Policy',
                                     ));
                                   },
@@ -324,11 +324,11 @@ class _CreditPackagesWidgetState extends State<CreditPackagesWidget>
   String _getPackageNameFromProductId(String productId) {
     switch (productId) {
       case 'ginly_extra_credit':
-        return 'Ginly AI Extra';
+        return 'GinFit AI Extra';
       case 'ginly_boost_credit':
-        return 'Ginly AI Boost';
+        return 'GinFit AI Boost';
       case 'ginly_mega_credit':
-        return 'Ginly AI Mega';
+        return 'GinFit AI Mega';
       default:
         return 'Credit Package';
     }

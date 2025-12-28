@@ -1,11 +1,11 @@
-import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/core/utils.dart';
+import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/core/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class PersonalInfoCard extends StatelessWidget {
   const PersonalInfoCard({Key? key}) : super(key: key);

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:ginly/app/features/library/ui/screens/video_full_screen.dart';
-import 'package:ginly/app/features/video_generate/model/video_generate_response_model.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
+import 'package:ginfit/app/features/library/ui/screens/video_full_screen.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_response_model.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
 import 'package:cached_video_player_plus/cached_video_player_plus.dart';
 
 class VideoPlayerWidget extends StatefulWidget {

@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:ginly/app/features/video_generate/model/video_generate_pixverse_pollo_request_model.dart';
-import 'package:ginly/app/features/video_generate/model/video_generate_response_model.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_pixverse_pollo_request_model.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_response_model.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
-import 'package:ginly/app/bloc/app_bloc.dart';
+import 'package:ginfit/app/bloc/app_bloc.dart';
 
 @injectable
 class FalAiUsecase {

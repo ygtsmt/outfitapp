@@ -64,7 +64,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "anime_style": MessageLookupByLibrary.simpleMessage("Anime-Stil"),
         "anime_style_description":
             MessageLookupByLibrary.simpleMessage("Japanischer Anime-Kunststil"),
-        "appName": MessageLookupByLibrary.simpleMessage("GINLY"),
+        "appName": MessageLookupByLibrary.simpleMessage("GinFit"),
         "app_settings":
             MessageLookupByLibrary.simpleMessage("App-Einstellungen"),
         "apple": MessageLookupByLibrary.simpleMessage("Apple"),
@@ -354,11 +354,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "getSubscriptionFirst":
             MessageLookupByLibrary.simpleMessage("Zuerst Abonnement holen"),
         "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("Ginly AI Plus Plan"),
+            MessageLookupByLibrary.simpleMessage("GinFit AI Plus Plan"),
         "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("Ginly AI Pro Plan"),
+            MessageLookupByLibrary.simpleMessage("GinFit AI Pro Plan"),
         "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("Ginly AI Ultra Plan"),
+            MessageLookupByLibrary.simpleMessage("GinFit AI Ultra Plan"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("Abonnement kaufen"),
         "good": MessageLookupByLibrary.simpleMessage("Gut"),
@@ -386,7 +386,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("HEIF-Format-Warnung"),
         "high_quality": MessageLookupByLibrary.simpleMessage("Hoch"),
         "howWasYourExperience": MessageLookupByLibrary.simpleMessage(
-            "Wie war Ihre Erfahrung mit Ginly AI?"),
+            "Wie war Ihre Erfahrung mit GinFit AI?"),
         "iHaveReadAndAgreedTo": MessageLookupByLibrary.simpleMessage(
             "Ich habe gelesen und stimme zu"),
         "idLabel": MessageLookupByLibrary.simpleMessage("ID: "),
@@ -403,7 +403,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "image_to_video": MessageLookupByLibrary.simpleMessage("Bild zu Video"),
         "images": MessageLookupByLibrary.simpleMessage("Bilder"),
         "initializing":
-            MessageLookupByLibrary.simpleMessage("Willkommen bei Ginly..."),
+            MessageLookupByLibrary.simpleMessage("Willkommen bei GinFit..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("Eingabebild"),
         "insufficientCredits":
             MessageLookupByLibrary.simpleMessage("Unzureichende Credits"),
@@ -690,11 +690,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingLanguage": MessageLookupByLibrary.simpleMessage(
             "Kreativität wird entfesselt..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "Schau dir dieses Bild an, das ich auf GINLY erstellt habe! App herunterladen: app.ginlyai.com"),
+            "Schau dir dieses Bild an, das ich auf GinFit erstellt habe! App herunterladen: app.ginlyai.com"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "Schau dir dieses Bild an, das ich auf GINLY erstellt habe!\nApp herunterladen: app.ginlyai.com"),
+            "Schau dir dieses Bild an, das ich auf GinFit erstellt habe!\nApp herunterladen: app.ginlyai.com"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "Schau dir dieses Video an, das ich auf GINLY AI erstellt habe! App herunterladen: app.ginlyai.com"),
+            "Schau dir dieses Video an, das ich auf GinFit AI erstellt habe! App herunterladen: app.ginlyai.com"),
         "short_video": MessageLookupByLibrary.simpleMessage("Kurzes Video"),
         "showAllEffects":
             MessageLookupByLibrary.simpleMessage("Alle Effekte anzeigen"),

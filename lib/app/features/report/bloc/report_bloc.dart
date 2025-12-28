@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ginly/app/features/auth/features/profile/data/models/report_model.dart';
-import 'package:ginly/app/features/report/data/report_usecase.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/auth/features/profile/data/models/report_model.dart';
+import 'package:ginfit/app/features/report/data/report_usecase.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

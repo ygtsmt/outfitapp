@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:ginly/app/features/library/ui/screens/library_videos_screen.dart';
-import 'package:ginly/app/features/library/bloc/library_bloc.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/library/ui/screens/library_videos_screen.dart';
+import 'package:ginfit/app/features/library/bloc/library_bloc.dart';
+import 'package:ginfit/core/core.dart';
 
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key});

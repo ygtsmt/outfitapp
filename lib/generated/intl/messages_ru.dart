@@ -63,7 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "anime_style": MessageLookupByLibrary.simpleMessage("Стиль Аниме"),
         "anime_style_description":
             MessageLookupByLibrary.simpleMessage("Японский стиль аниме"),
-        "appName": MessageLookupByLibrary.simpleMessage("GINLY"),
+        "appName": MessageLookupByLibrary.simpleMessage("GinFit"),
         "app_settings":
             MessageLookupByLibrary.simpleMessage("Настройки Приложения"),
         "apple": MessageLookupByLibrary.simpleMessage("Apple"),
@@ -355,11 +355,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "getSubscriptionFirst":
             MessageLookupByLibrary.simpleMessage("Получите Сначала Подписку"),
         "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("План Ginly AI Plus"),
+            MessageLookupByLibrary.simpleMessage("План GinFit AI Plus"),
         "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("План Ginly AI Pro"),
+            MessageLookupByLibrary.simpleMessage("План GinFit AI Pro"),
         "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("План Ginly AI Ultra"),
+            MessageLookupByLibrary.simpleMessage("План GinFit AI Ultra"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("Купить Подписку"),
         "good": MessageLookupByLibrary.simpleMessage("Хорошо"),
@@ -389,7 +389,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Предупреждение о Формате HEIF"),
         "high_quality": MessageLookupByLibrary.simpleMessage("Высокое"),
         "howWasYourExperience": MessageLookupByLibrary.simpleMessage(
-            "Как вам опыт использования Ginly AI?"),
+            "Как вам опыт использования GinFit AI?"),
         "iHaveReadAndAgreedTo":
             MessageLookupByLibrary.simpleMessage("Я прочитал и согласен с"),
         "idLabel": MessageLookupByLibrary.simpleMessage("ID: "),
@@ -408,8 +408,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "image_to_video":
             MessageLookupByLibrary.simpleMessage("Изображение в Видео"),
         "images": MessageLookupByLibrary.simpleMessage("Изображения"),
-        "initializing":
-            MessageLookupByLibrary.simpleMessage("Добро пожаловать в Ginly..."),
+        "initializing": MessageLookupByLibrary.simpleMessage(
+            "Добро пожаловать в GinFit..."),
         "inputImage":
             MessageLookupByLibrary.simpleMessage("Входное Изображение"),
         "insufficientCredits":
@@ -696,11 +696,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingLanguage":
             MessageLookupByLibrary.simpleMessage("Творческий процесс..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "Посмотрите это изображение, которое я создал в GINLY! Загрузите приложение: app.ginlyai.com"),
+            "Посмотрите это изображение, которое я создал в GinFit! Загрузите приложение: app.ginlyai.com"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "Посмотрите это изображение, которое я создал в GINLY!\nЗагрузите приложение: app.ginlyai.com"),
+            "Посмотрите это изображение, которое я создал в GinFit!\nЗагрузите приложение: app.ginlyai.com"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "Посмотрите это видео, которое я создал в GINLY AI! Загрузите приложение: app.ginlyai.com"),
+            "Посмотрите это видео, которое я создал в GinFit AI! Загрузите приложение: app.ginlyai.com"),
         "short_video": MessageLookupByLibrary.simpleMessage("Короткое Видео"),
         "showAllEffects":
             MessageLookupByLibrary.simpleMessage("Показать Все Эффекты"),

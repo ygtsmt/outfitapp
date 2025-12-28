@@ -1,15 +1,15 @@
 import 'dart:developer';
-import 'package:ginly/app/features/library/data/library_usecase.dart';
-import 'package:ginly/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart';
-import 'package:ginly/app/features/video_generate/model/video_generate_response_model.dart';
-import 'package:ginly/app/features/video_generate/model/pixverse_original_video_result_model.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/library/data/library_usecase.dart';
+import 'package:ginfit/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_response_model.dart';
+import 'package:ginfit/app/features/video_generate/model/pixverse_original_video_result_model.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ginly/app/features/video_generate/data/video_generate_usecase.dart';
+import 'package:ginfit/app/features/video_generate/data/video_generate_usecase.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginly/app/features/text_to_image/bloc/text_to_image_bloc.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
+import 'package:ginfit/app/features/text_to_image/bloc/text_to_image_bloc.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'dart:typed_data';
 

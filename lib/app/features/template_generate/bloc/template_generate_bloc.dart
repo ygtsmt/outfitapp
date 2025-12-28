@@ -1,11 +1,11 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:ginly/app/features/template_generate/data/template_generate_usecase.dart';
-import 'package:ginly/app/features/fal_ai/data/fal_ai_usecase.dart';
-import 'package:ginly/app/features/video_generate/data/video_generate_usecase.dart';
-import 'package:ginly/app/features/video_generate/model/video_generate_pixverse_pollo_request_model.dart';
-import 'package:ginly/app/features/video_generate/model/video_generate_response_model.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/template_generate/data/template_generate_usecase.dart';
+import 'package:ginfit/app/features/fal_ai/data/fal_ai_usecase.dart';
+import 'package:ginfit/app/features/video_generate/data/video_generate_usecase.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_pixverse_pollo_request_model.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_response_model.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

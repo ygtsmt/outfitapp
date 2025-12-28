@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:injectable/injectable.dart";
-import "package:ginly/core/keys.dart";
-import "package:ginly/generated/l10n.dart";
+import "package:ginfit/core/keys.dart";
+import "package:ginfit/generated/l10n.dart";
 
 @injectable
 class SnackBarService {

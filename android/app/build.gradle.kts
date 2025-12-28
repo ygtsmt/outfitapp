@@ -8,14 +8,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-}
+
 
 android {
-    namespace = "com.ginowl.ginlyai"
+    namespace = "com.ginfit.ai.outfit.generator.fitcheck"
     compileSdk = 36
     ndkVersion = "27.0.12077973"
 
@@ -33,7 +29,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.ginowl.ginlyai"
+        applicationId = "com.ginfit.ai.outfit.generator.fitcheck"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -42,16 +38,16 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String?
-            keyPassword = keystoreProperties["keyPassword"] as String?
-//            storeFile = file(keystoreProperties["storeFile"] as String)
- //           storePassword = keystoreProperties["storePassword"] as String?
+            // keyAlias = keystoreProperties["keyAlias"] as String?
+            // keyPassword = keystoreProperties["keyPassword"] as String?
+            // storeFile = file(keystoreProperties["storeFile"] as String)
+            // storePassword = keystoreProperties["storePassword"] as String?
         }
     }
 
     buildTypes {
         getByName("release") {
-            signingConfig = signingConfigs.getByName("release")
+            // signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }

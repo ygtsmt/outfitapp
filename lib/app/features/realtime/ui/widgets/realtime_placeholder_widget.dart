@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginly/app/features/realtime/bloc/realtime_bloc.dart';
-import 'package:ginly/app/features/realtime/ui/widgets/realtime_header_widget.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/features/realtime/bloc/realtime_bloc.dart';
+import 'package:ginfit/app/features/realtime/ui/widgets/realtime_header_widget.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class RealtimePlaceholderWidget extends StatelessWidget {
   const RealtimePlaceholderWidget({super.key});

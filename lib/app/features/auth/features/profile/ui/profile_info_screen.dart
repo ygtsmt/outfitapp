@@ -2,18 +2,18 @@ import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart';
-import 'package:ginly/app/bloc/app_bloc.dart';
-import 'package:ginly/app/ui/widgets/custom_gradient_button.dart';
-import 'package:ginly/app/ui/widgets/profile_image_network.dart';
-import 'package:ginly/app/ui/widgets/personal_info_card_widget.dart';
-import 'package:ginly/app/ui/widgets/profile_security_card_widget.dart';
-import 'package:ginly/core/utils.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:ginfit/app/bloc/app_bloc.dart';
+import 'package:ginfit/app/ui/widgets/custom_gradient_button.dart';
+import 'package:ginfit/app/ui/widgets/profile_image_network.dart';
+import 'package:ginfit/app/ui/widgets/personal_info_card_widget.dart';
+import 'package:ginfit/app/ui/widgets/profile_security_card_widget.dart';
+import 'package:ginfit/core/utils.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginly/core/helpers/error_message_handle.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/core/helpers/error_message_handle.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class ProfileInfoScreen extends StatefulWidget {
   const ProfileInfoScreen({super.key});

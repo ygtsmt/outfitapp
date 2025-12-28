@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class VideosLoadingWidget extends StatelessWidget {

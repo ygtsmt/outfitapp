@@ -1,7 +1,7 @@
 import "package:injectable/injectable.dart";
-import "package:ginly/app/bloc/app_bloc.dart";
-import "package:ginly/core/data_sources/local_data_source/secure_data_storage.dart";
-import "package:ginly/core/injection/injection.dart";
+import "package:ginfit/app/bloc/app_bloc.dart";
+import "package:ginfit/core/data_sources/local_data_source/secure_data_storage.dart";
+import "package:ginfit/core/injection/injection.dart";
 
 @injectable
 class ThemeService {

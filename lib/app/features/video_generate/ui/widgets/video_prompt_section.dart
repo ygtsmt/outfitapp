@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/video_generate/bloc/video_generate_bloc.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/features/video_generate/bloc/video_generate_bloc.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class VideoPromptSection extends StatelessWidget {
   final TextEditingController promptController;

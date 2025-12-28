@@ -4,12 +4,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/realtime/bloc/realtime_bloc.dart';
-import 'package:ginly/app/features/library/ui/widgets/image_details_text_widget.dart';
-import 'package:ginly/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/core/utils.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/features/realtime/bloc/realtime_bloc.dart';
+import 'package:ginfit/app/features/library/ui/widgets/image_details_text_widget.dart';
+import 'package:ginfit/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/core/utils.dart';
+import 'package:ginfit/generated/l10n.dart';
 import 'package:http/http.dart' as http;
 
 class RealtimeImageDetailScreen extends StatefulWidget {

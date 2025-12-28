@@ -2,17 +2,17 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:ginly/app/features/closet/data/closet_usecase.dart';
-import 'package:ginly/app/features/fal_ai/data/fal_ai_usecase.dart';
-import 'package:ginly/app/features/try_on/ui/widgets/user_selection_sheet.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/closet/data/closet_usecase.dart';
+import 'package:ginfit/app/features/fal_ai/data/fal_ai_usecase.dart';
+import 'package:ginfit/app/features/try_on/ui/widgets/user_selection_sheet.dart';
+import 'package:ginfit/core/core.dart';
 import 'dart:io';
-import 'package:ginly/app/features/closet/models/model_item_model.dart';
+import 'package:ginfit/app/features/closet/models/model_item_model.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter/services.dart';
-import 'package:ginly/app/features/closet/models/closet_item_model.dart';
+import 'package:ginfit/app/features/closet/models/closet_item_model.dart';
 import 'package:image_picker/image_picker.dart';
-// import 'package:ginly/app/features/closet/ui/widgets/models_tab_content.dart'; // Might be needed for some widgets or just use generic
+// import 'package:ginfit/app/features/closet/ui/widgets/models_tab_content.dart'; // Might be needed for some widgets or just use generic
 // import 'package:sizer/sizer.dart'; // Removed Sizer
 
 // Helper class for local colors since AppColors is not found

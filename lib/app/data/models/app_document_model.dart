@@ -1,4 +1,4 @@
-import 'package:ginly/app/data/models/multi_lang_file.dart';
+import 'package:ginfit/app/data/models/multi_lang_file.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'app_document_model.g.dart';

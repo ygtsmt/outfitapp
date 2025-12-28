@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ginly/app/features/text_to_image/data/text_to_image_usecase.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/text_to_image/data/text_to_image_usecase.dart';
+import 'package:ginfit/core/core.dart';
 
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';

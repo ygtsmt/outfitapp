@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/dashboard/ui/widgets/slider_widget.dart';
-import 'package:ginly/app/features/payment/ui/widgets/payment_watch_ad_button.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/app/data/models/features_doc_model.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/features/dashboard/ui/widgets/slider_widget.dart';
+import 'package:ginfit/app/features/payment/ui/widgets/payment_watch_ad_button.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/app/data/models/features_doc_model.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class PaymentHeaderWidget extends StatefulWidget {
   final List<VideoTemplate> trendingTemplates;
@@ -119,7 +119,7 @@ class _PaymentHeaderWidgetState extends State<PaymentHeaderWidget> {
                       color: context.white,
                     ),
                     Text(
-                      'Ginly AI',
+                      'GinFit AI',
                       style: Theme.of(context).textTheme.displayLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: context.white,

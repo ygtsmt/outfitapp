@@ -5,15 +5,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:ginly/app/features/text_to_image/bloc/text_to_image_bloc.dart';
-import 'package:ginly/app/features/text_to_image/model/text_to_image_flux_request_model.dart';
-import 'package:ginly/app/features/text_to_image/model/text_to_image_generation_response_model_for_all_flux.dart';
-import 'package:ginly/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/text_to_image/bloc/text_to_image_bloc.dart';
+import 'package:ginfit/app/features/text_to_image/model/text_to_image_flux_request_model.dart';
+import 'package:ginfit/app/features/text_to_image/model/text_to_image_generation_response_model_for_all_flux.dart';
+import 'package:ginfit/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
-import 'package:ginly/app/bloc/app_bloc.dart';
-import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:ginfit/app/bloc/app_bloc.dart';
+import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
 
 @injectable
 class TextToImageUsecase {

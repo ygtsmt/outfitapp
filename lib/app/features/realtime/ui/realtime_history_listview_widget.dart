@@ -3,11 +3,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/realtime/bloc/realtime_bloc.dart';
-import 'package:ginly/app/features/library/bloc/library_bloc.dart';
-import 'package:ginly/app/features/library/ui/screens/library_screen.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/realtime/bloc/realtime_bloc.dart';
+import 'package:ginfit/app/features/library/bloc/library_bloc.dart';
+import 'package:ginfit/app/features/library/ui/screens/library_screen.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
+import 'package:ginfit/core/core.dart';
 
 class RealtimeHistoryListviewWidget extends StatefulWidget {
   const RealtimeHistoryListviewWidget({super.key});

@@ -5,11 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:ginly/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart';
-import 'package:ginly/app/features/video_generate/model/video_generate_pollo_response_model.dart';
-import 'package:ginly/app/features/video_generate/model/video_generate_response_model.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/core/constants/app_constants.dart';
+import 'package:ginfit/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_pollo_response_model.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_response_model.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/core/constants/app_constants.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:injectable/injectable.dart';

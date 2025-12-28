@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/core/core.dart';
 
 /// Gallery Selection Screen for Model items.
 /// Uses ReusableGalleryPicker with multi-select and AI validation.

@@ -76,6 +76,6 @@ class DefaultFirebaseOptions {
         '793286859298-1vkvvdo2bodqne7ne88sknthtc7hu1v9.apps.googleusercontent.com',
     iosClientId:
         '793286859298-csip7ubjigejgsvs464d3j443vaocdq9.apps.googleusercontent.com',
-    iosBundleId: 'com.ginowl.ginlyai',
+    iosBundleId: 'com.ginfit.ai.outfit.generator.fitcheck',
   );
 }

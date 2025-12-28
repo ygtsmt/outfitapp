@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:flutter/material.dart';
 
-import 'package:ginly/core/constants/layout_constants.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomGradientButton extends StatelessWidget {

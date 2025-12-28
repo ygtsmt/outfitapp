@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart';
-import 'package:ginly/app/features/realtime/bloc/realtime_bloc.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:ginfit/app/features/realtime/bloc/realtime_bloc.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
+import 'package:ginfit/core/core.dart';
 
 class RealtimeGeneratedImageWidget extends StatelessWidget {
   const RealtimeGeneratedImageWidget({

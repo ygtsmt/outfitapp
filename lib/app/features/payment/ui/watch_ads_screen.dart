@@ -7,15 +7,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/payment/ui/widgets/watched_ads_daily_counter.dart';
-import 'package:ginly/app/ui/widgets/total_credit_widget.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/features/payment/ui/widgets/watched_ads_daily_counter.dart';
+import 'package:ginfit/app/ui/widgets/total_credit_widget.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
+import 'package:ginfit/generated/l10n.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart';
-import 'package:ginly/app/features/payment/bloc/payment_bloc.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:ginfit/app/features/payment/bloc/payment_bloc.dart';
+import 'package:ginfit/core/core.dart';
 
 class WatchAdsScreen extends StatefulWidget {
   const WatchAdsScreen({super.key});

@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/closet/models/closet_item_model.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/closet/models/closet_item_model.dart';
+import 'package:ginfit/core/core.dart';
 
 class AddClosetItemFormDialog extends StatefulWidget {
   final File imageFile;

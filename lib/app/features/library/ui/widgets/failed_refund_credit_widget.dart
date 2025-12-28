@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/video_generate/model/video_generate_response_model.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/app/features/library/ui/widgets/refund_options_dialog.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_response_model.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/app/features/library/ui/widgets/refund_options_dialog.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class FailedRefundCreditWidget extends StatefulWidget {
   const FailedRefundCreditWidget({

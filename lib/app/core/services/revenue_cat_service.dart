@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/generated/l10n.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -283,9 +283,9 @@ class RevenueCatService {
 
   /// Product ID'den paket adını çıkar
   static String _getPackageNameFromProductId(String productId) {
-    if (productId.contains('extra')) return 'Ginly AI Extra';
-    if (productId.contains('boost')) return 'Ginly AI Boost';
-    if (productId.contains('mega')) return 'Ginly AI Mega';
+    if (productId.contains('extra')) return 'GinFit AI Extra';
+    if (productId.contains('boost')) return 'GinFit AI Boost';
+    if (productId.contains('mega')) return 'GinFit AI Mega';
     return 'Unknown Package';
   }
 

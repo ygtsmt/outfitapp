@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ginly/app/features/auth/features/profile/data/models/user_model.dart';
+import 'package:ginfit/app/features/auth/features/profile/data/models/user_model.dart';
 
 class EmailVerificationService {
   /// Kullanıcının email doğrulaması gerekli mi kontrol et

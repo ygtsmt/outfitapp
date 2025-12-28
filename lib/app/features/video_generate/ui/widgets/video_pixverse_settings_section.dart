@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginly/app/bloc/app_bloc.dart';
-import 'package:ginly/app/features/video_generate/bloc/video_generate_bloc.dart';
-import 'package:ginly/app/features/video_generate/ui/widgets/video_pixverse_resolution_section.dart';
-import 'package:ginly/app/features/video_generate/ui/widgets/video_pixverse_length_section.dart';
-import 'package:ginly/app/features/video_generate/ui/widgets/video_aspect_ratio_section.dart';
-import 'package:ginly/generated/l10n.dart';
-import 'package:ginly/core/utils.dart';
+import 'package:ginfit/app/bloc/app_bloc.dart';
+import 'package:ginfit/app/features/video_generate/bloc/video_generate_bloc.dart';
+import 'package:ginfit/app/features/video_generate/ui/widgets/video_pixverse_resolution_section.dart';
+import 'package:ginfit/app/features/video_generate/ui/widgets/video_pixverse_length_section.dart';
+import 'package:ginfit/app/features/video_generate/ui/widgets/video_aspect_ratio_section.dart';
+import 'package:ginfit/generated/l10n.dart';
+import 'package:ginfit/core/utils.dart';
 
 class VideoPixverseSettingsSection extends StatelessWidget {
   final VideoGenerateState state;

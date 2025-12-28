@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:ginly/app/features/auth/features/profile/data/models/user_model.dart';
-import 'package:ginly/core/data_sources/local_data_source/secure_data_storage.dart';
+import 'package:ginfit/app/features/auth/features/profile/data/models/user_model.dart';
+import 'package:ginfit/core/data_sources/local_data_source/secure_data_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/generated/l10n.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 import 'package:image/image.dart' as img;

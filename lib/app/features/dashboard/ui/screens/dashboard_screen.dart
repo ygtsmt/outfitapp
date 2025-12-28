@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
-import 'package:ginly/app/features/closet/ui/widgets/closet_analytics_widget.dart';
-import "package:ginly/app/features/dashboard/ui/widgets/weather_widget.dart";
-import 'package:ginly/app/features/fit_check/ui/widgets/fit_check_card.dart';
-import "package:ginly/core/extensions.dart";
+import 'package:ginfit/app/features/closet/ui/widgets/closet_analytics_widget.dart';
+import "package:ginfit/app/features/dashboard/ui/widgets/weather_widget.dart";
+import 'package:ginfit/app/features/fit_check/ui/widgets/fit_check_card.dart';
+import "package:ginfit/core/extensions.dart";
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});

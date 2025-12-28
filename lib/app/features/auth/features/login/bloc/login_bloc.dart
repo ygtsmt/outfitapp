@@ -1,8 +1,8 @@
-import "package:ginly/app/features/auth/features/create_account/data/create_account_usecase.dart";
-import "package:ginly/app/features/auth/features/login/data/login_usecase.dart";
-import "package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart";
-import "package:ginly/core/enums.dart";
-import "package:ginly/core/core.dart";
+import "package:ginfit/app/features/auth/features/create_account/data/create_account_usecase.dart";
+import "package:ginfit/app/features/auth/features/login/data/login_usecase.dart";
+import "package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart";
+import "package:ginfit/core/enums.dart";
+import "package:ginfit/core/core.dart";
 
 import "package:equatable/equatable.dart";
 import "package:firebase_auth/firebase_auth.dart";

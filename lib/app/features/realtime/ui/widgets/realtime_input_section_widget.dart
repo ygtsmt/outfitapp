@@ -2,16 +2,16 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart';
-import 'package:ginly/app/features/realtime/bloc/realtime_bloc.dart';
-import 'package:ginly/app/ui/widgets/prompt_textfield.dart';
-import 'package:ginly/app/bloc/app_bloc.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:ginfit/app/features/realtime/bloc/realtime_bloc.dart';
+import 'package:ginfit/app/ui/widgets/prompt_textfield.dart';
+import 'package:ginfit/app/bloc/app_bloc.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:ginly/core/routes/app_router.dart';
+import 'package:ginfit/core/routes/app_router.dart';
 
 class RealtimeInputSectionWidget extends StatefulWidget {
   const RealtimeInputSectionWidget({

@@ -4,9 +4,9 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:ginly/app/features/closet/models/closet_item_model.dart';
-import 'package:ginly/app/features/closet/models/model_item_model.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/closet/models/closet_item_model.dart';
+import 'package:ginfit/app/features/closet/models/model_item_model.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable

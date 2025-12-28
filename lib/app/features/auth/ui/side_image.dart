@@ -1,4 +1,4 @@
-import "package:ginly/core/asset_paths.dart";
+import "package:ginfit/core/asset_paths.dart";
 import "package:flutter/material.dart";
 
 class SideImage extends StatelessWidget {

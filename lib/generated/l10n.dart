@@ -3480,30 +3480,30 @@ class AppLocalizations {
     );
   }
 
-  /// `Check out this image I created on GINLY! Download App: app.ginlyai.com`
+  /// `Check out this image I created on GinFit! Download App: app.ginlyai.com`
   String get shareText {
     return Intl.message(
-      'Check out this image I created on GINLY! Download App: app.ginlyai.com',
+      'Check out this image I created on GinFit! Download App: app.ginlyai.com',
       name: 'shareText',
       desc: '',
       args: [],
     );
   }
 
-  /// `Check out this image I created on GINLY!\nDownload App: app.ginlyai.com`
+  /// `Check out this image I created on GinFit!\nDownload App: app.ginlyai.com`
   String get shareTextFromUrl {
     return Intl.message(
-      'Check out this image I created on GINLY!\nDownload App: app.ginlyai.com',
+      'Check out this image I created on GinFit!\nDownload App: app.ginlyai.com',
       name: 'shareTextFromUrl',
       desc: '',
       args: [],
     );
   }
 
-  /// `Check out this video I created on GINLY AI! Download App: app.ginlyai.com`
+  /// `Check out this video I created on GinFit AI! Download App: app.ginlyai.com`
   String get shareVideoText {
     return Intl.message(
-      'Check out this video I created on GINLY AI! Download App: app.ginlyai.com',
+      'Check out this video I created on GinFit AI! Download App: app.ginlyai.com',
       name: 'shareVideoText',
       desc: '',
       args: [],
@@ -3730,10 +3730,10 @@ class AppLocalizations {
     );
   }
 
-  /// `GINLY`
+  /// `GinFit`
   String get appName {
     return Intl.message(
-      'GINLY',
+      'GinFit',
       name: 'appName',
       desc: '',
       args: [],
@@ -4110,10 +4110,10 @@ class AppLocalizations {
     );
   }
 
-  /// `How was your experience with Ginly AI?`
+  /// `How was your experience with GinFit AI?`
   String get howWasYourExperience {
     return Intl.message(
-      'How was your experience with Ginly AI?',
+      'How was your experience with GinFit AI?',
       name: 'howWasYourExperience',
       desc: '',
       args: [],
@@ -4210,30 +4210,30 @@ class AppLocalizations {
     );
   }
 
-  /// `Ginly AI Plus Plan`
+  /// `GinFit AI Plus Plan`
   String get ginlyAiPlusPlan {
     return Intl.message(
-      'Ginly AI Plus Plan',
+      'GinFit AI Plus Plan',
       name: 'ginlyAiPlusPlan',
       desc: '',
       args: [],
     );
   }
 
-  /// `Ginly AI Pro Plan`
+  /// `GinFit AI Pro Plan`
   String get ginlyAiProPlan {
     return Intl.message(
-      'Ginly AI Pro Plan',
+      'GinFit AI Pro Plan',
       name: 'ginlyAiProPlan',
       desc: '',
       args: [],
     );
   }
 
-  /// `Ginly AI Ultra Plan`
+  /// `GinFit AI Ultra Plan`
   String get ginlyAiUltraPlan {
     return Intl.message(
-      'Ginly AI Ultra Plan',
+      'GinFit AI Ultra Plan',
       name: 'ginlyAiUltraPlan',
       desc: '',
       args: [],
@@ -4690,10 +4690,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Welcome to Ginly...`
+  /// `Welcome to GinFit...`
   String get initializing {
     return Intl.message(
-      'Welcome to Ginly...',
+      'Welcome to GinFit...',
       name: 'initializing',
       desc: '',
       args: [],

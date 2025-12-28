@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:ginly/app/features/auth/features/profile/data/models/report_model.dart';
-import 'package:ginly/app/features/realtime/data/realtime_usecase.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/auth/features/profile/data/models/report_model.dart';
+import 'package:ginfit/app/features/realtime/data/realtime_usecase.dart';
+import 'package:ginfit/core/core.dart';
 
 import 'package:equatable/equatable.dart';
-import 'package:ginly/core/utils.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/core/utils.dart';
+import 'package:ginfit/generated/l10n.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 part 'realtime_event.dart';

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart';
-import 'package:ginly/app/features/video_generate/model/video_generate_response_model.dart';
+import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_response_model.dart';
 import 'package:flutter/services.dart';
-import 'package:ginly/app/core/services/refund_service.dart';
+import 'package:ginfit/app/core/services/refund_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/app/bloc/app_bloc.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/app/bloc/app_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class RefundOptionsDialog extends StatefulWidget {
   const RefundOptionsDialog({

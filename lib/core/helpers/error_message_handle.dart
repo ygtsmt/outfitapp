@@ -1,4 +1,4 @@
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class ErrorMessageHandle {
   static String getFirebaseAuthErrorMessage(String? errorCode) {

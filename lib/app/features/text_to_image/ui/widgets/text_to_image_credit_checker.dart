@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ginly/app/bloc/app_bloc.dart';
-import 'package:ginly/app/features/text_to_image/bloc/text_to_image_bloc.dart';
-import 'package:ginly/app/ui/widgets/custom_generate_button.dart';
-import 'package:ginly/app/ui/widgets/prompt_textfield.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
-import 'package:ginly/core/utils.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/bloc/app_bloc.dart';
+import 'package:ginfit/app/features/text_to_image/bloc/text_to_image_bloc.dart';
+import 'package:ginfit/app/ui/widgets/custom_generate_button.dart';
+import 'package:ginfit/app/ui/widgets/prompt_textfield.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
+import 'package:ginfit/core/utils.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class TextToImageCreditChecker extends StatelessWidget {
   final TextToImageState state;

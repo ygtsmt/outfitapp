@@ -1,4 +1,4 @@
-import 'package:ginly/app/features/video_generate/model/video_generate_response_model.dart';
+import 'package:ginfit/app/features/video_generate/model/video_generate_response_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'text_to_image_generation_response_model_for_black_forest_label.g.dart';

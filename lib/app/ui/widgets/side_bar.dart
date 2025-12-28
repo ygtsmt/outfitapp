@@ -1,8 +1,8 @@
 import "package:auto_route/auto_route.dart";
-import "package:ginly/app/bloc/app_bloc.dart";
-import "package:ginly/core/core.dart";
-import "package:ginly/core/data_sources/local_data_source/secure_data_storage.dart";
-import "package:ginly/generated/l10n.dart";
+import "package:ginfit/app/bloc/app_bloc.dart";
+import "package:ginfit/core/core.dart";
+import "package:ginfit/core/data_sources/local_data_source/secure_data_storage.dart";
+import "package:ginfit/generated/l10n.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 

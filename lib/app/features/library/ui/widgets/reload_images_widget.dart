@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ginly/app/features/library/bloc/library_bloc.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/app/features/library/bloc/library_bloc.dart';
+import 'package:ginfit/core/core.dart';
 
 class ReloadImagesWidget extends StatefulWidget {
   const ReloadImagesWidget({super.key});

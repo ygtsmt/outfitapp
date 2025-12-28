@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginly/app/features/library/bloc/library_bloc.dart';
-import 'package:ginly/app/features/library/ui/screens/generated_image_card.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/features/library/bloc/library_bloc.dart';
+import 'package:ginfit/app/features/library/ui/screens/generated_image_card.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class AllImagesScreen extends StatefulWidget {
   const AllImagesScreen({super.key});

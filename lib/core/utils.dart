@@ -2,13 +2,13 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:ginly/app/ui/widgets/custom_gradient_button.dart';
-import 'package:ginly/core/extensions.dart';
-import 'package:ginly/core/constants/layout_constants.dart';
+import 'package:ginfit/app/ui/widgets/custom_gradient_button.dart';
+import 'package:ginfit/core/extensions.dart';
+import 'package:ginfit/core/constants/layout_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/generated/l10n.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';

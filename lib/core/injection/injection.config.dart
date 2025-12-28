@@ -14,64 +14,64 @@ import 'package:firebase_auth/firebase_auth.dart' as _i7;
 import 'package:firebase_storage/firebase_storage.dart' as _i9;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i12;
 import 'package:get_it/get_it.dart' as _i1;
-import 'package:ginly/app/bloc/app_bloc.dart' as _i41;
-import 'package:ginly/app/core/services/first_install_bonus_service.dart'
+import 'package:ginfit/app/bloc/app_bloc.dart' as _i41;
+import 'package:ginfit/app/core/services/first_install_bonus_service.dart'
     as _i10;
-import 'package:ginly/app/data/app_usecase.dart' as _i28;
-import 'package:ginly/app/features/auth/features/create_account/bloc/create_account_bloc.dart'
+import 'package:ginfit/app/data/app_usecase.dart' as _i28;
+import 'package:ginfit/app/features/auth/features/create_account/bloc/create_account_bloc.dart'
     as _i43;
-import 'package:ginly/app/features/auth/features/create_account/data/create_account_usecase.dart'
+import 'package:ginfit/app/features/auth/features/create_account/data/create_account_usecase.dart'
     as _i30;
-import 'package:ginly/app/features/auth/features/login/bloc/login_bloc.dart'
+import 'package:ginfit/app/features/auth/features/login/bloc/login_bloc.dart'
     as _i33;
-import 'package:ginly/app/features/auth/features/login/data/login_usecase.dart'
+import 'package:ginfit/app/features/auth/features/login/data/login_usecase.dart'
     as _i16;
-import 'package:ginly/app/features/auth/features/profile/bloc/profile_bloc.dart'
+import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart'
     as _i44;
-import 'package:ginly/app/features/auth/features/profile/data/profile_usecase.dart'
+import 'package:ginfit/app/features/auth/features/profile/data/profile_usecase.dart'
     as _i35;
-import 'package:ginly/app/features/auth/features/splash/bloc/splash_bloc.dart'
+import 'package:ginfit/app/features/auth/features/splash/bloc/splash_bloc.dart'
     as _i22;
-import 'package:ginly/app/features/auth/features/splash/data/splash_usecase.dart'
+import 'package:ginfit/app/features/auth/features/splash/data/splash_usecase.dart'
     as _i23;
-import 'package:ginly/app/features/closet/bloc/closet_bloc.dart' as _i42;
-import 'package:ginly/app/features/closet/data/closet_usecase.dart' as _i29;
-import 'package:ginly/app/features/closet/services/closet_analysis_service.dart'
+import 'package:ginfit/app/features/closet/bloc/closet_bloc.dart' as _i42;
+import 'package:ginfit/app/features/closet/data/closet_usecase.dart' as _i29;
+import 'package:ginfit/app/features/closet/services/closet_analysis_service.dart'
     as _i5;
-import 'package:ginly/app/features/fal_ai/data/fal_ai_usecase.dart' as _i31;
-import 'package:ginly/app/features/fit_check/services/fit_check_service.dart'
+import 'package:ginfit/app/features/fal_ai/data/fal_ai_usecase.dart' as _i31;
+import 'package:ginfit/app/features/fit_check/services/fit_check_service.dart'
     as _i11;
-import 'package:ginly/app/features/library/bloc/library_bloc.dart' as _i32;
-import 'package:ginly/app/features/library/data/library_usecase.dart' as _i15;
-import 'package:ginly/app/features/payment/bloc/payment_bloc.dart' as _i34;
-import 'package:ginly/app/features/payment/data/payment_usecase.dart' as _i17;
-import 'package:ginly/app/features/realtime/bloc/realtime_bloc.dart' as _i36;
-import 'package:ginly/app/features/realtime/data/realtime_usecase.dart' as _i18;
-import 'package:ginly/app/features/report/bloc/report_bloc.dart' as _i37;
-import 'package:ginly/app/features/report/data/report_usecase.dart' as _i19;
-import 'package:ginly/app/features/template_generate/bloc/template_generate_bloc.dart'
+import 'package:ginfit/app/features/library/bloc/library_bloc.dart' as _i32;
+import 'package:ginfit/app/features/library/data/library_usecase.dart' as _i15;
+import 'package:ginfit/app/features/payment/bloc/payment_bloc.dart' as _i34;
+import 'package:ginfit/app/features/payment/data/payment_usecase.dart' as _i17;
+import 'package:ginfit/app/features/realtime/bloc/realtime_bloc.dart' as _i36;
+import 'package:ginfit/app/features/realtime/data/realtime_usecase.dart' as _i18;
+import 'package:ginfit/app/features/report/bloc/report_bloc.dart' as _i37;
+import 'package:ginfit/app/features/report/data/report_usecase.dart' as _i19;
+import 'package:ginfit/app/features/template_generate/bloc/template_generate_bloc.dart'
     as _i38;
-import 'package:ginly/app/features/template_generate/data/template_generate_usecase.dart'
+import 'package:ginfit/app/features/template_generate/data/template_generate_usecase.dart'
     as _i24;
-import 'package:ginly/app/features/text_to_image/bloc/text_to_image_bloc.dart'
+import 'package:ginfit/app/features/text_to_image/bloc/text_to_image_bloc.dart'
     as _i39;
-import 'package:ginly/app/features/text_to_image/data/text_to_image_usecase.dart'
+import 'package:ginfit/app/features/text_to_image/data/text_to_image_usecase.dart'
     as _i25;
-import 'package:ginly/app/features/video_generate/bloc/video_generate_bloc.dart'
+import 'package:ginfit/app/features/video_generate/bloc/video_generate_bloc.dart'
     as _i40;
-import 'package:ginly/app/features/video_generate/data/video_generate_usecase.dart'
+import 'package:ginfit/app/features/video_generate/data/video_generate_usecase.dart'
     as _i27;
-import 'package:ginly/core/data_sources/firebase_module_firestore.dart' as _i46;
-import 'package:ginly/core/data_sources/local_data_source/secure_data_storage.dart'
+import 'package:ginfit/core/data_sources/firebase_module_firestore.dart' as _i46;
+import 'package:ginfit/core/data_sources/local_data_source/secure_data_storage.dart'
     as _i20;
-import 'package:ginly/core/injection/modules/dio_module.dart' as _i45;
-import 'package:ginly/core/injection/modules/secure_storage_module.dart'
+import 'package:ginfit/core/injection/modules/dio_module.dart' as _i45;
+import 'package:ginfit/core/injection/modules/secure_storage_module.dart'
     as _i47;
-import 'package:ginly/core/routes/app_router.dart' as _i3;
-import 'package:ginly/core/services/bottom_sheet_service.dart' as _i4;
-import 'package:ginly/core/services/language_service.dart' as _i14;
-import 'package:ginly/core/services/snackbar_service.dart' as _i21;
-import 'package:ginly/core/services/theme_service.dart' as _i26;
+import 'package:ginfit/core/routes/app_router.dart' as _i3;
+import 'package:ginfit/core/services/bottom_sheet_service.dart' as _i4;
+import 'package:ginfit/core/services/language_service.dart' as _i14;
+import 'package:ginfit/core/services/snackbar_service.dart' as _i21;
+import 'package:ginfit/core/services/theme_service.dart' as _i26;
 import 'package:google_sign_in/google_sign_in.dart' as _i13;
 import 'package:injectable/injectable.dart' as _i2;
 

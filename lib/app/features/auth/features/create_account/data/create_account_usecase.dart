@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ginly/app/data/models/firebase_user_model.dart';
+import 'package:ginfit/app/data/models/firebase_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ginly/app/core/services/first_install_bonus_service.dart';
+import 'package:ginfit/app/core/services/first_install_bonus_service.dart';
 
 @injectable
 class CreateAccountUseCase {

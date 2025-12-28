@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class TextToImageErrorWidget extends StatelessWidget {
   final String? filterErrorMessage;

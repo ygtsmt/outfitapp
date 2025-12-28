@@ -4,11 +4,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginly/app/features/text_to_image/bloc/text_to_image_bloc.dart';
-import 'package:ginly/app/features/report/bloc/report_bloc.dart';
-import 'package:ginly/core/ui/widgets/report_dialog.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/app/features/text_to_image/ui/widgets/text_to_image_widgets.dart';
+import 'package:ginfit/app/features/text_to_image/bloc/text_to_image_bloc.dart';
+import 'package:ginfit/app/features/report/bloc/report_bloc.dart';
+import 'package:ginfit/core/ui/widgets/report_dialog.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/app/features/text_to_image/ui/widgets/text_to_image_widgets.dart';
 
 class TextToImageScreen extends StatefulWidget {
   const TextToImageScreen({super.key});

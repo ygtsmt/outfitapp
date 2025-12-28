@@ -3,12 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
-import 'package:ginly/app/features/closet/data/closet_usecase.dart';
-import 'package:ginly/app/features/dashboard/data/models/weather_model.dart';
-import 'package:ginly/app/features/fal_ai/data/fal_ai_usecase.dart';
-import 'package:ginly/core/services/location_service.dart';
-import 'package:ginly/core/services/weather_service.dart';
-import 'package:ginly/core/services/outfit_suggestion_service.dart';
+import 'package:ginfit/app/features/closet/data/closet_usecase.dart';
+import 'package:ginfit/app/features/dashboard/data/models/weather_model.dart';
+import 'package:ginfit/app/features/fal_ai/data/fal_ai_usecase.dart';
+import 'package:ginfit/core/services/location_service.dart';
+import 'package:ginfit/core/services/weather_service.dart';
+import 'package:ginfit/core/services/outfit_suggestion_service.dart';
 
 /// Weather widget that shows current weather based on user's location
 /// Shows permission request if location access is not granted

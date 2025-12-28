@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:ginly/app/features/dashboard/data/models/weather_model.dart';
+import 'package:ginfit/app/features/dashboard/data/models/weather_model.dart';
 
 /// Service for fetching weather data from OpenWeatherMap API
 class WeatherService {

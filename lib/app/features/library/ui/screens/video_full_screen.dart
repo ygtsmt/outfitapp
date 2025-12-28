@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ginly/core/core.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:cached_video_player_plus/cached_video_player_plus.dart';
 
 class VideoFullScreen extends StatefulWidget {

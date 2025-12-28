@@ -4,13 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/auth/features/login/bloc/login_bloc.dart';
-import 'package:ginly/app/ui/widgets/auth_required_widget.dart';
+import 'package:ginfit/app/features/auth/features/login/bloc/login_bloc.dart';
+import 'package:ginfit/app/ui/widgets/auth_required_widget.dart';
 
-import 'package:ginly/app/ui/widgets/random_widget.dart';
-import 'package:ginly/app/bloc/app_bloc.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/generated/l10n.dart';
+import 'package:ginfit/app/ui/widgets/random_widget.dart';
+import 'package:ginfit/app/bloc/app_bloc.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/generated/l10n.dart';
 
 class PromptTextField extends StatefulWidget {
   const PromptTextField({

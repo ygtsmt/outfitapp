@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginly/app/features/closet/bloc/closet_bloc.dart';
-import 'package:ginly/app/features/closet/data/closet_usecase.dart';
-import 'package:ginly/app/features/closet/models/closet_item_model.dart';
-import 'package:ginly/app/features/closet/services/clothing_analysis_service.dart';
-import 'package:ginly/core/core.dart';
-import 'package:ginly/core/services/background_removal_service.dart';
+import 'package:ginfit/app/features/closet/bloc/closet_bloc.dart';
+import 'package:ginfit/app/features/closet/data/closet_usecase.dart';
+import 'package:ginfit/app/features/closet/models/closet_item_model.dart';
+import 'package:ginfit/app/features/closet/services/clothing_analysis_service.dart';
+import 'package:ginfit/core/core.dart';
+import 'package:ginfit/core/services/background_removal_service.dart';
 import 'package:flutter_image_map/flutter_image_map.dart';
 
 class ClosetItemFormScreen extends StatefulWidget {

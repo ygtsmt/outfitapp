@@ -10,7 +10,7 @@
 
     <application
     android:usesCleartextTraffic="true"
-    android:label="Ginly AI"
+    android:label="GinFit"
     android:icon="@mipmap/ic_launcher"
     android:name="${applicationName}"
     android:requestLegacyExternalStorage="true">
