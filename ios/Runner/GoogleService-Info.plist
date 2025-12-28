@@ -3,25 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>793286859298-csip7ubjigejgsvs464d3j443vaocdq9.apps.googleusercontent.com</string>
+	<string>729242676224-jt8u45kgpagb8ur8a2l36gbl5tbov5bk.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.793286859298-csip7ubjigejgsvs464d3j443vaocdq9</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>793286859298-1vkvvdo2bodqne7ne88sknthtc7hu1v9.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.729242676224-jt8u45kgpagb8ur8a2l36gbl5tbov5bk</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBZnEpSBnRvvhDZsQs0lKHHenaCA8aG5_c</string>
+	<string>AIzaSyAKAilkVBPc7sWs-K_DpCsCgdWHnajuCUQ</string>
 	<key>GCM_SENDER_ID</key>
-	<string>793286859298</string>
+	<string>729242676224</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.ginowl.ginlyai</string>
+	<string>com.ginfit.ai.outfit.generator.fitcheck</string>
 	<key>PROJECT_ID</key>
-	<string>disciplify-26970</string>
+	<string>ginowl-ginfit</string>
 	<key>STORAGE_BUCKET</key>
-	<string>disciplify-26970.firebasestorage.app</string>
+	<string>ginowl-ginfit.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
-	<true></true>
+	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
 	<false></false>
 	<key>IS_APPINVITE_ENABLED</key>
@@ -31,8 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:793286859298:ios:c0222c7b337ff7315a887b</string>
-	<key>DATABASE_URL</key>
-	<string>https://disciplify-26970-default-rtdb.firebaseio.com</string>
+	<string>1:729242676224:ios:fec7a451f4171cfb1bfce5</string>
 </dict>
 </plist>
