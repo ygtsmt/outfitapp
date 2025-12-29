@@ -34,7 +34,6 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
       if (currentUser != null) {
         getIt<ProfileBloc>().add(FetchProfileInfoEvent(
             currentUser.uid)); // AppBloc'tan satın alma bilgilerini al
-        getIt<AppBloc>().add(FetchPurchasedInfoEvent(currentUser.uid));
       }
     });
   }

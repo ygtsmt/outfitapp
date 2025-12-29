@@ -334,8 +334,6 @@ class _PaymentPlansWidgetState extends State<PaymentPlansWidget>
           context.router.pushNamed('/homeScreen/profile/profile-screen');
           getIt<ProfileBloc>().add(FetchProfileInfoEvent(
               FirebaseAuth.instance.currentUser?.uid ?? ''));
-          getIt<AppBloc>().add(FetchPurchasedInfoEvent(
-              FirebaseAuth.instance.currentUser?.uid ?? ''));
         }
       } else {
         // Başarısız purchase
@@ -384,8 +382,6 @@ class _PaymentPlansWidgetState extends State<PaymentPlansWidget>
               content: AppLocalizations.of(context).subscriptionSuccessful);
           context.router.pushNamed('/homeScreen/profile/profile-screen');
           getIt<ProfileBloc>().add(FetchProfileInfoEvent(
-              FirebaseAuth.instance.currentUser?.uid ?? ''));
-          getIt<AppBloc>().add(FetchPurchasedInfoEvent(
               FirebaseAuth.instance.currentUser?.uid ?? ''));
         }
       } else {

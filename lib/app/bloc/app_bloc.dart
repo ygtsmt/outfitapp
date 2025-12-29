@@ -11,9 +11,7 @@ import 'package:ginfit/app/data/models/purchased_info_model.dart';
 import 'package:ginfit/core/core.dart';
 import 'package:injectable/injectable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+
 import 'dart:io';
 import 'dart:developer';
 
@@ -24,35 +22,6 @@ part 'app_state.dart';
 class AppBloc extends Bloc<AppEvent, AppState> {
   final AppUseCase appUsecase;
   AppBloc({required this.appUsecase}) : super(const AppState()) {
-    // Firestore'dan custom AI models'i dinle
-    _listenToCustomAIModels();
-
-    /// Version karşılaştırma fonksiyonu
-    /// Returns:
-    /// - Negatif değer: version1 < version2
-    /// - 0: version1 == version2
-    /// - Pozitif değer: version1 > version2
-    int _compareVersions(String version1, String version2) {
-      final v1Parts =
-          version1.split('.').map((e) => int.tryParse(e) ?? 0).toList();
-      final v2Parts =
-          version2.split('.').map((e) => int.tryParse(e) ?? 0).toList();
-
-      final maxLength =
-          v1Parts.length > v2Parts.length ? v1Parts.length : v2Parts.length;
-
-      for (int i = 0; i < maxLength; i++) {
-        final v1 = i < v1Parts.length ? v1Parts[i] : 0;
-        final v2 = i < v2Parts.length ? v2Parts[i] : 0;
-
-        if (v1 != v2) {
-          return v1 - v2;
-        }
-      }
-
-      return 0;
-    }
-
     on<SetThemeEvent>((event, emit) {
       emit(state.copyWith(themeMode: event.themeMode));
     });
@@ -78,53 +47,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         log('🔥 Fetching appDocs from Firestore (cache miss or force refresh)');
         final docs = await appUsecase.getAllAppDocs();
 
-        // App versiyonunu al
-        final packageInfo = await PackageInfo.fromPlatform();
-        final appVersion = packageInfo.version;
-
-        // Platform bazlı version kontrolü
-        String? platformVersion;
-        bool shouldDisableFilters = false;
-
-        if (kIsWeb) {
-          // Web için version kontrolü yok - filtreleri devre dışı bırak
-          shouldDisableFilters = true;
-        } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-          platformVersion = state.currentVersionIOS;
-          if (platformVersion?.isNotEmpty == true) {
-            // App version <= Firebase version ise filtreleri devre dışı bırak
-            // App version > Firebase version ise filtreleri etkinleştir
-            final comparison = _compareVersions(appVersion, platformVersion!);
-            shouldDisableFilters =
-                comparison <= 0; // appVersion <= platformVersion
-          } else {
-            // Firebase'de version yoksa filtreleri devre dışı bırak
-            shouldDisableFilters = true;
-          }
-        } else if (defaultTargetPlatform == TargetPlatform.android) {
-          platformVersion = state.currentVersionAndroid;
-          if (platformVersion?.isNotEmpty == true) {
-            // App version <= Firebase version ise filtreleri devre dışı bırak
-            // App version > Firebase version ise filtreleri etkinleştir
-            final comparison = _compareVersions(appVersion, platformVersion!);
-            shouldDisableFilters =
-                comparison <= 0; // appVersion <= platformVersion
-          } else {
-            // Firebase'de version yoksa filtreleri devre dışı bırak
-            shouldDisableFilters = true;
-          }
-        }
-
-        log('📱 App Version: $appVersion');
-        log('🔥 Platform: ${kIsWeb ? 'Web' : defaultTargetPlatform.name}');
-        log('🔥 Firebase Version: $platformVersion');
-        log('✅ Should Disable Filters: $shouldDisableFilters ${shouldDisableFilters ? "(Show All Templates)" : "(Apply Filters - App > Firebase)"}');
-
-        // Platform bazında doc filtreleme
-        List<FeaturesDocModel> filteredDocs;
-
-        // ÖNCELİKLİ: dont_use_doc kontrolü - Bu doc'ları HİÇBİR ZAMAN gösterme
-        final availableDocs = docs.where((doc) {
+        final filteredDocs = docs.where((doc) {
           if (doc.dont_use_doc == false) {
             log('⛔ Doc kalıcı olarak gizlendi (dont_use_doc=false): ${doc.id}');
             return false;
@@ -132,74 +55,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           return true;
         }).toList();
 
-        if (kIsWeb) {
-          filteredDocs = availableDocs; // Web için tüm docs
-        } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-          if (shouldDisableFilters) {
-            // App version <= Firebase version - TÜM DOC'LARI GÖSTER
-            filteredDocs = availableDocs;
-            log('🔓 Tüm doc\'lar gösteriliyor (App version <= Firebase version - iOS)');
-          } else {
-            // App version > Firebase version - FİLTRELEME YAP
-            filteredDocs = availableDocs
-                .where((doc) => doc.showOnAppleTemplates != false)
-                .toList();
-            log('🚫 Doc filtreleme aktif (App version > Firebase version - iOS)');
-          }
-        } else if (defaultTargetPlatform == TargetPlatform.android) {
-          if (shouldDisableFilters) {
-            // App version <= Firebase version - TÜM DOC'LARI GÖSTER
-            filteredDocs = availableDocs;
-            log('🔓 Tüm doc\'lar gösteriliyor (App version <= Firebase version - Android)');
-          } else {
-            // App version > Firebase version - FİLTRELEME YAP
-            filteredDocs = availableDocs
-                .where((doc) => doc.showOnAndroidTemplates != false)
-                .toList();
-            log('🚫 Doc filtreleme aktif (App version > Firebase version - Android)');
-          }
-        } else {
-          filteredDocs = availableDocs;
-        }
-
-        // Template'leri platform bazında filtrele
         final finalFilteredDocs = filteredDocs.map((doc) {
           final filteredTemplates = <String, List<VideoTemplate>>{};
 
           doc.templates.forEach((key, templateList) {
             final filteredList = templateList.where((template) {
-              // ÖNCELİKLİ: dont_use_template kontrolü - Bu template'ı HİÇBİR ZAMAN gösterme
               if (template.dont_use_template == false) {
                 log('⛔ Template kalıcı olarak gizlendi (dont_use_template=false): ${template.id}');
                 return false;
-              }
-
-              // Platform bazlı filtreleme
-              if (kIsWeb) {
-                return true; // Web'de tüm template'leri göster
-              } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-                // iOS için version kontrolü
-                if (shouldDisableFilters) {
-                  // App version <= Firebase version - TÜM TEMPLATE'LARI GÖSTER
-                  log('🔓 Template gösteriliyor (App version <= Firebase version): ${template.id}');
-                  return true;
-                }
-
-                // App version > Firebase version - FİLTRELEME YAP
-                final shouldShow = template.showThisTemplateIOS != false;
-                if (!shouldShow) {
-                  log('🚫 Template filtrelendi (iOS filter - App > Firebase): ${template.id}');
-                }
-                return shouldShow;
-              } else if (defaultTargetPlatform == TargetPlatform.android) {
-                // Android için version kontrolü
-                if (shouldDisableFilters) {
-                  // App version <= Firebase version - TÜM TEMPLATE'LARI GÖSTER
-                  return true;
-                }
-
-                // App version > Firebase version - FİLTRELEME YAP
-                return template.showThisTemplateAndroid != false;
               }
               return true;
             }).toList();
@@ -236,7 +99,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
         emit(state.copyWith(
           gettingAppDocsStatus: EventStatus.success,
-          appDocs: finalFilteredDocs, // Filtrelenmiş docs
+          appDocs: finalFilteredDocs,
           trendingTemplates: trendingTemplates,
         ));
       } catch (e) {
@@ -382,100 +245,5 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         emit(state.copyWith(languageLocale: locale));
       }
     });
-    on<FetchPurchasedInfoEvent>((event, emit) async {
-      try {
-        final purchasedInfo = await _getPurchasedInfoFromFirebase(event.userId);
-        emit(state.copyWith(purchasedInfo: purchasedInfo));
-      } catch (e) {
-        log('Error getting purchased info: $e');
-      }
-    });
-
-    on<_UpdateCustomAIModelsEvent>((event, emit) {
-      emit(state.copyWith(customAIModels: event.customAIModels));
-    });
-
-    on<_UpdateVersionInfoEvent>((event, emit) {
-      emit(state.copyWith(
-        currentVersionAndroid: event.currentVersionAndroid,
-        currentVersionIOS: event.currentVersionIOS,
-        forceUpdate: event.forceUpdate,
-      ));
-    });
-  }
-
-  // Firebase'den kullanıcının satın alma bilgilerini çek
-  Future<PurchasedInfo?> _getPurchasedInfoFromFirebase(String userId) async {
-    try {
-      final firestore = FirebaseFirestore.instance;
-      final userDoc = await firestore.collection('users').doc(userId).get();
-
-      if (userDoc.exists) {
-        final data = userDoc.data();
-        if (data != null && data['purchased_info'] != null) {
-          return PurchasedInfo.fromJson(data['purchased_info']);
-        }
-      }
-      return null;
-    } catch (e) {
-      log('Error getting purchased info from Firebase: $e');
-      return null;
-    }
-  }
-
-  // Custom AI Models'i Firestore'dan al (tek seferlik - listener YOK!)
-  void _listenToCustomAIModels() async {
-    try {
-      // custom_models'i AL (dinleme yok!)
-      final customModelsSnapshot = await FirebaseFirestore.instance
-          .collection('systems')
-          .doc('custom_models')
-          .get();
-
-      if (customModelsSnapshot.exists) {
-        final data = customModelsSnapshot.data();
-        final imageToVideo = data?['image_to_video'] as String? ?? 'pixverse';
-        final textToVideo = data?['text_to_video'] as String? ?? 'pixverse';
-
-        final customModels = CustomAIModels(
-          imageToVideo: imageToVideo,
-          textToVideo: textToVideo,
-        );
-
-        add(_UpdateCustomAIModelsEvent(customModels));
-        log('✅ Custom AI Models loaded (one-time read): image_to_video=$imageToVideo, text_to_video=$textToVideo');
-      } else {
-        log('⚠️ custom_models document not found, using defaults');
-      }
-    } catch (error) {
-      log('❌ Error fetching custom_models: $error');
-    }
-
-    try {
-      // versions'ı AL (dinleme yok!)
-      final versionsSnapshot = await FirebaseFirestore.instance
-          .collection('systems')
-          .doc('versions')
-          .get();
-
-      if (versionsSnapshot.exists) {
-        final data = versionsSnapshot.data();
-        final currentVersionAndroid =
-            data?['current_version_android'] as String? ?? '';
-        final currentVersionIOS = data?['current_version_ios'] as String? ?? '';
-        final forceUpdate = data?['force_update'] as bool? ?? false;
-
-        add(_UpdateVersionInfoEvent(
-            currentVersionAndroid, currentVersionIOS, forceUpdate));
-        log('✅ Version Info loaded (one-time read):');
-        log('  📱 Android: $currentVersionAndroid');
-        log('  🍎 iOS: $currentVersionIOS');
-        log('  🔒 Force Update: $forceUpdate');
-      } else {
-        log('⚠️ versions document not found, using defaults');
-      }
-    } catch (error) {
-      log('❌ Error fetching versions: $error');
-    }
   }
 }

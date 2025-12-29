@@ -75,39 +75,3 @@ class ClearSearchEvent extends AppEvent {
   @override
   List<Object> get props => [];
 }
-
-class FetchPurchasedInfoEvent extends AppEvent {
-  const FetchPurchasedInfoEvent(this.userId);
-
-  final String userId;
-
-  @override
-  List<Object> get props => [userId];
-}
-
-// Internal event to update custom AI models
-class _UpdateCustomAIModelsEvent extends AppEvent {
-  const _UpdateCustomAIModelsEvent(this.customAIModels);
-
-  final CustomAIModels customAIModels;
-
-  @override
-  List<Object> get props => [customAIModels];
-}
-
-// Internal event to update version info
-class _UpdateVersionInfoEvent extends AppEvent {
-  const _UpdateVersionInfoEvent(
-    this.currentVersionAndroid,
-    this.currentVersionIOS,
-    this.forceUpdate,
-  );
-
-  final String currentVersionAndroid;
-  final String currentVersionIOS;
-  final bool forceUpdate;
-
-  @override
-  List<Object> get props =>
-      [currentVersionAndroid, currentVersionIOS, forceUpdate];
-}
