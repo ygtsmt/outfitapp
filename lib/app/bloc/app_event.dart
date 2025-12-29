@@ -43,13 +43,6 @@ class GetAllAppDocsEvent extends AppEvent {
   List<Object> get props => [forceRefresh];
 }
 
-class GetAllAppDocumentsEvent extends AppEvent {
-  const GetAllAppDocumentsEvent();
-
-  @override
-  List<Object> get props => [];
-}
-
 class SubmitFeedbackEvent extends AppEvent {
   const SubmitFeedbackEvent(this.message, {this.imageFile});
 
@@ -67,13 +60,6 @@ class InitializeLanguageEvent extends AppEvent {
   List<Object?> get props => [];
 }
 
-class GetGenerateCreditRequirementsEvent extends AppEvent {
-  const GetGenerateCreditRequirementsEvent();
-
-  @override
-  List<Object?> get props => [];
-}
-
 class SearchEffectsEvent extends AppEvent {
   const SearchEffectsEvent(this.query);
 
@@ -85,13 +71,6 @@ class SearchEffectsEvent extends AppEvent {
 
 class ClearSearchEvent extends AppEvent {
   const ClearSearchEvent();
-
-  @override
-  List<Object> get props => [];
-}
-
-class GetPlansEvent extends AppEvent {
-  const GetPlansEvent();
 
   @override
   List<Object> get props => [];
@@ -129,5 +108,6 @@ class _UpdateVersionInfoEvent extends AppEvent {
   final bool forceUpdate;
 
   @override
-  List<Object> get props => [currentVersionAndroid, currentVersionIOS, forceUpdate];
+  List<Object> get props =>
+      [currentVersionAndroid, currentVersionIOS, forceUpdate];
 }

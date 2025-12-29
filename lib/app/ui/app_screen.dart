@@ -41,11 +41,6 @@ class _AppScreenState extends State<AppScreen> {
         SystemNavigator.routeInformationUpdated(replace: true);
       }
     }
-
-    // Kredi requirements'ı çek
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getIt<AppBloc>().add(const GetGenerateCreditRequirementsEvent());
-    });
   }
 
   @override
@@ -99,26 +94,6 @@ class _AppScreenState extends State<AppScreen> {
           print('🔥 APP SCREEN BUILD - Locale: ${state.languageLocale}');
           print(
               '🔥 Current language: ${state.languageLocale?.languageCode ?? 'null'}');
-          // Kredi requirements yüklenmeden app'i gösterme
-          if (state.generateCreditRequirements == null) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              home: Scaffold(
-                backgroundColor: Colors.white,
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(
-                        color: Colors.black,
-                        strokeWidth: 8,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }
 
           return BlocBuilder<AppBloc, AppState>(
             builder: (context, state) {

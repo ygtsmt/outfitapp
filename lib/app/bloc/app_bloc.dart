@@ -247,20 +247,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     //kdflkmsdf
 
-    on<GetAllAppDocumentsEvent>((event, emit) async {
-      emit(state.copyWith(getAppDocumentsStatus: EventStatus.processing));
-      try {
-        final appDocumentsRepsonse = await appUsecase.getAppDocuments();
-        emit(state.copyWith(
-          getAppDocumentsStatus: EventStatus.success,
-          appDocuments: appDocumentsRepsonse,
-        ));
-      } catch (e) {
-        emit(state.copyWith(getAppDocumentsStatus: EventStatus.failure));
-      }
-      emit(state.copyWith(getAppDocumentsStatus: EventStatus.idle));
-    });
-
     on<SubmitFeedbackEvent>((event, emit) async {
       emit(state.copyWith(submitFeedbackStatus: EventStatus.processing));
       try {
@@ -370,24 +356,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ));
     });
 
-    on<GetPlansEvent>((event, emit) async {
-      try {
-        final plans = await _getPlansFromFirebase();
-        emit(state.copyWith(plans: plans));
-      } catch (e) {
-        log('Error getting plans: $e');
-      }
-    });
-
-    on<GetGenerateCreditRequirementsEvent>((event, emit) async {
-      try {
-        final requirements = await appUsecase.getGenerateCreditRequirements();
-        emit(state.copyWith(generateCreditRequirements: requirements));
-      } catch (e) {
-        log('Error getting generate credit requirements: $e');
-      }
-    });
-
     on<InitializeLanguageEvent>((event, emit) async {
       try {
         // Kullanıcının telefon dilini al
@@ -434,28 +402,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         forceUpdate: event.forceUpdate,
       ));
     });
-  }
-
-  // Firebase'den plan'ları çek
-  Future<List<PlanModel>> _getPlansFromFirebase() async {
-    try {
-      final firestore = FirebaseFirestore.instance;
-      final plansCollection = firestore.collection('plans');
-
-      final querySnapshot = await plansCollection.get();
-      final plans = <PlanModel>[];
-
-      for (final doc in querySnapshot.docs) {
-        final planData = doc.data();
-        final plan = PlanModel.fromMap(planData, doc.id);
-        plans.add(plan);
-      }
-
-      return plans;
-    } catch (e) {
-      log('Error getting plans from Firebase: $e');
-      return [];
-    }
   }
 
   // Firebase'den kullanıcının satın alma bilgilerini çek

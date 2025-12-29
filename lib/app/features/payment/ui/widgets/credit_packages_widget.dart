@@ -40,7 +40,6 @@ class _CreditPackagesWidgetState extends State<CreditPackagesWidget>
     // Default olarak Ginly AI Boost paketini seç
     _selectedPackageId = 'ginly_boost_credit';
     // AppState'den plans'ı çekmek için GetPlansEvent'i tetikle
-    context.read<AppBloc>().add(const GetPlansEvent());
 
     // Animasyon controller'ı başlat
     _animationController = AnimationController(

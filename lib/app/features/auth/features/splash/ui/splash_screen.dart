@@ -41,8 +41,6 @@ class _SplashScreenState extends State<SplashScreen> {
       _updateProgress(0.1);
 
       // Bloc ile gerekli dataları çek (asenkron, await etme)
-      getIt<AppBloc>().add(const GetAllAppDocumentsEvent());
-      getIt<AppBloc>().add(const GetPlansEvent());
 
       // Progress: 30% - Bloc işlemleri başladı
       _updateProgress(0.3);

@@ -65,9 +65,7 @@ class _PaymentPlansWidgetState extends State<PaymentPlansWidget>
     _animation = Tween<double>(begin: 1.1, end: 1).animate(_controller);
 
     // Firebase'den plan'ları çek
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AppBloc>().add(const GetPlansEvent());
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
   @override
@@ -308,7 +306,7 @@ class _PaymentPlansWidgetState extends State<PaymentPlansWidget>
     try {
       // 🔥 Satın almadan ÖNCE RevenueCat'i Firebase User ID ile sync et
       await RevenueCatService.syncWithFirebase();
-      
+
       final productId = _getSelectedProductId();
       final result = await RevenueCatService.purchaseProduct(productId);
 
@@ -321,7 +319,8 @@ class _PaymentPlansWidgetState extends State<PaymentPlansWidget>
                 .collection('users')
                 .doc(userId)
                 .update({'profile_info.user_used_premium_template': false});
-            debugPrint('✅ Premium template usage reset after subscription purchase');
+            debugPrint(
+                '✅ Premium template usage reset after subscription purchase');
           } catch (e) {
             debugPrint('❌ Error resetting premium template usage: $e');
           }
