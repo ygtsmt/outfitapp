@@ -6,7 +6,6 @@ import "package:ginfit/app/features/auth/features/splash/bloc/splash_bloc.dart";
 import "package:ginfit/app/features/closet/bloc/closet_bloc.dart";
 import "package:ginfit/app/features/payment/bloc/payment_bloc.dart";
 import "package:ginfit/app/features/report/bloc/report_bloc.dart";
-import "package:ginfit/app/features/video_generate/bloc/video_generate_bloc.dart";
 import "package:ginfit/core/color_schemes.g.dart";
 import "package:ginfit/core/core.dart";
 import "package:ginfit/generated/l10n.dart";
@@ -60,18 +59,12 @@ class _AppScreenState extends State<AppScreen> {
         BlocProvider<ProfileBloc>(
           create: (final context) => getIt<ProfileBloc>(),
         ),
-       
-        BlocProvider<VideoGenerateBloc>(
-          create: (final context) => getIt<VideoGenerateBloc>(),
-        ),
-        
         BlocProvider<ClosetBloc>(
           create: (final context) => getIt<ClosetBloc>(),
         ),
         BlocProvider<PaymentBloc>(
           create: (final context) => getIt<PaymentBloc>(),
         ),
-    
         BlocProvider<ReportBloc>(
           create: (final context) => getIt<ReportBloc>(),
         ),

@@ -236,8 +236,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                                     children: [
                                       SizedBox(width: 6.w),
                                       Text(
-                                        _getPlanDisplayName(appState
-                                            .purchasedInfo?.lastProductId),
+                                        'Plan name',
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyMedium

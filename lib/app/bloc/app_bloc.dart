@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ginfit/app/data/app_usecase.dart';
 import 'package:ginfit/app/data/models/app_document_model.dart';
-import 'package:ginfit/app/data/models/features_doc_model.dart';
 import 'package:ginfit/app/data/models/feedback_model.dart';
 import 'package:ginfit/app/data/models/credit_model.dart';
 import 'package:ginfit/app/data/models/plan_model.dart';

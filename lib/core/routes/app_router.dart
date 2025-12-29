@@ -5,7 +5,6 @@ import "dart:io";
 import "package:auto_route/auto_route.dart";
 import "package:auto_route/empty_router_widgets.dart";
 import "package:ginfit/app/bloc/app_bloc.dart";
-import "package:ginfit/app/data/models/features_doc_model.dart";
 import "package:ginfit/app/features/auth/features/profile/ui/profile_screen.dart";
 import "package:ginfit/app/features/auth/features/splash/ui/splash_screen.dart";
 import "package:ginfit/app/features/closet/models/closet_item_model.dart";
@@ -35,8 +34,6 @@ import "package:ginfit/app/features/closet/ui/screens/failed_model_review_screen
 import "package:ginfit/app/features/closet/models/model_item_model.dart";
 import "package:ginfit/app/features/fit_check/ui/screens/fit_check_calendar_screen.dart";
 import "package:ginfit/app/features/try_on/ui/try_on_screen.dart";
-import "package:ginfit/app/features/video_generate/model/video_generate_response_model.dart";
-import "package:ginfit/app/features/video_generate/ui/video_generate_screen.dart";
 import "package:ginfit/app/ui/home_screen.dart";
 import "package:ginfit/core/core.dart";
 import "package:flutter/material.dart";
@@ -132,11 +129,6 @@ part "app_router.gr.dart";
     CustomRoute(
       page: AllToolsScreen,
       path: "/all-tools-screen",
-      transitionsBuilder: TransitionsBuilders.fadeIn,
-    ),
-    CustomRoute(
-      page: VideoGenerateScreen,
-      path: "/video-generate-screen",
       transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
     // Payment & Utility Route Group - Support features

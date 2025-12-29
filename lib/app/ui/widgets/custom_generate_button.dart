@@ -29,14 +29,7 @@ class CustomGenerateButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AppBloc, AppState>(
       builder: (context, state) {
-        final requirements = state.generateCreditRequirements;
-        if (requirements == null) {
-          return const SizedBox
-              .shrink(); // Kredi sistemi yüklenmemişse gösterme
-        }
-
         // Generate type'a göre gerekli kredi miktarını al
-        final requiredCredits = _getRequiredCredits(requirements);
 
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 8.h),
@@ -81,7 +74,7 @@ class CustomGenerateButton extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        requiredCredits.toString(),
+                        '0',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: context.baseColor,

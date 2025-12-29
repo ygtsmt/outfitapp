@@ -6,20 +6,17 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ginfit/app/core/services/first_install_bonus_service.dart';
 
 @injectable
 class CreateAccountUseCase {
   final FirebaseAuth auth;
   final GoogleSignIn googleSignIn;
   final FirebaseFirestore firestore;
-  final FirstInstallBonusService bonusService;
 
   CreateAccountUseCase({
     required this.auth,
     required this.googleSignIn,
     required this.firestore,
-    required this.bonusService,
   });
 
   Future<User?> createAccountWithEmail(String email, String password) async {
@@ -116,18 +113,6 @@ class CreateAccountUseCase {
 
     await userDoc.set({'profile_info': profileInfo}, SetOptions(merge: true));
     print('✅ New user created: ${user.email ?? user.uid}');
-
-    // 🎁 First Install Bonus ver (cihaz bazlı kontrol)
-    final bonusAmount = await bonusService.applyFirstInstallBonus(
-      user.uid,
-      authProvider ?? 'unknown',
-    );
-
-    if (bonusAmount > 0) {
-      print('🎉 First install bonus applied: $bonusAmount credits');
-    } else {
-      print('ℹ️ No bonus applied (device already used or error)');
-    }
   }
 
   Future<User?> createAccountWithGoogle() async {

@@ -67,15 +67,6 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
-    VideoGenerateScreenRoute.name: (routeData) {
-      return CustomPage<dynamic>(
-        routeData: routeData,
-        child: const VideoGenerateScreen(),
-        transitionsBuilder: TransitionsBuilders.fadeIn,
-        opaque: true,
-        barrierDismissible: false,
-      );
-    },
     PaymentsScreenRoute.name: (routeData) {
       final args = routeData.argsAs<PaymentsScreenRouteArgs>(
           orElse: () => const PaymentsScreenRouteArgs());
@@ -479,10 +470,6 @@ class _$AppRouter extends RootStackRouter {
           path: '/all-tools-screen',
         ),
         RouteConfig(
-          VideoGenerateScreenRoute.name,
-          path: '/video-generate-screen',
-        ),
-        RouteConfig(
           PaymentsScreenRoute.name,
           path: '/payment-screen',
         ),
@@ -639,18 +626,6 @@ class AllToolsScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'AllToolsScreenRoute';
-}
-
-/// generated route for
-/// [VideoGenerateScreen]
-class VideoGenerateScreenRoute extends PageRouteInfo<void> {
-  const VideoGenerateScreenRoute()
-      : super(
-          VideoGenerateScreenRoute.name,
-          path: '/video-generate-screen',
-        );
-
-  static const String name = 'VideoGenerateScreenRoute';
 }
 
 /// generated route for

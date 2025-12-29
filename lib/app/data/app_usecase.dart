@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ginfit/app/data/models/app_document_model.dart';
-import 'package:ginfit/app/data/models/features_doc_model.dart';
 import 'package:ginfit/app/data/models/feedback_model.dart';
 import 'package:ginfit/app/data/models/credit_model.dart';
 import 'package:injectable/injectable.dart';
@@ -27,24 +26,6 @@ class AppUseCase {
     await _secureDataStorage.setAppLanguage(locale);
   }
 
-  Future<List<FeaturesDocModel>> getAllAppDocs() async {
-    try {
-      final querySnapshot = await firestore
-          .collection('templates')
-          .orderBy('docRank') // Sıralamayı burada yapıyoruz
-          .get();
-
-      final docs = querySnapshot.docs.map((doc) {
-        final data = doc.data();
-        data['id'] = doc.id;
-        return FeaturesDocModel.fromJson(data);
-      }).toList();
-      return docs;
-    } catch (e, s) {
-      log('getAllAppDocs error: $e\n$s');
-      return [];
-    }
-  }
 
   Future<AppDocumentModel?> getAppDocuments() async {
     try {
