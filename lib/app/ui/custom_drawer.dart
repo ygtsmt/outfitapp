@@ -154,7 +154,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ],
               ),
      */
-              Divider(),
+              const Divider(),
               LanguageDropdown(
                 selectedLocale:
                     widget.state.languageLocale?.languageCode ?? 'en',
@@ -200,10 +200,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (context, profileState) {
                   // Review yapmışsa butonu gösterme
-                  if (profileState.profileInfo?.hasReceivedReviewCredit == true) {
+                  if (profileState.profileInfo?.hasReceivedReviewCredit ==
+                      true) {
                     return const SizedBox.shrink();
                   }
-                  
+
                   return ListTile(
                     leading: const Icon(
                       Icons.star_rate_rounded,
@@ -258,7 +259,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 onTap: () {
                   context.router.push(
                     DocumentsWebViewScreenRoute(
-                      pdfUrl: 'https://www.ginlyai.com/#/privacy',
+                      pdfUrl: 'https://www.ginfit.com/#/privacy',
                       title: AppLocalizations.of(context).privacyPolicy,
                     ),
                   );
@@ -280,7 +281,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 onTap: () {
                   context.router.push(
                     DocumentsWebViewScreenRoute(
-                      pdfUrl: "https://www.ginlyai.com/#/terms",
+                      pdfUrl: "https://www.ginfit.com/#/terms",
                       title: AppLocalizations.of(context).termsOfService,
                     ),
                   );
@@ -561,6 +562,4 @@ class _CustomDrawerState extends State<CustomDrawer> {
       }
     }
   }
-  }
-
-
+}

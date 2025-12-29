@@ -696,11 +696,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingLanguage":
             MessageLookupByLibrary.simpleMessage("Творческий процесс..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "Посмотрите это изображение, которое я создал в GinFit! Загрузите приложение: app.ginlyai.com"),
+            "Посмотрите это изображение, которое я создал в GinFit! Загрузите приложение: app.ginfit.com"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "Посмотрите это изображение, которое я создал в GinFit!\nЗагрузите приложение: app.ginlyai.com"),
+            "Посмотрите это изображение, которое я создал в GinFit!\nЗагрузите приложение: app.ginfit.com"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "Посмотрите это видео, которое я создал в GinFit AI! Загрузите приложение: app.ginlyai.com"),
+            "Посмотрите это видео, которое я создал в GinFit AI! Загрузите приложение: app.ginfit.com"),
         "short_video": MessageLookupByLibrary.simpleMessage("Короткое Видео"),
         "showAllEffects":
             MessageLookupByLibrary.simpleMessage("Показать Все Эффекты"),

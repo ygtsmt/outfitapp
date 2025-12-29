@@ -36,9 +36,6 @@ class AppState extends Equatable {
     this.getAppDocumentsStatus = EventStatus.idle,
     this.isCheckedTermsAndPolicy = true,
     this.submitFeedbackStatus = EventStatus.idle,
-    this.searchQuery = '',
-    this.filteredAppDocs,
-    this.filteredTemplates,
     this.plans,
     this.purchasedInfo,
     this.currentVersionFromFirestore,
@@ -60,9 +57,7 @@ class AppState extends Equatable {
   final EventStatus getAppDocumentsStatus;
   final bool isCheckedTermsAndPolicy;
   final EventStatus submitFeedbackStatus;
-  final String? searchQuery;
-  final List<FeaturesDocModel>? filteredAppDocs;
-  final List<VideoTemplate>? filteredTemplates;
+
   final List<PlanModel>? plans; // Tüm planların listesi
   final PurchasedInfo? purchasedInfo; // Kullanıcının satın alma bilgileri
   final String?
@@ -85,9 +80,6 @@ class AppState extends Equatable {
     EventStatus? getAppDocumentsStatus,
     bool isCheckedTermsAndPolicy = true,
     EventStatus? submitFeedbackStatus,
-    String? searchQuery,
-    List<FeaturesDocModel>? filteredAppDocs,
-    List<VideoTemplate>? filteredTemplates,
     List<PlanModel>? plans,
     PurchasedInfo? purchasedInfo,
     String? currentVersionFromFirestore,
@@ -113,9 +105,6 @@ class AppState extends Equatable {
           getAppDocumentsStatus ?? this.getAppDocumentsStatus,
       isCheckedTermsAndPolicy: isCheckedTermsAndPolicy,
       submitFeedbackStatus: submitFeedbackStatus ?? this.submitFeedbackStatus,
-      searchQuery: searchQuery ?? this.searchQuery,
-      filteredAppDocs: filteredAppDocs ?? this.filteredAppDocs,
-      filteredTemplates: filteredTemplates ?? this.filteredTemplates,
       plans: plans ?? this.plans,
       purchasedInfo: purchasedInfo ?? this.purchasedInfo,
       currentVersionFromFirestore:
@@ -142,9 +131,6 @@ class AppState extends Equatable {
         getAppDocumentsStatus,
         isCheckedTermsAndPolicy,
         submitFeedbackStatus,
-        searchQuery,
-        filteredAppDocs,
-        filteredTemplates,
         plans,
         purchasedInfo,
         currentVersionFromFirestore,

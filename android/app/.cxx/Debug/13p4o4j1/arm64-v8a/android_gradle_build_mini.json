@@ -6,14 +6,14 @@
     [
       "/Users/yigitsametolmez/Library/Android/sdk/cmake/3.22.1/bin/ninja",
       "-C",
-      "/Users/yigitsametolmez/ginly/android/app/.cxx/Debug/13p4o4j1/arm64-v8a",
+      "/Users/yigitsametolmez/disciplify-main/android/app/.cxx/Debug/13p4o4j1/arm64-v8a",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
     "/Users/yigitsametolmez/Library/Android/sdk/cmake/3.22.1/bin/ninja",
     "-C",
-    "/Users/yigitsametolmez/ginly/android/app/.cxx/Debug/13p4o4j1/arm64-v8a",
+    "/Users/yigitsametolmez/disciplify-main/android/app/.cxx/Debug/13p4o4j1/arm64-v8a",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {}

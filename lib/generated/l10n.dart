@@ -3480,30 +3480,30 @@ class AppLocalizations {
     );
   }
 
-  /// `Check out this image I created on GinFit! Download App: app.ginlyai.com`
+  /// `Check out this image I created on GinFit! Download App: app.ginfit.com`
   String get shareText {
     return Intl.message(
-      'Check out this image I created on GinFit! Download App: app.ginlyai.com',
+      'Check out this image I created on GinFit! Download App: app.ginfit.com',
       name: 'shareText',
       desc: '',
       args: [],
     );
   }
 
-  /// `Check out this image I created on GinFit!\nDownload App: app.ginlyai.com`
+  /// `Check out this image I created on GinFit!\nDownload App: app.ginfit.com`
   String get shareTextFromUrl {
     return Intl.message(
-      'Check out this image I created on GinFit!\nDownload App: app.ginlyai.com',
+      'Check out this image I created on GinFit!\nDownload App: app.ginfit.com',
       name: 'shareTextFromUrl',
       desc: '',
       args: [],
     );
   }
 
-  /// `Check out this video I created on GinFit AI! Download App: app.ginlyai.com`
+  /// `Check out this video I created on GinFit AI! Download App: app.ginfit.com`
   String get shareVideoText {
     return Intl.message(
-      'Check out this video I created on GinFit AI! Download App: app.ginlyai.com',
+      'Check out this video I created on GinFit AI! Download App: app.ginfit.com',
       name: 'shareVideoText',
       desc: '',
       args: [],

@@ -34,15 +34,6 @@ class SetLanguageEvent extends AppEvent {
   List<Object> get props => [locale];
 }
 
-class GetAllAppDocsEvent extends AppEvent {
-  const GetAllAppDocsEvent({this.forceRefresh = false});
-
-  final bool forceRefresh; // true ise cache'i yok say ve yeniden çek
-
-  @override
-  List<Object> get props => [forceRefresh];
-}
-
 class SubmitFeedbackEvent extends AppEvent {
   const SubmitFeedbackEvent(this.message, {this.imageFile});
 
@@ -58,20 +49,4 @@ class InitializeLanguageEvent extends AppEvent {
 
   @override
   List<Object?> get props => [];
-}
-
-class SearchEffectsEvent extends AppEvent {
-  const SearchEffectsEvent(this.query);
-
-  final String query;
-
-  @override
-  List<Object> get props => [query];
-}
-
-class ClearSearchEvent extends AppEvent {
-  const ClearSearchEvent();
-
-  @override
-  List<Object> get props => [];
 }

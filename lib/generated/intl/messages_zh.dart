@@ -553,11 +553,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "separate_photos": MessageLookupByLibrary.simpleMessage("2 张单独的照片"),
         "settingLanguage": MessageLookupByLibrary.simpleMessage("准备好发挥创意..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "看看我在 GinFit 上制作的这张图片！下载应用：app.ginlyai.com"),
+            "看看我在 GinFit 上制作的这张图片！下载应用：app.ginfit.com"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "看看我在 GinFit 上制作的这张图片！\n下载应用：app.ginlyai.com"),
+            "看看我在 GinFit 上制作的这张图片！\n下载应用：app.ginfit.com"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "看看我在 GinFit AI 上制作的这个视频！下载应用：app.ginlyai.com"),
+            "看看我在 GinFit AI 上制作的这个视频！下载应用：app.ginfit.com"),
         "short_video": MessageLookupByLibrary.simpleMessage("短视频"),
         "showAllEffects": MessageLookupByLibrary.simpleMessage("显示所有效果"),
         "showMore": MessageLookupByLibrary.simpleMessage("显示更多"),

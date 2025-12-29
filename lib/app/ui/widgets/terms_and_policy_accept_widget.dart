@@ -52,7 +52,7 @@ class TermsAndPolicyAcceptWidget extends StatelessWidget {
               onTermsTap: () {
                 context.router.push(
                   DocumentsWebViewScreenRoute(
-                    pdfUrl: 'https://www.ginlyai.com/#/terms',
+                    pdfUrl: 'https://www.ginfit.com/#/terms',
                     title: AppLocalizations.of(context).termsOfService,
                   ),
                 );
@@ -60,7 +60,7 @@ class TermsAndPolicyAcceptWidget extends StatelessWidget {
               onPrivacyTap: () {
                 context.router.push(
                   DocumentsWebViewScreenRoute(
-                    pdfUrl: 'https://www.ginlyai.com/#/privacy',
+                    pdfUrl: 'https://www.ginfit.com/#/privacy',
                     title: AppLocalizations.of(context).privacyPolicy,
                   ),
                 );

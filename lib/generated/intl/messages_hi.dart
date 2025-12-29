@@ -676,11 +676,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingLanguage":
             MessageLookupByLibrary.simpleMessage("रचनात्मक हो रहा है..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "इस छवि को देखें जिसे मैंने GinFit पर बनाया है! ऐप डाउनलोड करें: app.ginlyai.com"),
+            "इस छवि को देखें जिसे मैंने GinFit पर बनाया है! ऐप डाउनलोड करें: app.ginfit.com"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "इस छवि को देखें जिसे मैंने GinFit पर बनाया है!\nऐप डाउनलोड करें: app.ginlyai.com"),
+            "इस छवि को देखें जिसे मैंने GinFit पर बनाया है!\nऐप डाउनलोड करें: app.ginfit.com"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "यह वीडियो देखें जिसे मैंने GinFit AI पर बनाया है! ऐप डाउनलोड करें: app.ginlyai.com"),
+            "यह वीडियो देखें जिसे मैंने GinFit AI पर बनाया है! ऐप डाउनलोड करें: app.ginfit.com"),
         "short_video": MessageLookupByLibrary.simpleMessage("छोटा वीडियो"),
         "showAllEffects":
             MessageLookupByLibrary.simpleMessage("सभी प्रभाव दिखाएं"),

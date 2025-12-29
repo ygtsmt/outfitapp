@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ginfit/app/bloc/app_bloc.dart';
 import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
 import 'package:ginfit/app/features/payment/bloc/payment_bloc.dart';
-import 'package:ginfit/app/features/payment/ui/widgets/payment_header_widget.dart';
 import 'package:ginfit/app/features/payment/ui/widgets/payment_advantages_widget.dart'
     show PaymentAdvantagesWidget, PaymentAdvantagesWidgetState;
 import 'package:ginfit/app/features/payment/ui/widgets/payment_plans_widget.dart';
@@ -97,16 +96,6 @@ class _PaymentsScreenState extends State<PaymentsScreen>
               return SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Header Widget
-                    PaymentHeaderWidget(
-                      trendingTemplates: appState.trendingTemplates ?? [],
-                      isPaywall: widget.isPaywall ?? false,
-                      // Paywall ise back button gösterme (null ver)
-                      onBackPressed: (widget.isPaywall ?? false)
-                          ? null
-                          : () => context.router.pop(),
-                    ),
-
                     // Advantages Widget
                     PaymentAdvantagesWidget(
                       key: _advantagesKey,

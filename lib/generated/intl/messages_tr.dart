@@ -670,11 +670,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingLanguage":
             MessageLookupByLibrary.simpleMessage("Yaratıcılık başlıyor..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "GinFit\'de oluşturduğum bu görsele göz atın! Uygulamayı İndir: app.ginlyai.com"),
+            "GinFit\'de oluşturduğum bu görsele göz atın! Uygulamayı İndir: app.ginfit.com"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "GinFit\'de oluşturduğum bu görsele göz atın!\nUygulamayı İndir: app.ginlyai.com"),
+            "GinFit\'de oluşturduğum bu görsele göz atın!\nUygulamayı İndir: app.ginfit.com"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "GinFit AI\'da oluşturduğum bu videoya göz atın! Uygulamayı İndir: app.ginlyai.com"),
+            "GinFit AI\'da oluşturduğum bu videoya göz atın! Uygulamayı İndir: app.ginfit.com"),
         "short_video": MessageLookupByLibrary.simpleMessage("Kısa Video"),
         "showAllEffects": MessageLookupByLibrary.simpleMessage("Tüm Efektler"),
         "showMore": MessageLookupByLibrary.simpleMessage("Daha Fazlası"),

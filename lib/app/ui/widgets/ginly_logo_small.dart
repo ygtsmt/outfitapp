@@ -31,7 +31,7 @@ class GinlyLogoSmall extends StatelessWidget {
         ),
         if (haveText)
           Center(
-            child: Text('GINLY',
+            child: Text('GINFIT',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,

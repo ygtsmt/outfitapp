@@ -12,25 +12,14 @@ import "package:ginfit/app/features/closet/models/closet_item_model.dart";
 import "package:ginfit/app/features/closet/ui/closet_screen.dart";
 import "package:ginfit/app/features/auth/features/create_account/ui/create_account_screen.dart";
 import "package:ginfit/app/features/auth/features/login/ui/login_screen.dart";
-import "package:ginfit/app/features/create_tab/ui/create_tab_screen.dart";
 import "package:ginfit/app/features/dashboard/ui/screens/all_tools_screen.dart";
 import "package:ginfit/app/features/dashboard/ui/screens/dashboard_screen.dart";
-import "package:ginfit/app/features/dashboard/ui/screens/all_effects_screen.dart";
-import "package:ginfit/app/features/realtime/ui/generate_realtime_screen.dart";
-import "package:ginfit/app/features/template_generate/ui/screens/generate_template_video_screen.dart";
 import "package:ginfit/app/features/dashboard/ui/screens/user_summary_screen.dart";
-import "package:ginfit/app/features/library/ui/screens/all_images_screen.dart";
-import "package:ginfit/app/features/library/ui/screens/all_videos_screen.dart";
-import "package:ginfit/app/features/library/ui/screens/image_detail_screen.dart";
-import "package:ginfit/app/features/library/ui/screens/video_detail_screen.dart";
-import "package:ginfit/app/features/library/ui/screens/video_full_screen.dart";
 import "package:ginfit/app/features/payment/ui/payment_screen.dart";
 import "package:ginfit/app/features/payment/ui/documents_webview_screen.dart";
 import "package:ginfit/app/features/payment/ui/watch_ads_screen.dart";
 import "package:ginfit/app/features/payment/ui/free_credit_screen.dart";
 import "package:ginfit/app/ui/widgets/feedback_screen.dart";
-import "package:ginfit/app/features/realtime/ui/realtime_screen.dart";
-import "package:ginfit/app/features/library/ui/screens/library_screen.dart";
 import "package:ginfit/app/features/closet/ui/screens/gallery_selection_screen.dart";
 import "package:ginfit/app/features/closet/ui/screens/closet_item_form_screen.dart";
 import "package:ginfit/app/features/closet/ui/screens/closet_item_detail_screen.dart";
@@ -45,8 +34,6 @@ import "package:ginfit/app/features/closet/ui/screens/batch_model_upload_result_
 import "package:ginfit/app/features/closet/ui/screens/failed_model_review_screen.dart";
 import "package:ginfit/app/features/closet/models/model_item_model.dart";
 import "package:ginfit/app/features/fit_check/ui/screens/fit_check_calendar_screen.dart";
-import "package:ginfit/app/features/text_to_image/model/text_to_image_generation_response_model_for_black_forest_label.dart";
-import "package:ginfit/app/features/text_to_image/ui/text_to_image_screen.dart";
 import "package:ginfit/app/features/try_on/ui/try_on_screen.dart";
 import "package:ginfit/app/features/video_generate/model/video_generate_response_model.dart";
 import "package:ginfit/app/features/video_generate/ui/video_generate_screen.dart";
@@ -95,49 +82,6 @@ part "app_router.gr.dart";
                 page: UserSummaryScreen,
                 path: "user-summary",
                 transitionsBuilder: TransitionsBuilders.fadeIn),
-          ],
-        ),
-        CustomRoute(
-          page: EmptyRouterPage,
-          name: "LibraryTabRouter",
-          path: "library",
-          transitionsBuilder: TransitionsBuilders.fadeIn,
-          children: [
-            CustomRoute(
-              page: LibraryScreen,
-              path: "library-screen",
-              initial: true,
-              transitionsBuilder: TransitionsBuilders.fadeIn,
-              meta: {'initialTabIndex': 0},
-            ),
-          ],
-        ),
-        CustomRoute(
-          page: EmptyRouterPage,
-          name: "GenerateTabRouter",
-          path: "generate",
-          transitionsBuilder: TransitionsBuilders.fadeIn,
-          children: [
-            CustomRoute(
-              page: RealtimeScreen,
-              path: "generate-screen",
-              initial: true,
-              transitionsBuilder: TransitionsBuilders.fadeIn,
-            ),
-          ],
-        ),
-        CustomRoute(
-          page: EmptyRouterPage,
-          name: "CreateTabRouter",
-          path: "createTab",
-          transitionsBuilder: TransitionsBuilders.fadeIn,
-          children: [
-            CustomRoute(
-              page: CreateTabScreen,
-              path: "create-tab-screen",
-              initial: true,
-              transitionsBuilder: TransitionsBuilders.fadeIn,
-            ),
           ],
         ),
         CustomRoute(
@@ -191,46 +135,8 @@ part "app_router.gr.dart";
       transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
     CustomRoute(
-      page: TextToImageScreen,
-      path: "/text-to-image-screen",
-      transitionsBuilder: TransitionsBuilders.fadeIn,
-    ),
-    CustomRoute(
       page: VideoGenerateScreen,
       path: "/video-generate-screen",
-      transitionsBuilder: TransitionsBuilders.fadeIn,
-    ),
-    // Library & Media Route Group - Content viewing
-    CustomRoute(
-      page: VideoFullScreen,
-      path: "/video-full-screen",
-      transitionsBuilder: TransitionsBuilders.fadeIn,
-    ),
-    CustomRoute(
-      page: VideoDetailScreen,
-      path: "/video-detail-screen",
-      transitionsBuilder: TransitionsBuilders.fadeIn,
-    ),
-    CustomRoute(
-      page: AllImagesScreen,
-      path: "/all-images-screen",
-      transitionsBuilder: TransitionsBuilders.fadeIn,
-    ),
-    CustomRoute(
-      page: ImageDetailScreen,
-      path: "/image-detail-screen",
-      transitionsBuilder: TransitionsBuilders.fadeIn,
-      meta: {'imageType': 'text_to_image'}, // Default image type
-    ),
-    // Effects & Template Route Group - Advanced features
-    CustomRoute(
-      page: AllEffectsScreen,
-      path: "/all-effects-screen",
-      transitionsBuilder: TransitionsBuilders.fadeIn,
-    ),
-    CustomRoute(
-      page: GenerateTemplateVideoScreen,
-      path: "/generate-template-video-screen",
       transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
     // Payment & Utility Route Group - Support features
@@ -257,11 +163,6 @@ part "app_router.gr.dart";
     CustomRoute(
       page: FeedbackScreen,
       path: "/feedback-screen",
-      transitionsBuilder: TransitionsBuilders.slideBottom,
-    ),
-    CustomRoute(
-      page: GenerateRealtimeScreen,
-      path: "/generate-realtime-screen",
       transitionsBuilder: TransitionsBuilders.slideBottom,
     ),
     // Closet screens

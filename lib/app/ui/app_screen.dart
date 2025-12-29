@@ -3,13 +3,9 @@ import "package:ginfit/app/features/auth/features/create_account/bloc/create_acc
 import "package:ginfit/app/features/auth/features/login/bloc/login_bloc.dart";
 import "package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart";
 import "package:ginfit/app/features/auth/features/splash/bloc/splash_bloc.dart";
-import "package:ginfit/app/features/library/bloc/library_bloc.dart";
 import "package:ginfit/app/features/closet/bloc/closet_bloc.dart";
 import "package:ginfit/app/features/payment/bloc/payment_bloc.dart";
-import "package:ginfit/app/features/realtime/bloc/realtime_bloc.dart";
 import "package:ginfit/app/features/report/bloc/report_bloc.dart";
-import "package:ginfit/app/features/template_generate/bloc/template_generate_bloc.dart";
-import "package:ginfit/app/features/text_to_image/bloc/text_to_image_bloc.dart";
 import "package:ginfit/app/features/video_generate/bloc/video_generate_bloc.dart";
 import "package:ginfit/core/color_schemes.g.dart";
 import "package:ginfit/core/core.dart";
@@ -64,27 +60,18 @@ class _AppScreenState extends State<AppScreen> {
         BlocProvider<ProfileBloc>(
           create: (final context) => getIt<ProfileBloc>(),
         ),
-        BlocProvider<RealtimeBloc>(
-          create: (final context) => getIt<RealtimeBloc>(),
-        ),
-        BlocProvider<TextToImageBloc>(
-          create: (final context) => getIt<TextToImageBloc>(),
-        ),
+       
         BlocProvider<VideoGenerateBloc>(
           create: (final context) => getIt<VideoGenerateBloc>(),
         ),
-        BlocProvider<LibraryBloc>(
-          create: (final context) => getIt<LibraryBloc>(),
-        ),
+        
         BlocProvider<ClosetBloc>(
           create: (final context) => getIt<ClosetBloc>(),
         ),
         BlocProvider<PaymentBloc>(
           create: (final context) => getIt<PaymentBloc>(),
         ),
-        BlocProvider<TemplateGenerateBloc>(
-          create: (final context) => getIt<TemplateGenerateBloc>(),
-        ),
+    
         BlocProvider<ReportBloc>(
           create: (final context) => getIt<ReportBloc>(),
         ),

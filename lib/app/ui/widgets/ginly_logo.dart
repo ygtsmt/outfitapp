@@ -20,7 +20,7 @@ class GinlyLogo extends StatelessWidget {
     return Column(
       children: [
         if (haveText)
-          Text('GINLY',
+          Text('GINFIT',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   fontSize: 34.sp,

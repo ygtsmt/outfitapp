@@ -692,11 +692,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingLanguage":
             MessageLookupByLibrary.simpleMessage("Poniéndose creativo..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "¡Mira esta imagen que creé en GinFit! Descargar App: app.ginlyai.com"),
+            "¡Mira esta imagen que creé en GinFit! Descargar App: app.ginfit.com"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "¡Mira esta imagen que creé en GinFit!\nDescargar App: app.ginlyai.com"),
+            "¡Mira esta imagen que creé en GinFit!\nDescargar App: app.ginfit.com"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "¡Mira este video que creé en GinFit AI! Descargar App: app.ginlyai.com"),
+            "¡Mira este video que creé en GinFit AI! Descargar App: app.ginfit.com"),
         "short_video": MessageLookupByLibrary.simpleMessage("Vídeo Corto"),
         "showAllEffects":
             MessageLookupByLibrary.simpleMessage("Mostrar Todos los Efectos"),
