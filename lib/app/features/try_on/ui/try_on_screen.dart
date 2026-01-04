@@ -33,14 +33,14 @@ class _TryOnScreenState extends State<TryOnScreen> {
   final ClosetUseCase _closetUseCase = GetIt.I<ClosetUseCase>();
 
   ModelItem? _selectedModel; // Changed from String? _selectedModelUrl
-  final List<String> _selectedClothesUrls = [];
+  final List<ClosetItem> _selectedClothes = [];
 
   bool _isLoading = false;
   String? _statusMessage;
   String? _requestId;
 
   Future<void> _generateImage() async {
-    if (_selectedModel == null || _selectedClothesUrls.isEmpty) {
+    if (_selectedModel == null || _selectedClothes.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text('Please select a model and at least one cloth')),
@@ -58,13 +58,24 @@ class _TryOnScreenState extends State<TryOnScreen> {
       // Create list: [Model URL, Cloth URL 1, Cloth URL 2, ...]
       final List<String> imageUrls = [
         _selectedModel!.imageUrl,
-        ..._selectedClothesUrls
+        ..._selectedClothes.map((e) => e.imageUrl)
       ];
+
+      // Construct a more specific prompt to preserve identity
+      String clothesDescription = _selectedClothes.map((e) {
+        final category = e.category ?? 'cloth';
+        final subcategory = e.subcategory ?? '';
+        final color = e.color ?? '';
+        return '$color $subcategory $category'.trim();
+      }).join(', ');
+
+      final refinedPrompt =
+          "Put the following clothes: ($clothesDescription) onto the person in the first image. Keep the person's face, body shape, and pose exactly the same. Only change the clothing.";
 
       final result = await _falAiUsecase.generateGeminiImageEdit(
         imageUrls: imageUrls,
-        prompt: "Wear clothes", // Base prompt
-        modelAiPrompt: _selectedModel!.aiPrompt, // Pass the model's AI prompt
+        prompt: refinedPrompt,
+        modelAiPrompt: _selectedModel!.aiPrompt,
       );
 
       if (result != null && result['status'] == 'processing') {
@@ -130,9 +141,9 @@ class _TryOnScreenState extends State<TryOnScreen> {
         await context.router.push(const GallerySelectionScreenRoute());
 
     if (result is ClosetItem) {
-      if (!_selectedClothesUrls.contains(result.imageUrl)) {
+      if (!_selectedClothes.any((e) => e.imageUrl == result.imageUrl)) {
         setState(() {
-          _selectedClothesUrls.add(result.imageUrl);
+          _selectedClothes.add(result);
           _statusMessage = 'Cloth added from gallery';
         });
       }
@@ -155,9 +166,9 @@ class _TryOnScreenState extends State<TryOnScreen> {
       );
 
       if (result is ClosetItem) {
-        if (!_selectedClothesUrls.contains(result.imageUrl)) {
+        if (!_selectedClothes.any((e) => e.imageUrl == result.imageUrl)) {
           setState(() {
-            _selectedClothesUrls.add(result.imageUrl);
+            _selectedClothes.add(result);
             _statusMessage = 'Cloth added from camera';
           });
         }
@@ -272,9 +283,9 @@ class _TryOnScreenState extends State<TryOnScreen> {
         ],
         onSelected: (item) {
           if (item is ClosetItem) {
-            if (!_selectedClothesUrls.contains(item.imageUrl)) {
+            if (!_selectedClothes.any((e) => e.imageUrl == item.imageUrl)) {
               setState(() {
-                _selectedClothesUrls.add(item.imageUrl);
+                _selectedClothes.add(item);
               });
             }
           }
@@ -324,6 +335,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
     return Scaffold(
       backgroundColor: colorScheme.surface, // Was LocalColors.background
       appBar: AppBar(
+        forceMaterialTransparency: true,
         title: const Text(
           'Virtual Studio',
           style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5),
@@ -358,11 +370,11 @@ class _TryOnScreenState extends State<TryOnScreen> {
                           child: _buildSectionTitle(
                               context, "WARDROBE", "Pick items to mix & match"),
                         ),
-                        if (_selectedClothesUrls.isNotEmpty)
+                        if (_selectedClothes.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 4),
                             child: Text(
-                              "${_selectedClothesUrls.length} selected",
+                              "${_selectedClothes.length} selected",
                               style: TextStyle(
                                   color: colorScheme.onSurface.withOpacity(0.6),
                                   fontSize: 12),
@@ -372,11 +384,11 @@ class _TryOnScreenState extends State<TryOnScreen> {
                     ),
                     const SizedBox(height: 16),
                     _ClothList(
-                      clothes: _selectedClothesUrls,
+                      clothes: _selectedClothes,
                       onAdd: _showClothSelection,
                       onRemove: (index) {
                         setState(() {
-                          _selectedClothesUrls.removeAt(index);
+                          _selectedClothes.removeAt(index);
                         });
                       },
                     ),
@@ -483,11 +495,10 @@ class _TryOnScreenState extends State<TryOnScreen> {
       child: SafeArea(
         top: false,
         child: ElevatedButton(
-          onPressed: _isLoading ||
-                  _selectedModel == null ||
-                  _selectedClothesUrls.isEmpty
-              ? null
-              : _generateImage,
+          onPressed:
+              _isLoading || _selectedModel == null || _selectedClothes.isEmpty
+                  ? null
+                  : _generateImage,
           style: ElevatedButton.styleFrom(
             backgroundColor: colorScheme.primary, // Was 0xFFE94057
             foregroundColor: colorScheme.onPrimary,
@@ -657,7 +668,7 @@ class _ModelSelector extends StatelessWidget {
 }
 
 class _ClothList extends StatelessWidget {
-  final List<String> clothes;
+  final List<ClosetItem> clothes;
   final VoidCallback onAdd;
   final Function(int) onRemove;
 
@@ -714,7 +725,8 @@ class _ClothList extends StatelessWidget {
                 ));
           }
 
-          final url = clothes[index - 1];
+          final item = clothes[index - 1];
+          final url = item.imageUrl;
           return Stack(
             clipBehavior: Clip.none,
             children: [

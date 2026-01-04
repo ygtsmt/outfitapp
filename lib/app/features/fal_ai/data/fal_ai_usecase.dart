@@ -97,7 +97,7 @@ class FalAiUsecase {
     try {
       // Webhook URL'i query parameter olarak ekle
       final webhookUrl =
-          "https://us-central1-disciplify-26970.cloudfunctions.net/falWebhook";
+          "https://us-central1-ginowl-ginfit.cloudfunctions.net/falWebhook";
       final uri =
           Uri.parse('https://queue.fal.run/fal-ai/gemini-25-flash-image/edit')
               .replace(queryParameters: {'fal_webhook': webhookUrl});
@@ -114,7 +114,22 @@ class FalAiUsecase {
             'Put the clothing items from the other images onto the person in the first image. Transfer only the clothes, not any people wearing them.';
       }
 
-      final apiKey = await getFalAiApiKey();
+      var apiKey = await getFalAiApiKey();
+
+      // Validate API Key format (simple check for colon)
+      if (!apiKey.contains(':')) {
+        log('❌ WARNING: Fal AI API Key format appears invalid (missing colon). Checking fallback...');
+        // Force fallback to hardcoded key from app_constants if simple check fails
+        if (falAiApiKey.contains(':')) {
+          apiKey = falAiApiKey;
+          log('✅ Switched to hardcoded fallback key which appears valid.');
+        } else {
+          log('❌ Hardcoded key also appears invalid.');
+        }
+      } else {
+        final keyId = apiKey.split(':')[0];
+        log('🔑 Using Fal AI API Key with ID: ${keyId.substring(0, keyId.length < 8 ? keyId.length : 8)}...');
+      }
       final response = await http.post(
         uri,
         headers: {

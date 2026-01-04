@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:ginfit/core/routes/app_router.dart';
 
 class CombinesTabContent extends StatefulWidget {
   const CombinesTabContent({super.key});
@@ -59,6 +61,15 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
           return model == 'gemini-2.5-flash-image-edit';
         }).toList();
 
+        // Tarihe göre sırala (Yeniden eskiye)
+        geminiImages.sort((a, b) {
+          final dateA =
+              DateTime.tryParse(a['createdAt'] ?? '') ?? DateTime(2000);
+          final dateB =
+              DateTime.tryParse(b['createdAt'] ?? '') ?? DateTime(2000);
+          return dateB.compareTo(dateA); // Descending
+        });
+
         if (geminiImages.isEmpty) {
           return Center(
             child: Column(
@@ -105,7 +116,13 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
             itemCount: geminiImages.length,
             itemBuilder: (context, index) {
               final image = geminiImages[index] as Map<String, dynamic>;
-              return _CombineImageCard(imageData: image);
+              return GestureDetector(
+                onTap: () {
+                  context.router
+                      .push(CombineDetailScreenRoute(imageData: image));
+                },
+                child: _CombineImageCard(imageData: image),
+              );
             },
           ),
         );
@@ -140,20 +157,23 @@ class _CombineImageCard extends StatelessWidget {
             // Image
             Expanded(
               child: status == 'succeeded' && imageUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Center(
-                        child: LoadingAnimationWidget.fourRotatingDots(
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 12.h,
+                  ? Hero(
+                      tag: 'combine_${imageData['id'] ?? imageUrl}',
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Center(
+                          child: LoadingAnimationWidget.fourRotatingDots(
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 12.h,
+                          ),
                         ),
-                      ),
-                      errorWidget: (_, __, ___) => Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          color: Colors.grey[400],
-                          size: 48.sp,
+                        errorWidget: (_, __, ___) => Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            color: Colors.grey[400],
+                            size: 48.sp,
+                          ),
                         ),
                       ),
                     )

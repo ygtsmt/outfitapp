@@ -157,6 +157,19 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    CombineDetailScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<CombineDetailScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: CombineDetailScreen(
+          key: args.key,
+          imageData: args.imageData,
+        ),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     BatchUploadProgressScreenRoute.name: (routeData) {
       final args = routeData.argsAs<BatchUploadProgressScreenRouteArgs>();
       return CustomPage<dynamic>(
@@ -502,6 +515,10 @@ class _$AppRouter extends RootStackRouter {
           path: '/closet-item-detail-screen',
         ),
         RouteConfig(
+          CombineDetailScreenRoute.name,
+          path: '/combine-detail-screen',
+        ),
+        RouteConfig(
           BatchUploadProgressScreenRoute.name,
           path: '/batch-upload-progress-screen',
         ),
@@ -817,6 +834,41 @@ class ClosetItemDetailScreenRouteArgs {
   @override
   String toString() {
     return 'ClosetItemDetailScreenRouteArgs{key: $key, closetItem: $closetItem}';
+  }
+}
+
+/// generated route for
+/// [CombineDetailScreen]
+class CombineDetailScreenRoute
+    extends PageRouteInfo<CombineDetailScreenRouteArgs> {
+  CombineDetailScreenRoute({
+    Key? key,
+    required Map<String, dynamic> imageData,
+  }) : super(
+          CombineDetailScreenRoute.name,
+          path: '/combine-detail-screen',
+          args: CombineDetailScreenRouteArgs(
+            key: key,
+            imageData: imageData,
+          ),
+        );
+
+  static const String name = 'CombineDetailScreenRoute';
+}
+
+class CombineDetailScreenRouteArgs {
+  const CombineDetailScreenRouteArgs({
+    this.key,
+    required this.imageData,
+  });
+
+  final Key? key;
+
+  final Map<String, dynamic> imageData;
+
+  @override
+  String toString() {
+    return 'CombineDetailScreenRouteArgs{key: $key, imageData: $imageData}';
   }
 }
 

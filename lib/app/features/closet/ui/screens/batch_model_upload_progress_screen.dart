@@ -195,174 +195,159 @@ class _BatchModelUploadProgressScreenState
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(24.w),
-          child: Column(
-            children: [
-              SizedBox(height: 24.h),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(24.w),
+            child: Column(
+              children: [
+                SizedBox(height: 24.h),
 
-              // Circular Progress with Counter
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 120.w,
-                    height: 120.w,
-                    child: CircularProgressIndicator(
-                      value: progress,
-                      strokeWidth: 8,
-                      backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        context.baseColor,
-                      ),
+                // Current Photo Preview with Counter
+                if (_currentIndex < widget.imageFiles.length)
+                  ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          height: 450.h,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16.r),
+                            child: Image.file(
+                              widget.imageFiles[_currentIndex],
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        // Counter Overlay
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 20.w, vertical: 10.h),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(30.r),
+                          ),
+                          child: Text(
+                            '${_currentIndex + 1} / ${widget.imageFiles.length}',
+                            style: TextStyle(
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
+
+                SizedBox(height: 24.h),
+
+                // Status Text
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    key: ValueKey(_currentStatus),
                     children: [
-                      Text(
-                        '${_currentIndex + 1}',
-                        style: TextStyle(
-                          fontSize: 32.sp,
-                          fontWeight: FontWeight.bold,
+                      if (_isProcessing)
+                        LoadingAnimationWidget.staggeredDotsWave(
                           color: context.baseColor,
+                          size: 24.sp,
                         ),
-                      ),
+                      SizedBox(width: 12.w),
                       Text(
-                        '/ ${widget.imageFiles.length}',
+                        _currentStatus,
                         style: TextStyle(
                           fontSize: 16.sp,
-                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[700],
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
 
-              SizedBox(height: 32.h),
+                SizedBox(height: 40.h),
 
-              // Current Photo Preview
-              if (_currentIndex < widget.imageFiles.length)
-                ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: Container(
-                    height: 280.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16.r),
-                      child: Image.file(
-                        widget.imageFiles[_currentIndex],
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                // Remaining count
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(color: Colors.grey[200]!),
                   ),
-                ),
-
-              SizedBox(height: 24.h),
-
-              // Status Text
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  key: ValueKey(_currentStatus),
-                  children: [
-                    if (_isProcessing)
-                      LoadingAnimationWidget.staggeredDotsWave(
-                        color: context.baseColor,
-                        size: 24.sp,
-                      ),
-                    SizedBox(width: 12.w),
-                    Text(
-                      _currentStatus,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const Spacer(),
-
-              // Remaining count
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: Colors.grey[200]!),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 20.sp,
-                        ),
-                        SizedBox(width: 8.w),
-                        Text(
-                          'Başarılı: ${_successfulItems.length}',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (_failedPhotos.isNotEmpty)
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       Row(
                         children: [
                           Icon(
-                            Icons.error,
-                            color: Colors.red,
+                            Icons.check_circle,
+                            color: Colors.green,
                             size: 20.sp,
                           ),
                           SizedBox(width: 8.w),
                           Text(
-                            'Başarısız: ${_failedPhotos.length}',
+                            'Başarılı: ${_successfulItems.length}',
                             style: TextStyle(
                               fontSize: 14.sp,
-                              color: Colors.red,
+                              color: Colors.grey[700],
                             ),
                           ),
                         ],
                       ),
-                  ],
+                      if (_failedPhotos.isNotEmpty)
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.error,
+                              color: Colors.red,
+                              size: 20.sp,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              'Başarısız: ${_failedPhotos.length}',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
                 ),
-              ),
 
-              SizedBox(height: 24.h),
+                SizedBox(height: 24.h),
 
-              // Progress Bar
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: LinearProgressIndicator(
-                  value: progress,
-                  minHeight: 8.h,
-                  backgroundColor: Colors.grey[200],
-                  valueColor: AlwaysStoppedAnimation<Color>(context.baseColor),
+                // Progress Bar
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    minHeight: 8.h,
+                    backgroundColor: Colors.grey[200],
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(context.baseColor),
+                  ),
                 ),
-              ),
 
-              SizedBox(height: 16.h),
-            ],
+                SizedBox(height: 32.h),
+              ],
+            ),
           ),
         ),
       ),

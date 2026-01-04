@@ -25,6 +25,7 @@ import "package:ginfit/app/features/closet/ui/screens/closet_item_detail_screen.
 import "package:ginfit/app/features/closet/ui/screens/model_gallery_selection_screen.dart";
 import "package:ginfit/app/features/closet/ui/screens/model_item_form_screen.dart";
 import "package:ginfit/app/features/closet/ui/screens/model_item_detail_screen.dart";
+import "package:ginfit/app/features/closet/ui/screens/combine_detail_screen.dart";
 import "package:ginfit/app/features/closet/ui/screens/batch_upload_progress_screen.dart";
 import "package:ginfit/app/features/closet/ui/screens/batch_upload_result_screen.dart";
 import "package:ginfit/app/features/closet/ui/screens/failed_photo_review_screen.dart";
@@ -171,6 +172,11 @@ part "app_router.gr.dart";
     CustomRoute(
       page: ClosetItemDetailScreen,
       path: "/closet-item-detail-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      page: CombineDetailScreen, // detail for combine
+      path: "/combine-detail-screen",
       transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
     // Batch upload screens

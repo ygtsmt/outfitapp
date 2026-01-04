@@ -8,7 +8,6 @@ import 'package:ginfit/app/features/closet/models/closet_item_model.dart';
 import 'package:ginfit/app/features/closet/services/clothing_analysis_service.dart';
 import 'package:ginfit/core/core.dart';
 import 'package:ginfit/core/services/background_removal_service.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 /// Result model for batch upload
 class BatchUploadResult {
@@ -62,7 +61,6 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
   final List<FailedPhotoInfo> _failedPhotos = [];
 
   late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
@@ -71,9 +69,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
+
     _startProcessing();
   }
 
@@ -208,189 +204,206 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
 
   @override
   Widget build(BuildContext context) {
-    final progress = widget.imageFiles.isEmpty
-        ? 0.0
-        : (_currentIndex + 1) / widget.imageFiles.length;
+    // Current file
+    final currentFile = _currentIndex < widget.imageFiles.length
+        ? widget.imageFiles[_currentIndex]
+        : widget.imageFiles.last;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text('Fotoğraflar İşleniyor'),
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(24.w),
-          child: Column(
-            children: [
-              SizedBox(height: 24.h),
+      backgroundColor: Colors.black,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // 1. Background Image (Full Screen)
+          Image.file(
+            currentFile,
+            fit: BoxFit.cover,
+          ),
 
-              // Circular Progress with Counter
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 120.w,
-                    height: 120.w,
-                    child: CircularProgressIndicator(
-                      value: progress,
-                      strokeWidth: 8,
-                      backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        context.baseColor,
-                      ),
-                    ),
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
+          // 2. Black Overlay (for readability)
+          Container(
+            color: Colors.black.withOpacity(0.5),
+          ),
+
+          // 3. Content
+          SafeArea(
+            child: Column(
+              children: [
+                // Top Bar
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '${_currentIndex + 1}',
-                        style: TextStyle(
-                          fontSize: 32.sp,
-                          fontWeight: FontWeight.bold,
-                          color: context.baseColor,
+                      // Counter Badge
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 12.w, vertical: 6.h),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(20.r),
+                          border:
+                              Border.all(color: Colors.white.withOpacity(0.2)),
                         ),
-                      ),
-                      Text(
-                        '/ ${widget.imageFiles.length}',
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: Colors.grey[600],
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.photo_library,
+                              color: Colors.white,
+                              size: 16.sp,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              '${_currentIndex + 1} / ${widget.imageFiles.length}',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-
-              SizedBox(height: 32.h),
-
-              // Current Photo Preview
-              if (_currentIndex < widget.imageFiles.length)
-                ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: Container(
-                    height: 280.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16.r),
-                      child: Image.file(
-                        widget.imageFiles[_currentIndex],
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
                 ),
 
-              SizedBox(height: 24.h),
+                const Spacer(),
 
-              // Status Text
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  key: ValueKey(_currentStatus),
+                // Center Progress Circle
+                Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (_isProcessing)
-                      LoadingAnimationWidget.staggeredDotsWave(
-                        color: context.baseColor,
-                        size: 24.sp,
-                      ),
-                    SizedBox(width: 12.w),
-                    Text(
-                      _currentStatus,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const Spacer(),
-
-              // Remaining count
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: Colors.grey[200]!),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 20.sp,
-                        ),
-                        SizedBox(width: 8.w),
-                        Text(
-                          'Başarılı: ${_successfulItems.length}',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (_failedPhotos.isNotEmpty)
-                      Row(
+                    SizedBox(
+                      width: 120.w,
+                      height: 120.w,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        alignment: Alignment.center,
                         children: [
-                          Icon(
-                            Icons.error,
-                            color: Colors.red,
-                            size: 20.sp,
+                          CircularProgressIndicator(
+                            value: _isProcessing ? null : 0,
+                            strokeWidth: 3,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                                Colors.white),
+                            backgroundColor: Colors.white.withOpacity(0.2),
                           ),
-                          SizedBox(width: 8.w),
                           Text(
-                            'Başarısız: ${_failedPhotos.length}',
+                            '${((_currentIndex + 1) / widget.imageFiles.length * 100).toInt()}%',
                             style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.red,
+                              color: Colors.white,
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
+                    ),
+                    SizedBox(height: 24.h),
+
+                    // animated status text
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      child: Text(
+                        _currentStatus,
+                        key: ValueKey(_currentStatus),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.5),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              ),
 
-              SizedBox(height: 24.h),
+                const Spacer(),
 
-              // Progress Bar
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: LinearProgressIndicator(
-                  value: progress,
-                  minHeight: 8.h,
-                  backgroundColor: Colors.grey[200],
-                  valueColor: AlwaysStoppedAnimation<Color>(context.baseColor),
+                // Bottom Stats Card
+                Container(
+                  margin: EdgeInsets.all(24.w),
+                  padding: EdgeInsets.all(20.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(24.r),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildStatItem(
+                        icon: Icons.check_circle_outline,
+                        color: const Color(0xFF4CAF50), // Bright Green
+                        label: 'Başarılı',
+                        value: _successfulItems.length.toString(),
+                      ),
+                      Container(
+                        width: 1,
+                        height: 40.h,
+                        color: Colors.white.withOpacity(0.2),
+                      ),
+                      _buildStatItem(
+                        icon: Icons.error_outline,
+                        color: const Color(0xFFFF5252), // Bright Red
+                        label: 'Başarısız',
+                        value: _failedPhotos.length.toString(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                SizedBox(height: 20.h),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-              SizedBox(height: 16.h),
-            ],
+  Widget _buildStatItem({
+    required IconData icon,
+    required Color color,
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: color, size: 24.sp),
+        SizedBox(height: 8.h),
+        Text(
+          value,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold,
           ),
         ),
-      ),
+        SizedBox(height: 4.h),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.7),
+            fontSize: 12.sp,
+          ),
+        ),
+      ],
     );
   }
 }
