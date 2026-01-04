@@ -12,6 +12,7 @@ String languageLocale = const Locale('tr').languageCode;
 const String passwordRegex = r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$";
 
 const appId = "0bf81f0a52cf49109bba64ccb59070da";
+const geminiApiKey = "AIzaSyACsjR_d1kwVClwXUkITExCeO8KyzVtn0Y";
 const togetherApiUrl = 'https://api.together.xyz/v1/images/generations';
 const togetherAPiKey =
     "df1fd62679c42ef1345d7bba0ead56fd4b18f078d50007fb2e87d8f03f890b11";

@@ -47,6 +47,52 @@ class _TryOnScreenState extends State<TryOnScreen> {
       );
       return;
     }
+/* 
+    // Body Part Validation
+    final bodyPart = _selectedModel!.bodyPart?.toLowerCase() ?? 'full_body';
+
+    // Normalize body part for looser matching if needed
+    final isUpperBodyOnly =
+        bodyPart.contains('upper') || bodyPart.contains('face');
+    final isLowerBodyOnly =
+        bodyPart.contains('lower') || bodyPart.contains('feet');
+
+    // Categories that are incompatible
+    for (final item in _selectedClothes) {
+      final category = item.category?.toLowerCase() ??
+          ClosetItem.getCategoryFromSubcategory(item.subcategory)
+              ?.toLowerCase() ??
+          '';
+
+      if (isUpperBodyOnly) {
+        if (category == 'bottom' || category == 'shoes') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Your model is "${_selectedModel!.bodyPart}". You cannot try on ${item.subcategory ?? 'bottoms/shoes'} with this photo. Please select a full-body model.'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+          return;
+        }
+      }
+
+      if (isLowerBodyOnly) {
+        if (category == 'top' || category == 'outerwear') {
+          // Outerwear usually covers upper body
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Your model is "${_selectedModel!.bodyPart}". You cannot try on ${item.subcategory ?? 'tops'} with this photo. Please select a full-body model.'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+          return;
+        }
+      }
+    } */
 
     setState(() {
       _isLoading = true;

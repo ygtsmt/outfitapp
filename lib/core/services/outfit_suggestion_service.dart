@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ginfit/core/core.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:ginfit/app/features/closet/models/closet_item_model.dart';
 import 'package:ginfit/app/features/closet/models/model_item_model.dart';
@@ -9,12 +10,11 @@ class OutfitSuggestionService {
   late final GenerativeModel _model;
 
   // Gemini API Key (same as ClothingAnalysisService)
-  static const String _apiKey = 'AIzaSyAkFWcwsPZ8hlHW5r4aMe1a5tmXYjm_024';
 
   OutfitSuggestionService() {
     _model = GenerativeModel(
       model: 'gemini-2.5-flash',
-      apiKey: _apiKey,
+      apiKey: geminiApiKey,
     );
   }
 

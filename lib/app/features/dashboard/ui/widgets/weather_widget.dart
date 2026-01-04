@@ -619,11 +619,16 @@ class _OutfitSuggestionSheetState extends State<_OutfitSuggestionSheet> {
 
     try {
       final falAiUsecase = GetIt.I<FalAiUsecase>();
+      final clothesList = widget.suggestion.closetItems
+          .map((e) =>
+              "${e.color ?? ''} ${e.subcategory ?? ''} ${e.category ?? ''}"
+                  .trim())
+          .join(", ");
 
       final result = await falAiUsecase.generateGeminiImageEdit(
         imageUrls: widget.suggestion.imageUrls,
         prompt:
-            'Wear clothes for ${widget.weather.temperature.round()}°C ${widget.weather.description} weather',
+            'Put the following clothes: ($clothesList) onto the person in the first image. Keep the person\'s face, body shape, and pose exactly the same. Only change the clothing.',
         modelAiPrompt: widget.suggestion.model.aiPrompt,
       );
 

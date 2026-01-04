@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:ginfit/core/core.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:ginfit/app/features/fit_check/models/fit_check_model.dart';
 import 'package:injectable/injectable.dart';
@@ -15,12 +16,11 @@ class FitCheckService {
   late final GenerativeModel _geminiModel;
 
   // Using the same API key as other services for consistency
-  static const String _apiKey = 'AIzaSyAkFWcwsPZ8hlHW5r4aMe1a5tmXYjm_024';
 
   FitCheckService(this._auth, this._firestore, this._storage) {
     _geminiModel = GenerativeModel(
       model: 'gemini-2.5-flash',
-      apiKey: _apiKey,
+      apiKey: geminiApiKey,
     );
   }
 
