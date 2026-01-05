@@ -63,3 +63,7 @@ const darkColorScheme = ColorScheme(
   outlineVariant: Color(0xFF49454F),
   scrim: Color(0xFF000000),
 );
+/* 
+Combines tabbarında yeralan elemanlarnda UI ını duzenle dostum burada kullanıcıların acıklamayı gormelerıne falan gerek yok belkı tıcket seklınde bır seyler goterılebılrı bılmıyorum ama daha modern ve UI olarka profosoyone lgozukmesı lazım 
+
+ */

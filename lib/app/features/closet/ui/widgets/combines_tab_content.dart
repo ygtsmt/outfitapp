@@ -15,6 +15,9 @@ class CombinesTabContent extends StatefulWidget {
 }
 
 class _CombinesTabContentState extends State<CombinesTabContent> {
+  int _crossAxisCount = 2;
+  double _baseScaleFactor = 1.0;
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -101,29 +104,47 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
           );
         }
 
-        return RefreshIndicator(
-          onRefresh: () async {
-            setState(() {});
+        return GestureDetector(
+          onScaleStart: (details) {
+            _baseScaleFactor = _crossAxisCount.toDouble();
           },
-          child: GridView.builder(
-            padding: EdgeInsets.all(8.w),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 8.w,
-              mainAxisSpacing: 8.h,
-              childAspectRatio: 0.75,
-            ),
-            itemCount: geminiImages.length,
-            itemBuilder: (context, index) {
-              final image = geminiImages[index] as Map<String, dynamic>;
-              return GestureDetector(
-                onTap: () {
-                  context.router
-                      .push(CombineDetailScreenRoute(imageData: image));
-                },
-                child: _CombineImageCard(imageData: image),
-              );
+          onScaleUpdate: (details) {
+            // scale > 1 means zooming in (fewer columns)
+            // scale < 1 means zooming out (more columns)
+            // We want inverted behavior relative to scale roughly.
+            // newCount = base / scale
+            // Example: Start 2. Zoom In (scale 2.0) -> 2/2 = 1. But clamp min 2.
+            // Example: Start 2. Zoom Out (scale 0.5) -> 2/0.5 = 4.
+
+            setState(() {
+              final newCount = (_baseScaleFactor / details.scale).round();
+              _crossAxisCount = newCount.clamp(2, 4);
+            });
+          },
+          child: RefreshIndicator(
+            onRefresh: () async {
+              setState(() {});
             },
+            child: GridView.builder(
+              padding: EdgeInsets.all(8.w),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: _crossAxisCount,
+                crossAxisSpacing: 8.w,
+                mainAxisSpacing: 8.h,
+                childAspectRatio: 0.75, // Keeps poster ratio
+              ),
+              itemCount: geminiImages.length,
+              itemBuilder: (context, index) {
+                final image = geminiImages[index] as Map<String, dynamic>;
+                return GestureDetector(
+                  onTap: () {
+                    context.router
+                        .push(CombineDetailScreenRoute(imageData: image));
+                  },
+                  child: _CombineImageCard(imageData: image),
+                );
+              },
+            ),
           ),
         );
       },
@@ -142,98 +163,108 @@ class _CombineImageCard extends StatelessWidget {
     final output = imageData['output'] as List<dynamic>?;
     final imageUrl =
         output != null && output.isNotEmpty ? output[0] as String? : null;
-    final prompt = imageData['prompt'] as String? ?? '';
 
     return Card(
-      elevation: 2,
+      elevation: 4,
+      shadowColor: Colors.black.withOpacity(0.2),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(16.r),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12.r),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        borderRadius: BorderRadius.circular(16.r),
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            // Image
-            Expanded(
-              child: status == 'succeeded' && imageUrl != null
-                  ? Hero(
-                      tag: 'combine_${imageData['id'] ?? imageUrl}',
-                      child: CachedNetworkImage(
-                        imageUrl: imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Center(
-                          child: LoadingAnimationWidget.fourRotatingDots(
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 12.h,
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) => Center(
-                          child: Icon(
-                            Icons.broken_image,
-                            color: Colors.grey[400],
-                            size: 48.sp,
-                          ),
-                        ),
-                      ),
-                    )
-                  : Container(
-                      color: Colors.grey[200],
-                      child: Center(
-                        child: status == 'processing'
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  LoadingAnimationWidget.fourRotatingDots(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    size: 24.h,
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    'İşleniyor...',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.error_outline,
-                                    color: Colors.red,
-                                    size: 32.sp,
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    'Hata',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                      ),
+            // Image (Full Bleed)
+            if (status == 'succeeded' && imageUrl != null)
+              Hero(
+                tag: 'combine_${imageData['id'] ?? imageUrl}',
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Center(
+                    child: LoadingAnimationWidget.fourRotatingDots(
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 12.h,
                     ),
-            ),
-            // Prompt
-            Container(
-              padding: EdgeInsets.all(8.w),
-              color: Colors.black.withOpacity(0.05),
-              child: Text(
-                prompt,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  color: Colors.grey[700],
+                  ),
+                  errorWidget: (_, __, ___) => Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: Colors.grey[400],
+                      size: 32.sp,
+                    ),
+                  ),
+                ),
+              )
+            else
+              Container(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: Center(
+                  child: status == 'processing'
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            LoadingAnimationWidget.fourRotatingDots(
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 20.h,
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              'Hazırlanıyor...',
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withOpacity(0.6),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: Theme.of(context).colorScheme.error,
+                              size: 24.sp,
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              'Hata',
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                color: Theme.of(context).colorScheme.error,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                 ),
               ),
-            ),
+
+            // Gradient Overlay (Bottom)
+            if (status == 'succeeded')
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 60.h,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.6),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

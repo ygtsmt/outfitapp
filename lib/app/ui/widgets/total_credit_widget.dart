@@ -61,7 +61,7 @@ class TotalCreditWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 4.w),
         decoration: BoxDecoration(
-          color: context.gray100,
+          color: Colors.grey[100],
           borderRadius: BorderRadius.circular(12),
           boxShadow: const [
             BoxShadow(
@@ -71,24 +71,13 @@ class TotalCreditWidget extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          spacing: 4.w,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              PngPaths.coin,
-              height: 24.h,
-              width: 24.w,
-            ),
-            Text(
-              totalCredit.toString(),
+        child: Text(
+              "Free",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: context.black,
                   ),
             ),
-          ],
-        ),
       ),
     );
   }

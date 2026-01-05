@@ -59,7 +59,7 @@ class PersonalInfoCard extends StatelessWidget {
                 ],
               ),
               Divider(
-                color: context.borderColor,
+                color: Colors.grey[200],
               ),
               LayoutConstants.tinyEmptyHeight,
 

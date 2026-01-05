@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/app/features/fal_ai/data/fal_ai_usecase.dart';
@@ -430,77 +431,120 @@ class _TryOnScreenState extends State<TryOnScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface, // Was LocalColors.background
-      appBar: AppBar(
-        forceMaterialTransparency: true,
-        title: const Text(
-          'Virtual Studio',
-          style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionTitle(
-                        context, "MODEL", "Select who will try on the clothes"),
-                    const SizedBox(height: 16),
-                    _ModelSelector(
-                      imageUrl: _selectedModel?.imageUrl,
-                      onTap: _showModelSelection,
-                      onRandomSelect: _selectRandomModel,
-                    ),
-                    const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: _buildSectionTitle(
-                              context, "WARDROBE", "Pick items to mix & match"),
-                        ),
-                        if (_selectedClothes.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Text(
-                              "${_selectedClothes.length} selected",
-                              style: TextStyle(
-                                  color: colorScheme.onSurface.withOpacity(0.6),
-                                  fontSize: 12),
-                            ),
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionTitle(
+                      context, "MODEL", "Select who will try on the clothes"),
+                  const SizedBox(height: 16),
+                  _ModelSelector(
+                    imageUrl: _selectedModel?.imageUrl,
+                    onTap: _showModelSelection,
+                    onRandomSelect: _selectRandomModel,
+                  ),
+                  const SizedBox(height: 32),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: _buildSectionTitle(
+                            context, "WARDROBE", "Pick items to mix & match"),
+                      ),
+                      if (_selectedClothes.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Text(
+                            "${_selectedClothes.length} selected",
+                            style: TextStyle(
+                                color: colorScheme.onSurface.withOpacity(0.6),
+                                fontSize: 12),
                           ),
-                      ],
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _ClothList(
+                    clothes: _selectedClothes,
+                    onAdd: _showClothSelection,
+                    onRandomSelect: _selectRandomCloth,
+                    onRemove: (index) {
+                      setState(() {
+                        _selectedClothes.removeAt(index);
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  if (_statusMessage != null) _buildStatusCard(context),
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainer ??
+                            colorScheme.surface, // Was 0xFF1E1E1E
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(24)),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: _isLoading ||
+                                _selectedModel == null ||
+                                _selectedClothes.isEmpty
+                            ? null
+                            : _generateImage,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              colorScheme.primary, // Was 0xFFE94057
+                          foregroundColor: colorScheme.onPrimary,
+                          disabledBackgroundColor:
+                              colorScheme.onSurface.withOpacity(0.12),
+                          disabledForegroundColor:
+                              colorScheme.onSurface.withOpacity(0.38),
+                          padding: const EdgeInsets.symmetric(vertical: 18),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: _isLoading
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 20.w,
+                                    height: 20.h,
+                                    child: CircularProgressIndicator(
+                                        color: colorScheme.onPrimary,
+                                        strokeWidth: 2),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  const Text("Processing Studio..."),
+                                ],
+                              )
+                            : Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 20.h),
+                                child: Text(
+                                  'Try-on',
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ),
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    _ClothList(
-                      clothes: _selectedClothes,
-                      onAdd: _showClothSelection,
-                      onRandomSelect: _selectRandomCloth,
-                      onRemove: (index) {
-                        setState(() {
-                          _selectedClothes.removeAt(index);
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    if (_statusMessage != null) _buildStatusCard(context),
-                  ],
-                ),
+                  )
+                ],
               ),
             ),
-            _buildBottomBar(context),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -579,60 +623,6 @@ class _TryOnScreenState extends State<TryOnScreen> {
             ),
           ],
         ],
-      ),
-    );
-  }
-
-  Widget _buildBottomBar(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer ??
-            colorScheme.surface, // Was 0xFF1E1E1E
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: ElevatedButton(
-          onPressed:
-              _isLoading || _selectedModel == null || _selectedClothes.isEmpty
-                  ? null
-                  : _generateImage,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colorScheme.primary, // Was 0xFFE94057
-            foregroundColor: colorScheme.onPrimary,
-            disabledBackgroundColor: colorScheme.onSurface.withOpacity(0.12),
-            disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
-            padding: const EdgeInsets.symmetric(vertical: 18),
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          child: _isLoading
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                          color: colorScheme.onPrimary, strokeWidth: 2),
-                    ),
-                    const SizedBox(width: 12),
-                    const Text("Processing Studio..."),
-                  ],
-                )
-              : const Text(
-                  'Visualize Outfit',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-        ),
       ),
     );
   }

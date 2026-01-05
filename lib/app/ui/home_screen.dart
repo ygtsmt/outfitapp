@@ -245,4 +245,15 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Günaydın ☀️';
+    } else if (hour < 18) {
+      return 'İyi günler 👋';
+    } else {
+      return 'İyi akşamlar 🌙';
+    }
+  }
 }

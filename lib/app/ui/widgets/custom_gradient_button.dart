@@ -50,25 +50,7 @@ class CustomGradientButton extends StatelessWidget {
                 ? MainAxisAlignment.spaceBetween
                 : MainAxisAlignment.center,
             children: [
-              if (requiredCredit != null)
-                Row(
-                  spacing: 4.w,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      PngPaths.coin,
-                      height: 24.h, // Sabit ve orantılı ikon boyutu
-                      width: 24.w, color: Colors.transparent,
-                    ),
-                    Text(
-                      requiredCredit ?? '0',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.transparent,
-                          ),
-                    ),
-                  ],
-                ),
+              
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -84,25 +66,7 @@ class CustomGradientButton extends StatelessWidget {
                   ),
                 ],
               ),
-              if (requiredCredit != null)
-                Row(
-                  spacing: 4.w,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      requiredCredit ?? '0',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: context.baseColor,
-                          ),
-                    ),
-                    Image.asset(
-                      PngPaths.coin,
-                      height: 20.h, // Sabit ve orantılı ikon boyutu
-                      width: 20.w,
-                    ),
-                  ],
-                ),
+            
             ],
           ),
         ),

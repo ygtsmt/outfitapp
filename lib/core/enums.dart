@@ -17,16 +17,3 @@ enum EventStatus {
   failure,
 }
 
-enum VideoGenerateWithPollotStatus {
-  waiting,
-  succeed,
-  failed,
-  processing,
-}
-
-enum GenerateType {
-  image,
-  realtimeImage,
-  video,
-  videoTemplate,
-}

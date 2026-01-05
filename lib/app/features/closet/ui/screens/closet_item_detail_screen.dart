@@ -115,7 +115,6 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
         child: Stack(
           children: [
             // Background with gradient
-            _buildBackground(),
 
             // Main scrollable content
             SingleChildScrollView(
@@ -225,33 +224,6 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
                 ),
               ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBackground() {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.white,
-            Color.lerp(Colors.white, Colors.grey[100], _progress)!,
-          ],
-        ),
-      ),
-      child: Opacity(
-        opacity: 0.03 * (1 - _progress),
-        child: Center(
-          child: Image.asset(
-            'assets/png/logo.png',
-            width: 200.w,
-            height: 200.w,
-          ),
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,90 +40,128 @@ class _ClosetScreenState extends State<ClosetScreen>
       return _buildLoginRequiredUI(context);
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 16.h),
-          // TabBar
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-              ),
-            ),
-            child: TabBar(
-              controller: _tabController,
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.r),
-                color: Theme.of(context).primaryColor,
-              ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              dividerColor: Colors.transparent,
-              labelColor: Colors.white,
-              unselectedLabelColor:
-                  Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-              labelStyle: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-              ),
-              unselectedLabelStyle: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-              ),
-              tabs: [
-                Tab(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Closet'),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // TabBar
+            // Glassmorphic Premium TabBar
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.h),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20.r),
+                child: BackdropFilter(
+                  filter: ui.ImageFilter.blur(
+                      sigmaX: 10, sigmaY: 10), // Blur effect
+                  child: Container(
+                    height: 56.h,
+                    padding: EdgeInsets.all(4.w),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .surface
+                          .withOpacity(0.7), // Semi-transparent surface
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.2),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: TabBar(
+                      controller: _tabController,
+                      indicator: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.r),
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).primaryColor.withOpacity(0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                Theme.of(context).primaryColor.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      dividerColor: Colors.transparent,
+                      labelColor: Colors.white,
+                      unselectedLabelColor: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
+                      labelStyle: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                      unselectedLabelStyle: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.2,
+                      ),
+                      overlayColor: WidgetStateProperty.all(Colors.transparent),
+                      tabs: [
+                        Tab(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text('Closet'),
+                          ),
+                        ),
+                        Tab(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text('Models'),
+                          ),
+                        ),
+                        Tab(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text('Combines'),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
-                Tab(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Models'),
-                      ],
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Combines'),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-          SizedBox(height: 16.h),
-          // TabBarView
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: const [
-                ClosetTabContent(),
-                ModelsTabContent(),
-                CombinesTabContent(),
-              ],
+            // TabBarView
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: const [
+                  ClosetTabContent(),
+                  ModelsTabContent(),
+                  CombinesTabContent(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

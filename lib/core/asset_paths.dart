@@ -5,11 +5,6 @@ class PngPaths {
   static const String appleLogo = "assets/png/apple_logo.png";
   static const String generateFilled = "assets/png/generate_filled.png";
   static const String generateOutlined = "assets/png/generate_outlined.png";
-  static const String coin = "assets/png/coin.png";
-  static const String upload = "assets/png/upload.png";
-  static const String square = "assets/png/square.png";
-  static const String portrait = "assets/png/portrait.png";
-  static const String landscape = "assets/png/landscape.png";
   static const String success = "assets/png/success.png";
   static const String textToImage = "assets/png/text-to-image.jpeg";
   static const String textToVideo = "assets/png/text-to-video.png";

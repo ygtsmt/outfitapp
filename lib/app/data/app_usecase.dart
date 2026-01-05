@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:comby/app/data/models/app_document_model.dart';
 import 'package:comby/app/data/models/feedback_model.dart';
-import 'package:comby/app/data/models/credit_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:comby/core/data_sources/local_data_source/secure_data_storage.dart';
 import 'dart:io';
@@ -112,61 +111,6 @@ class AppUseCase {
     } catch (e) {
       log('getSavedLanguage error: $e');
       return null;
-    }
-  }
-
-  Future<GenerateCreditRequirements?> getGenerateCreditRequirements() async {
-    try {
-      // Tek document'tan tüm kredi requirements'ı çek
-      final doc = await firestore
-          .collection('generate_credit')
-          .doc('required_credits_per')
-          .get();
-
-      if (!doc.exists) {
-        return null;
-      }
-
-      final data = doc.data();
-      if (data == null) return null;
-
-      return GenerateCreditRequirements.fromJson(data);
-    } catch (e) {
-      log('getGenerateCreditRequirements error: $e');
-      return null;
-    }
-  }
-
-  Future<int> getOpenedCreditCount() async {
-    try {
-      final doc = await firestore
-          .collection('generate_credit')
-          .doc('credit_campaign')
-          .get();
-
-      if (!doc.exists) {
-        log('credit_campaign document does not exist, using default 60');
-        return 200; // Default fallback
-      }
-
-      final data = doc.data();
-      if (data == null) {
-        log('credit_campaign data is null, using default 60');
-        return 200; // Default fallback
-      }
-
-      final openedCreditCount = data['opened_credit_count'] as int?;
-      if (openedCreditCount == null) {
-        log('⚠️ opened_credit_count field not found, using default 200');
-        return 200; // Default fallback
-      }
-
-      log('✅ Opened credit count from Firestore: $openedCreditCount');
-      debugPrint('🔥🔥🔥 FIREBASE BONUS AMOUNT: $openedCreditCount 🔥🔥🔥');
-      return openedCreditCount;
-    } catch (e) {
-      log('getOpenedCreditCount error: $e, using default 60');
-      return 200; // Default fallback
     }
   }
 }

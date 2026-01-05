@@ -20,29 +20,11 @@ extension ColorSheme on BuildContext {
 
   Color get white => Theme.of(this).colorScheme.onPrimary;
   Color get gray3 => Theme.of(this).colorScheme.onPrimary;
-  Color? get gray100 => Colors.grey[100];
-  Color get text => Theme.of(this).colorScheme.onPrimaryContainer;
-  Color get pinkStroke =>
-      // ignore: deprecated_member_use
-      Theme.of(this).colorScheme.secondary.withOpacity(0.45);
+
   Color get lightBlack => Theme.of(this).colorScheme.onSecondary;
   Color get black => Theme.of(this).colorScheme.scrim;
   Color get lightRed => Theme.of(this).colorScheme.onTertiary;
   Color get red => Theme.of(this).colorScheme.tertiaryContainer;
-  Color get activeColor => const Color(0XFFF2613F);
-
-  Gradient get redGradient => const LinearGradient(colors: [
-        Color(0xFFBB2649),
-        Color(0xFFF35D74),
-      ]);
-
-  Color get textColor => const Color(0XFF4B4F5D);
-  Color get subTitleColor => const Color(0XFF727272);
-  Color get labelColor => const Color(0XFFC5C0C0);
-  Color get textColorSplash => const Color(0XFF505050);
-  Color get disableBackgorund => const Color(0XFFE3E3E3);
-  Color get borderColor => const Color(0XFFC9C9C9);
-  Color get containerBackgroundColor => const Color(0XFFF6F6F6);
 }
 
 extension PrettyDateTimeTR on String {

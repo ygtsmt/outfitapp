@@ -90,7 +90,7 @@ class _PaymentsScreenState extends State<PaymentsScreen>
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: context.gray100,
+          backgroundColor: Colors.grey[100],
           body: BlocBuilder<AppBloc, AppState>(
             builder: (context, appState) {
               return SingleChildScrollView(
