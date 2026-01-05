@@ -112,6 +112,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearAll": MessageLookupByLibrary.simpleMessage("Bersihkan Semua"),
         "clearSearch": MessageLookupByLibrary.simpleMessage("Hapus Pencarian"),
         "close": MessageLookupByLibrary.simpleMessage("Tutup"),
+        "combyAiPlusPlan":
+            MessageLookupByLibrary.simpleMessage("Paket Comby AI Plus"),
+        "combyAiProPlan":
+            MessageLookupByLibrary.simpleMessage("Paket Comby AI Pro"),
+        "combyAiUltraPlan":
+            MessageLookupByLibrary.simpleMessage("Paket Comby AI Ultra"),
         "comic_style": MessageLookupByLibrary.simpleMessage("Gaya Komik"),
         "comic_style_description":
             MessageLookupByLibrary.simpleMessage("Gaya seni buku komik"),
@@ -342,12 +348,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("DAPATKAN PREMIUM 🔱"),
         "getSubscriptionFirst":
             MessageLookupByLibrary.simpleMessage("Dapatkan Langganan Dahulu"),
-        "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("Paket Comby AI Plus"),
-        "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("Paket Comby AI Pro"),
-        "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("Paket Comby AI Ultra"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("Beli Langganan"),
         "good": MessageLookupByLibrary.simpleMessage("Bagus"),

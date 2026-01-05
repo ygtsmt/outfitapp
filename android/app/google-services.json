@@ -7,12 +7,33 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:729242676224:android:8eae1c9612180bc11bfce5",
+        "mobilesdk_app_id": "1:729242676224:android:6bf917e7b5b4ef971bfce5",
         "android_client_info": {
-          "package_name": "com.ginfit.ai.outfit.generator.fitcheck"
+          "package_name": "com.comby.ai.outfit.generator.tryon.wardrobe.fitcheck.style"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "729242676224-00btul3o99n7hd6ihc7l6g618b22bi3j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.comby.ai.outfit.generator.tryon.wardrobe.fitcheck.style",
+            "certificate_hash": "0599a78e09ed11c558c585181646e5f6f31366d6"
+          }
+        },
+        {
+          "client_id": "729242676224-fi6e4oopgd8t5fbs65reb88cvr0gos5h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.comby.ai.outfit.generator.tryon.wardrobe.fitcheck.style",
+            "certificate_hash": "451543c7cc55787fa1ec0b20dd593184ef43ac4e"
+          }
+        },
+        {
+          "client_id": "729242676224-t8o2lgbj8sqsgob7m5gbttbeudqsfs2q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCBLAnJjnPzo4J67kcEuw0Moj7o3K2p82s"
@@ -20,7 +41,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "729242676224-t8o2lgbj8sqsgob7m5gbttbeudqsfs2q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "729242676224-29sr201jv6ep4f6jmgfso8bd66o2kdgf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.comby.ai.outfit.generator.tryon.wardrobe.fitcheck.style"
+              }
+            }
+          ]
         }
       }
     }

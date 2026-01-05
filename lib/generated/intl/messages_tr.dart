@@ -113,6 +113,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearAll": MessageLookupByLibrary.simpleMessage("Tümünü Temizle"),
         "clearSearch": MessageLookupByLibrary.simpleMessage("Aramayı Temizle"),
         "close": MessageLookupByLibrary.simpleMessage("Kapat"),
+        "combyAiPlusPlan":
+            MessageLookupByLibrary.simpleMessage("Comby AI Plus Planı"),
+        "combyAiProPlan":
+            MessageLookupByLibrary.simpleMessage("Comby AI Pro Planı"),
+        "combyAiUltraPlan":
+            MessageLookupByLibrary.simpleMessage("Comby AI Ultra Planı"),
         "comic_style":
             MessageLookupByLibrary.simpleMessage("Çizgi Roman Stili"),
         "comic_style_description":
@@ -344,12 +350,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "getPremium": MessageLookupByLibrary.simpleMessage("PREMİUM AL 🔱"),
         "getSubscriptionFirst":
             MessageLookupByLibrary.simpleMessage("Önce Abonelik Alın"),
-        "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("Comby AI Plus Planı"),
-        "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("Comby AI Pro Planı"),
-        "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("Comby AI Ultra Planı"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("Abonelik Satın Al"),
         "good": MessageLookupByLibrary.simpleMessage("İyi"),

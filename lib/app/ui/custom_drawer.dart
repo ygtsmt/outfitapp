@@ -174,7 +174,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ),
                 onTap: () async {
                   final Uri url = Uri.parse(
-                      'https://play.google.com/store/apps/details?id=com.example.ginly');
+                      'https://play.google.com/store/apps/details?id=com.example.comby');
                   if (await canLaunchUrl(url)) {
                     await launchUrl(url, mode: LaunchMode.externalApplication);
                   }

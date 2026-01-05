@@ -18,7 +18,7 @@ import "package:package_info_plus/package_info_plus.dart";
 import "package:url_launcher/url_launcher.dart";
 import "package:comby/app/ui/widgets/feedback_screen.dart";
 
-import "package:comby/app/ui/widgets/ginly_logo_small.dart";
+import "package:comby/app/ui/widgets/comby_logo_small.dart";
 import "package:comby/app/ui/widgets/language_dropdown.dart";
 import "package:comby/app/ui/widgets/total_credit_widget.dart";
 import "package:comby/app/features/payment/ui/documents_webview_screen.dart";
@@ -168,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 leadingWidth: 64.w,
                                 centerTitle: true,
-                                title: GinlyLogoSmall(
+                                title: CombyLogoSmall(
                                   themeMode: state.themeMode,
                                   haveText: true,
                                 ),

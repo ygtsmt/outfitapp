@@ -6,8 +6,8 @@ import "package:comby/generated/l10n.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 
-class GinlySideBar extends StatelessWidget {
-  const GinlySideBar({super.key});
+class CombySideBar extends StatelessWidget {
+  const CombySideBar({super.key});
 
   @override
   Widget build(final BuildContext context) {

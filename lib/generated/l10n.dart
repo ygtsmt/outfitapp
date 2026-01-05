@@ -4211,30 +4211,30 @@ class AppLocalizations {
   }
 
   /// `Comby AI Plus Plan`
-  String get ginlyAiPlusPlan {
+  String get combyAiPlusPlan {
     return Intl.message(
       'Comby AI Plus Plan',
-      name: 'ginlyAiPlusPlan',
+      name: 'combyAiPlusPlan',
       desc: '',
       args: [],
     );
   }
 
   /// `Comby AI Pro Plan`
-  String get ginlyAiProPlan {
+  String get combyAiProPlan {
     return Intl.message(
       'Comby AI Pro Plan',
-      name: 'ginlyAiProPlan',
+      name: 'combyAiProPlan',
       desc: '',
       args: [],
     );
   }
 
   /// `Comby AI Ultra Plan`
-  String get ginlyAiUltraPlan {
+  String get combyAiUltraPlan {
     return Intl.message(
       'Comby AI Ultra Plan',
-      name: 'ginlyAiUltraPlan',
+      name: 'combyAiUltraPlan',
       desc: '',
       args: [],
     );

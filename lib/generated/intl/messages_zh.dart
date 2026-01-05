@@ -95,6 +95,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearAll": MessageLookupByLibrary.simpleMessage("清除所有"),
         "clearSearch": MessageLookupByLibrary.simpleMessage("清除搜索"),
         "close": MessageLookupByLibrary.simpleMessage("关闭"),
+        "combyAiPlusPlan":
+            MessageLookupByLibrary.simpleMessage("Comby AI Plus 计划"),
+        "combyAiProPlan":
+            MessageLookupByLibrary.simpleMessage("Comby AI Pro 计划"),
+        "combyAiUltraPlan":
+            MessageLookupByLibrary.simpleMessage("Comby AI Ultra 计划"),
         "comic_style": MessageLookupByLibrary.simpleMessage("漫画风格"),
         "comic_style_description":
             MessageLookupByLibrary.simpleMessage("漫画书艺术风格"),
@@ -287,12 +293,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "getLabel": MessageLookupByLibrary.simpleMessage("获取："),
         "getPremium": MessageLookupByLibrary.simpleMessage("获取高级版 🔱"),
         "getSubscriptionFirst": MessageLookupByLibrary.simpleMessage("先获取订阅"),
-        "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("Comby AI Plus 计划"),
-        "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("Comby AI Pro 计划"),
-        "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("Comby AI Ultra 计划"),
         "goToSubscriptions": MessageLookupByLibrary.simpleMessage("购买订阅"),
         "good": MessageLookupByLibrary.simpleMessage("好"),
         "google": MessageLookupByLibrary.simpleMessage("Google"),

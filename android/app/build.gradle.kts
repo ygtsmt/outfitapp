@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.ginfit.ai.outfit.generator.fitcheck"
+    namespace = "com.comby.ai.outfit.generator.tryon.wardrobe.fitcheck.style"
     compileSdk = 36
     ndkVersion = "27.0.12077973"
 
@@ -33,7 +33,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.ginfit.ai.outfit.generator.fitcheck"
+        applicationId = "com.comby.ai.outfit.generator.tryon.wardrobe.fitcheck.style"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

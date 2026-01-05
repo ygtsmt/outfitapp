@@ -112,6 +112,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearAll": MessageLookupByLibrary.simpleMessage("مسح الكل"),
         "clearSearch": MessageLookupByLibrary.simpleMessage("مسح البحث"),
         "close": MessageLookupByLibrary.simpleMessage("إغلاق"),
+        "combyAiPlusPlan":
+            MessageLookupByLibrary.simpleMessage("خطة Comby AI Plus"),
+        "combyAiProPlan":
+            MessageLookupByLibrary.simpleMessage("خطة Comby AI Pro"),
+        "combyAiUltraPlan":
+            MessageLookupByLibrary.simpleMessage("خطة Comby AI Ultra"),
         "comic_style":
             MessageLookupByLibrary.simpleMessage("نمط القصص المصورة"),
         "comic_style_description":
@@ -341,12 +347,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("احصل على بريميوم 🔱"),
         "getSubscriptionFirst":
             MessageLookupByLibrary.simpleMessage("احصل على الاشتراك أولاً"),
-        "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("خطة Comby AI Plus"),
-        "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("خطة Comby AI Pro"),
-        "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("خطة Comby AI Ultra"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("شراء اشتراك"),
         "good": MessageLookupByLibrary.simpleMessage("جيد"),

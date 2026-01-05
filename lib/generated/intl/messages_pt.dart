@@ -116,6 +116,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearAll": MessageLookupByLibrary.simpleMessage("Limpar Tudo"),
         "clearSearch": MessageLookupByLibrary.simpleMessage("Limpar Pesquisa"),
         "close": MessageLookupByLibrary.simpleMessage("Fechar"),
+        "combyAiPlusPlan":
+            MessageLookupByLibrary.simpleMessage("Plano Comby AI Plus"),
+        "combyAiProPlan":
+            MessageLookupByLibrary.simpleMessage("Plano Comby AI Pro"),
+        "combyAiUltraPlan":
+            MessageLookupByLibrary.simpleMessage("Plano Comby AI Ultra"),
         "comic_style":
             MessageLookupByLibrary.simpleMessage("Estilo Banda Desenhada"),
         "comic_style_description": MessageLookupByLibrary.simpleMessage(
@@ -346,12 +352,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "getPremium": MessageLookupByLibrary.simpleMessage("OBTER PREMIUM 🔱"),
         "getSubscriptionFirst": MessageLookupByLibrary.simpleMessage(
             "Obtenha uma Assinatura Primeiro"),
-        "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("Plano Comby AI Plus"),
-        "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("Plano Comby AI Pro"),
-        "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("Plano Comby AI Ultra"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("Comprar uma Assinatura"),
         "good": MessageLookupByLibrary.simpleMessage("Bom"),

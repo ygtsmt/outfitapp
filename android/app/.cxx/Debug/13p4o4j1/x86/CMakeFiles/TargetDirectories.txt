@@ -1,2 +1,0 @@
-/Users/yigitsametolmez/ginly/android/app/.cxx/Debug/13p4o4j1/x86/CMakeFiles/edit_cache.dir
-/Users/yigitsametolmez/ginly/android/app/.cxx/Debug/13p4o4j1/x86/CMakeFiles/rebuild_cache.dir

@@ -162,9 +162,9 @@ async function getCurrentRefundCount(userRef) {
  * One-time purchase paket adını belirle
  */
 function getOneTimePackageName(productId) {
-  if (productId.includes('extra')) return 'Ginly AI Extra';
-  if (productId.includes('boost')) return 'Ginly AI Boost';
-  if (productId.includes('mega')) return 'Ginly AI Mega';
+  if (productId.includes('extra')) return 'Comby AI Extra';
+  if (productId.includes('boost')) return 'Comby AI Boost';
+  if (productId.includes('mega')) return 'Comby AI Mega';
   return 'Unknown Package';
 }
 

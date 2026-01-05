@@ -1,2 +1,0 @@
-/Users/yigitsametolmez/finxpert-mobile/android/app/.cxx/RelWithDebInfo/292e5kky/x86_64/CMakeFiles/edit_cache.dir
-/Users/yigitsametolmez/finxpert-mobile/android/app/.cxx/RelWithDebInfo/292e5kky/x86_64/CMakeFiles/rebuild_cache.dir

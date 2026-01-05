@@ -52,12 +52,12 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.729242676224-jt8u45kgpagb8ur8a2l36gbl5tbov5bk</string>
+				<string>com.googleusercontent.apps.729242676224-29sr201jv6ep4f6jmgfso8bd66o2kdgf</string>
 			</array>
 		</dict>
 	</array>
 	<key>GIDClientID</key>
-	<string>729242676224-jt8u45kgpagb8ur8a2l36gbl5tbov5bk.apps.googleusercontent.com</string>
+	<string>729242676224-29sr201jv6ep4f6jmgfso8bd66o2kdgf.apps.googleusercontent.com</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to your photo library to select and use images for AI content generation.</string>
 	<key>NSCameraUsageDescription</key>

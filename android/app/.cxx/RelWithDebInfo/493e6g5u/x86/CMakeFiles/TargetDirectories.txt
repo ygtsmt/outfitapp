@@ -1,2 +1,0 @@
-/Users/yigitsametolmez/ginly/android/app/.cxx/RelWithDebInfo/493e6g5u/x86/CMakeFiles/edit_cache.dir
-/Users/yigitsametolmez/ginly/android/app/.cxx/RelWithDebInfo/493e6g5u/x86/CMakeFiles/rebuild_cache.dir

@@ -40,9 +40,9 @@ class PaymentAdvantagesWidgetState extends State<PaymentAdvantagesWidget> {
 
     // Product IDs - RevenueCat dashboard'da tanımlanan paketler
     final List<String> productIds = [
-      'ginly_plus_weekly',
-      'ginly_pro_weekly',
-      'ginly_ultra_weekly',
+      'comby_plus_weekly',
+      'comby_pro_weekly',
+      'comby_ultra_weekly',
     ];
 
     final productId = productIds[_selectedPlanIndex];

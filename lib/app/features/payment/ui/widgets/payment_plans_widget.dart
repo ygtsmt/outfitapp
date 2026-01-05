@@ -37,16 +37,16 @@ class _PaymentPlansWidgetState extends State<PaymentPlansWidget>
     if (Platform.isIOS) {
       // iOS Product IDs - Tek subscription group altında
       return [
-        'ginly_plus_weekly_ios',
-        'ginly_pro_weekly_ios',
-        'ginly_ultra_weekly_ios',
+        'comby_plus_weekly_ios',
+        'comby_pro_weekly_ios',
+        'comby_ultra_weekly_ios',
       ];
     } else {
       // Android Product IDs - Ayrı subscription groups
       return [
-        'ginly_plus_weekly',
-        'ginly_pro_weekly',
-        'ginly_ultra_weekly',
+        'comby_plus_weekly',
+        'comby_pro_weekly',
+        'comby_ultra_weekly',
       ];
     }
   }
@@ -412,22 +412,22 @@ class _PaymentPlansWidgetState extends State<PaymentPlansWidget>
   String _getPackageNameFromProductId(String productId) {
     if (Platform.isIOS) {
       switch (productId) {
-        case 'ginly_plus_weekly_ios':
+        case 'comby_plus_weekly_ios':
           return 'Comby AI Plus';
-        case 'ginly_pro_weekly_ios':
+        case 'comby_pro_weekly_ios':
           return 'Comby AI Pro';
-        case 'ginly_ultra_weekly_ios':
+        case 'comby_ultra_weekly_ios':
           return 'Comby AI Ultra';
         default:
           return 'Credit Package';
       }
     } else
       switch (productId) {
-        case 'ginly_plus_weekly':
+        case 'comby_plus_weekly':
           return 'Comby AI Plus';
-        case 'ginly_pro_weekly':
+        case 'comby_pro_weekly':
           return 'Comby AI Pro';
-        case 'ginly_ultra_weekly':
+        case 'comby_ultra_weekly':
           return 'Comby AI Ultra';
         default:
           return 'Credit Package';

@@ -111,6 +111,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearAll": MessageLookupByLibrary.simpleMessage("सभी साफ़ करें"),
         "clearSearch": MessageLookupByLibrary.simpleMessage("खोज साफ़ करें"),
         "close": MessageLookupByLibrary.simpleMessage("बंद करें"),
+        "combyAiPlusPlan":
+            MessageLookupByLibrary.simpleMessage("जिनली एआई प्लस योजना"),
+        "combyAiProPlan":
+            MessageLookupByLibrary.simpleMessage("जिनली एआई प्रो योजना"),
+        "combyAiUltraPlan":
+            MessageLookupByLibrary.simpleMessage("जिनली एआई अल्ट्रा योजना"),
         "comic_style": MessageLookupByLibrary.simpleMessage("कॉमिक शैली"),
         "comic_style_description":
             MessageLookupByLibrary.simpleMessage("कॉमिक बुक कला शैली"),
@@ -340,12 +346,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("प्रीमियम प्राप्त करें 🔱"),
         "getSubscriptionFirst":
             MessageLookupByLibrary.simpleMessage("पहले सदस्यता प्राप्त करें"),
-        "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("जिनली एआई प्लस योजना"),
-        "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("जिनली एआई प्रो योजना"),
-        "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("जिनली एआई अल्ट्रा योजना"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("सदस्यता खरीदें"),
         "good": MessageLookupByLibrary.simpleMessage("अच्छा"),

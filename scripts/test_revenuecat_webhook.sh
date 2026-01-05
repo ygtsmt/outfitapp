@@ -20,7 +20,7 @@ curl -X POST "$WEBHOOK_URL" \
   -d '{
     "event_type": "INITIAL_PURCHASE",
     "app_user_id": "test_user_123",
-    "product_id": "ginly_plus_weekly",
+    "product_id": "comby_plus_weekly",
     "entitlement_id": "premium",
     "event": {
       "transaction_id": "test_txn_001",
@@ -47,7 +47,7 @@ curl -X POST "$WEBHOOK_URL" \
   -d '{
     "event_type": "ONE_TIME_PURCHASE",
     "app_user_id": "test_user_456",
-    "product_id": "ginly_extra_credit",
+    "product_id": "comby_extra_credit",
     "event": {
       "transaction_id": "test_txn_002",
       "price": 4.99,
@@ -70,7 +70,7 @@ curl -X POST "$WEBHOOK_URL" \
   -d '{
     "event_type": "RENEWAL",
     "app_user_id": "test_user_123",
-    "product_id": "ginly_plus_weekly",
+    "product_id": "comby_plus_weekly",
     "event": {
       "transaction_id": "test_txn_003",
       "price": 9.99,

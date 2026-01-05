@@ -199,9 +199,9 @@ class RevenueCatService {
   /// One-time purchase için product ID'leri (Platform bağımsız)
   static List<String> getOneTimeProductIds() {
     return [
-      'ginly_extra_credit',
-      'ginly_boost_credit',
-      'ginly_mega_credit',
+      'comby_extra_credit',
+      'comby_boost_credit',
+      'comby_mega_credit',
     ];
   }
 

@@ -3,9 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>729242676224-jt8u45kgpagb8ur8a2l36gbl5tbov5bk.apps.googleusercontent.com</string>
+	<string>729242676224-29sr201jv6ep4f6jmgfso8bd66o2kdgf.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.729242676224-jt8u45kgpagb8ur8a2l36gbl5tbov5bk</string>
+	<string>com.googleusercontent.apps.729242676224-29sr201jv6ep4f6jmgfso8bd66o2kdgf</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>729242676224-lm2h5prnk3crrb9e1s4it92oape5tbpq.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAKAilkVBPc7sWs-K_DpCsCgdWHnajuCUQ</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.ginfit.ai.outfit.generator.fitcheck</string>
+	<string>com.comby.ai.outfit.generator.tryon.wardrobe.fitcheck.style</string>
 	<key>PROJECT_ID</key>
 	<string>ginowl-ginfit</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:729242676224:ios:fec7a451f4171cfb1bfce5</string>
+	<string>1:729242676224:ios:b585ac46adac8d7a1bfce5</string>
 </dict>
 </plist>

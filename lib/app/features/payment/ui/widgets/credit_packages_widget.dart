@@ -37,8 +37,8 @@ class _CreditPackagesWidgetState extends State<CreditPackagesWidget>
   @override
   void initState() {
     super.initState();
-    // Default olarak Ginly AI Boost paketini seç
-    _selectedPackageId = 'ginly_boost_credit';
+    // Default olarak Comby AI Boost paketini seç
+    _selectedPackageId = 'comby_boost_credit';
     // AppState'den plans'ı çekmek için GetPlansEvent'i tetikle
 
     // Animasyon controller'ı başlat
@@ -322,11 +322,11 @@ class _CreditPackagesWidgetState extends State<CreditPackagesWidget>
 
   String _getPackageNameFromProductId(String productId) {
     switch (productId) {
-      case 'ginly_extra_credit':
+      case 'comby_extra_credit':
         return 'Comby AI Extra';
-      case 'ginly_boost_credit':
+      case 'comby_boost_credit':
         return 'Comby AI Boost';
-      case 'ginly_mega_credit':
+      case 'comby_mega_credit':
         return 'Comby AI Mega';
       default:
         return 'Credit Package';

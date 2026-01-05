@@ -343,11 +343,11 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
     if (planId == null) return AppLocalizations.of(context).freePlan;
 
     if (planId.contains('plus')) {
-      return AppLocalizations.of(context).ginlyAiPlusPlan;
+      return AppLocalizations.of(context).combyAiPlusPlan;
     } else if (planId.contains('pro')) {
-      return AppLocalizations.of(context).ginlyAiProPlan;
+      return AppLocalizations.of(context).combyAiProPlan;
     } else if (planId.contains('ultra')) {
-      return AppLocalizations.of(context).ginlyAiUltraPlan;
+      return AppLocalizations.of(context).combyAiUltraPlan;
     }
 
     return AppLocalizations.of(context).freePlan;

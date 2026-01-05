@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,9 +28,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -40,18 +49,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDhxY9P6XUkac9bt-1fczD90Oi3iXnaEHY',
-    appId: '1:729242676224:web:788b19f52a80f80c1bfce5',
-    messagingSenderId: '729242676224',
-    projectId: 'ginowl-ginfit',
-    authDomain: 'ginowl-ginfit.firebaseapp.com',
-    storageBucket: 'ginowl-ginfit.firebasestorage.app',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCBLAnJjnPzo4J67kcEuw0Moj7o3K2p82s',
-    appId: '1:729242676224:android:8eae1c9612180bc11bfce5',
+    appId: '1:729242676224:android:6bf917e7b5b4ef971bfce5',
     messagingSenderId: '729242676224',
     projectId: 'ginowl-ginfit',
     storageBucket: 'ginowl-ginfit.firebasestorage.app',
@@ -59,28 +59,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAKAilkVBPc7sWs-K_DpCsCgdWHnajuCUQ',
-    appId: '1:729242676224:ios:fec7a451f4171cfb1bfce5',
+    appId: '1:729242676224:ios:b585ac46adac8d7a1bfce5',
     messagingSenderId: '729242676224',
     projectId: 'ginowl-ginfit',
     storageBucket: 'ginowl-ginfit.firebasestorage.app',
-    iosBundleId: 'com.ginfit.ai.outfit.generator.fitcheck',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAKAilkVBPc7sWs-K_DpCsCgdWHnajuCUQ',
-    appId: '1:729242676224:ios:fec7a451f4171cfb1bfce5',
-    messagingSenderId: '729242676224',
-    projectId: 'ginowl-ginfit',
-    storageBucket: 'ginowl-ginfit.firebasestorage.app',
-    iosBundleId: 'com.ginfit.ai.outfit.generator.fitcheck',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDhxY9P6XUkac9bt-1fczD90Oi3iXnaEHY',
-    appId: '1:729242676224:web:f089341cea38110c1bfce5',
-    messagingSenderId: '729242676224',
-    projectId: 'ginowl-ginfit',
-    authDomain: 'ginowl-ginfit.firebaseapp.com',
-    storageBucket: 'ginowl-ginfit.firebasestorage.app',
+    androidClientId: '729242676224-lm2h5prnk3crrb9e1s4it92oape5tbpq.apps.googleusercontent.com',
+    iosClientId: '729242676224-29sr201jv6ep4f6jmgfso8bd66o2kdgf.apps.googleusercontent.com',
+    iosBundleId: 'com.comby.ai.outfit.generator.tryon.wardrobe.fitcheck.style',
   );
 }

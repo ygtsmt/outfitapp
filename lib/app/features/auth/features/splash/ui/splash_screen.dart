@@ -8,7 +8,7 @@ import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
 
 import "package:comby/app/features/auth/features/splash/bloc/splash_bloc.dart";
-import "package:comby/app/ui/widgets/ginly_logo.dart";
+import "package:comby/app/ui/widgets/comby_logo.dart";
 import "package:comby/core/core.dart";
 import "package:comby/core/services/language_service.dart";
 import "package:comby/core/services/theme_service.dart";
@@ -141,7 +141,7 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Logo
-              Text('GINLY AI',
+              Text('Comby',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                       fontSize: 34.sp,
@@ -152,7 +152,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
               SizedBox(
                   width: MediaQuery.of(context).size.width / 2,
-                  child: GinlyLogo(haveText: false)),
+                  child: CombyLogo(haveText: false)),
               SizedBox(height: 40.h),
 
               // App Name

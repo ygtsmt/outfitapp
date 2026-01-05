@@ -114,6 +114,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearSearch":
             MessageLookupByLibrary.simpleMessage("Effacer la Recherche"),
         "close": MessageLookupByLibrary.simpleMessage("Fermer"),
+        "combyAiPlusPlan":
+            MessageLookupByLibrary.simpleMessage("Plan Comby AI Plus"),
+        "combyAiProPlan":
+            MessageLookupByLibrary.simpleMessage("Plan Comby AI Pro"),
+        "combyAiUltraPlan":
+            MessageLookupByLibrary.simpleMessage("Plan Comby AI Ultra"),
         "comic_style":
             MessageLookupByLibrary.simpleMessage("Style Bande Dessinée"),
         "comic_style_description": MessageLookupByLibrary.simpleMessage(
@@ -355,12 +361,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("OBTENIR PREMIUM 🔱"),
         "getSubscriptionFirst": MessageLookupByLibrary.simpleMessage(
             "Obtenez un Abonnement d\'abord"),
-        "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("Plan Comby AI Plus"),
-        "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("Plan Comby AI Pro"),
-        "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("Plan Comby AI Ultra"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("Acheter un Abonnement"),
         "good": MessageLookupByLibrary.simpleMessage("Bon"),
