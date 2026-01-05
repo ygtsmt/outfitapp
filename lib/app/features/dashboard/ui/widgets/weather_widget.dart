@@ -630,6 +630,7 @@ class _OutfitSuggestionSheetState extends State<_OutfitSuggestionSheet> {
         prompt:
             'Put the following clothes: ($clothesList) onto the person in the first image. Keep the person\'s face, body shape, and pose exactly the same. Only change the clothing.',
         modelAiPrompt: widget.suggestion.model.aiPrompt,
+        usedClosetItems: widget.suggestion.closetItems,
       );
 
       if (result != null && result['status'] == 'processing') {

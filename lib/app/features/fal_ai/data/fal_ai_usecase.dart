@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:ginfit/core/core.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
+import 'package:ginfit/app/features/closet/models/closet_item_model.dart';
 
 @injectable
 class FalAiUsecase {
@@ -93,6 +94,7 @@ class FalAiUsecase {
     required List<String> imageUrls,
     required String prompt,
     String? modelAiPrompt, // AI-generated description of the model
+    List<ClosetItem>? usedClosetItems, // Items used in the outfit
   }) async {
     try {
       // Webhook URL'i query parameter olarak ekle
@@ -141,6 +143,13 @@ class FalAiUsecase {
         final requestId = responseData['request_id'];
 
         if (requestId != null) {
+          // Serialize closet items if provided
+          List<Map<String, dynamic>>? serializedClosetItems;
+          if (usedClosetItems != null) {
+            serializedClosetItems =
+                usedClosetItems.map((item) => item.toJson()).toList();
+          }
+
           // Create image data for Firestore
           final imageData = {
             'id': requestId,
@@ -151,6 +160,7 @@ class FalAiUsecase {
             'createdAt': DateTime.now().toIso8601String(),
             'completedAt': null,
             'model': 'gemini-2.5-flash-image-edit',
+            'usedClosetItems': serializedClosetItems,
           };
 
           // Add to user's Firestore document

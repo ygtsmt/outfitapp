@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -38,6 +39,57 @@ class _TryOnScreenState extends State<TryOnScreen> {
   bool _isLoading = false;
   String? _statusMessage;
   String? _requestId;
+
+  // Random Selection Implementation
+  Future<void> _selectRandomModel() async {
+    try {
+      final models = await _closetUseCase.getUserModelItems();
+      if (models.isNotEmpty) {
+        final random = Random();
+        setState(() {
+          _selectedModel = models[random.nextInt(models.length)];
+          _statusMessage = 'Random model selected!';
+        });
+      } else {
+        setState(() {
+          _statusMessage = 'No models found in gallery.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _statusMessage = 'Error selecting random model: $e';
+      });
+    }
+  }
+
+  Future<void> _selectRandomCloth() async {
+    try {
+      final clothes = await _closetUseCase.getUserClosetItems();
+      // Filter out already selected matches if needed
+      final availableClothes = clothes
+          .where(
+              (c) => !_selectedClothes.any((sc) => sc.imageUrl == c.imageUrl))
+          .toList();
+
+      if (availableClothes.isNotEmpty) {
+        final random = Random();
+        final randomItem =
+            availableClothes[random.nextInt(availableClothes.length)];
+        setState(() {
+          _selectedClothes.add(randomItem);
+          _statusMessage = 'Random item added!';
+        });
+      } else {
+        setState(() {
+          _statusMessage = 'No items found in closet.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _statusMessage = 'Error selecting random cloth: $e';
+      });
+    }
+  }
 
   Future<void> _generateImage() async {
     if (_selectedModel == null || _selectedClothes.isEmpty) {
@@ -406,6 +458,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
                     _ModelSelector(
                       imageUrl: _selectedModel?.imageUrl,
                       onTap: _showModelSelection,
+                      onRandomSelect: _selectRandomModel,
                     ),
                     const SizedBox(height: 32),
                     Row(
@@ -432,6 +485,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
                     _ClothList(
                       clothes: _selectedClothes,
                       onAdd: _showClothSelection,
+                      onRandomSelect: _selectRandomCloth,
                       onRemove: (index) {
                         setState(() {
                           _selectedClothes.removeAt(index);
@@ -587,8 +641,13 @@ class _TryOnScreenState extends State<TryOnScreen> {
 class _ModelSelector extends StatelessWidget {
   final String? imageUrl;
   final VoidCallback onTap;
+  final VoidCallback onRandomSelect;
 
-  const _ModelSelector({required this.imageUrl, required this.onTap});
+  const _ModelSelector({
+    required this.imageUrl,
+    required this.onTap,
+    required this.onRandomSelect,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -656,6 +715,23 @@ class _ModelSelector extends StatelessWidget {
                         color: colorScheme.onSurface.withOpacity(0.5),
                         fontSize: 12),
                   ),
+                  const SizedBox(height: 24),
+                  // Random Selection Button
+                  TextButton.icon(
+                    onPressed: onRandomSelect,
+                    style: TextButton.styleFrom(
+                      backgroundColor: colorScheme.primary.withOpacity(0.1),
+                      foregroundColor: colorScheme.primary,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.shuffle_rounded, size: 20),
+                    label: const Text("Surprise Me",
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                  ),
                 ],
               )
             : Stack(
@@ -716,11 +792,13 @@ class _ModelSelector extends StatelessWidget {
 class _ClothList extends StatelessWidget {
   final List<ClosetItem> clothes;
   final VoidCallback onAdd;
+  final VoidCallback onRandomSelect;
   final Function(int) onRemove;
 
   const _ClothList({
     required this.clothes,
     required this.onAdd,
+    required this.onRandomSelect,
     required this.onRemove,
   });
 
@@ -733,7 +811,7 @@ class _ClothList extends StatelessWidget {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
-        itemCount: clothes.length + 1,
+        itemCount: clothes.length + 1 + (clothes.isEmpty ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == 0) {
             return GestureDetector(
@@ -771,7 +849,48 @@ class _ClothList extends StatelessWidget {
                 ));
           }
 
-          final item = clothes[index - 1];
+          final showRandomButton = clothes.isEmpty;
+          if (showRandomButton && index == 1) {
+            // Random Item Button
+            return GestureDetector(
+                onTap: onRandomSelect,
+                child: Container(
+                  width: 90,
+                  margin: const EdgeInsets.only(right: 12),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainer ?? colorScheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: colorScheme.primary.withOpacity(0.5),
+                      style: BorderStyle.solid,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.shuffle, color: colorScheme.primary, size: 30),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Random\nPick",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: colorScheme.primary,
+                            fontSize: 12,
+                            height: 1.2,
+                            fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                ));
+          }
+
+          // Adjust index for random button possibility
+          final itemIndex = index - (showRandomButton ? 2 : 1);
+          if (itemIndex < 0 || itemIndex >= clothes.length)
+            return const SizedBox.shrink();
+
+          final item = clothes[itemIndex];
           final url = item.imageUrl;
           return Stack(
             clipBehavior: Clip.none,
@@ -800,7 +919,7 @@ class _ClothList extends StatelessWidget {
                 top: -6,
                 right: 4,
                 child: GestureDetector(
-                  onTap: () => onRemove(index - 1),
+                  onTap: () => onRemove(itemIndex),
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
