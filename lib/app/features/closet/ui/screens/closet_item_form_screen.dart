@@ -181,7 +181,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
             padding: EdgeInsets.all(16.w),
             child: ImageMap(
               image: Image.asset(
-                'assets/png/body_map.png',
+                'assets/png/body_map_woman.png',
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return const Center(child: Text('Body Map Image Not Found'));
