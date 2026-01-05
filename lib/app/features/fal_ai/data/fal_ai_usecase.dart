@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/core/core.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
-import 'package:ginfit/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/closet_item_model.dart';
 
 @injectable
 class FalAiUsecase {

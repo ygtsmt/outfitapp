@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/core/core.dart';
 
 class RandomWidget extends StatefulWidget {
   const RandomWidget({

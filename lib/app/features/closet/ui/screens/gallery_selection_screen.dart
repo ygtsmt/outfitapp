@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/core/core.dart';
 
 /// Gallery Selection Screen for Closet items.
 /// This screen uses the reusable gallery picker for photo selection.

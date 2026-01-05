@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/generated/l10n.dart';
 
 class FilterDialogWidget extends StatefulWidget {
   final List<String> categories;

@@ -7,13 +7,13 @@ import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
 
-import "package:ginfit/app/features/auth/features/splash/bloc/splash_bloc.dart";
-import "package:ginfit/app/ui/widgets/ginly_logo.dart";
-import "package:ginfit/core/core.dart";
-import "package:ginfit/core/services/language_service.dart";
-import "package:ginfit/core/services/theme_service.dart";
-import "package:ginfit/app/core/services/revenue_cat_service.dart";
-import "package:ginfit/generated/l10n.dart";
+import "package:comby/app/features/auth/features/splash/bloc/splash_bloc.dart";
+import "package:comby/app/ui/widgets/ginly_logo.dart";
+import "package:comby/core/core.dart";
+import "package:comby/core/services/language_service.dart";
+import "package:comby/core/services/theme_service.dart";
+import "package:comby/app/core/services/revenue_cat_service.dart";
+import "package:comby/generated/l10n.dart";
 import "package:google_mobile_ads/google_mobile_ads.dart";
 
 import "package:photo_manager/photo_manager.dart";

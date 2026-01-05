@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
-import 'package:ginfit/app/features/closet/services/closet_analysis_service.dart';
+import 'package:comby/app/features/closet/services/closet_analysis_service.dart';
 
 class ClosetAnalyticsWidget extends StatefulWidget {
   const ClosetAnalyticsWidget({super.key});

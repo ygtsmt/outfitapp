@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/core/core.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 /// Service for analyzing model/human images using Gemini AI

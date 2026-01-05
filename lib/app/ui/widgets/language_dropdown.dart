@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginfit/app/bloc/app_bloc.dart';
-import 'package:ginfit/core/constants/layout_constants.dart';
-import 'package:ginfit/core/core.dart';
-import 'package:ginfit/core/data_sources/local_data_source/secure_data_storage.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/app/bloc/app_bloc.dart';
+import 'package:comby/core/constants/layout_constants.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/core/data_sources/local_data_source/secure_data_storage.dart';
+import 'package:comby/generated/l10n.dart';
 
 class LanguageDropdown extends StatefulWidget {
   final String selectedLocale;
@@ -175,7 +175,7 @@ final List<LanguageItem> languages = [
                                     context: context,
                                     builder: (final context) {
                                       return AboutDialog(
-                                        applicationName: "GinFit AI",
+                                        applicationName: "Comby",
                                         applicationVersion: "v1.0.0",
                                         applicationIcon: Image.asset(
                                           PngPaths.logo,

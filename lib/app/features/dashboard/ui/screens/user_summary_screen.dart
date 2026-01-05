@@ -1,4 +1,4 @@
-import "package:ginfit/generated/l10n.dart";
+import "package:comby/generated/l10n.dart";
 import "package:flutter/material.dart";
 
 class UserSummaryScreen extends StatelessWidget {

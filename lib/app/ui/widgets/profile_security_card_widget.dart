@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ginfit/app/features/auth/features/profile/ui/widgets/change_password_bottom_sheet.dart';
+import 'package:comby/app/features/auth/features/profile/ui/widgets/change_password_bottom_sheet.dart';
 
-import 'package:ginfit/core/constants/layout_constants.dart';
-import 'package:ginfit/core/utils.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/core/constants/layout_constants.dart';
+import 'package:comby/core/utils.dart';
+import 'package:comby/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/generated/l10n.dart';
 
 class ProfileSecurityCardWidget extends StatelessWidget {
   const ProfileSecurityCardWidget({super.key});

@@ -3,8 +3,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginfit/app/features/closet/bloc/closet_bloc.dart';
-import 'package:ginfit/app/features/closet/models/model_item_model.dart';
+import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
+import 'package:comby/app/features/closet/models/model_item_model.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';

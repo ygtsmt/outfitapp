@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -48,14 +48,11 @@ class RevenueCatService {
 
         // Payment started
 
-
         final purchaseResult = await Purchases.purchasePackage(package);
 
         if (purchaseResult.customerInfo != null) {
           debugPrint('✅ Purchase successful: '
               '${purchaseResult.customerInfo!.entitlements.active}');
-
-     
 
           return purchaseResult.customerInfo;
         }
@@ -283,9 +280,9 @@ class RevenueCatService {
 
   /// Product ID'den paket adını çıkar
   static String _getPackageNameFromProductId(String productId) {
-    if (productId.contains('extra')) return 'GinFit AI Extra';
-    if (productId.contains('boost')) return 'GinFit AI Boost';
-    if (productId.contains('mega')) return 'GinFit AI Mega';
+    if (productId.contains('extra')) return 'Comby AI Extra';
+    if (productId.contains('boost')) return 'Comby AI Boost';
+    if (productId.contains('mega')) return 'Comby AI Mega';
     return 'Unknown Package';
   }
 

@@ -63,7 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "anime_style": MessageLookupByLibrary.simpleMessage("एनीमे शैली"),
         "anime_style_description":
             MessageLookupByLibrary.simpleMessage("जापानी एनीमे कला शैली"),
-        "appName": MessageLookupByLibrary.simpleMessage("GinFit"),
+        "appName": MessageLookupByLibrary.simpleMessage("Comby"),
         "app_settings": MessageLookupByLibrary.simpleMessage("ऐप सेटिंग्स"),
         "apple": MessageLookupByLibrary.simpleMessage("एप्पल"),
         "artistCredit": MessageLookupByLibrary.simpleMessage(
@@ -373,7 +373,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("एचईआईएफ प्रारूप चेतावनी"),
         "high_quality": MessageLookupByLibrary.simpleMessage("उच्च"),
         "howWasYourExperience": MessageLookupByLibrary.simpleMessage(
-            "GinFit AI के साथ आपका अनुभव कैसा रहा?"),
+            "Comby AI के साथ आपका अनुभव कैसा रहा?"),
         "iHaveReadAndAgreedTo": MessageLookupByLibrary.simpleMessage(
             "मैंने पढ़ा है और मैं सहमत हूँ"),
         "idLabel": MessageLookupByLibrary.simpleMessage("आईडी: "),
@@ -389,8 +389,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "छवि डेटा पुनर्प्राप्त नहीं किया जा सका"),
         "image_to_video": MessageLookupByLibrary.simpleMessage("छवि से वीडियो"),
         "images": MessageLookupByLibrary.simpleMessage("छवियां"),
-        "initializing": MessageLookupByLibrary.simpleMessage(
-            "GinFit में आपका स्वागत है..."),
+        "initializing":
+            MessageLookupByLibrary.simpleMessage("Comby में आपका स्वागत है..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("इनपुट छवि"),
         "insufficientCredits":
             MessageLookupByLibrary.simpleMessage("अपर्याप्त क्रेडिट"),
@@ -676,11 +676,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingLanguage":
             MessageLookupByLibrary.simpleMessage("रचनात्मक हो रहा है..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "इस छवि को देखें जिसे मैंने GinFit पर बनाया है! ऐप डाउनलोड करें: app.ginfit.com"),
+            "इस छवि को देखें जिसे मैंने Comby पर बनाया है! ऐप डाउनलोड करें: app.comby.ai"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "इस छवि को देखें जिसे मैंने GinFit पर बनाया है!\nऐप डाउनलोड करें: app.ginfit.com"),
+            "इस छवि को देखें जिसे मैंने Comby पर बनाया है!\nऐप डाउनलोड करें: app.comby.ai"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "यह वीडियो देखें जिसे मैंने GinFit AI पर बनाया है! ऐप डाउनलोड करें: app.ginfit.com"),
+            "यह वीडियो देखें जिसे मैंने Comby AI पर बनाया है! ऐप डाउनलोड करें: app.comby.ai"),
         "short_video": MessageLookupByLibrary.simpleMessage("छोटा वीडियो"),
         "showAllEffects":
             MessageLookupByLibrary.simpleMessage("सभी प्रभाव दिखाएं"),

@@ -63,7 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "anime_style": MessageLookupByLibrary.simpleMessage("Gaya Anime"),
         "anime_style_description":
             MessageLookupByLibrary.simpleMessage("Gaya seni anime Jepang"),
-        "appName": MessageLookupByLibrary.simpleMessage("GinFit"),
+        "appName": MessageLookupByLibrary.simpleMessage("Comby"),
         "app_settings":
             MessageLookupByLibrary.simpleMessage("Pengaturan Aplikasi"),
         "apple": MessageLookupByLibrary.simpleMessage("Apple"),
@@ -343,11 +343,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "getSubscriptionFirst":
             MessageLookupByLibrary.simpleMessage("Dapatkan Langganan Dahulu"),
         "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("Paket GinFit AI Plus"),
+            MessageLookupByLibrary.simpleMessage("Paket Comby AI Plus"),
         "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("Paket GinFit AI Pro"),
+            MessageLookupByLibrary.simpleMessage("Paket Comby AI Pro"),
         "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("Paket GinFit AI Ultra"),
+            MessageLookupByLibrary.simpleMessage("Paket Comby AI Ultra"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("Beli Langganan"),
         "good": MessageLookupByLibrary.simpleMessage("Bagus"),
@@ -375,7 +375,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Peringatan Format HEIF"),
         "high_quality": MessageLookupByLibrary.simpleMessage("Tinggi"),
         "howWasYourExperience": MessageLookupByLibrary.simpleMessage(
-            "Bagaimana pengalaman Anda dengan GinFit AI?"),
+            "Bagaimana pengalaman Anda dengan Comby AI?"),
         "iHaveReadAndAgreedTo": MessageLookupByLibrary.simpleMessage(
             "Saya telah membaca dan menyetujui"),
         "idLabel": MessageLookupByLibrary.simpleMessage("ID: "),
@@ -394,7 +394,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Gambar ke Video"),
         "images": MessageLookupByLibrary.simpleMessage("Gambar"),
         "initializing":
-            MessageLookupByLibrary.simpleMessage("Selamat datang di GinFit..."),
+            MessageLookupByLibrary.simpleMessage("Selamat datang di Comby..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("Gambar Input"),
         "insufficientCredits":
             MessageLookupByLibrary.simpleMessage("Kredit tidak cukup"),
@@ -678,11 +678,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingLanguage": MessageLookupByLibrary.simpleMessage(
             "Bersemangat untuk menjadi kreatif..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "Lihat gambar ini yang saya buat di GinFit! Unduh Aplikasi: app.ginfit.com"),
+            "Lihat gambar ini yang saya buat di Comby! Unduh Aplikasi: app.comby.ai"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "Lihat gambar ini yang saya buat di GinFit!\nUnduh Aplikasi: app.ginfit.com"),
+            "Lihat gambar ini yang saya buat di Comby!\nUnduh Aplikasi: app.comby.ai"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "Lihat video ini yang saya buat di GinFit AI! Unduh Aplikasi: app.ginfit.com"),
+            "Lihat video ini yang saya buat di Comby AI! Unduh Aplikasi: app.comby.ai"),
         "short_video": MessageLookupByLibrary.simpleMessage("Video Pendek"),
         "showAllEffects":
             MessageLookupByLibrary.simpleMessage("Tampilkan Semua Efek"),

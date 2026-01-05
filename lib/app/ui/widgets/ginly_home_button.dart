@@ -1,4 +1,4 @@
-import "package:ginfit/core/constants/layout_constants.dart";
+import "package:comby/core/constants/layout_constants.dart";
 import "package:flutter/material.dart";
 
 class GinlyHomeButton extends StatelessWidget {

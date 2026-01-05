@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import "package:ginfit/app/bloc/app_bloc.dart";
-import "package:ginfit/core/extensions.dart";
-import "package:ginfit/core/asset_paths.dart";
+import "package:comby/app/bloc/app_bloc.dart";
+import "package:comby/core/extensions.dart";
+import "package:comby/core/asset_paths.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
@@ -31,7 +31,7 @@ class GinlyLogoSmall extends StatelessWidget {
         ),
         if (haveText)
           Center(
-            child: Text('GINFIT',
+            child: Text('Comby',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,

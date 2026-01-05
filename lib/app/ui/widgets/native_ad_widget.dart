@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:ginfit/app/core/services/revenue_cat_service.dart';
+import 'package:comby/app/core/services/revenue_cat_service.dart';
 
 /// Native Advanced reklam widget'ı
 /// Video card gibi görünecek şekilde tasarlandı

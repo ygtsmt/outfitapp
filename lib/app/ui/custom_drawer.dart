@@ -5,24 +5,24 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginfit/app/bloc/app_bloc.dart';
-import 'package:ginfit/app/core/services/revenue_cat_service.dart';
-import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:comby/app/bloc/app_bloc.dart';
+import 'package:comby/app/core/services/revenue_cat_service.dart';
+import 'package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginfit/app/features/auth/features/profile/data/profile_usecase.dart';
-import 'package:ginfit/app/ui/widgets/language_dropdown.dart';
-import 'package:ginfit/core/constants/layout_constants.dart';
-import 'package:ginfit/core/core.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/app/features/auth/features/profile/data/profile_usecase.dart';
+import 'package:comby/app/ui/widgets/language_dropdown.dart';
+import 'package:comby/core/constants/layout_constants.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ginfit/core/data_sources/local_data_source/secure_data_storage.dart';
+import 'package:comby/core/data_sources/local_data_source/secure_data_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:ginfit/core/utils.dart';
+import 'package:comby/core/utils.dart';
 import 'package:in_app_review/in_app_review.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -259,7 +259,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 onTap: () {
                   context.router.push(
                     DocumentsWebViewScreenRoute(
-                      pdfUrl: 'https://www.ginfit.com/#/privacy',
+                      pdfUrl: 'https://www.comby.ai/#/privacy',
                       title: AppLocalizations.of(context).privacyPolicy,
                     ),
                   );
@@ -281,7 +281,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 onTap: () {
                   context.router.push(
                     DocumentsWebViewScreenRoute(
-                      pdfUrl: "https://www.ginfit.com/#/terms",
+                      pdfUrl: "https://www.comby.ai/#/terms",
                       title: AppLocalizations.of(context).termsOfService,
                     ),
                   );

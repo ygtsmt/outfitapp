@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginfit/app/bloc/app_bloc.dart';
-import 'package:ginfit/app/features/payment/ui/widgets/payment_avantage.dart';
-import 'package:ginfit/core/constants/layout_constants.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/app/bloc/app_bloc.dart';
+import 'package:comby/app/features/payment/ui/widgets/payment_avantage.dart';
+import 'package:comby/core/constants/layout_constants.dart';
+import 'package:comby/generated/l10n.dart';
 
 class PaymentAdvantagesWidget extends StatefulWidget {
   const PaymentAdvantagesWidget({super.key});

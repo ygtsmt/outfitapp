@@ -10,7 +10,7 @@
 
     <application
     android:usesCleartextTraffic="true"
-    android:label="GinFit"
+    android:label="Comby"
     android:icon="@mipmap/ic_launcher"
     android:name="${applicationName}"
     android:requestLegacyExternalStorage="true">

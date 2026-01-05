@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/core/core.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
@@ -19,20 +19,21 @@ class PaymentUsecase {
     try {
       final userId = auth.currentUser!.uid;
       final userDocRef = firestore.collection('users').doc(userId);
-      
+
       // Günlük limit kontrolü: Maksimum 60 kredi (3 reklam)
       final userDoc = await userDocRef.get();
-      final currentDailyAds = userDoc.data()?['profile_info']?['dailyAdsWatched'] ?? 0;
-      
+      final currentDailyAds =
+          userDoc.data()?['profile_info']?['dailyAdsWatched'] ?? 0;
+
       if (currentDailyAds >= 60) {
         debugPrint('⚠️ Daily ad limit reached: $currentDailyAds/60');
         return EventStatus.failure;
       }
-      
+
       // Günlük krediyi artır (maksimum 60'a kadar)
       final newTotal = currentDailyAds + addingCredit;
       final creditToAdd = newTotal > 60 ? (60 - currentDailyAds) : addingCredit;
-      
+
       await userDocRef.update({
         'profile_info.dailyAdsWatched': FieldValue.increment(creditToAdd),
       });

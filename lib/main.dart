@@ -2,10 +2,10 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
 import "package:firebase_core/firebase_core.dart";
-import "package:ginfit/app/ui/app_screen.dart";
-import "package:ginfit/core/core.dart";
+import "package:comby/app/ui/app_screen.dart";
+import "package:comby/core/core.dart";
 
-import "package:ginfit/firebase_options.dart";
+import "package:comby/firebase_options.dart";
 import "package:url_strategy/url_strategy.dart";
 
 Future<void> main() async {

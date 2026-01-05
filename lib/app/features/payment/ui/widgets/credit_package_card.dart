@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginfit/app/features/payment/data/models/one_time_product_model.dart';
+import 'package:comby/app/features/payment/data/models/one_time_product_model.dart';
 
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/generated/l10n.dart';
 
 class CreditPackageCard extends StatelessWidget {
   final OneTimeProduct product;

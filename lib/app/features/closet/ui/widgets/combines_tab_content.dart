@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:ginfit/core/routes/app_router.dart';
+import 'package:comby/core/routes/app_router.dart';
 
 class CombinesTabContent extends StatefulWidget {
   const CombinesTabContent({super.key});

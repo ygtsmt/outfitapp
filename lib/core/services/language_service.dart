@@ -1,7 +1,7 @@
 import "package:injectable/injectable.dart";
-import "package:ginfit/app/bloc/app_bloc.dart";
-import "package:ginfit/core/data_sources/local_data_source/secure_data_storage.dart";
-import "package:ginfit/core/injection/injection.dart";
+import "package:comby/app/bloc/app_bloc.dart";
+import "package:comby/core/data_sources/local_data_source/secure_data_storage.dart";
+import "package:comby/core/injection/injection.dart";
 import "package:flutter/material.dart";
 import "dart:io";
 

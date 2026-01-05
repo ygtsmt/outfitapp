@@ -1,4 +1,4 @@
-import "package:ginfit/app/bloc/app_bloc.dart";
+import "package:comby/app/bloc/app_bloc.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 

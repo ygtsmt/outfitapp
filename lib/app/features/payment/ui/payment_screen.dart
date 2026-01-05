@@ -4,18 +4,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginfit/app/bloc/app_bloc.dart';
-import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
-import 'package:ginfit/app/features/payment/bloc/payment_bloc.dart';
-import 'package:ginfit/app/features/payment/ui/widgets/payment_advantages_widget.dart'
+import 'package:comby/app/bloc/app_bloc.dart';
+import 'package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:comby/app/features/payment/bloc/payment_bloc.dart';
+import 'package:comby/app/features/payment/ui/widgets/payment_advantages_widget.dart'
     show PaymentAdvantagesWidget, PaymentAdvantagesWidgetState;
-import 'package:ginfit/app/features/payment/ui/widgets/payment_plans_widget.dart';
-import 'package:ginfit/app/features/payment/ui/widgets/credit_packages_widget.dart';
-import 'package:ginfit/core/constants/layout_constants.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/app/features/payment/ui/widgets/payment_plans_widget.dart';
+import 'package:comby/app/features/payment/ui/widgets/credit_packages_widget.dart';
+import 'package:comby/core/constants/layout_constants.dart';
+import 'package:comby/core/core.dart';
 
-import 'package:ginfit/app/core/services/revenue_cat_service.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/app/core/services/revenue_cat_service.dart';
+import 'package:comby/generated/l10n.dart';
 
 class PaymentsScreen extends StatefulWidget {
   final bool? isPaywall;

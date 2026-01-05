@@ -1,5 +1,5 @@
-import "package:ginfit/app/bloc/app_bloc.dart";
-import "package:ginfit/app/ui/widgets/ginly_logo.dart";
+import "package:comby/app/bloc/app_bloc.dart";
+import "package:comby/app/ui/widgets/ginly_logo.dart";
 import "package:flutter/material.dart";
 import "package:flutter_adaptive_ui/flutter_adaptive_ui.dart";
 import "package:flutter_bloc/flutter_bloc.dart";

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // SystemUiOverlayStyle için
 import 'package:flutter/widgets.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 /// STORAGE KEYS

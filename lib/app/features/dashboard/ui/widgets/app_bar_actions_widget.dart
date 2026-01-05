@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ginfit/app/features/dashboard/ui/widgets/grid_layout_constants.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/app/features/dashboard/ui/widgets/grid_layout_constants.dart';
+import 'package:comby/generated/l10n.dart';
 
 class AppBarActionsWidget extends StatelessWidget {
   final VoidCallback onFilterPressed;

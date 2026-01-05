@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:ginfit/core/core.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 
 class TermsAgreementText extends StatelessWidget {
   final VoidCallback onTermsTap;

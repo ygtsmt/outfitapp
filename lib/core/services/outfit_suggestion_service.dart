@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/core/core.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:ginfit/app/features/closet/models/closet_item_model.dart';
-import 'package:ginfit/app/features/closet/models/model_item_model.dart';
-import 'package:ginfit/app/features/dashboard/data/models/weather_model.dart';
+import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/model_item_model.dart';
+import 'package:comby/app/features/dashboard/data/models/weather_model.dart';
 
 /// Service for AI-powered outfit suggestion based on weather
 class OutfitSuggestionService {

@@ -7,26 +7,26 @@ import "package:flutter_adaptive_ui/flutter_adaptive_ui.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
 
-import "package:ginfit/app/bloc/app_bloc.dart";
-import "package:ginfit/app/data/models/multi_lang_file.dart";
-import "package:ginfit/app/features/auth/features/login/bloc/login_bloc.dart";
-import "package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart";
+import "package:comby/app/bloc/app_bloc.dart";
+import "package:comby/app/data/models/multi_lang_file.dart";
+import "package:comby/app/features/auth/features/login/bloc/login_bloc.dart";
+import "package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart";
 
-import "package:ginfit/app/features/payment/ui/payment_screen.dart";
-import "package:ginfit/app/ui/custom_drawer.dart";
+import "package:comby/app/features/payment/ui/payment_screen.dart";
+import "package:comby/app/ui/custom_drawer.dart";
 import "package:package_info_plus/package_info_plus.dart";
 import "package:url_launcher/url_launcher.dart";
-import "package:ginfit/app/ui/widgets/feedback_screen.dart";
+import "package:comby/app/ui/widgets/feedback_screen.dart";
 
-import "package:ginfit/app/ui/widgets/ginly_logo_small.dart";
-import "package:ginfit/app/ui/widgets/language_dropdown.dart";
-import "package:ginfit/app/ui/widgets/total_credit_widget.dart";
-import "package:ginfit/app/features/payment/ui/documents_webview_screen.dart";
-import "package:ginfit/core/constants/layout_constants.dart";
-import "package:ginfit/core/core.dart";
+import "package:comby/app/ui/widgets/ginly_logo_small.dart";
+import "package:comby/app/ui/widgets/language_dropdown.dart";
+import "package:comby/app/ui/widgets/total_credit_widget.dart";
+import "package:comby/app/features/payment/ui/documents_webview_screen.dart";
+import "package:comby/core/constants/layout_constants.dart";
+import "package:comby/core/core.dart";
 
-import "package:ginfit/core/services/paywall_manager.dart";
-import "package:ginfit/generated/l10n.dart";
+import "package:comby/core/services/paywall_manager.dart";
+import "package:comby/generated/l10n.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

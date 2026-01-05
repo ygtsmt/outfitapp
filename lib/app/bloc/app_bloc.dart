@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginfit/app/data/app_usecase.dart';
-import 'package:ginfit/app/data/models/app_document_model.dart';
-import 'package:ginfit/app/data/models/feedback_model.dart';
-import 'package:ginfit/app/data/models/credit_model.dart';
-import 'package:ginfit/app/data/models/plan_model.dart';
-import 'package:ginfit/app/data/models/purchased_info_model.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/app/data/app_usecase.dart';
+import 'package:comby/app/data/models/app_document_model.dart';
+import 'package:comby/app/data/models/feedback_model.dart';
+import 'package:comby/app/data/models/credit_model.dart';
+import 'package:comby/app/data/models/plan_model.dart';
+import 'package:comby/app/data/models/purchased_info_model.dart';
+import 'package:comby/core/core.dart';
 import 'package:injectable/injectable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

@@ -2,11 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:ginfit/core/core.dart';
-import 'package:ginfit/generated/l10n.dart';
-import 'package:ginfit/app/features/closet/ui/widgets/closet_tab_content.dart';
-import 'package:ginfit/app/features/closet/ui/widgets/models_tab_content.dart';
-import 'package:ginfit/app/features/closet/ui/widgets/combines_tab_content.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
+import 'package:comby/app/features/closet/ui/widgets/closet_tab_content.dart';
+import 'package:comby/app/features/closet/ui/widgets/models_tab_content.dart';
+import 'package:comby/app/features/closet/ui/widgets/combines_tab_content.dart';
 
 class ClosetScreen extends StatefulWidget {
   const ClosetScreen({super.key});

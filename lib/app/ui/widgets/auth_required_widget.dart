@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:ginfit/app/ui/widgets/custom_gradient_button.dart';
-import 'package:ginfit/core/core.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/app/ui/widgets/custom_gradient_button.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 
 class AuthRequiredWidget extends StatelessWidget {
   const AuthRequiredWidget({

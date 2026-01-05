@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ginfit/core/core.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 
 class PhotoTypeSelectionWidget extends StatelessWidget {
   final bool isDifferentPhoto;

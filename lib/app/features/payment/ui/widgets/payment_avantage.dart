@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/core/core.dart';
 
 class PaymentAvantage extends StatelessWidget {
   final String label;

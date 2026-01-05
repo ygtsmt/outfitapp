@@ -3480,30 +3480,30 @@ class AppLocalizations {
     );
   }
 
-  /// `Check out this image I created on GinFit! Download App: app.ginfit.com`
+  /// `Check out this image I created on Comby! Download App: app.comby.ai`
   String get shareText {
     return Intl.message(
-      'Check out this image I created on GinFit! Download App: app.ginfit.com',
+      'Check out this image I created on Comby! Download App: app.comby.ai',
       name: 'shareText',
       desc: '',
       args: [],
     );
   }
 
-  /// `Check out this image I created on GinFit!\nDownload App: app.ginfit.com`
+  /// `Check out this image I created on Comby!\nDownload App: app.comby.ai`
   String get shareTextFromUrl {
     return Intl.message(
-      'Check out this image I created on GinFit!\nDownload App: app.ginfit.com',
+      'Check out this image I created on Comby!\nDownload App: app.comby.ai',
       name: 'shareTextFromUrl',
       desc: '',
       args: [],
     );
   }
 
-  /// `Check out this video I created on GinFit AI! Download App: app.ginfit.com`
+  /// `Check out this video I created on Comby AI! Download App: app.comby.ai`
   String get shareVideoText {
     return Intl.message(
-      'Check out this video I created on GinFit AI! Download App: app.ginfit.com',
+      'Check out this video I created on Comby AI! Download App: app.comby.ai',
       name: 'shareVideoText',
       desc: '',
       args: [],
@@ -3730,10 +3730,10 @@ class AppLocalizations {
     );
   }
 
-  /// `GinFit`
+  /// `Comby`
   String get appName {
     return Intl.message(
-      'GinFit',
+      'Comby',
       name: 'appName',
       desc: '',
       args: [],
@@ -4110,10 +4110,10 @@ class AppLocalizations {
     );
   }
 
-  /// `How was your experience with GinFit AI?`
+  /// `How was your experience with Comby AI?`
   String get howWasYourExperience {
     return Intl.message(
-      'How was your experience with GinFit AI?',
+      'How was your experience with Comby AI?',
       name: 'howWasYourExperience',
       desc: '',
       args: [],
@@ -4210,30 +4210,30 @@ class AppLocalizations {
     );
   }
 
-  /// `GinFit AI Plus Plan`
+  /// `Comby AI Plus Plan`
   String get ginlyAiPlusPlan {
     return Intl.message(
-      'GinFit AI Plus Plan',
+      'Comby AI Plus Plan',
       name: 'ginlyAiPlusPlan',
       desc: '',
       args: [],
     );
   }
 
-  /// `GinFit AI Pro Plan`
+  /// `Comby AI Pro Plan`
   String get ginlyAiProPlan {
     return Intl.message(
-      'GinFit AI Pro Plan',
+      'Comby AI Pro Plan',
       name: 'ginlyAiProPlan',
       desc: '',
       args: [],
     );
   }
 
-  /// `GinFit AI Ultra Plan`
+  /// `Comby AI Ultra Plan`
   String get ginlyAiUltraPlan {
     return Intl.message(
-      'GinFit AI Ultra Plan',
+      'Comby AI Ultra Plan',
       name: 'ginlyAiUltraPlan',
       desc: '',
       args: [],
@@ -4690,10 +4690,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Welcome to GinFit...`
+  /// `Welcome to Comby...`
   String get initializing {
     return Intl.message(
-      'Welcome to GinFit...',
+      'Welcome to Comby...',
       name: 'initializing',
       desc: '',
       args: [],

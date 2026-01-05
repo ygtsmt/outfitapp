@@ -1,16 +1,16 @@
 import "package:auto_route/auto_route.dart";
-import "package:ginfit/app/features/auth/features/create_account/bloc/create_account_bloc.dart";
-import "package:ginfit/app/features/auth/features/create_account/ui/create_account_form.dart";
-import "package:ginfit/app/ui/widgets/custom_progress_dialog.dart";
-import "package:ginfit/core/utils.dart";
-import "package:ginfit/core/core.dart";
-import "package:ginfit/core/helpers/error_message_handle.dart";
+import "package:comby/app/features/auth/features/create_account/bloc/create_account_bloc.dart";
+import "package:comby/app/features/auth/features/create_account/ui/create_account_form.dart";
+import "package:comby/app/ui/widgets/custom_progress_dialog.dart";
+import "package:comby/core/utils.dart";
+import "package:comby/core/core.dart";
+import "package:comby/core/helpers/error_message_handle.dart";
 
 import "package:flutter/material.dart";
 import "package:flutter_adaptive_ui/flutter_adaptive_ui.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
-import "package:ginfit/generated/l10n.dart";
-import "package:ginfit/app/core/services/revenue_cat_service.dart";
+import "package:comby/generated/l10n.dart";
+import "package:comby/app/core/services/revenue_cat_service.dart";
 
 class CreateAccountScreen extends StatelessWidget {
   final bool? isUpgrade;
@@ -70,8 +70,7 @@ class CreateAccountScreen extends StatelessWidget {
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 32),
-                                child: CreateAccountForm(
-                                    isUpgrade: isUpgrade),
+                                child: CreateAccountForm(isUpgrade: isUpgrade),
                               ),
                             )
                           ],

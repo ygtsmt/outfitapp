@@ -3,10 +3,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
-import 'package:ginfit/app/features/fit_check/models/fit_check_model.dart';
-import 'package:ginfit/app/features/fit_check/services/fit_check_service.dart';
-import 'package:ginfit/app/features/fit_check/ui/widgets/streak_widget.dart';
-import 'package:ginfit/core/routes/app_router.dart';
+import 'package:comby/app/features/fit_check/models/fit_check_model.dart';
+import 'package:comby/app/features/fit_check/services/fit_check_service.dart';
+import 'package:comby/app/features/fit_check/ui/widgets/streak_widget.dart';
+import 'package:comby/core/routes/app_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 

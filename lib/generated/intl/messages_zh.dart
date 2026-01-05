@@ -55,7 +55,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "anime_style": MessageLookupByLibrary.simpleMessage("动漫风格"),
         "anime_style_description":
             MessageLookupByLibrary.simpleMessage("日式动漫艺术风格"),
-        "appName": MessageLookupByLibrary.simpleMessage("GinFit"),
+        "appName": MessageLookupByLibrary.simpleMessage("Comby"),
         "app_settings": MessageLookupByLibrary.simpleMessage("应用设置"),
         "apple": MessageLookupByLibrary.simpleMessage("Apple"),
         "artistCredit": MessageLookupByLibrary.simpleMessage(
@@ -288,11 +288,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "getPremium": MessageLookupByLibrary.simpleMessage("获取高级版 🔱"),
         "getSubscriptionFirst": MessageLookupByLibrary.simpleMessage("先获取订阅"),
         "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("GinFit AI Plus 计划"),
+            MessageLookupByLibrary.simpleMessage("Comby AI Plus 计划"),
         "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("GinFit AI Pro 计划"),
+            MessageLookupByLibrary.simpleMessage("Comby AI Pro 计划"),
         "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("GinFit AI Ultra 计划"),
+            MessageLookupByLibrary.simpleMessage("Comby AI Ultra 计划"),
         "goToSubscriptions": MessageLookupByLibrary.simpleMessage("购买订阅"),
         "good": MessageLookupByLibrary.simpleMessage("好"),
         "google": MessageLookupByLibrary.simpleMessage("Google"),
@@ -315,7 +315,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "heifFormatWarning": MessageLookupByLibrary.simpleMessage("HEIF 格式警告"),
         "high_quality": MessageLookupByLibrary.simpleMessage("高"),
         "howWasYourExperience":
-            MessageLookupByLibrary.simpleMessage("您对 GinFit AI 的体验如何？"),
+            MessageLookupByLibrary.simpleMessage("您对 Comby AI 的体验如何？"),
         "iHaveReadAndAgreedTo": MessageLookupByLibrary.simpleMessage("我已阅读并同意"),
         "idLabel": MessageLookupByLibrary.simpleMessage("ID："),
         "image": MessageLookupByLibrary.simpleMessage("图像"),
@@ -329,7 +329,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "image_data_error": MessageLookupByLibrary.simpleMessage("无法检索图像数据"),
         "image_to_video": MessageLookupByLibrary.simpleMessage("图像转视频"),
         "images": MessageLookupByLibrary.simpleMessage("图像"),
-        "initializing": MessageLookupByLibrary.simpleMessage("欢迎使用 GinFit..."),
+        "initializing": MessageLookupByLibrary.simpleMessage("欢迎使用 Comby..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("输入图像"),
         "insufficientCredits": MessageLookupByLibrary.simpleMessage("积分不足"),
         "insufficient_credit": MessageLookupByLibrary.simpleMessage("积分不足"),
@@ -553,11 +553,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "separate_photos": MessageLookupByLibrary.simpleMessage("2 张单独的照片"),
         "settingLanguage": MessageLookupByLibrary.simpleMessage("准备好发挥创意..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "看看我在 GinFit 上制作的这张图片！下载应用：app.ginfit.com"),
+            "看看我在 Comby 上制作的这张图片！下载应用：app.comby.ai"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "看看我在 GinFit 上制作的这张图片！\n下载应用：app.ginfit.com"),
+            "看看我在 Comby 上制作的这张图片！\n下载应用：app.comby.ai"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "看看我在 GinFit AI 上制作的这个视频！下载应用：app.ginfit.com"),
+            "看看我在 Comby AI 上制作的这个视频！下载应用：app.comby.ai"),
         "short_video": MessageLookupByLibrary.simpleMessage("短视频"),
         "showAllEffects": MessageLookupByLibrary.simpleMessage("显示所有效果"),
         "showMore": MessageLookupByLibrary.simpleMessage("显示更多"),

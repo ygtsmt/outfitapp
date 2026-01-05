@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ginfit/app/features/payment/data/payment_usecase.dart';
-import 'package:ginfit/app/features/payment/data/models/one_time_product_model.dart';
-import 'package:ginfit/app/core/services/revenue_cat_service.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/app/features/payment/data/payment_usecase.dart';
+import 'package:comby/app/features/payment/data/models/one_time_product_model.dart';
+import 'package:comby/app/core/services/revenue_cat_service.dart';
+import 'package:comby/core/core.dart';
 import 'package:equatable/equatable.dart';
-import 'package:ginfit/core/utils.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/core/utils.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 part 'payment_event.dart';
@@ -91,7 +91,8 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
                   .collection('users')
                   .doc(userId)
                   .update({'profile_info.user_used_premium_template': false});
-              debugPrint('✅ Premium template usage reset after credit package purchase');
+              debugPrint(
+                  '✅ Premium template usage reset after credit package purchase');
             } catch (e) {
               debugPrint('❌ Error resetting premium template usage: $e');
             }

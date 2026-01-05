@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/generated/l10n.dart';
 
 class HeifFormatWarningDialog extends StatelessWidget {
   final String fileName;
@@ -49,7 +49,6 @@ class HeifFormatWarningDialog extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16),
-   
           SizedBox(height: 16),
           Container(
             padding: EdgeInsets.all(12),

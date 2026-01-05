@@ -1,4 +1,4 @@
-import 'package:ginfit/app/core/services/revenue_cat_service.dart';
+import 'package:comby/app/core/services/revenue_cat_service.dart';
 
 /// Paywall gösterim yöneticisi
 /// Session başına (app restart) sadece 1 kez paywall gösterir

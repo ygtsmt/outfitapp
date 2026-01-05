@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
-import 'package:ginfit/app/ui/widgets/custom_gradient_button.dart';
-import 'package:ginfit/core/core.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:comby/app/ui/widgets/custom_gradient_button.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 
 class ChangePasswordBottomSheet extends StatefulWidget {
   const ChangePasswordBottomSheet({super.key});

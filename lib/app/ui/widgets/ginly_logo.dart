@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import "package:flutter_screenutil/flutter_screenutil.dart";
-import "package:ginfit/app/bloc/app_bloc.dart";
-import "package:ginfit/core/extensions.dart";
-import "package:ginfit/core/asset_paths.dart";
+import "package:comby/app/bloc/app_bloc.dart";
+import "package:comby/core/extensions.dart";
+import "package:comby/core/asset_paths.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 
@@ -20,7 +20,7 @@ class GinlyLogo extends StatelessWidget {
     return Column(
       children: [
         if (haveText)
-          Text('GINFIT',
+          Text('Comby',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                   fontSize: 34.sp,

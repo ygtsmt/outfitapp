@@ -63,7 +63,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "anime_style": MessageLookupByLibrary.simpleMessage("Anime Stili"),
         "anime_style_description":
             MessageLookupByLibrary.simpleMessage("Japon anime sanat stili"),
-        "appName": MessageLookupByLibrary.simpleMessage("GinFit"),
+        "appName": MessageLookupByLibrary.simpleMessage("Comby"),
         "app_settings":
             MessageLookupByLibrary.simpleMessage("Uygulama Ayarları"),
         "apple": MessageLookupByLibrary.simpleMessage("Apple"),
@@ -345,11 +345,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "getSubscriptionFirst":
             MessageLookupByLibrary.simpleMessage("Önce Abonelik Alın"),
         "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("GinFit AI Plus Planı"),
+            MessageLookupByLibrary.simpleMessage("Comby AI Plus Planı"),
         "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("GinFit AI Pro Planı"),
+            MessageLookupByLibrary.simpleMessage("Comby AI Pro Planı"),
         "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("GinFit AI Ultra Planı"),
+            MessageLookupByLibrary.simpleMessage("Comby AI Ultra Planı"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("Abonelik Satın Al"),
         "good": MessageLookupByLibrary.simpleMessage("İyi"),
@@ -381,7 +381,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("HEIF Format Uyarısı"),
         "high_quality": MessageLookupByLibrary.simpleMessage("Yüksek"),
         "howWasYourExperience": MessageLookupByLibrary.simpleMessage(
-            "GinFit AI deneyiminiz nasıldı?"),
+            "Comby AI deneyiminiz nasıldı?"),
         "iHaveReadAndAgreedTo":
             MessageLookupByLibrary.simpleMessage("Okudum ve kabul ediyorum"),
         "idLabel": MessageLookupByLibrary.simpleMessage("ID: "),
@@ -403,7 +403,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Görselden Video"),
         "images": MessageLookupByLibrary.simpleMessage("Görseller"),
         "initializing":
-            MessageLookupByLibrary.simpleMessage("GinFit\'e hoş geldin..."),
+            MessageLookupByLibrary.simpleMessage("Comby\'e hoş geldin..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("Girdi Görsel"),
         "insufficientCredits":
             MessageLookupByLibrary.simpleMessage("Yetersiz kredi"),
@@ -670,11 +670,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingLanguage":
             MessageLookupByLibrary.simpleMessage("Yaratıcılık başlıyor..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "GinFit\'de oluşturduğum bu görsele göz atın! Uygulamayı İndir: app.ginfit.com"),
+            "Comby\'de oluşturduğum bu görsele göz atın! Uygulamayı İndir: app.comby.com"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "GinFit\'de oluşturduğum bu görsele göz atın!\nUygulamayı İndir: app.ginfit.com"),
+            "Comby\'de oluşturduğum bu görsele göz atın!\nUygulamayı İndir: app.comby.com"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "GinFit AI\'da oluşturduğum bu videoya göz atın! Uygulamayı İndir: app.ginfit.com"),
+            "Comby AI\'da oluşturduğum bu videoya göz atın! Uygulamayı İndir: app.comby.com"),
         "short_video": MessageLookupByLibrary.simpleMessage("Kısa Video"),
         "showAllEffects": MessageLookupByLibrary.simpleMessage("Tüm Efektler"),
         "showMore": MessageLookupByLibrary.simpleMessage("Daha Fazlası"),

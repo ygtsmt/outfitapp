@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ginfit/app/bloc/app_bloc.dart';
-import 'package:ginfit/app/data/models/multi_lang_file.dart';
-import 'package:ginfit/app/features/auth/features/login/ui/widgets/terms_agreement_text.dart';
-import 'package:ginfit/app/features/payment/ui/payment_screen.dart';
-import 'package:ginfit/core/core.dart';
-import 'package:ginfit/generated/l10n.dart';
+import 'package:comby/app/bloc/app_bloc.dart';
+import 'package:comby/app/data/models/multi_lang_file.dart';
+import 'package:comby/app/features/auth/features/login/ui/widgets/terms_agreement_text.dart';
+import 'package:comby/app/features/payment/ui/payment_screen.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 
 class TermsAndPolicyAcceptWidget extends StatelessWidget {
   const TermsAndPolicyAcceptWidget({
@@ -52,7 +52,7 @@ class TermsAndPolicyAcceptWidget extends StatelessWidget {
               onTermsTap: () {
                 context.router.push(
                   DocumentsWebViewScreenRoute(
-                    pdfUrl: 'https://www.ginfit.com/#/terms',
+                    pdfUrl: 'https://www.comby.ai/#/terms',
                     title: AppLocalizations.of(context).termsOfService,
                   ),
                 );
@@ -60,7 +60,7 @@ class TermsAndPolicyAcceptWidget extends StatelessWidget {
               onPrivacyTap: () {
                 context.router.push(
                   DocumentsWebViewScreenRoute(
-                    pdfUrl: 'https://www.ginfit.com/#/privacy',
+                    pdfUrl: 'https://www.comby.ai/#/privacy',
                     title: AppLocalizations.of(context).privacyPolicy,
                   ),
                 );

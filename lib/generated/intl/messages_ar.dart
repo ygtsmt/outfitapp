@@ -62,7 +62,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "anime_style": MessageLookupByLibrary.simpleMessage("نمط الأنمي"),
         "anime_style_description":
             MessageLookupByLibrary.simpleMessage("نمط فن الأنمي الياباني"),
-        "appName": MessageLookupByLibrary.simpleMessage("GinFit"),
+        "appName": MessageLookupByLibrary.simpleMessage("Comby"),
         "app_settings": MessageLookupByLibrary.simpleMessage("إعدادات التطبيق"),
         "apple": MessageLookupByLibrary.simpleMessage("آبل"),
         "artistCredit": MessageLookupByLibrary.simpleMessage(
@@ -342,11 +342,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "getSubscriptionFirst":
             MessageLookupByLibrary.simpleMessage("احصل على الاشتراك أولاً"),
         "ginlyAiPlusPlan":
-            MessageLookupByLibrary.simpleMessage("خطة GinFit AI Plus"),
+            MessageLookupByLibrary.simpleMessage("خطة Comby AI Plus"),
         "ginlyAiProPlan":
-            MessageLookupByLibrary.simpleMessage("خطة GinFit AI Pro"),
+            MessageLookupByLibrary.simpleMessage("خطة Comby AI Pro"),
         "ginlyAiUltraPlan":
-            MessageLookupByLibrary.simpleMessage("خطة GinFit AI Ultra"),
+            MessageLookupByLibrary.simpleMessage("خطة Comby AI Ultra"),
         "goToSubscriptions":
             MessageLookupByLibrary.simpleMessage("شراء اشتراك"),
         "good": MessageLookupByLibrary.simpleMessage("جيد"),
@@ -374,7 +374,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("تحذير تنسيق HEIF"),
         "high_quality": MessageLookupByLibrary.simpleMessage("عالية"),
         "howWasYourExperience": MessageLookupByLibrary.simpleMessage(
-            "كيف كانت تجربتك مع GinFit AI؟"),
+            "كيف كانت تجربتك مع Comby AI؟"),
         "iHaveReadAndAgreedTo":
             MessageLookupByLibrary.simpleMessage("لقد قرأت ووافقت على"),
         "idLabel": MessageLookupByLibrary.simpleMessage("المعرّف: "),
@@ -392,7 +392,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("صورة إلى فيديو"),
         "images": MessageLookupByLibrary.simpleMessage("الصور"),
         "initializing":
-            MessageLookupByLibrary.simpleMessage("مرحباً بك في GinFit..."),
+            MessageLookupByLibrary.simpleMessage("مرحباً بك في Comby..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("صورة الإدخال"),
         "insufficientCredits":
             MessageLookupByLibrary.simpleMessage("نقاط غير كافية"),
@@ -672,11 +672,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingLanguage":
             MessageLookupByLibrary.simpleMessage("جاري الإبداع..."),
         "shareText": MessageLookupByLibrary.simpleMessage(
-            "شاهد هذه الصورة التي أنشأتها على GinFit! تنزيل التطبيق: app.ginfit.com"),
+            "شاهد هذه الصورة التي أنشأتها على Comby! تنزيل التطبيق: app.comby.ai"),
         "shareTextFromUrl": MessageLookupByLibrary.simpleMessage(
-            "شاهد هذه الصورة التي أنشأتها على GinFit!\nتنزيل التطبيق: app.ginfit.com"),
+            "شاهد هذه الصورة التي أنشأتها على Comby!\nتنزيل التطبيق: app.comby.ai"),
         "shareVideoText": MessageLookupByLibrary.simpleMessage(
-            "شاهد هذا الفيديو الذي أنشأته على GinFit AI! تنزيل التطبيق: app.ginfit.com"),
+            "شاهد هذا الفيديو الذي أنشأته على Comby AI! تنزيل التطبيق: app.comby.ai"),
         "short_video": MessageLookupByLibrary.simpleMessage("فيديو قصير"),
         "showAllEffects":
             MessageLookupByLibrary.simpleMessage("إظهار جميع التأثيرات"),

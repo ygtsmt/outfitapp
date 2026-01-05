@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // SystemChrome için
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginfit/app/features/auth/features/profile/bloc/profile_bloc.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart';
+import 'package:comby/core/core.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -34,7 +34,8 @@ Future<void> _uploadToUserUploadedFiles(File imageFile) async {
       'user_uploaded_files': FieldValue.arrayUnion([url])
     });
 
-    debugPrint('✅ Profil fotoğrafı user_uploaded_files listesine eklendi: $url');
+    debugPrint(
+        '✅ Profil fotoğrafı user_uploaded_files listesine eklendi: $url');
   } catch (e) {
     debugPrint('❌ user_uploaded_files yüklenirken hata: $e');
     // Hata olsa bile kullanıcı deneyimini etkilemesin
@@ -107,10 +108,10 @@ class ProfileImageNetwork extends StatelessWidget {
 
                     if (croppedFile != null) {
                       final file = File(croppedFile.path);
-                      
+
                       // Mevcut profil fotosu güncelleme
                       getIt<ProfileBloc>().add(UpdateProfileImageEvent(file));
-                      
+
                       // 🔥 EKSTRA: Fotoğrafı hemen storage'a yükle ve user_uploaded_files listesine ekle
                       _uploadToUserUploadedFiles(file);
                     }

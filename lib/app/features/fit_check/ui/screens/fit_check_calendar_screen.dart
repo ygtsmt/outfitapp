@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
-import 'package:ginfit/app/features/fit_check/models/fit_check_model.dart';
-import 'package:ginfit/app/features/fit_check/services/fit_check_service.dart';
+import 'package:comby/app/features/fit_check/models/fit_check_model.dart';
+import 'package:comby/app/features/fit_check/services/fit_check_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 

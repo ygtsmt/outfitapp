@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ginfit/app/features/closet/ui/screens/batch_upload_progress_screen.dart';
-import 'package:ginfit/core/core.dart';
+import 'package:comby/app/features/closet/ui/screens/batch_upload_progress_screen.dart';
+import 'package:comby/core/core.dart';
 
 class FailedPhotoReviewScreen extends StatefulWidget {
   final List<FailedPhotoInfo> failedPhotos;

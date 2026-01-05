@@ -1,5 +1,5 @@
-import "package:ginfit/app/features/auth/features/create_account/data/create_account_usecase.dart";
-import "package:ginfit/core/enums.dart";
+import "package:comby/app/features/auth/features/create_account/data/create_account_usecase.dart";
+import "package:comby/core/enums.dart";
 import "package:equatable/equatable.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -52,7 +52,6 @@ class CreateAccountBloc extends Bloc<_CreateAccountEvent, CreateAccountState> {
         );
 
         // Analytics: Kayıt başarılı
-
 
         if (isUpgradeFromAnonymous) {
           print('✅ Anonymous hesap başarıyla email ile upgrade edildi!');

@@ -3,11 +3,11 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ginfit/app/data/models/app_document_model.dart';
-import 'package:ginfit/app/data/models/feedback_model.dart';
-import 'package:ginfit/app/data/models/credit_model.dart';
+import 'package:comby/app/data/models/app_document_model.dart';
+import 'package:comby/app/data/models/feedback_model.dart';
+import 'package:comby/app/data/models/credit_model.dart';
 import 'package:injectable/injectable.dart';
-import 'package:ginfit/core/data_sources/local_data_source/secure_data_storage.dart';
+import 'package:comby/core/data_sources/local_data_source/secure_data_storage.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -25,7 +25,6 @@ class AppUseCase {
   Future<void> setAppLanguage(final Locale locale) async {
     await _secureDataStorage.setAppLanguage(locale);
   }
-
 
   Future<AppDocumentModel?> getAppDocuments() async {
     try {
