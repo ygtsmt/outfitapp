@@ -28,19 +28,17 @@ class ClosetUseCase {
       final userId = auth.currentUser?.uid;
       if (userId == null) return [];
 
-      final snapshot = await firestore.collection('users').doc(userId).get();
-      if (!snapshot.exists) return [];
+      final snapshot = await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('models')
+          .get();
 
-      final data = snapshot.data();
-      final modelsList = data?['models'] as List<dynamic>? ?? [];
-
-      log('Model items count: ${modelsList.length}');
-
-      return modelsList
-          .map((itemJson) {
+      final modelsList = snapshot.docs
+          .map((doc) {
             try {
-              final map = Map<String, dynamic>.from(itemJson);
-              return ModelItem.fromMap(map);
+              final data = doc.data();
+              return ModelItem.fromMap(data);
             } catch (e) {
               log('Error parsing model item: $e');
               return null;
@@ -48,6 +46,9 @@ class ClosetUseCase {
           })
           .whereType<ModelItem>()
           .toList();
+
+      log('Model items count: ${modelsList.length}');
+      return modelsList;
     } catch (e) {
       log("getUserModelItems error: $e");
       return [];
@@ -77,19 +78,12 @@ class ClosetUseCase {
       final userId = auth.currentUser?.uid;
       if (userId == null) return EventStatus.failure;
 
-      final userDocRef = firestore.collection('users').doc(userId);
-      final docSnapshot = await userDocRef.get();
-
-      if (!docSnapshot.exists) {
-        await userDocRef.set({'models': []});
-      }
-
-      final data = docSnapshot.data();
-      final List<dynamic> modelsList = data?['models'] ?? [];
-
-      modelsList.add(item.toMap());
-
-      await userDocRef.update({'models': modelsList});
+      await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('models')
+          .doc(item.id)
+          .set(item.toMap());
 
       log('Model item added successfully');
       return EventStatus.success;
@@ -104,20 +98,12 @@ class ClosetUseCase {
       final userId = auth.currentUser?.uid;
       if (userId == null) return EventStatus.failure;
 
-      final userDocRef = firestore.collection('users').doc(userId);
-      final docSnapshot = await userDocRef.get();
-
-      if (!docSnapshot.exists) return EventStatus.failure;
-
-      final data = docSnapshot.data();
-      final List<dynamic> modelsList = data?['models'] ?? [];
-
-      final updatedList = modelsList.where((itemMap) {
-        final map = Map<String, dynamic>.from(itemMap);
-        return map['id'] != itemId;
-      }).toList();
-
-      await userDocRef.update({'models': updatedList});
+      await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('models')
+          .doc(itemId)
+          .delete();
 
       log('Model item deleted successfully');
       return EventStatus.success;
@@ -134,19 +120,17 @@ class ClosetUseCase {
       final userId = auth.currentUser?.uid;
       if (userId == null) return [];
 
-      final snapshot = await firestore.collection('users').doc(userId).get();
-      if (!snapshot.exists) return [];
+      final snapshot = await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('closet')
+          .get();
 
-      final data = snapshot.data();
-      final closetList = data?['closet'] as List<dynamic>? ?? [];
-
-      log('Closet items count: ${closetList.length}');
-
-      return closetList
-          .map((itemJson) {
+      final closetList = snapshot.docs
+          .map((doc) {
             try {
-              final map = Map<String, dynamic>.from(itemJson);
-              return WardrobeItem.fromMap(map);
+              final data = doc.data();
+              return WardrobeItem.fromMap(data);
             } catch (e) {
               log('Error parsing closet item: $e');
               return null;
@@ -154,6 +138,9 @@ class ClosetUseCase {
           })
           .whereType<WardrobeItem>()
           .toList();
+
+      log('Closet items count: ${closetList.length}');
+      return closetList;
     } catch (e) {
       log("getUserClosetItems error: $e");
       return [];
@@ -217,22 +204,12 @@ class ClosetUseCase {
       final userId = auth.currentUser?.uid;
       if (userId == null) return EventStatus.failure;
 
-      final userDocRef = firestore.collection('users').doc(userId);
-      final docSnapshot = await userDocRef.get();
-
-      if (!docSnapshot.exists) {
-        // Kullanıcı dokümanı yoksa oluştur
-        await userDocRef.set({'closet': []});
-      }
-
-      final data = docSnapshot.data();
-      final List<dynamic> closetList = data?['closet'] ?? [];
-
-      // Yeni item'ı listeye ekle
-      closetList.add(item.toMap());
-
-      // Firestore'a güncelle
-      await userDocRef.update({'closet': closetList});
+      await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('closet')
+          .doc(item.id)
+          .set(item.toMap());
 
       log('Closet item added successfully');
       return EventStatus.success;
@@ -247,27 +224,12 @@ class ClosetUseCase {
       final userId = auth.currentUser?.uid;
       if (userId == null) return EventStatus.failure;
 
-      final userDocRef = firestore.collection('users').doc(userId);
-      final docSnapshot = await userDocRef.get();
-
-      if (!docSnapshot.exists) {
-        return EventStatus.failure;
-      }
-
-      final data = docSnapshot.data();
-      final List<dynamic> closetList = data?['closet'] ?? [];
-
-      // Item'ı güncelle (aynı ID'ye sahip olanı bul ve değiştir)
-      final updatedList = closetList.map((itemMap) {
-        final map = Map<String, dynamic>.from(itemMap);
-        if (map['id'] == item.id) {
-          return item.toMap();
-        }
-        return itemMap;
-      }).toList();
-
-      // Firestore'a güncelle
-      await userDocRef.update({'closet': updatedList});
+      await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('closet')
+          .doc(item.id)
+          .update(item.toMap());
 
       log('Closet item updated successfully');
       return EventStatus.success;

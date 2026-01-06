@@ -28,23 +28,18 @@ class WardrobeAnalysisService {
 
     try {
       // Corrected: Read from user document, not subcollection
-      final docSnapshot =
-          await _firestore.collection('users').doc(userId).get();
+      final snapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('closet')
+          .get();
 
-      if (!docSnapshot.exists) {
-        return WardrobeStats(
-            totalItems: 0, categoryCount: {}, colorDistribution: {});
-      }
-
-      final data = docSnapshot.data();
-      final List<dynamic> wardrobeList = data?['wardrobe'] ?? [];
-
-      int total = wardrobeList.length;
+      int total = snapshot.docs.length;
       Map<String, int> categories = {};
       Map<String, int> colors = {};
 
-      for (var item in wardrobeList) {
-        final itemMap = Map<String, dynamic>.from(item);
+      for (var doc in snapshot.docs) {
+        final itemMap = doc.data();
 
         // Category Count
         final category = itemMap['category'] as String?;
