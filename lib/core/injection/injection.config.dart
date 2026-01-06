@@ -75,7 +75,8 @@ extension GetItInjectableX on _i1.GetIt {
     final secureStorageModule = _$SecureStorageModule();
     gh.factory<_i3.AppRouter>(() => _i3.AppRouter());
     gh.lazySingleton<_i4.BottomSheetService>(() => _i4.BottomSheetService());
-    gh.singleton<_i5.ClosetAnalysisService>(() => _i5.ClosetAnalysisService());
+    gh.singleton<_i5.WardrobeAnalysisService>(
+        () => _i5.WardrobeAnalysisService());
     gh.singleton<_i6.Dio>(() => dioModule.dio());
     gh.lazySingleton<_i7.FirebaseAuth>(() => firebaseModule.firebaseAuth);
     gh.lazySingleton<_i8.FirebaseFirestore>(

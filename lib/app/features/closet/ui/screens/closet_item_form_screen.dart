@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
-import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/closet/services/clothing_analysis_service.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/services/background_removal_service.dart';
@@ -954,9 +954,9 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
 
       // Subcategory'den category'yi otomatik belirle
       final autoCategory =
-          ClosetItem.getCategoryFromSubcategory(selectedSubcategory);
+          WardrobeItem.getCategoryFromSubcategory(selectedSubcategory);
 
-      final item = ClosetItem(
+      final item = WardrobeItem(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         imageUrl: finalImageUrl,
         category: autoCategory,

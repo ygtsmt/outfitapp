@@ -2,7 +2,7 @@ import "package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart"
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
-import 'package:comby/app/features/closet/ui/widgets/closet_analytics_widget.dart';
+import 'package:comby/app/features/closet/ui/widgets/wardrobe_analytics_widget.dart';
 import "package:comby/app/features/dashboard/ui/widgets/weather_widget.dart";
 import 'package:comby/app/features/fit_check/ui/widgets/fit_check_card.dart';
 import "package:comby/core/extensions.dart";
@@ -54,7 +54,7 @@ class DashboardScreen extends StatelessWidget {
               const FitCheckCard(),
 
               // Closet Analytics
-              const ClosetAnalyticsWidget(),
+              const WardrobeAnalyticsWidget(),
             ],
           ),
         ));

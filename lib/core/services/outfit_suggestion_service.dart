@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:comby/core/core.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/app/features/dashboard/data/models/weather_model.dart';
 
@@ -23,7 +23,7 @@ class OutfitSuggestionService {
   Future<OutfitSuggestion?> suggestOutfit({
     required WeatherModel weather,
     required List<ModelItem> models,
-    required List<ClosetItem> closetItems,
+    required List<WardrobeItem> closetItems,
   }) async {
     if (models.isEmpty || closetItems.isEmpty) {
       return null;
@@ -74,14 +74,14 @@ class OutfitSuggestionService {
 
       // 3. Cap items per category
       filteredItems.shuffle();
-      final Map<String, List<ClosetItem>> itemsByCategory = {};
+      final Map<String, List<WardrobeItem>> itemsByCategory = {};
       for (var item in filteredItems) {
         if (item.category != null) {
           itemsByCategory.putIfAbsent(item.category!, () => []).add(item);
         }
       }
 
-      final truncatedItems = <ClosetItem>[];
+      final truncatedItems = <WardrobeItem>[];
       const maxItemsPerCategory = 15;
 
       itemsByCategory.forEach((category, items) {
@@ -152,7 +152,7 @@ JSON:''';
   OutfitSuggestion? _parseResponse(
     String responseText,
     List<ModelItem> models,
-    List<ClosetItem> closetItems,
+    List<WardrobeItem> closetItems,
   ) {
     try {
       // Remove markdown code blocks if present
@@ -189,7 +189,7 @@ JSON:''';
         orElse: () => models.first,
       );
 
-      final selectedItems = <ClosetItem>[];
+      final selectedItems = <WardrobeItem>[];
 
       if (topId != null) {
         final top = closetItems.where((c) => c.id == topId).firstOrNull;
@@ -241,7 +241,7 @@ JSON:''';
 /// Result of outfit suggestion
 class OutfitSuggestion {
   final ModelItem model;
-  final List<ClosetItem> closetItems;
+  final List<WardrobeItem> closetItems;
   final String reasoning;
 
   OutfitSuggestion({

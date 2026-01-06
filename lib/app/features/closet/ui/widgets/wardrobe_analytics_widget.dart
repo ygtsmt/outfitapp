@@ -4,15 +4,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:comby/app/features/closet/services/closet_analysis_service.dart';
 
-class ClosetAnalyticsWidget extends StatefulWidget {
-  const ClosetAnalyticsWidget({super.key});
+class WardrobeAnalyticsWidget extends StatefulWidget {
+  const WardrobeAnalyticsWidget({super.key});
 
   @override
-  State<ClosetAnalyticsWidget> createState() => _ClosetAnalyticsWidgetState();
+  State<WardrobeAnalyticsWidget> createState() =>
+      _WardrobeAnalyticsWidgetState();
 }
 
-class _ClosetAnalyticsWidgetState extends State<ClosetAnalyticsWidget> {
-  ClosetStats? _stats;
+class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
+  WardrobeStats? _stats;
   bool _isLoading = true;
 
   @override
@@ -22,7 +23,7 @@ class _ClosetAnalyticsWidgetState extends State<ClosetAnalyticsWidget> {
   }
 
   Future<void> _loadStats() async {
-    final stats = await GetIt.I<ClosetAnalysisService>().getClosetStats();
+    final stats = await GetIt.I<WardrobeAnalysisService>().getWardrobeStats();
     if (mounted) {
       setState(() {
         _stats = stats;

@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/generated/l10n.dart';
-import 'package:comby/app/features/closet/ui/widgets/closet_tab_content.dart';
+import 'package:comby/app/features/closet/ui/widgets/wardrobe_tab_content.dart';
 import 'package:comby/app/features/closet/ui/widgets/models_tab_content.dart';
 import 'package:comby/app/features/closet/ui/widgets/combines_tab_content.dart';
 
@@ -42,119 +42,113 @@ class _ClosetScreenState extends State<ClosetScreen>
 
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        padding: EdgeInsets.symmetric(horizontal: 4.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // TabBar
             // Glassmorphic Premium TabBar
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.h),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.r),
-                child: BackdropFilter(
-                  filter: ui.ImageFilter.blur(
-                      sigmaX: 10, sigmaY: 10), // Blur effect
-                  child: Container(
-                    height: 56.h,
-                    padding: EdgeInsets.all(4.w),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .surface
-                          .withOpacity(0.7), // Semi-transparent surface
-                      borderRadius: BorderRadius.circular(20.r),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.2),
-                        width: 1.5,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 16,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: TabBar(
-                      controller: _tabController,
-                      indicator: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.r),
-                        gradient: LinearGradient(
-                          colors: [
-                            Theme.of(context).primaryColor,
-                            Theme.of(context).primaryColor.withOpacity(0.8),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color:
-                                Theme.of(context).primaryColor.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      dividerColor: Colors.transparent,
-                      labelColor: Colors.white,
-                      unselectedLabelColor: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.6),
-                      labelStyle: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.5,
-                      ),
-                      unselectedLabelStyle: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.2,
-                      ),
-                      overlayColor: WidgetStateProperty.all(Colors.transparent),
-                      tabs: [
-                        Tab(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            alignment: Alignment.center,
-                            child: const Text('Closet'),
-                          ),
-                        ),
-                        Tab(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            alignment: Alignment.center,
-                            child: const Text('Models'),
-                          ),
-                        ),
-                        Tab(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            alignment: Alignment.center,
-                            child: const Text('Combines'),
-                          ),
-                        ),
-                      ],
-                    ),
+            BackdropFilter(
+              filter:
+                  ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Blur effect
+              child: Container(
+                height: 56.h,
+                padding: EdgeInsets.all(4.w),
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surface
+                      .withOpacity(0.7), // Semi-transparent surface
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1.5,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: TabBar(
+                  controller: _tabController,
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.r),
+                    gradient: LinearGradient(
+                      colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColor.withOpacity(0.8),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).primaryColor.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  dividerColor: Colors.transparent,
+                  labelColor: Colors.white,
+                  unselectedLabelColor:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  labelStyle: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
+                  ),
+                  unselectedLabelStyle: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.2,
+                  ),
+                  overlayColor: WidgetStateProperty.all(Colors.transparent),
+                  tabs: [
+                    Tab(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text('Wardrobe'),
+                      ),
+                    ),
+                    Tab(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text('Models'),
+                      ),
+                    ),
+                    Tab(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text('Combines'),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+            ),
+            Divider(
+              thickness: 0.2,
             ),
             // TabBarView
             Expanded(
               child: TabBarView(
                 controller: _tabController,
                 children: const [
-                  ClosetTabContent(),
+                  WardrobeTabContent(),
                   ModelsTabContent(),
                   CombinesTabContent(),
                 ],

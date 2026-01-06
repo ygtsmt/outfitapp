@@ -7,7 +7,7 @@ import "package:auto_route/empty_router_widgets.dart";
 import "package:comby/app/bloc/app_bloc.dart";
 import "package:comby/app/features/auth/features/profile/ui/profile_screen.dart";
 import "package:comby/app/features/auth/features/splash/ui/splash_screen.dart";
-import "package:comby/app/features/closet/models/closet_item_model.dart";
+import "package:comby/app/features/closet/models/wardrobe_item_model.dart";
 import "package:comby/app/features/closet/ui/closet_screen.dart";
 import "package:comby/app/features/auth/features/create_account/ui/create_account_screen.dart";
 import "package:comby/app/features/auth/features/login/ui/login_screen.dart";

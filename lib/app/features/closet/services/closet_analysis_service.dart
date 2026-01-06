@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:injectable/injectable.dart';
 
-class ClosetStats {
+class WardrobeStats {
   final int totalItems;
   final Map<String, int> categoryCount;
   final Map<String, int> colorDistribution;
 
-  ClosetStats({
+  WardrobeStats({
     required this.totalItems,
     required this.categoryCount,
     required this.colorDistribution,
@@ -15,14 +15,14 @@ class ClosetStats {
 }
 
 @singleton
-class ClosetAnalysisService {
+class WardrobeAnalysisService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<ClosetStats> getClosetStats() async {
+  Future<WardrobeStats> getWardrobeStats() async {
     final userId = _auth.currentUser?.uid;
     if (userId == null) {
-      return ClosetStats(
+      return WardrobeStats(
           totalItems: 0, categoryCount: {}, colorDistribution: {});
     }
 
@@ -32,18 +32,18 @@ class ClosetAnalysisService {
           await _firestore.collection('users').doc(userId).get();
 
       if (!docSnapshot.exists) {
-        return ClosetStats(
+        return WardrobeStats(
             totalItems: 0, categoryCount: {}, colorDistribution: {});
       }
 
       final data = docSnapshot.data();
-      final List<dynamic> closetList = data?['closet'] ?? [];
+      final List<dynamic> wardrobeList = data?['wardrobe'] ?? [];
 
-      int total = closetList.length;
+      int total = wardrobeList.length;
       Map<String, int> categories = {};
       Map<String, int> colors = {};
 
-      for (var item in closetList) {
+      for (var item in wardrobeList) {
         final itemMap = Map<String, dynamic>.from(item);
 
         // Category Count
@@ -61,14 +61,14 @@ class ClosetAnalysisService {
         }
       }
 
-      return ClosetStats(
+      return WardrobeStats(
         totalItems: total,
         categoryCount: categories,
         colorDistribution: colors,
       );
     } catch (e) {
       print('Error fetching closet stats: $e');
-      return ClosetStats(
+      return WardrobeStats(
           totalItems: 0, categoryCount: {}, colorDistribution: {});
     }
   }

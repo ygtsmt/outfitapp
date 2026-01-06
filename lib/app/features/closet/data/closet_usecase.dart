@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/core/core.dart';
 import 'package:injectable/injectable.dart';
@@ -129,7 +129,7 @@ class ClosetUseCase {
 
   // ==================== CLOSET METHODS ====================
 
-  Future<List<ClosetItem>> getUserClosetItems() async {
+  Future<List<WardrobeItem>> getUserClosetItems() async {
     try {
       final userId = auth.currentUser?.uid;
       if (userId == null) return [];
@@ -146,13 +146,13 @@ class ClosetUseCase {
           .map((itemJson) {
             try {
               final map = Map<String, dynamic>.from(itemJson);
-              return ClosetItem.fromMap(map);
+              return WardrobeItem.fromMap(map);
             } catch (e) {
               log('Error parsing closet item: $e');
               return null;
             }
           })
-          .whereType<ClosetItem>()
+          .whereType<WardrobeItem>()
           .toList();
     } catch (e) {
       log("getUserClosetItems error: $e");
@@ -212,7 +212,7 @@ class ClosetUseCase {
     }
   }
 
-  Future<EventStatus> addClosetItem(ClosetItem item) async {
+  Future<EventStatus> addClosetItem(WardrobeItem item) async {
     try {
       final userId = auth.currentUser?.uid;
       if (userId == null) return EventStatus.failure;
@@ -242,7 +242,7 @@ class ClosetUseCase {
     }
   }
 
-  Future<EventStatus> updateClosetItem(ClosetItem item) async {
+  Future<EventStatus> updateClosetItem(WardrobeItem item) async {
     try {
       final userId = auth.currentUser?.uid;
       if (userId == null) return EventStatus.failure;

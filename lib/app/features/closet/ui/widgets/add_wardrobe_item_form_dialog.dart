@@ -2,25 +2,25 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/core/core.dart';
 
-class AddClosetItemFormDialog extends StatefulWidget {
+class AddWardrobeItemFormDialog extends StatefulWidget {
   final File imageFile;
   final String imageUrl;
 
-  const AddClosetItemFormDialog({
+  const AddWardrobeItemFormDialog({
     super.key,
     required this.imageFile,
     required this.imageUrl,
   });
 
   @override
-  State<AddClosetItemFormDialog> createState() =>
-      _AddClosetItemFormDialogState();
+  State<AddWardrobeItemFormDialog> createState() =>
+      _AddWardrobeItemFormDialogState();
 }
 
-class _AddClosetItemFormDialogState extends State<AddClosetItemFormDialog> {
+class _AddWardrobeItemFormDialogState extends State<AddWardrobeItemFormDialog> {
   String? selectedSubcategory; // ZORUNLU
   String? selectedColor;
   String? selectedPattern;
@@ -333,9 +333,9 @@ class _AddClosetItemFormDialogState extends State<AddClosetItemFormDialog> {
 
     // Subcategory'den category'yi otomatik belirle
     final autoCategory =
-        ClosetItem.getCategoryFromSubcategory(selectedSubcategory);
+        WardrobeItem.getCategoryFromSubcategory(selectedSubcategory);
 
-    final item = ClosetItem(
+    final item = WardrobeItem(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       imageUrl: widget.imageUrl,
       category: autoCategory,

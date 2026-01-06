@@ -2,7 +2,7 @@ part of 'closet_bloc.dart';
 
 class ClosetState extends Equatable {
   final EventStatus? gettingClosetItemsStatus;
-  final List<ClosetItem>? closetItems;
+  final List<WardrobeItem>? closetItems;
   final EventStatus? gettingModelItemsStatus;
   final List<ModelItem>? modelItems;
   final String? errorMessage;
@@ -17,7 +17,7 @@ class ClosetState extends Equatable {
 
   ClosetState copyWith({
     EventStatus? gettingClosetItemsStatus,
-    List<ClosetItem>? closetItems,
+    List<WardrobeItem>? closetItems,
     EventStatus? gettingModelItemsStatus,
     List<ModelItem>? modelItems,
     String? errorMessage,
@@ -42,6 +42,3 @@ class ClosetState extends Equatable {
         errorMessage,
       ];
 }
-
-
-

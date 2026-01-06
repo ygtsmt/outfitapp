@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
-import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/closet/services/clothing_analysis_service.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/services/background_removal_service.dart';
 
 /// Result model for batch upload
 class BatchUploadResult {
-  final List<ClosetItem> successfulItems;
+  final List<WardrobeItem> successfulItems;
   final List<FailedPhotoInfo> failedPhotos;
 
   BatchUploadResult({
@@ -57,7 +57,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
   bool _isProcessing = true;
   String _currentStatus = 'Hazırlanıyor...';
 
-  final List<ClosetItem> _successfulItems = [];
+  final List<WardrobeItem> _successfulItems = [];
   final List<FailedPhotoInfo> _failedPhotos = [];
 
   late AnimationController _animationController;
@@ -164,9 +164,9 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
 
       // Step 3: Create closet item
       final subcategory = analysisResult['subcategory'];
-      final autoCategory = ClosetItem.getCategoryFromSubcategory(subcategory);
+      final autoCategory = WardrobeItem.getCategoryFromSubcategory(subcategory);
 
-      final item = ClosetItem(
+      final item = WardrobeItem(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         imageUrl: finalImageUrl,
         category: autoCategory,

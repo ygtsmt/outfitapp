@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
-import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/core/core.dart';
 import 'package:equatable/equatable.dart';

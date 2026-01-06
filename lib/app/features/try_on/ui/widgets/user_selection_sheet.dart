@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/core/core.dart';
 
@@ -52,7 +52,7 @@ class _UserSelectionSheetState extends State<UserSelectionSheet> {
   }
 
   String _getImageUrl(dynamic item) {
-    if (item is ClosetItem) return item.imageUrl;
+    if (item is WardrobeItem) return item.imageUrl;
     if (item is ModelItem) return item.imageUrl;
     return '';
   }

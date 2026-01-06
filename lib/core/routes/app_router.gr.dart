@@ -808,7 +808,7 @@ class ClosetItemDetailScreenRoute
     extends PageRouteInfo<ClosetItemDetailScreenRouteArgs> {
   ClosetItemDetailScreenRoute({
     Key? key,
-    required ClosetItem closetItem,
+    required WardrobeItem closetItem,
   }) : super(
           ClosetItemDetailScreenRoute.name,
           path: '/closet-item-detail-screen',
@@ -829,7 +829,7 @@ class ClosetItemDetailScreenRouteArgs {
 
   final Key? key;
 
-  final ClosetItem closetItem;
+  final WardrobeItem closetItem;
 
   @override
   String toString() {

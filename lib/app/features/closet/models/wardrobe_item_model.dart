@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ClosetItem {
+class WardrobeItem {
   final String id; // Firestore doc ID
   final String
       imageUrl; // Kıyafetin fotoğrafı (Firebase Storage URL) - arka planı kaldırılmış
@@ -16,7 +16,7 @@ class ClosetItem {
   final String? brand; // Marka: Zara, H&M, Nike, Adidas...
   final DateTime createdAt; // Kayıt tarihi
 
-  ClosetItem({
+  WardrobeItem({
     required this.id,
     required this.imageUrl,
     required this.createdAt,
@@ -30,7 +30,7 @@ class ClosetItem {
   });
 
   // Map'ten model oluşturma (Firestore'dan gelirken)
-  factory ClosetItem.fromMap(Map<String, dynamic> map) {
+  factory WardrobeItem.fromMap(Map<String, dynamic> map) {
     // ID yoksa unique bir ID oluştur
     String id = map['id'] as String? ??
         DateTime.now().millisecondsSinceEpoch.toString();
@@ -47,7 +47,7 @@ class ClosetItem {
       createdAt = DateTime.now();
     }
 
-    return ClosetItem(
+    return WardrobeItem(
       id: id,
       imageUrl: map['imageUrl'] as String? ?? '',
       category: map['category'] as String?,
@@ -78,8 +78,8 @@ class ClosetItem {
   }
 
   // JSON'dan model oluşturma (API'den gelirken)
-  factory ClosetItem.fromJson(Map<String, dynamic> json) {
-    return ClosetItem(
+  factory WardrobeItem.fromJson(Map<String, dynamic> json) {
+    return WardrobeItem(
       id: json['id'] as String,
       imageUrl: json['imageUrl'] as String,
       category: json['category'] as String?,
@@ -111,7 +111,7 @@ class ClosetItem {
     };
   }
 
-  ClosetItem copyWith({
+  WardrobeItem copyWith({
     String? id,
     String? imageUrl,
     String? category,
@@ -123,7 +123,7 @@ class ClosetItem {
     String? brand,
     DateTime? createdAt,
   }) {
-    return ClosetItem(
+    return WardrobeItem(
       id: id ?? this.id,
       imageUrl: imageUrl ?? this.imageUrl,
       category: category ?? this.category,
@@ -227,7 +227,7 @@ class ClosetItem {
   }
 
   // Category'yi subcategory'den otomatik belirle (eğer yoksa)
-  ClosetItem withAutoCategory() {
+  WardrobeItem withAutoCategory() {
     if (category == null && subcategory != null) {
       final autoCategory = getCategoryFromSubcategory(subcategory);
       return copyWith(category: autoCategory);

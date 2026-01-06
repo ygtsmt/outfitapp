@@ -7,7 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:comby/core/core.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
-import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 
 @injectable
 class FalAiUsecase {
@@ -94,7 +94,7 @@ class FalAiUsecase {
     required List<String> imageUrls,
     required String prompt,
     String? modelAiPrompt, // AI-generated description of the model
-    List<ClosetItem>? usedClosetItems, // Items used in the outfit
+    List<WardrobeItem>? usedClosetItems, // Items used in the outfit
   }) async {
     try {
       // Webhook URL'i query parameter olarak ekle

@@ -12,7 +12,7 @@ import 'dart:io';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter/services.dart';
-import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:image_picker/image_picker.dart';
 // import 'package:comby/app/features/closet/ui/widgets/models_tab_content.dart'; // Might be needed for some widgets or just use generic
 // import 'package:sizer/sizer.dart'; // Removed Sizer
@@ -35,7 +35,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
   final ClosetUseCase _closetUseCase = GetIt.I<ClosetUseCase>();
 
   ModelItem? _selectedModel; // Changed from String? _selectedModelUrl
-  final List<ClosetItem> _selectedClothes = [];
+  final List<WardrobeItem> _selectedClothes = [];
 
   bool _isLoading = false;
   String? _statusMessage;
@@ -239,7 +239,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
     final result =
         await context.router.push(const GallerySelectionScreenRoute());
 
-    if (result is ClosetItem) {
+    if (result is WardrobeItem) {
       if (!_selectedClothes.any((e) => e.imageUrl == result.imageUrl)) {
         setState(() {
           _selectedClothes.add(result);
@@ -264,7 +264,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
         ClosetItemFormScreenRoute(imageFile: File(pickedFile.path)),
       );
 
-      if (result is ClosetItem) {
+      if (result is WardrobeItem) {
         if (!_selectedClothes.any((e) => e.imageUrl == result.imageUrl)) {
           setState(() {
             _selectedClothes.add(result);
@@ -381,7 +381,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
           ),
         ],
         onSelected: (item) {
-          if (item is ClosetItem) {
+          if (item is WardrobeItem) {
             if (!_selectedClothes.any((e) => e.imageUrl == item.imageUrl)) {
               setState(() {
                 _selectedClothes.add(item);
@@ -780,7 +780,7 @@ class _ModelSelector extends StatelessWidget {
 }
 
 class _ClothList extends StatelessWidget {
-  final List<ClosetItem> clothes;
+  final List<WardrobeItem> clothes;
   final VoidCallback onAdd;
   final VoidCallback onRandomSelect;
   final Function(int) onRemove;

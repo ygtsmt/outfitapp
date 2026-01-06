@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
-import 'package:comby/app/features/closet/models/closet_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/routes/app_router.dart';
 
 class ClosetItemDetailScreen extends StatefulWidget {
-  final ClosetItem closetItem;
+  final WardrobeItem closetItem;
 
   const ClosetItemDetailScreen({
     super.key,
@@ -325,7 +325,7 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
     );
   }
 
-  void _openFullscreenViewer(BuildContext context, ClosetItem item) {
+  void _openFullscreenViewer(BuildContext context, WardrobeItem item) {
     // Renk bazlı arka plan belirleme
     final itemColor = item.color?.toLowerCase() ?? '';
     final isDarkColor = itemColor.contains('black') ||
@@ -439,7 +439,7 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
     );
   }
 
-  Widget _buildDetailsSection(BuildContext context, ClosetItem item) {
+  Widget _buildDetailsSection(BuildContext context, WardrobeItem item) {
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 150),
       opacity: 1.0 - (_progress * 0.8),
@@ -506,7 +506,7 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
     );
   }
 
-  Widget _buildDetailsGrid(BuildContext context, ClosetItem item) {
+  Widget _buildDetailsGrid(BuildContext context, WardrobeItem item) {
     final details = <MapEntry<String, String>>[];
 
     if (item.color != null) {
@@ -638,7 +638,7 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
   }
 
   Widget _buildSimilarItemsSection(
-      BuildContext context, ClosetItem currentItem) {
+      BuildContext context, WardrobeItem currentItem) {
     return BlocBuilder<ClosetBloc, ClosetState>(
       builder: (context, state) {
         // Aynı kategorideki diğer ürünleri filtrele
@@ -713,7 +713,7 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
     );
   }
 
-  Widget _buildSimilarItemCard(BuildContext context, ClosetItem item) {
+  Widget _buildSimilarItemCard(BuildContext context, WardrobeItem item) {
     return GestureDetector(
       onTap: () {
         context.router.push(ClosetItemDetailScreenRoute(closetItem: item));

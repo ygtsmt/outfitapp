@@ -17,6 +17,19 @@ class CombinesTabContent extends StatefulWidget {
 class _CombinesTabContentState extends State<CombinesTabContent> {
   int _crossAxisCount = 2;
   double _baseScaleFactor = 1.0;
+  Stream<DocumentSnapshot>? _userStream;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      _userStream = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .snapshots();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +42,7 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
     }
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .snapshots(),
+      stream: _userStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -109,28 +119,25 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
             _baseScaleFactor = _crossAxisCount.toDouble();
           },
           onScaleUpdate: (details) {
-            // scale > 1 means zooming in (fewer columns)
-            // scale < 1 means zooming out (more columns)
-            // We want inverted behavior relative to scale roughly.
-            // newCount = base / scale
-            // Example: Start 2. Zoom In (scale 2.0) -> 2/2 = 1. But clamp min 2.
-            // Example: Start 2. Zoom Out (scale 0.5) -> 2/0.5 = 4.
+            // Squaring the scale makes the resize trigger faster (higher sensitivity)
+            final effectiveScale = details.scale * details.scale;
+            final newCount = (_baseScaleFactor / effectiveScale).round();
+            final clampedCount = newCount.clamp(2, 4);
 
-            setState(() {
-              final newCount = (_baseScaleFactor / details.scale).round();
-              _crossAxisCount = newCount.clamp(2, 4);
-            });
+            if (_crossAxisCount != clampedCount) {
+              setState(() {
+                _crossAxisCount = clampedCount;
+              });
+            }
           },
           child: RefreshIndicator(
             onRefresh: () async {
               setState(() {});
             },
             child: GridView.builder(
-              padding: EdgeInsets.all(8.w),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: _crossAxisCount,
-                crossAxisSpacing: 8.w,
-                mainAxisSpacing: 8.h,
+
                 childAspectRatio: 0.75, // Keeps poster ratio
               ),
               itemCount: geminiImages.length,
@@ -164,109 +171,101 @@ class _CombineImageCard extends StatelessWidget {
     final imageUrl =
         output != null && output.isNotEmpty ? output[0] as String? : null;
 
-    return Card(
-      elevation: 4,
-      shadowColor: Colors.black.withOpacity(0.2),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // Image (Full Bleed)
-            if (status == 'succeeded' && imageUrl != null)
-              Hero(
-                tag: 'combine_${imageData['id'] ?? imageUrl}',
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Center(
-                    child: LoadingAnimationWidget.fourRotatingDots(
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 12.h,
-                    ),
-                  ),
-                  errorWidget: (_, __, ___) => Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      color: Colors.grey[400],
-                      size: 32.sp,
-                    ),
+    return ClipRRect(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Image (Full Bleed)
+          if (status == 'succeeded' && imageUrl != null)
+            Hero(
+              tag: 'combine_${imageData['id'] ?? imageUrl}',
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Center(
+                  child: LoadingAnimationWidget.fourRotatingDots(
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 12.h,
                   ),
                 ),
-              )
-            else
-              Container(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                child: Center(
-                  child: status == 'processing'
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            LoadingAnimationWidget.fourRotatingDots(
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 20.h,
+                errorWidget: (_, __, ___) => Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: Colors.grey[400],
+                    size: 32.sp,
+                  ),
+                ),
+              ),
+            )
+          else
+            Container(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              child: Center(
+                child: status == 'processing'
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          LoadingAnimationWidget.fourRotatingDots(
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 20.h,
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            'Hazırlanıyor...',
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.6),
+                              fontWeight: FontWeight.w500,
                             ),
-                            SizedBox(height: 8.h),
-                            Text(
-                              'Hazırlanıyor...',
-                              style: TextStyle(
-                                fontSize: 10.sp,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withOpacity(0.6),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.error_outline,
+                          ),
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            color: Theme.of(context).colorScheme.error,
+                            size: 24.sp,
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            'Hata',
+                            style: TextStyle(
+                              fontSize: 10.sp,
                               color: Theme.of(context).colorScheme.error,
-                              size: 24.sp,
+                              fontWeight: FontWeight.w500,
                             ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              'Hata',
-                              style: TextStyle(
-                                fontSize: 10.sp,
-                                color: Theme.of(context).colorScheme.error,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                ),
+                          ),
+                        ],
+                      ),
               ),
+            ),
 
-            // Gradient Overlay (Bottom)
-            if (status == 'succeeded')
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: 60.h,
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.6),
-                      ],
-                    ),
+          // Gradient Overlay (Bottom)
+          if (status == 'succeeded')
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: 60.h,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.6),
+                    ],
                   ),
                 ),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }

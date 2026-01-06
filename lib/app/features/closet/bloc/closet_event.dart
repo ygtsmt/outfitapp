@@ -24,7 +24,7 @@ class RefreshClosetItemsEvent extends ClosetEvent {
 }
 
 class AddClosetItemEvent extends ClosetEvent {
-  final ClosetItem item;
+  final WardrobeItem item;
 
   const AddClosetItemEvent(this.item);
 
@@ -33,7 +33,7 @@ class AddClosetItemEvent extends ClosetEvent {
 }
 
 class UpdateClosetItemEvent extends ClosetEvent {
-  final ClosetItem item;
+  final WardrobeItem item;
 
   const UpdateClosetItemEvent(this.item);
 
