@@ -1,1 +1,33 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"ginowl-ginfit","appId":"1:729242676224:android:6bf917e7b5b4ef971bfce5","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"ginowl-ginfit","appId":"1:729242676224:ios:b585ac46adac8d7a1bfce5","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"ginowl-ginfit","configurations":{"android":"1:729242676224:android:6bf917e7b5b4ef971bfce5","ios":"1:729242676224:ios:b585ac46adac8d7a1bfce5"}}}}}}
+{
+    "functions": {
+        "source": "functions"
+    },
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "ginowl-ginfit",
+                    "appId": "1:729242676224:android:6bf917e7b5b4ef971bfce5",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "ios": {
+                "default": {
+                    "projectId": "ginowl-ginfit",
+                    "appId": "1:729242676224:ios:b585ac46adac8d7a1bfce5",
+                    "uploadDebugSymbols": false,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "ginowl-ginfit",
+                    "configurations": {
+                        "android": "1:729242676224:android:6bf917e7b5b4ef971bfce5",
+                        "ios": "1:729242676224:ios:b585ac46adac8d7a1bfce5"
+                    }
+                }
+            }
+        }
+    }
+}

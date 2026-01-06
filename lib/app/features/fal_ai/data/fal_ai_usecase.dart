@@ -97,9 +97,9 @@ class FalAiUsecase {
     List<WardrobeItem>? usedClosetItems, // Items used in the outfit
   }) async {
     try {
-      // Webhook URL'i query parameter olarak ekle
+      final userId = auth.currentUser!.uid;
       final webhookUrl =
-          "https://us-central1-ginowl-ginfit.cloudfunctions.net/falWebhook";
+          "https://us-central1-ginowl-ginfit.cloudfunctions.net/falWebhook?userId=$userId";
       final uri = Uri.parse(
               'https://queue.fal.run/fal-ai/gemini-3-pro-image-preview/edit')
           .replace(queryParameters: {'fal_webhook': webhookUrl});
@@ -163,11 +163,14 @@ class FalAiUsecase {
             'usedClosetItems': serializedClosetItems,
           };
 
-          // Add to user's Firestore document
+          // Add to user's Firestore subcollection
           final userId = auth.currentUser!.uid;
-          await firestore.collection('users').doc(userId).update({
-            'userGeneratedImages': FieldValue.arrayUnion([imageData]),
-          });
+          await firestore
+              .collection('users')
+              .doc(userId)
+              .collection('combines')
+              .doc(requestId)
+              .set(imageData);
 
           log('✅ Gemini Image Edit request created: $requestId');
           return imageData;

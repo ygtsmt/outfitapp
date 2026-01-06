@@ -60,42 +60,31 @@ exports.falWebhook = functions.https.onRequest(async (req, res) => {
             if (firebaseUrl) {
               console.log(`✅ Combine Image uploaded to Firebase: ${firebaseUrl}`);
 
-              // Find and update the user request
-              const usersSnapshot = await db.collection('users').get();
-              let imageFound = false;
+              // Check for userId in query params for direct lookup
+              const userId = req.query.userId;
 
-              for (const userDoc of usersSnapshot.docs) {
-                const userId = userDoc.id;
-                const userData = userDoc.data();
-                const userGeneratedImages = userData?.userGeneratedImages || [];
+              if (userId) {
+                console.log(`🔍 Using direct user lookup for userId: ${userId} and requestId: ${request_id}`);
 
-                // Find matching request in array
-                const updatedImages = userGeneratedImages.map(image => {
-                  if (image.id === request_id) {
-                    imageFound = true;
-                    console.log(`✅ Found matching request for user ${userId}`);
-                    return {
-                      ...image,
-                      output: [firebaseUrl],
-                      status: 'succeeded',
-                      completedAt: new Date().toISOString()
-                    };
-                  }
-                  return image;
-                });
+                // Directly reference the subcollection document
+                const docRef = db.collection('users')
+                  .doc(userId)
+                  .collection('combines')
+                  .doc(request_id);
 
-                if (imageFound) {
-                  await db.collection('users').doc(userId).update({
-                    userGeneratedImages: updatedImages,
-                    lastImageUpdate: new Date().toISOString()
+                try {
+                  await docRef.update({
+                    output: [firebaseUrl],
+                    status: 'succeeded',
+                    completedAt: new Date().toISOString()
                   });
-                  console.log(`✅ Request updated for user ${userId} with image ${firebaseUrl}`);
-                  break;
+                  console.log(`✅ Request updated in subcollection for user ${userId}`);
+                } catch (err) {
+                  console.error(`❌ Error updating subcollection doc for user ${userId}:`, err);
                 }
-              }
 
-              if (!imageFound) {
-                console.log(`❌ Request ID ${request_id} not found in any user profile`);
+              } else {
+                console.log('❌ userId missing in webhook URL. Cannot update subcollection.');
               }
             } else {
               console.log(`❌ Failed to get Firebase URL for combine image`);
@@ -118,37 +107,24 @@ exports.falWebhook = functions.https.onRequest(async (req, res) => {
         console.log(`❌ Checking if this was a combine request: ${request_id}`);
         const db = admin.firestore();
         const failMsg = event.error || 'Unknown processing error';
+        const userId = req.query.userId;
 
-        const usersSnapshot = await db.collection('users').get();
-        let imageFound = false;
+        if (userId) {
+          const docRef = db.collection('users')
+            .doc(userId)
+            .collection('combines')
+            .doc(request_id);
 
-        for (const userDoc of usersSnapshot.docs) {
-          const userId = userDoc.id;
-          const userData = userDoc.data();
-          const userGeneratedImages = userData?.userGeneratedImages || [];
-
-          const updatedImages = userGeneratedImages.map(image => {
-            if (image.id === request_id) {
-              imageFound = true;
-              return {
-                ...image,
-                status: 'failed',
-                error: failMsg,
-                completedAt: new Date().toISOString()
-              };
-            }
-            return image;
+          await docRef.update({
+            status: 'failed',
+            error: failMsg,
+            completedAt: new Date().toISOString()
           });
-
-          if (imageFound) {
-            await db.collection('users').doc(userId).update({
-              userGeneratedImages: updatedImages,
-              lastImageUpdate: new Date().toISOString()
-            });
-            console.log(`✅ Updated failed status for combine request for user ${userId}`);
-            break;
-          }
+          console.log(`✅ Updated failed status in subcollection for user ${userId}`);
+        } else {
+          console.log('❌ userId missing in webhook error handler.');
         }
+
       } catch (imageError) {
         console.error('Error updating failed combine status:', imageError);
       }

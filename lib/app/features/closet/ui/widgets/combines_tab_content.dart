@@ -17,16 +17,18 @@ class CombinesTabContent extends StatefulWidget {
 class _CombinesTabContentState extends State<CombinesTabContent> {
   int _crossAxisCount = 2;
   double _baseScaleFactor = 1.0;
-  Stream<DocumentSnapshot>? _userStream;
+  Stream<QuerySnapshot>? _imagesStream;
 
   @override
   void initState() {
     super.initState();
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      _userStream = FirebaseFirestore.instance
+      _imagesStream = FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
+          .collection('combines')
+          .orderBy('createdAt', descending: true)
           .snapshots();
     }
   }
@@ -41,8 +43,8 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
       );
     }
 
-    return StreamBuilder<DocumentSnapshot>(
-      stream: _userStream,
+    return StreamBuilder<QuerySnapshot>(
+      stream: _imagesStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -59,29 +61,17 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
           );
         }
 
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return const Center(
-            child: Text('Veri bulunamadı'),
-          );
-        }
+        final docs = snapshot.data?.docs ?? [];
 
-        final userData = snapshot.data!.data() as Map<String, dynamic>?;
-        final images = userData?['userGeneratedImages'] as List<dynamic>? ?? [];
-
-        // Sadece Gemini Image Edit modelini filtrele
-        final geminiImages = images.where((img) {
+        // Filter and map to list of maps
+        final geminiImages = docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          return data;
+        }).where((img) {
           final model = img['model'] as String?;
+          // Filter if needed, though we only put images here anyway
           return model == 'gemini-2.5-flash-image-edit';
         }).toList();
-
-        // Tarihe göre sırala (Yeniden eskiye)
-        geminiImages.sort((a, b) {
-          final dateA =
-              DateTime.tryParse(a['createdAt'] ?? '') ?? DateTime(2000);
-          final dateB =
-              DateTime.tryParse(b['createdAt'] ?? '') ?? DateTime(2000);
-          return dateB.compareTo(dateA); // Descending
-        });
 
         if (geminiImages.isEmpty) {
           return Center(
