@@ -7,6 +7,7 @@ import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
 import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/routes/app_router.dart';
+import 'package:palette_generator/palette_generator.dart';
 
 class ClosetItemDetailScreen extends StatefulWidget {
   final WardrobeItem closetItem;
@@ -24,11 +25,42 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
   final ScrollController _scrollController = ScrollController();
   double _scrollOffset = 0;
   double _maxScroll = 400;
+  Color? _dominantColor;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _extractDominantColor();
+  }
+
+  Future<void> _extractDominantColor() async {
+    try {
+      final imageProvider =
+          CachedNetworkImageProvider(widget.closetItem.imageUrl);
+      final paletteGenerator = await PaletteGenerator.fromImageProvider(
+        imageProvider,
+        maximumColorCount: 20,
+      );
+
+      // Baskın rengi al - önce vibrant, yoksa dominant
+      final dominantColor = paletteGenerator.vibrantColor?.color ??
+          paletteGenerator.dominantColor?.color ??
+          Colors.black;
+
+      if (mounted) {
+        setState(() {
+          _dominantColor = dominantColor;
+        });
+      }
+    } catch (e) {
+      // Hata durumunda siyah kullan
+      if (mounted) {
+        setState(() {
+          _dominantColor = Colors.black;
+        });
+      }
+    }
   }
 
   @override
@@ -140,7 +172,8 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
                           borderRadius: BorderRadius.circular(borderRadius),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(shadowOpacity),
+                              color: (_dominantColor ?? Colors.black)
+                                  .withOpacity(shadowOpacity),
                               blurRadius: 30 + (_progress * 20),
                               offset: Offset(0, -10 - (_progress * 10)),
                               spreadRadius: _progress * 5,
