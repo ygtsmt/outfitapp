@@ -144,27 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: BlocBuilder<LoginBloc, LoginState>(
                   builder: (context, loginBuilderState) {
                     return Scaffold(
-                        floatingActionButton: FloatingActionButton(
-                          onPressed: () {
-                            context.router.pushNamed('/quick-try-on-screen');
-                          },
-                          backgroundColor: context.baseColor,
-                          elevation: 4,
-                          shape: const CircleBorder(),
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                            size: 28.sp,
-                          ),
-                        ),
-                        floatingActionButtonAnimator:
-                            FloatingActionButtonAnimator.scaling,
-                        floatingActionButtonLocation:
-                            FloatingActionButtonLocation.centerDocked,
                         key: _scaffoldKey,
                         drawer: CustomDrawer(state: state),
-                        resizeToAvoidBottomInset:
-                            false, // Changed to false to prevent FAB moving up with keyboard if not needed
                         // Update indices: Closet is now 1, Try-On is now 2 (in router)
                         appBar: (tabsRouter.activeIndex == 1 ||
                                 tabsRouter.activeIndex == 2)
@@ -228,15 +209,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 label: 'Closet',
                               ),
                               const BottomNavigationBarItem(
-                                icon: SizedBox(), // Empty space for FAB
-                                label: '',
-                                tooltip: '',
+                                icon: Icon(Icons.camera_alt_outlined),
+                                activeIcon: Icon(Icons.camera_alt),
+                                label: 'Quick Try',
                               ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 2
                                     ? const Icon(Icons.history_edu)
                                     : const Icon(Icons.history_edu_outlined),
-                                label: 'Combines',
+                                label: 'Try-On',
                               ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 3
@@ -252,7 +233,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: (value) {
                               if (value == 0) tabsRouter.setActiveIndex(0);
                               if (value == 1) tabsRouter.setActiveIndex(1);
-                              // Value 2 is FAB, ignore
+                              if (value == 2) {
+                                context.router
+                                    .pushNamed('/quick-try-on-screen');
+                              }
                               if (value == 3) tabsRouter.setActiveIndex(2);
                               if (value == 4) tabsRouter.setActiveIndex(3);
                             },

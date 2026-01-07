@@ -174,68 +174,56 @@ class _AddModelItemButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).primaryColor.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16.r),
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).primaryColor.withOpacity(0.3),
-                width: 1.5,
-              ),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Theme.of(context).primaryColor.withOpacity(0.05),
-                  Theme.of(context).primaryColor.withOpacity(0.1),
-                ],
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).primaryColor.withOpacity(0.1),
-                    border: Border.all(
-                      color: Theme.of(context).primaryColor.withOpacity(0.2),
-                      width: 1,
+          border:
+              Border.symmetric(horizontal: BorderSide(color: context.gray3))),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24.r), // Daha yumuşak köşeler
+        child: AspectRatio(
+          aspectRatio: 0.75,
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // İçeriğe göre daralır
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // İkon Alanı - Daha derinlikli bir görünüm
+              Container(
+                height: 56.w,
+                width: 56.w,
+                decoration: BoxDecoration(
+                  color: Colors.white, // İkonun arkasını temiz beyaz yapıyoruz
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
-                  child: Icon(
-                    Icons.person_add_rounded,
-                    size: 28.sp,
-                    color: Theme.of(context).primaryColor,
-                  ),
+                  ],
                 ),
-                SizedBox(height: 8.h),
-                Text(
-                  'Model Ekle',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).primaryColor.withOpacity(0.8),
-                    letterSpacing: 0.5,
-                  ),
+                child: Icon(
+                  Icons.person_outline, // Daha modern bir ikon
+                  size: 30.sp,
+                  color: primaryColor,
                 ),
-              ],
-            ),
+              ),
+              SizedBox(
+                height: 8.h,
+              ),
+              Text(
+                'Model Ekle',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.bold,
+                  color: primaryColor.withOpacity(0.9),
+                  letterSpacing: -0.2,
+                ),
+              ),
+            ],
           ),
         ),
       ),

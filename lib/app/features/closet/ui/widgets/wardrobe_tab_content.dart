@@ -113,8 +113,6 @@ class _WardrobeTabContentState extends State<WardrobeTabContent> {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: _crossAxisCount,
                   childAspectRatio: 1,
-                  mainAxisSpacing: 4.h,
-                  crossAxisSpacing: 4.w,
                 ),
                 itemCount: items.length + 1, // +1 for add button
                 itemBuilder: (context, index) {
@@ -149,53 +147,50 @@ class _ClosetItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(20.r),
-      child: Stack(
-        children: [
-          // Image
-          Positioned.fill(
-            child: CachedNetworkImage(
-              imageUrl: item.imageUrl,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Center(
-                child: LoadingAnimationWidget.fourRotatingDots(
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 12.h,
-                ),
+    return Stack(
+      children: [
+        // Image
+        Positioned.fill(
+          child: CachedNetworkImage(
+            imageUrl: item.imageUrl,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Center(
+              child: LoadingAnimationWidget.fourRotatingDots(
+                color: Theme.of(context).colorScheme.primary,
+                size: 12.h,
               ),
-              errorWidget: (_, __, ___) => Center(
-                child: Icon(
-                  Icons.broken_image,
-                  color: Colors.grey[400],
-                  size: 48.sp,
+            ),
+            errorWidget: (_, __, ___) => Center(
+              child: Icon(
+                Icons.broken_image,
+                color: Colors.grey[400],
+                size: 48.sp,
+              ),
+            ),
+          ),
+        ),
+        // Category badge
+        if (item.category != null)
+          Positioned(
+            top: 8.h,
+            left: 8.w,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.6),
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Text(
+                item.category!,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
           ),
-          // Category badge
-          if (item.category != null)
-            Positioned(
-              top: 8.h,
-              left: 8.w,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Text(
-                  item.category!,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 }
@@ -207,69 +202,58 @@ class _AddWardrobeItemButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).primaryColor.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        // Diğer butonunla aynı border yapısı
+        border: Border.symmetric(
+          horizontal: BorderSide(color: context.gray3),
+        ),
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16.r),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.r),
-              border: Border.all(
-                color: Theme.of(context).primaryColor.withOpacity(0.3),
-                width: 1.5,
-              ),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Theme.of(context).primaryColor.withOpacity(0.05),
-                  Theme.of(context).primaryColor.withOpacity(0.1),
-                ],
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).primaryColor.withOpacity(0.1),
-                    border: Border.all(
-                      color: Theme.of(context).primaryColor.withOpacity(0.2),
-                      width: 1,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24.r),
+        child: AspectRatio(
+          aspectRatio: 0.75, // Model butonuyla tam uyumlu oran
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // İkon Alanı - Beyaz yuvarlak ve hafif gölge (Model butonuyla aynı)
+              Container(
+                height: 56.w,
+                width: 56.w,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
-                  child: Icon(
-                    Icons.add_rounded,
-                    size: 28.sp,
-                    color: Theme.of(context).primaryColor,
-                  ),
+                  ],
                 ),
-                SizedBox(height: 8.h),
-                Text(
-                  'Yeni Ekle',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).primaryColor.withOpacity(0.8),
-                    letterSpacing: 0.5,
-                  ),
+                child: Icon(
+                  Icons.checkroom_outlined, // Gardırop için modern askı ikonu
+                  size: 28.sp,
+                  color: primaryColor,
                 ),
-              ],
-            ),
+              ),
+              SizedBox(height: 8.h),
+              // Yazı Alanı
+              Text(
+                'Yeni Ekle',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.bold,
+                  color: primaryColor.withOpacity(0.9),
+                  letterSpacing: -0.2,
+                ),
+              ),
+            ],
           ),
         ),
       ),

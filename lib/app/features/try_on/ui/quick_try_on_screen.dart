@@ -341,7 +341,10 @@ class _QuickTryOnScreenState extends State<QuickTryOnScreen>
     }
 
     if (!_isCameraInitialized || _controller == null) {
-      return const Scaffold(
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Quick Try On'),
+        ),
         body: Center(child: CircularProgressIndicator()),
       );
     }

@@ -1,3 +1,4 @@
+import 'package:comby/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -78,10 +79,10 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.photo_library_outlined,
-                  size: 80.sp,
-                  color: Colors.grey[400],
+                AddCombineItemButton(
+                  onTap: () {
+                    context.router.pushNamed('/quick-try-on-screen');
+                  },
                 ),
                 SizedBox(height: 24.h),
                 Text(
@@ -93,7 +94,7 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  'Try-On sekmesinden yeni combine oluşturabilirsiniz',
+                  'Yeni combine oluşturmak için yukarıdaki butona tıklayın',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.grey[500],
                       ),
@@ -130,9 +131,16 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
 
                 childAspectRatio: 0.75, // Keeps poster ratio
               ),
-              itemCount: geminiImages.length,
+              itemCount: geminiImages.length + 1,
               itemBuilder: (context, index) {
-                final image = geminiImages[index] as Map<String, dynamic>;
+                if (index == 0) {
+                  return AddCombineItemButton(
+                    onTap: () {
+                      context.router.pushNamed('/quick-try-on-screen');
+                    },
+                  );
+                }
+                final image = geminiImages[index - 1] as Map<String, dynamic>;
                 return GestureDetector(
                   onTap: () {
                     context.router
@@ -256,6 +264,72 @@ class _CombineImageCard extends StatelessWidget {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class AddCombineItemButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const AddCombineItemButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.symmetric(
+          horizontal: BorderSide(color: context.gray3),
+        ),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24.r),
+        child: AspectRatio(
+          aspectRatio: 0.75, // Tasarım bütünlüğü için sabit oran
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // İkon Alanı - Beyaz yuvarlak ve soft gölge
+              Container(
+                height: 56.w,
+                width: 56.w,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: primaryColor.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons
+                      .auto_awesome_outlined, // Kombin oluşturma için "yaratıcı" ikon
+                  size: 28.sp,
+                  color: primaryColor,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              // Yazı Alanı
+              Text(
+                'Kombin Oluştur',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.bold,
+                  color: primaryColor.withOpacity(0.9),
+                  letterSpacing: -0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

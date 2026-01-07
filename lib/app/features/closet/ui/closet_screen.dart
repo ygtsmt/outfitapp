@@ -40,108 +40,82 @@ class _ClosetScreenState extends State<ClosetScreen>
       return _buildLoginRequiredUI(context);
     }
 
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 4.w),
+    return Container(
+      child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // TabBar
             // Glassmorphic Premium TabBar
-            BackdropFilter(
-              filter:
-                  ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Blur effect
-              child: Container(
-                height: 56.h,
-                padding: EdgeInsets.all(4.w),
-                decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .surface
-                      .withOpacity(0.7), // Semi-transparent surface
-                  borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
-                    width: 1.5,
+            Container(
+              height: 56.h,
+              padding: EdgeInsets.all(4.w),
+              child: TabBar(
+                controller: _tabController,
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.r),
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).primaryColor.withOpacity(0.8),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
+                      color: Theme.of(context).primaryColor.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: TabBar(
-                  controller: _tabController,
-                  indicator: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.r),
-                    gradient: LinearGradient(
-                      colors: [
-                        Theme.of(context).primaryColor,
-                        Theme.of(context).primaryColor.withOpacity(0.8),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).primaryColor.withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  dividerColor: Colors.transparent,
-                  labelColor: Colors.white,
-                  unselectedLabelColor:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                  labelStyle: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
-                  unselectedLabelStyle: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.2,
-                  ),
-                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                  tabs: [
-                    Tab(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        alignment: Alignment.center,
-                        child: const Text('Wardrobe'),
-                      ),
-                    ),
-                    Tab(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        alignment: Alignment.center,
-                        child: const Text('Models'),
-                      ),
-                    ),
-                    Tab(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        alignment: Alignment.center,
-                        child: const Text('Combines'),
-                      ),
-                    ),
-                  ],
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                labelColor: Colors.white,
+                unselectedLabelColor:
+                    Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                labelStyle: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
                 ),
+                unselectedLabelStyle: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.2,
+                ),
+                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                tabs: [
+                  Tab(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text('Wardrobe'),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text('Models'),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text('Combines'),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Divider(
-              thickness: 0.2,
             ),
             // TabBarView
             Expanded(

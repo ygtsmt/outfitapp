@@ -198,6 +198,7 @@ class WardrobeItem {
     const outerwearSubcategories = [
       'jacket',
       'coat',
+      'puffer jacket',
       'blazer',
       'cardigan',
       'vest',

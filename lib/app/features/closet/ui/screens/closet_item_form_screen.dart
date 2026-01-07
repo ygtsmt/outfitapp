@@ -66,6 +66,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
       'dress',
       'hoodie',
       'jacket',
+      'puffer jacket',
       'shirt',
       'sweater',
       'swimwear',

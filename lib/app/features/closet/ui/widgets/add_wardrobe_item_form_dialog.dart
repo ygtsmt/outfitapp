@@ -48,6 +48,7 @@ class _AddWardrobeItemFormDialogState extends State<AddWardrobeItemFormDialog> {
     'heels',
     'hoodie',
     'jacket',
+    'puffer jacket',
     'jeans',
     'jewelry',
     'leggings',
