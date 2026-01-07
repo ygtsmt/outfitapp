@@ -43,6 +43,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs access to your camera to take photos for AI content generation.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to your microphone for video recording features.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Bulunduğunuz konuma göre hava durumu bilgisi göstermek için konum erişimi gereklidir.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

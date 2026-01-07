@@ -35,6 +35,7 @@ import "package:comby/app/features/closet/ui/screens/failed_model_review_screen.
 import "package:comby/app/features/closet/models/model_item_model.dart";
 import "package:comby/app/features/fit_check/ui/screens/fit_check_calendar_screen.dart";
 import "package:comby/app/features/try_on/ui/try_on_screen.dart";
+import "package:comby/app/features/try_on/ui/quick_try_on_screen.dart";
 import "package:comby/app/ui/home_screen.dart";
 import "package:comby/core/core.dart";
 import "package:flutter/material.dart";
@@ -232,6 +233,12 @@ part "app_router.gr.dart";
       page: FitCheckCalendarScreen,
       path: "/fit-check-calendar-screen",
       transitionsBuilder: TransitionsBuilders.slideLeft,
+    ),
+    CustomRoute(
+      page: QuickTryOnScreen,
+      path: "/quick-try-on-screen",
+      transitionsBuilder: TransitionsBuilders.slideBottom,
+      fullscreenDialog: true,
     ),
   ],
 )

@@ -144,14 +144,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: BlocBuilder<LoginBloc, LoginState>(
                   builder: (context, loginBuilderState) {
                     return Scaffold(
+                        floatingActionButton: FloatingActionButton(
+                          onPressed: () {
+                            context.router.pushNamed('/quick-try-on-screen');
+                          },
+                          backgroundColor: context.baseColor,
+                          elevation: 4,
+                          shape: const CircleBorder(),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                            size: 28.sp,
+                          ),
+                        ),
                         floatingActionButtonAnimator:
                             FloatingActionButtonAnimator.scaling,
                         floatingActionButtonLocation:
-                            FloatingActionButtonLocation.endFloat,
+                            FloatingActionButtonLocation.centerDocked,
                         key: _scaffoldKey,
                         drawer: CustomDrawer(state: state),
-                        resizeToAvoidBottomInset: true,
-                        // Update indices: Closet is now 1, Try-On is now 2
+                        resizeToAvoidBottomInset:
+                            false, // Changed to false to prevent FAB moving up with keyboard if not needed
+                        // Update indices: Closet is now 1, Try-On is now 2 (in router)
                         appBar: (tabsRouter.activeIndex == 1 ||
                                 tabsRouter.activeIndex == 2)
                             ? null
@@ -213,11 +227,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                     : const Icon(Icons.checkroom_outlined),
                                 label: 'Closet',
                               ),
+                              const BottomNavigationBarItem(
+                                icon: SizedBox(), // Empty space for FAB
+                                label: '',
+                                tooltip: '',
+                              ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 2
-                                    ? const Icon(Icons.camera_alt)
-                                    : const Icon(Icons.camera_alt_outlined),
-                                label: 'Try-On',
+                                    ? const Icon(Icons.history_edu)
+                                    : const Icon(Icons.history_edu_outlined),
+                                label: 'Combines',
                               ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 3
@@ -228,11 +247,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 label: AppLocalizations.of(context).profile,
                               ),
                             ],
-                            currentIndex: tabsRouter.activeIndex,
+                            currentIndex:
+                                _getBottomNavIndex(tabsRouter.activeIndex),
                             onTap: (value) {
-                              tabsRouter.setActiveIndex(value);
-
-                              // Tab değişimini logla
+                              if (value == 0) tabsRouter.setActiveIndex(0);
+                              if (value == 1) tabsRouter.setActiveIndex(1);
+                              // Value 2 is FAB, ignore
+                              if (value == 3) tabsRouter.setActiveIndex(2);
+                              if (value == 4) tabsRouter.setActiveIndex(3);
                             },
                           ),
                         ));
@@ -255,5 +277,13 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       return 'İyi akşamlar 🌙';
     }
+  }
+
+  int _getBottomNavIndex(int routerIndex) {
+    if (routerIndex == 0) return 0; // Dashboard
+    if (routerIndex == 1) return 1; // Closet
+    if (routerIndex == 2) return 3; // Combines (Try-On)
+    if (routerIndex == 3) return 4; // Profile
+    return 0;
   }
 }

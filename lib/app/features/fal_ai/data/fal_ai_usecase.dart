@@ -64,17 +64,17 @@ class FalAiUsecase {
     }
   }
 
-  Future<String> uploadUserImage(File imageFile) async {
+  Future<String> uploadImageToStorage(File imageFile, String folder) async {
     final userId = auth.currentUser!.uid;
 
     try {
       final ref = storage.ref().child(
-          "fal_ai_uploads/$userId/${DateTime.now().millisecondsSinceEpoch}.jpg");
+          "$folder/$userId/${DateTime.now().millisecondsSinceEpoch}.jpg");
 
       final bytes = await imageFile.readAsBytes();
       final uploadTask = await ref.putData(bytes);
 
-      // Dosyayı public yap (Fal AI erişimi için)
+      // Make file public for Fal AI access
       await ref.updateMetadata(SettableMetadata(
         cacheControl: 'public, max-age=3600',
         contentType: 'image/jpeg',
@@ -83,9 +83,13 @@ class FalAiUsecase {
       final url = await uploadTask.ref.getDownloadURL();
       return url;
     } catch (e) {
-      log('Fal AI uploadUserImage error: $e');
-      throw Exception('Error uploading user image: $e');
+      log('Fal AI uploadImageToStorage error: $e');
+      throw Exception('Error uploading image: $e');
     }
+  }
+
+  Future<String> uploadUserImage(File imageFile) async {
+    return uploadImageToStorage(imageFile, "fal_ai_uploads");
   }
 
   /// Gemini 2.5 Flash Image Edit

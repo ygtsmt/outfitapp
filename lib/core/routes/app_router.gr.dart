@@ -292,6 +292,16 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    QuickTryOnScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const QuickTryOnScreen(),
+        fullscreenDialog: true,
+        transitionsBuilder: TransitionsBuilders.slideBottom,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -557,6 +567,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           FitCheckCalendarScreenRoute.name,
           path: '/fit-check-calendar-screen',
+        ),
+        RouteConfig(
+          QuickTryOnScreenRoute.name,
+          path: '/quick-try-on-screen',
         ),
       ];
 }
@@ -1174,6 +1188,18 @@ class FitCheckCalendarScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'FitCheckCalendarScreenRoute';
+}
+
+/// generated route for
+/// [QuickTryOnScreen]
+class QuickTryOnScreenRoute extends PageRouteInfo<void> {
+  const QuickTryOnScreenRoute()
+      : super(
+          QuickTryOnScreenRoute.name,
+          path: '/quick-try-on-screen',
+        );
+
+  static const String name = 'QuickTryOnScreenRoute';
 }
 
 /// generated route for
