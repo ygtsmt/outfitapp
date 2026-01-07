@@ -15,9 +15,13 @@ class ModelsTabContent extends StatefulWidget {
   State<ModelsTabContent> createState() => _ModelsTabContentState();
 }
 
-class _ModelsTabContentState extends State<ModelsTabContent> {
-  int _crossAxisCount = 3;
+class _ModelsTabContentState extends State<ModelsTabContent>
+    with AutomaticKeepAliveClientMixin {
+  int _crossAxisCount = 2;
   double _baseScaleFactor = 1.0;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -35,6 +39,7 @@ class _ModelsTabContentState extends State<ModelsTabContent> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocListener<ClosetBloc, ClosetState>(
       listener: (context, state) {
         // Hata durumunda

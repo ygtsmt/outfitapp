@@ -61,16 +61,16 @@ class DashboardScreen extends StatelessWidget {
   }
 
   String _getGreeting(String username) {
-    final name =
+    String name =
         username.split(" ").length > 1 ? username.split(" ")[0] : username;
-
+    final noGuestName = name.toLowerCase() != 'guest' ? name : '';
     final hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Günaydın $name ☀️ ';
+      return 'Günaydın $noGuestName ☀️ ';
     } else if (hour < 18) {
-      return 'İyi günler $name 👋 ';
+      return 'İyi günler $noGuestName 👋 ';
     } else {
-      return 'İyi akşamlar $name 🌙';
+      return 'İyi akşamlar $noGuestName 🌙';
     }
   }
 }

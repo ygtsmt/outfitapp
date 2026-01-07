@@ -15,10 +15,14 @@ class CombinesTabContent extends StatefulWidget {
   State<CombinesTabContent> createState() => _CombinesTabContentState();
 }
 
-class _CombinesTabContentState extends State<CombinesTabContent> {
+class _CombinesTabContentState extends State<CombinesTabContent>
+    with AutomaticKeepAliveClientMixin {
   int _crossAxisCount = 2;
   double _baseScaleFactor = 1.0;
   Stream<QuerySnapshot>? _imagesStream;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -36,6 +40,7 @@ class _CombinesTabContentState extends State<CombinesTabContent> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {

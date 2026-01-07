@@ -15,9 +15,13 @@ class WardrobeTabContent extends StatefulWidget {
   State<WardrobeTabContent> createState() => _WardrobeTabContentState();
 }
 
-class _WardrobeTabContentState extends State<WardrobeTabContent> {
+class _WardrobeTabContentState extends State<WardrobeTabContent>
+    with AutomaticKeepAliveClientMixin {
   int _crossAxisCount = 3;
   double _baseScaleFactor = 1.0;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -35,6 +39,7 @@ class _WardrobeTabContentState extends State<WardrobeTabContent> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocListener<ClosetBloc, ClosetState>(
       listener: (context, state) {
         // Hata durumunda
