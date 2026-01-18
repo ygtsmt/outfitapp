@@ -5000,6 +5000,16 @@ class AppLocalizations {
     );
   }
 
+  /// `How do you want to look today?`
+  String get welcome_messages {
+    return Intl.message(
+      'How do you want to look today?',
+      name: 'welcome_messages',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Guest Account`
   String get guestAccountTitle {
     return Intl.message(

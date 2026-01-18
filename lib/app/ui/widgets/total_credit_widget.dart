@@ -47,7 +47,7 @@ class TotalCreditWidget extends StatelessWidget {
       BuildContext context, int totalCredit, bool isAuthenticated) {
     return GestureDetector(
       onTap: () {
-        if (isAuthenticated) {
+        /*   if (isAuthenticated) {
           // Platform'a göre farklı payment screen'e git
           if (Platform.isIOS) {
             context.router.push(PaymentsScreenRoute());
@@ -56,10 +56,10 @@ class TotalCreditWidget extends StatelessWidget {
           }
         } else {
           context.router.push(const LoginScreenRoute());
-        }
+        } */
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 4.w),
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
         decoration: BoxDecoration(
           color: Colors.grey[100],
           borderRadius: BorderRadius.circular(12),
@@ -72,12 +72,12 @@ class TotalCreditWidget extends StatelessWidget {
           ],
         ),
         child: Text(
-              "Free",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: context.black,
-                  ),
-            ),
+          "Free",
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: context.black,
+              ),
+        ),
       ),
     );
   }

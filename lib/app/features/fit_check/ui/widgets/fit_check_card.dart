@@ -305,7 +305,9 @@ class _FitCheckSuccessDialog extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w600)),
             SizedBox(height: 20.h),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                context.router.push(DashbordTabRouter());
+              },
               child: Text('Harika!'),
             ),
           ],

@@ -302,6 +302,56 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    AIFashionCritiqueCameraScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const AIFashionCritiqueCameraScreen(),
+        fullscreenDialog: true,
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    AIFashionCritiquePreviewScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<AIFashionCritiquePreviewScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: AIFashionCritiquePreviewScreen(
+          key: args.key,
+          imageFile: args.imageFile,
+        ),
+        fullscreenDialog: true,
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    AIFashionCritiqueResultScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<AIFashionCritiqueResultScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: AIFashionCritiqueResultScreen(
+          key: args.key,
+          imageFile: args.imageFile,
+        ),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    AIFashionCritiqueDetailScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<AIFashionCritiqueDetailScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: AIFashionCritiqueDetailScreen(
+          key: args.key,
+          critiqueData: args.critiqueData,
+        ),
+        transitionsBuilder: TransitionsBuilders.slideRight,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -571,6 +621,22 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           QuickTryOnScreenRoute.name,
           path: '/quick-try-on-screen',
+        ),
+        RouteConfig(
+          AIFashionCritiqueCameraScreenRoute.name,
+          path: '/ai-fashion-critique-camera-screen',
+        ),
+        RouteConfig(
+          AIFashionCritiquePreviewScreenRoute.name,
+          path: '/ai-fashion-critique-preview-screen',
+        ),
+        RouteConfig(
+          AIFashionCritiqueResultScreenRoute.name,
+          path: '/ai-fashion-critique-result-screen',
+        ),
+        RouteConfig(
+          AIFashionCritiqueDetailScreenRoute.name,
+          path: '/ai-fashion-critique-detail-screen',
         ),
       ];
 }
@@ -1200,6 +1266,123 @@ class QuickTryOnScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'QuickTryOnScreenRoute';
+}
+
+/// generated route for
+/// [AIFashionCritiqueCameraScreen]
+class AIFashionCritiqueCameraScreenRoute extends PageRouteInfo<void> {
+  const AIFashionCritiqueCameraScreenRoute()
+      : super(
+          AIFashionCritiqueCameraScreenRoute.name,
+          path: '/ai-fashion-critique-camera-screen',
+        );
+
+  static const String name = 'AIFashionCritiqueCameraScreenRoute';
+}
+
+/// generated route for
+/// [AIFashionCritiquePreviewScreen]
+class AIFashionCritiquePreviewScreenRoute
+    extends PageRouteInfo<AIFashionCritiquePreviewScreenRouteArgs> {
+  AIFashionCritiquePreviewScreenRoute({
+    Key? key,
+    required File imageFile,
+  }) : super(
+          AIFashionCritiquePreviewScreenRoute.name,
+          path: '/ai-fashion-critique-preview-screen',
+          args: AIFashionCritiquePreviewScreenRouteArgs(
+            key: key,
+            imageFile: imageFile,
+          ),
+        );
+
+  static const String name = 'AIFashionCritiquePreviewScreenRoute';
+}
+
+class AIFashionCritiquePreviewScreenRouteArgs {
+  const AIFashionCritiquePreviewScreenRouteArgs({
+    this.key,
+    required this.imageFile,
+  });
+
+  final Key? key;
+
+  final File imageFile;
+
+  @override
+  String toString() {
+    return 'AIFashionCritiquePreviewScreenRouteArgs{key: $key, imageFile: $imageFile}';
+  }
+}
+
+/// generated route for
+/// [AIFashionCritiqueResultScreen]
+class AIFashionCritiqueResultScreenRoute
+    extends PageRouteInfo<AIFashionCritiqueResultScreenRouteArgs> {
+  AIFashionCritiqueResultScreenRoute({
+    Key? key,
+    required File imageFile,
+  }) : super(
+          AIFashionCritiqueResultScreenRoute.name,
+          path: '/ai-fashion-critique-result-screen',
+          args: AIFashionCritiqueResultScreenRouteArgs(
+            key: key,
+            imageFile: imageFile,
+          ),
+        );
+
+  static const String name = 'AIFashionCritiqueResultScreenRoute';
+}
+
+class AIFashionCritiqueResultScreenRouteArgs {
+  const AIFashionCritiqueResultScreenRouteArgs({
+    this.key,
+    required this.imageFile,
+  });
+
+  final Key? key;
+
+  final File imageFile;
+
+  @override
+  String toString() {
+    return 'AIFashionCritiqueResultScreenRouteArgs{key: $key, imageFile: $imageFile}';
+  }
+}
+
+/// generated route for
+/// [AIFashionCritiqueDetailScreen]
+class AIFashionCritiqueDetailScreenRoute
+    extends PageRouteInfo<AIFashionCritiqueDetailScreenRouteArgs> {
+  AIFashionCritiqueDetailScreenRoute({
+    Key? key,
+    required Map<String, dynamic> critiqueData,
+  }) : super(
+          AIFashionCritiqueDetailScreenRoute.name,
+          path: '/ai-fashion-critique-detail-screen',
+          args: AIFashionCritiqueDetailScreenRouteArgs(
+            key: key,
+            critiqueData: critiqueData,
+          ),
+        );
+
+  static const String name = 'AIFashionCritiqueDetailScreenRoute';
+}
+
+class AIFashionCritiqueDetailScreenRouteArgs {
+  const AIFashionCritiqueDetailScreenRouteArgs({
+    this.key,
+    required this.critiqueData,
+  });
+
+  final Key? key;
+
+  final Map<String, dynamic> critiqueData;
+
+  @override
+  String toString() {
+    return 'AIFashionCritiqueDetailScreenRouteArgs{key: $key, critiqueData: $critiqueData}';
+  }
 }
 
 /// generated route for

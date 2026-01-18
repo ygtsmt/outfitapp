@@ -13,7 +13,7 @@ class OutfitSuggestionService {
 
   OutfitSuggestionService() {
     _model = GenerativeModel(
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       apiKey: geminiApiKey,
     );
   }

@@ -39,16 +39,8 @@ class _GallerySelectionScreenState extends State<GallerySelectionScreen> {
       return;
     }
 
-    if (result.selectedFiles.length == 1) {
-      // Single photo - go to form then pop
-      final formResult = await context.router.push(
-        ClosetItemFormScreenRoute(imageFile: result.selectedFiles.first),
-      );
-      if (mounted) {
-        context.router.pop(formResult);
-      }
-    } else {
-      // Multiple photos - go to batch upload
+    // Always go to batch upload, even for single files
+    if (result.selectedFiles.isNotEmpty) {
       context.router.replace(
         BatchUploadProgressScreenRoute(imageFiles: result.selectedFiles),
       );

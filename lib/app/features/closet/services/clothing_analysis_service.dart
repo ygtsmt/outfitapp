@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:comby/core/core.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Service for analyzing clothing images using Gemini AI
 class ClothingAnalysisService {
@@ -10,7 +12,7 @@ class ClothingAnalysisService {
 
   ClothingAnalysisService() {
     _model = GenerativeModel(
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       apiKey: geminiApiKey,
     );
   }
@@ -132,6 +134,151 @@ JSON:''';
       throw ClothingAnalysisException(
         'Failed to parse response: ${e.toString()}\nResponse: $responseText',
       );
+    }
+  }
+
+  /// Analyze an outfit photo and provide a critique
+  /// Returns a Map with: score (1-10), style, feedback (List<String>), colorHarmony
+  Future<Map<String, dynamic>> analyzeOutfit(File imageFile) async {
+    try {
+      final imageBytes = await imageFile.readAsBytes();
+
+      final prompt = '''
+Analyze this outfit photo and provide a fashion critique.
+
+Return ONLY a valid JSON object with these exact fields:
+
+{
+  "score": "A number from 1 to 10 rating the outfit (integer)",
+  "style": "The style category (e.g. Casual, Business, Streetwear, Formal, Bohemian, Chic, Vintage, etc.)",
+  "feedback": ["A list of 3 short, constructive, and friendly tips or comments about the outfit."],
+  "colorHarmony": "One of: Excellent, Good, Average, Needs Improvement"
+}
+
+Rules:
+- Be constructive and friendly in the feedback
+- Focus on color matching, fit, and overall aesthetic
+- Return ONLY the JSON object
+- Turkish language for values
+''';
+
+      final content = [
+        Content.multi([
+          TextPart(prompt),
+          DataPart('image/jpeg', imageBytes),
+        ])
+      ];
+
+      final response = await _model.generateContent(content);
+      final responseText = response.text?.trim() ?? '';
+
+      return _parseOutfitResponse(responseText);
+    } catch (e) {
+      throw ClothingAnalysisException(
+        'Failed to analyze outfit: ${e.toString()}',
+      );
+    }
+  }
+
+  Map<String, dynamic> _parseOutfitResponse(String responseText) {
+    try {
+      String jsonText = responseText;
+      if (jsonText.contains('```json')) {
+        jsonText =
+            jsonText.replaceAll('```json', '').replaceAll('```', '').trim();
+      } else if (jsonText.contains('```')) {
+        jsonText = jsonText.replaceAll('```', '').trim();
+      }
+
+      final jsonStart = jsonText.indexOf('{');
+      final jsonEnd = jsonText.lastIndexOf('}');
+
+      if (jsonStart == -1 || jsonEnd == -1) {
+        throw FormatException('No JSON object found in response');
+      }
+
+      jsonText = jsonText.substring(jsonStart, jsonEnd + 1);
+
+      // Extract score
+      final scoreMatch = RegExp(r'"score":\s*"?(\d+)"?').firstMatch(jsonText);
+      final score = int.tryParse(scoreMatch?.group(1) ?? '7') ?? 7;
+
+      // Extract style
+      final styleMatch = RegExp(r'"style":\s*"([^"]+)"').firstMatch(jsonText);
+      final style = styleMatch?.group(1) ?? 'Günlük';
+
+      // Extract colorHarmony
+      final harmonyMatch =
+          RegExp(r'"colorHarmony":\s*"([^"]+)"').firstMatch(jsonText);
+      final harmony = harmonyMatch?.group(1) ?? 'İyi';
+
+      // Extract feedback list
+      final List<String> feedback = [];
+      final feedbackMatch =
+          RegExp(r'"feedback":\s*\[(.*?)\]', dotAll: true).firstMatch(jsonText);
+      if (feedbackMatch != null) {
+        final feedbackContent = feedbackMatch.group(1)!;
+        final tips = RegExp(r'"([^"]+)"').allMatches(feedbackContent);
+        for (final tip in tips) {
+          feedback.add(tip.group(1)!);
+        }
+      }
+
+      if (feedback.isEmpty) {
+        feedback.add('Kombinin harika görünüyor!');
+      }
+
+      return {
+        'score': score,
+        'style': style,
+        'feedback': feedback,
+        'colorHarmony': harmony,
+      };
+    } catch (e) {
+      // Fallback
+      return {
+        'score': 8,
+        'style': 'Günlük',
+        'feedback': [
+          'Harika görünüyorsun!',
+          'Renkler çok uyumlu.',
+          'Tarzın çok hoş.'
+        ],
+        'colorHarmony': 'İyi',
+      };
+    }
+  }
+
+  /// Uploads the critique image to Firebase Storage
+  /// Returns the download URL
+  Future<String> uploadCritiqueImage(File imageFile, String userId) async {
+    try {
+      final fileName = 'critique_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('users/$userId/critiques/$fileName');
+
+      await ref.putFile(imageFile);
+      return await ref.getDownloadURL();
+    } catch (e) {
+      throw ClothingAnalysisException('Failed to upload image: $e');
+    }
+  }
+
+  /// Saves the critique result to Firestore
+  Future<void> saveCritique(
+      String userId, Map<String, dynamic> critiqueData) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('critiques')
+          .add({
+        ...critiqueData,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw ClothingAnalysisException('Failed to save critique: $e');
     }
   }
 }

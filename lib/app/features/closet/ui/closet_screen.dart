@@ -8,9 +8,13 @@ import 'package:comby/generated/l10n.dart';
 import 'package:comby/app/features/closet/ui/widgets/wardrobe_tab_content.dart';
 import 'package:comby/app/features/closet/ui/widgets/models_tab_content.dart';
 import 'package:comby/app/features/closet/ui/widgets/combines_tab_content.dart';
+import 'package:comby/app/features/closet/ui/widgets/critiques_tab_content.dart';
 
 class ClosetScreen extends StatefulWidget {
   const ClosetScreen({super.key});
+
+  /// Notifier to switch tabs externally
+  static final ValueNotifier<int> tabNotifier = ValueNotifier<int>(0);
 
   @override
   State<ClosetScreen> createState() => _ClosetScreenState();
@@ -23,13 +27,27 @@ class _ClosetScreenState extends State<ClosetScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+
+    _tabController = TabController(
+      length: 4,
+      vsync: this,
+      initialIndex: ClosetScreen.tabNotifier.value,
+    );
+
+    ClosetScreen.tabNotifier.addListener(_handleTabChange);
   }
 
   @override
   void dispose() {
+    ClosetScreen.tabNotifier.removeListener(_handleTabChange);
     _tabController.dispose();
     super.dispose();
+  }
+
+  void _handleTabChange() {
+    if (mounted) {
+      _tabController.animateTo(ClosetScreen.tabNotifier.value);
+    }
   }
 
   @override
@@ -76,12 +94,12 @@ class _ClosetScreenState extends State<ClosetScreen>
                 unselectedLabelColor:
                     Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                 labelStyle: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 13.sp, // Slightly smaller to fit 4 tabs
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
                 ),
                 unselectedLabelStyle: TextStyle(
-                  fontSize: 14.sp,
+                  fontSize: 13.sp,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.2,
                 ),
@@ -114,6 +132,15 @@ class _ClosetScreenState extends State<ClosetScreen>
                       child: const Text('Combines'),
                     ),
                   ),
+                  Tab(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text('Critiques'),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -125,6 +152,7 @@ class _ClosetScreenState extends State<ClosetScreen>
                   WardrobeTabContent(),
                   ModelsTabContent(),
                   CombinesTabContent(),
+                  CritiquesTabContent(),
                 ],
               ),
             ),

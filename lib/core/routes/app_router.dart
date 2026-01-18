@@ -36,6 +36,10 @@ import "package:comby/app/features/closet/models/model_item_model.dart";
 import "package:comby/app/features/fit_check/ui/screens/fit_check_calendar_screen.dart";
 import "package:comby/app/features/try_on/ui/try_on_screen.dart";
 import "package:comby/app/features/try_on/ui/quick_try_on_screen.dart";
+import "package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_preview_screen.dart";
+import "package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_result_screen.dart";
+import "package:comby/app/features/dashboard/ui/screens/ai_critique_camera_screen.dart";
+import "package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_detail_screen.dart";
 import "package:comby/app/ui/home_screen.dart";
 import "package:comby/core/core.dart";
 import "package:flutter/material.dart";
@@ -239,6 +243,29 @@ part "app_router.gr.dart";
       path: "/quick-try-on-screen",
       transitionsBuilder: TransitionsBuilders.slideBottom,
       fullscreenDialog: true,
+    ),
+    // AI Fashion Critique
+    CustomRoute(
+      page: AIFashionCritiqueCameraScreen,
+      path: "/ai-fashion-critique-camera-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      fullscreenDialog: true,
+    ),
+    CustomRoute(
+      page: AIFashionCritiquePreviewScreen,
+      path: "/ai-fashion-critique-preview-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      fullscreenDialog: true,
+    ),
+    CustomRoute(
+      page: AIFashionCritiqueResultScreen,
+      path: "/ai-fashion-critique-result-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      page: AIFashionCritiqueDetailScreen,
+      path: "/ai-fashion-critique-detail-screen",
+      transitionsBuilder: TransitionsBuilders.slideRight,
     ),
   ],
 )

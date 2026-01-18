@@ -838,6 +838,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "The password you entered is too weak. Please choose a stronger password."),
         "webLabel": MessageLookupByLibrary.simpleMessage("Web: "),
         "weeklyPlan": MessageLookupByLibrary.simpleMessage("Weekly Plan"),
+        "welcome_messages": MessageLookupByLibrary.simpleMessage(
+            "How do you want to look today?"),
         "wrong_password":
             MessageLookupByLibrary.simpleMessage("Incorrect password."),
         "wtfEffects": MessageLookupByLibrary.simpleMessage("WTF Effects"),

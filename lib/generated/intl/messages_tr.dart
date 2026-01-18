@@ -836,6 +836,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Girdiğiniz şifre çok zayıf. Daha güçlü bir şifre seçin."),
         "webLabel": MessageLookupByLibrary.simpleMessage("Web: "),
         "weeklyPlan": MessageLookupByLibrary.simpleMessage("Haftalık Plan"),
+        "welcome_messages": MessageLookupByLibrary.simpleMessage(
+            "Bugün nasıl görünmek istersin?|Bugün tarzın ne anlatıyor?|Bugün hangi vibe’dayız?|Bugün stilin ne olsun?|Bugün kendini nasıl görmek istiyorsun?|Bugün hangi tarz sensin?|Bugün modun ne?|Bugün hangi havadayız?|Bugün nasıl bir stil seçiyoruz?|Bugün kendini nasıl yansıtmak istersin?|Bugün cool mu, şık mı?|Bugün hangi enerjiyi istiyorsun?|Bugün stilini seç|Bugün görünümün ne anlatsın?|Bugün hangisi sensin?|Bugün tarzını konuştur|Bugün hangi moda geçiyoruz?|Bugün nasıl bir etki bırakmak istersin?|Bugün stilinle konuş|Bugün vibe’ını seç|Bugün hangi sen?|Bugün tarzınla parla|Bugün görünümünle fark yarat|Bugün ne hissetmek istiyorsun?|Bugün stilinle sahne senin"),
         "wrong_password": MessageLookupByLibrary.simpleMessage("Hatalı şifre."),
         "wtfEffects":
             MessageLookupByLibrary.simpleMessage("İnanılmaz Efektler"),

@@ -276,10 +276,10 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(
-                      width: 120.w,
-                      height: 120.w,
+                      width: 100.w,
+                      height: 100.w,
                       child: Stack(
-                        fit: StackFit.expand,
+                        fit: StackFit.passthrough,
                         alignment: Alignment.center,
                         children: [
                           CircularProgressIndicator(
@@ -289,18 +289,19 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
                                 Colors.white),
                             backgroundColor: Colors.white.withOpacity(0.2),
                           ),
-                          Text(
-                            '${((_currentIndex + 1) / widget.imageFiles.length * 100).toInt()}%',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.bold,
+                          Center(
+                            child: Text(
+                              '${((_currentIndex + 1) / widget.imageFiles.length * 100).toInt()}%',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(height: 24.h),
 
                     // animated status text
                     AnimatedSwitcher(
@@ -353,17 +354,19 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
                         label: 'Başarılı',
                         value: _successfulItems.length.toString(),
                       ),
-                      Container(
-                        width: 1,
-                        height: 40.h,
-                        color: Colors.white.withOpacity(0.2),
-                      ),
-                      _buildStatItem(
-                        icon: Icons.error_outline,
-                        color: const Color(0xFFFF5252), // Bright Red
-                        label: 'Başarısız',
-                        value: _failedPhotos.length.toString(),
-                      ),
+                      if (_failedPhotos.isNotEmpty) ...[
+                        Container(
+                          width: 1,
+                          height: 40.h,
+                          color: Colors.white.withOpacity(0.2),
+                        ),
+                        _buildStatItem(
+                          icon: Icons.error_outline,
+                          color: const Color(0xFFFF5252), // Bright Red
+                          label: 'Başarısız',
+                          value: _failedPhotos.length.toString(),
+                        ),
+                      ],
                     ],
                   ),
                 ),

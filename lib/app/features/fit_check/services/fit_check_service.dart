@@ -19,7 +19,7 @@ class FitCheckService {
 
   FitCheckService(this._auth, this._firestore, this._storage) {
     _geminiModel = GenerativeModel(
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       apiKey: geminiApiKey,
     );
   }

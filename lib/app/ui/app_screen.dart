@@ -14,6 +14,7 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_localizations/flutter_localizations.dart";
+import "package:comby/core/theme/app_colors_extension.dart";
 
 class AppScreen extends StatefulWidget {
   const AppScreen({super.key});
@@ -96,11 +97,13 @@ class _AppScreenState extends State<AppScreen> {
                     useMaterial3: true,
                     colorScheme: lightColorScheme,
                     fontFamily: 'Futura',
+                    extensions: const [AppColorsExtension.light],
                   ),
                   darkTheme: ThemeData(
                     useMaterial3: true,
                     colorScheme: darkColorScheme,
                     fontFamily: 'Futura',
+                    extensions: const [AppColorsExtension.dark],
                   ),
                   locale: state.languageLocale ?? const Locale('en'),
                   themeMode: ThemeMode.light,

@@ -86,7 +86,7 @@ class _CombinesTabContentState extends State<CombinesTabContent>
               children: [
                 AddCombineItemButton(
                   onTap: () {
-                    context.router.pushNamed('/quick-try-on-screen');
+                    context.router.navigate(const TryOnTabRouter());
                   },
                 ),
                 SizedBox(height: 24.h),
@@ -141,7 +141,7 @@ class _CombinesTabContentState extends State<CombinesTabContent>
                 if (index == 0) {
                   return AddCombineItemButton(
                     onTap: () {
-                      context.router.pushNamed('/quick-try-on-screen');
+                      context.router.navigate(const TryOnTabRouter());
                     },
                   );
                 }

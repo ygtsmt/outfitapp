@@ -2,9 +2,7 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:comby/app/features/closet/data/closet_usecase.dart';
-import 'package:comby/app/features/closet/models/model_item_model.dart';
-import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
+
 import 'package:comby/app/features/fal_ai/data/fal_ai_usecase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -190,7 +188,7 @@ class _QuickTryOnScreenState extends State<QuickTryOnScreen>
 
     try {
       final falAiUsecase = GetIt.I<FalAiUsecase>();
-      final closetUseCase = GetIt.I<ClosetUseCase>();
+      // final closetUseCase = GetIt.I<ClosetUseCase>(); // No longer needed
 
       // 1. Upload Images
       final userUrl =
@@ -198,27 +196,7 @@ class _QuickTryOnScreenState extends State<QuickTryOnScreen>
       final clothesUrl =
           await falAiUsecase.uploadImageToStorage(_clothesImage!, 'closet');
 
-      // 2. Save User Photo as Model
-      final modelItem = ModelItem(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        imageUrl: userUrl,
-        createdAt: DateTime.now(),
-        name: 'Quick Try-On Model',
-        personCount: 1, // Default
-      );
-      await closetUseCase.addModelItem(modelItem);
-
-      // 3. Save Clothes Photo as Wardrobe Item
-      final wardrobeItem = WardrobeItem(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        imageUrl: clothesUrl,
-        createdAt: DateTime.now(),
-        category: 'Quick Try-On', // Or maybe auto-detect later
-        // Other fields can be null for now
-      );
-      await closetUseCase.addClosetItem(wardrobeItem);
-
-      // 4. Trigger AI Generation
+      // 2. Trigger AI Generation (Without saving to closet/models)
       final result = await falAiUsecase.generateGeminiImageEdit(
         imageUrls: [
           userUrl,
@@ -226,13 +204,13 @@ class _QuickTryOnScreenState extends State<QuickTryOnScreen>
         ], // First image is user (model), second is reference
         prompt:
             "Put the clothes from the second image onto the person in the first image.",
-        usedClosetItems: [wardrobeItem],
+        usedClosetItems: null, // Don't link to any permanent items
       );
 
       if (result != null && result['status'] == 'processing') {
         final requestId = result['id'];
 
-        // 5. Poll for Result (or listen to stream)
+        // 3. Poll for Result (or listen to stream)
         // Since we are in a modal flow, a simple stream listener for this specific doc is best
         _listenForCompletion(requestId);
       } else {
@@ -258,11 +236,12 @@ class _QuickTryOnScreenState extends State<QuickTryOnScreen>
     if (!mounted) return;
 
     // Listen to the document in 'combines' collection
-    // Note: Assuming we have access to Firestore instance via GetIt or directly
     final firestore = FirebaseFirestore.instance;
     final userId = FirebaseAuth.instance.currentUser?.uid;
 
     if (userId == null) return;
+
+    debugPrint('🔍 Quick Try: Listening for completion of request: $requestId');
 
     firestore
         .collection('users')
@@ -278,24 +257,19 @@ class _QuickTryOnScreenState extends State<QuickTryOnScreen>
         final status = data?['status'];
         final output = data?['output'];
 
-        if (status == 'completed' && output != null) {
+        debugPrint(
+            '🔍 Quick Try: Status update - status: $status, output: $output');
+
+        // Webhook saves status as 'succeeded', not 'completed'
+        if (status == 'succeeded' && output != null) {
+          debugPrint('✅ Quick Try: Generation succeeded!');
           setState(() {
             _isLoading = false;
             _currentStep = TryOnStep.result;
-            // We'll use the 'output' URL to show the result
-            // But since _buildResultView logic needs access to it,
-            // we might need to store it in a state variable or pass it.
-            // For simplicity, let's assume `output` contains the `imageUrl`
-            // Actually `output` from Fal usually has `images` list or similar.
-            // Let's debug what 'output' structure is expected.
-            // Based on `falWebhook`, it saves `result` to `output`.
-            // Checking fal.js: `await docRef.update({ status: 'completed', output: result });`
-            // Result from Gemini is usually `{ images: [{ url: ... }] }`
-
-            // Let's store the result map for use in build
             _resultData = data;
           });
         } else if (status == 'failed') {
+          debugPrint('❌ Quick Try: Generation failed');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('İşlem başarısız oldu.')),
@@ -306,6 +280,9 @@ class _QuickTryOnScreenState extends State<QuickTryOnScreen>
             });
           }
         }
+      } else {
+        debugPrint(
+            '⚠️ Quick Try: Document does not exist yet for request: $requestId');
       }
     });
   }
@@ -474,7 +451,11 @@ class _QuickTryOnScreenState extends State<QuickTryOnScreen>
     String? imageUrl;
     if (_resultData != null) {
       final output = _resultData!['output'];
-      if (output is Map && output.containsKey('images')) {
+      // Webhook saves output as an array: [firebaseUrl]
+      if (output is List && output.isNotEmpty) {
+        imageUrl = output.first as String?;
+      } else if (output is Map && output.containsKey('images')) {
+        // Fallback for other formats
         final images = output['images'];
         if (images is List && images.isNotEmpty) {
           imageUrl = images.first['url'];
