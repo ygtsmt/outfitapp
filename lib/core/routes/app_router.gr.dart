@@ -327,27 +327,16 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     AIFashionCritiqueResultScreenRoute.name: (routeData) {
-      final args = routeData.argsAs<AIFashionCritiqueResultScreenRouteArgs>();
+      final args = routeData.argsAs<AIFashionCritiqueResultScreenRouteArgs>(
+          orElse: () => const AIFashionCritiqueResultScreenRouteArgs());
       return CustomPage<dynamic>(
         routeData: routeData,
         child: AIFashionCritiqueResultScreen(
           key: args.key,
           imageFile: args.imageFile,
-        ),
-        transitionsBuilder: TransitionsBuilders.fadeIn,
-        opaque: true,
-        barrierDismissible: false,
-      );
-    },
-    AIFashionCritiqueDetailScreenRoute.name: (routeData) {
-      final args = routeData.argsAs<AIFashionCritiqueDetailScreenRouteArgs>();
-      return CustomPage<dynamic>(
-        routeData: routeData,
-        child: AIFashionCritiqueDetailScreen(
-          key: args.key,
           critiqueData: args.critiqueData,
         ),
-        transitionsBuilder: TransitionsBuilders.slideRight,
+        transitionsBuilder: TransitionsBuilders.fadeIn,
         opaque: true,
         barrierDismissible: false,
       );
@@ -633,10 +622,6 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           AIFashionCritiqueResultScreenRoute.name,
           path: '/ai-fashion-critique-result-screen',
-        ),
-        RouteConfig(
-          AIFashionCritiqueDetailScreenRoute.name,
-          path: '/ai-fashion-critique-detail-screen',
         ),
       ];
 }
@@ -1321,13 +1306,15 @@ class AIFashionCritiqueResultScreenRoute
     extends PageRouteInfo<AIFashionCritiqueResultScreenRouteArgs> {
   AIFashionCritiqueResultScreenRoute({
     Key? key,
-    required File imageFile,
+    File? imageFile,
+    Map<String, dynamic>? critiqueData,
   }) : super(
           AIFashionCritiqueResultScreenRoute.name,
           path: '/ai-fashion-critique-result-screen',
           args: AIFashionCritiqueResultScreenRouteArgs(
             key: key,
             imageFile: imageFile,
+            critiqueData: critiqueData,
           ),
         );
 
@@ -1337,51 +1324,19 @@ class AIFashionCritiqueResultScreenRoute
 class AIFashionCritiqueResultScreenRouteArgs {
   const AIFashionCritiqueResultScreenRouteArgs({
     this.key,
-    required this.imageFile,
+    this.imageFile,
+    this.critiqueData,
   });
 
   final Key? key;
 
-  final File imageFile;
+  final File? imageFile;
+
+  final Map<String, dynamic>? critiqueData;
 
   @override
   String toString() {
-    return 'AIFashionCritiqueResultScreenRouteArgs{key: $key, imageFile: $imageFile}';
-  }
-}
-
-/// generated route for
-/// [AIFashionCritiqueDetailScreen]
-class AIFashionCritiqueDetailScreenRoute
-    extends PageRouteInfo<AIFashionCritiqueDetailScreenRouteArgs> {
-  AIFashionCritiqueDetailScreenRoute({
-    Key? key,
-    required Map<String, dynamic> critiqueData,
-  }) : super(
-          AIFashionCritiqueDetailScreenRoute.name,
-          path: '/ai-fashion-critique-detail-screen',
-          args: AIFashionCritiqueDetailScreenRouteArgs(
-            key: key,
-            critiqueData: critiqueData,
-          ),
-        );
-
-  static const String name = 'AIFashionCritiqueDetailScreenRoute';
-}
-
-class AIFashionCritiqueDetailScreenRouteArgs {
-  const AIFashionCritiqueDetailScreenRouteArgs({
-    this.key,
-    required this.critiqueData,
-  });
-
-  final Key? key;
-
-  final Map<String, dynamic> critiqueData;
-
-  @override
-  String toString() {
-    return 'AIFashionCritiqueDetailScreenRouteArgs{key: $key, critiqueData: $critiqueData}';
+    return 'AIFashionCritiqueResultScreenRouteArgs{key: $key, imageFile: $imageFile, critiqueData: $critiqueData}';
   }
 }
 

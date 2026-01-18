@@ -122,27 +122,37 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
   bool get _isMultiMode => widget.mode == GallerySelectionMode.multi;
 
   Future<void> _requestPermissionAndLoadPhotos() async {
-    PermissionState ps = await PhotoManager.requestPermissionExtend();
+    try {
+      PermissionState ps = await PhotoManager.requestPermissionExtend();
 
-    if (!ps.hasAccess) {
-      ps = await PhotoManager.requestPermissionExtend();
-    }
-
-    if (ps.hasAccess) {
-      setState(() {
-        _hasPermission = true;
-      });
-      await _loadPhotos();
-
-      if (ps.isLimited) {
-        _showLimitedAccessDialog();
+      if (!ps.hasAccess) {
+        ps = await PhotoManager.requestPermissionExtend();
       }
-    } else {
-      setState(() {
-        _hasPermission = false;
-        _isLoading = false;
-      });
-      _showPermissionRequiredDialog();
+
+      if (ps.hasAccess) {
+        if (mounted) {
+          setState(() {
+            _hasPermission = true;
+          });
+        }
+        await _loadPhotos();
+      } else {
+        if (mounted) {
+          setState(() {
+            _hasPermission = false;
+            _isLoading = false;
+          });
+        }
+        _showPermissionRequiredDialog();
+      }
+    } catch (e) {
+      debugPrint("Gallery Permission Error: $e");
+      if (mounted) {
+        setState(() {
+          _hasPermission = false;
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -172,34 +182,6 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
                 Future.delayed(const Duration(seconds: 1), () {
                   _requestPermissionAndLoadPhotos();
                 });
-              },
-              child: const Text('Ayarlara Git'),
-            ),
-          ],
-        ),
-      );
-    });
-  }
-
-  void _showLimitedAccessDialog() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Tam Erişim Gerekli'),
-          content: const Text(
-            'Tüm fotoğraflarınızı görebilmek için galeri erişimine tam izin vermeniz gerekiyor.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Tamam'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                PhotoManager.openSetting();
               },
               child: const Text('Ayarlara Git'),
             ),

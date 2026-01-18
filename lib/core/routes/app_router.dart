@@ -39,7 +39,6 @@ import "package:comby/app/features/try_on/ui/quick_try_on_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_preview_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_result_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/ai_critique_camera_screen.dart";
-import "package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_detail_screen.dart";
 import "package:comby/app/ui/home_screen.dart";
 import "package:comby/core/core.dart";
 import "package:flutter/material.dart";
@@ -261,11 +260,6 @@ part "app_router.gr.dart";
       page: AIFashionCritiqueResultScreen,
       path: "/ai-fashion-critique-result-screen",
       transitionsBuilder: TransitionsBuilders.fadeIn,
-    ),
-    CustomRoute(
-      page: AIFashionCritiqueDetailScreen,
-      path: "/ai-fashion-critique-detail-screen",
-      transitionsBuilder: TransitionsBuilders.slideRight,
     ),
   ],
 )

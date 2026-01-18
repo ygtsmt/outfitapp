@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
+import 'package:comby/core/core.dart';
 import 'package:comby/core/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
 
 class AIFashionCritiqueWidget extends StatefulWidget {
   const AIFashionCritiqueWidget({super.key});
@@ -14,8 +14,126 @@ class AIFashionCritiqueWidget extends StatefulWidget {
 }
 
 class _AIFashionCritiqueWidgetState extends State<AIFashionCritiqueWidget> {
-  Future<void> _takePhoto() async {
-    context.router.push(const AIFashionCritiqueCameraScreenRoute());
+  Future<void> _showSelectionSheet() async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(
+              height: 8.h,
+            ),
+            // Camera Option
+            _buildOptionCard(
+              icon: Icons.camera_alt_outlined,
+              title: 'Fotoğraf Çek',
+              color: const Color(0xFFFF416C),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                context.router.push(const AIFashionCritiqueCameraScreenRoute());
+              },
+            ),
+            SizedBox(height: 4.h),
+
+            // Gallery Option
+            _buildOptionCard(
+              icon: Icons.photo_library_outlined,
+              title: 'Galeriden Seç',
+              color: const Color(0xFF8E2DE2),
+              onTap: () async {
+                Navigator.pop(sheetContext);
+                final result = await ReusableGalleryPicker.show(
+                  context: context,
+                  title: 'Kombin Seç',
+                  mode: GallerySelectionMode.single,
+                );
+
+                if (result?.singleFile != null && mounted) {
+                  context.router.push(
+                    AIFashionCritiqueResultScreenRoute(
+                      imageFile: result!.singleFile!,
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionCard({
+    required IconData icon,
+    required String title,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: Colors.grey[200]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 16.sp,
+              ),
+            ),
+            SizedBox(width: 16.w),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.chevron_right,
+              color: Colors.grey[400],
+              size: 24.sp,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -43,7 +161,7 @@ class _AIFashionCritiqueWidgetState extends State<AIFashionCritiqueWidget> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: _takePhoto,
+          onTap: _showSelectionSheet,
           borderRadius: BorderRadius.circular(24.r),
           child: Stack(
             children: [

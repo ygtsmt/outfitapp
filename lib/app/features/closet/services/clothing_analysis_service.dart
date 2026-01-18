@@ -14,6 +14,12 @@ class ClothingAnalysisService {
     _model = GenerativeModel(
       model: 'gemini-3-flash-preview',
       apiKey: geminiApiKey,
+      safetySettings: [
+        SafetySetting(HarmCategory.harassment, HarmBlockThreshold.none),
+        SafetySetting(HarmCategory.hateSpeech, HarmBlockThreshold.none),
+        SafetySetting(HarmCategory.sexuallyExplicit, HarmBlockThreshold.none),
+        SafetySetting(HarmCategory.dangerousContent, HarmBlockThreshold.none),
+      ],
     );
   }
 
@@ -149,9 +155,10 @@ Analyze this outfit photo and provide a fashion critique.
 Return ONLY a valid JSON object with these exact fields:
 
 {
-  "score": "A number from 1 to 10 rating the outfit (integer)",
+  "score": "A number from 1 to 100 rating the outfit (integer)",
   "style": "The style category (e.g. Casual, Business, Streetwear, Formal, Bohemian, Chic, Vintage, etc.)",
   "feedback": ["A list of 3 short, constructive, and friendly tips or comments about the outfit."],
+  "missingPointsReasons": ["A list of 1-3 specific reasons why points were deducted. E.g. 'colors clash', 'fit is loose', 'accessories missing'. If score is 100, return empty list."],
   "colorHarmony": "One of: Excellent, Good, Average, Needs Improvement"
 }
 
@@ -201,7 +208,7 @@ Rules:
 
       // Extract score
       final scoreMatch = RegExp(r'"score":\s*"?(\d+)"?').firstMatch(jsonText);
-      final score = int.tryParse(scoreMatch?.group(1) ?? '7') ?? 7;
+      final score = int.tryParse(scoreMatch?.group(1) ?? '75') ?? 75;
 
       // Extract style
       final styleMatch = RegExp(r'"style":\s*"([^"]+)"').firstMatch(jsonText);
@@ -228,22 +235,37 @@ Rules:
         feedback.add('Kombinin harika görünüyor!');
       }
 
+      // Extract missingPointsReasons list
+      final List<String> missingPointsReasons = [];
+      final reasonsMatch =
+          RegExp(r'"missingPointsReasons":\s*\[(.*?)\]', dotAll: true)
+              .firstMatch(jsonText);
+      if (reasonsMatch != null) {
+        final reasonsContent = reasonsMatch.group(1)!;
+        final reasons = RegExp(r'"([^"]+)"').allMatches(reasonsContent);
+        for (final reason in reasons) {
+          missingPointsReasons.add(reason.group(1)!);
+        }
+      }
+
       return {
         'score': score,
         'style': style,
         'feedback': feedback,
+        'missingPointsReasons': missingPointsReasons,
         'colorHarmony': harmony,
       };
     } catch (e) {
       // Fallback
       return {
-        'score': 8,
+        'score': 80,
         'style': 'Günlük',
         'feedback': [
           'Harika görünüyorsun!',
           'Renkler çok uyumlu.',
           'Tarzın çok hoş.'
         ],
+        'missingPointsReasons': [],
         'colorHarmony': 'İyi',
       };
     }

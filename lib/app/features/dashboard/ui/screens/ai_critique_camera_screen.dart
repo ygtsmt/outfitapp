@@ -119,7 +119,7 @@ class _AIFashionCritiqueCameraScreenState
       if (mounted) {
         // Navigate to preview screen using replace to remove camera from stack
         context.router.replace(
-          AIFashionCritiquePreviewScreenRoute(imageFile: imageFile),
+          AIFashionCritiqueResultScreenRoute(imageFile: imageFile),
         );
       }
     } catch (e) {
@@ -133,7 +133,7 @@ class _AIFashionCritiqueCameraScreenState
 
     if (image != null && mounted) {
       context.router.replace(
-        AIFashionCritiquePreviewScreenRoute(imageFile: File(image.path)),
+        AIFashionCritiqueResultScreenRoute(imageFile: File(image.path)),
       );
     }
   }

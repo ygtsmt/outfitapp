@@ -1,4 +1,3 @@
-import 'package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_detail_screen.dart';
 import 'package:comby/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -113,7 +112,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
     return GestureDetector(
       onTap: () {
         AutoRouter.of(context).push(
-          AIFashionCritiqueDetailScreenRoute(
+          AIFashionCritiqueResultScreenRoute(
             critiqueData: data,
           ),
         );

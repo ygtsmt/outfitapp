@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
+import 'package:comby/core/extensions.dart';
 import 'package:comby/core/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -53,158 +54,139 @@ class _AIFashionCritiquePreviewScreenState
             Colors.white;
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: CircleAvatar(
-          backgroundColor: Colors.white.withOpacity(0.8),
-          child: IconButton(
-            icon: const Icon(Icons.close, color: Colors.black),
-            onPressed: () => context.router.pop(),
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.white,
+                lightColor,
+                dominantColor.withOpacity(0.2),
+              ],
+            ),
           ),
-        ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              lightColor,
-              dominantColor.withOpacity(0.2),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              SizedBox(height: 20.h),
-              Text(
-                'Fotoğrafı Onayla',
-                style: TextStyle(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+          child: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 12.w),
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: dominantColor.withOpacity(0.3),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16.r),
+                      child: Image.file(
+                        widget.imageFile,
+                        fit: BoxFit.contain,
+                        width: double.infinity,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              SizedBox(height: 20.h),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 24.w),
+                SizedBox(height: 16.h),
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(32.r),
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(32.r)),
                     boxShadow: [
                       BoxShadow(
-                        color: dominantColor.withOpacity(0.3),
+                        color: Colors.black.withOpacity(0.05),
                         blurRadius: 20,
-                        offset: const Offset(0, 10),
+                        offset: const Offset(0, -5),
                       ),
                     ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(32.r),
-                    child: Image.file(
-                      widget.imageFile,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: GestureDetector(
+                        onTap: () => context.router.pop(),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(20.r)),
+                          height: 48.h,
+                          width: 48.w,
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 24.h,
+                          ),
+                        ),
+                      )),
+                      SizedBox(
+                        width: 16.w,
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: FilledButton(
+                          onPressed: _isAnalyzing
+                              ? null
+                              : () async {
+                                  setState(() {
+                                    _isAnalyzing = true;
+                                  });
+
+                                  if (mounted) {
+                                    context.router.replace(
+                                      AIFashionCritiqueResultScreenRoute(
+                                          imageFile: widget.imageFile),
+                                    );
+                                  }
+                                },
+                          style: FilledButton.styleFrom(
+                            backgroundColor: context.baseColor.withBlue(200),
+                            foregroundColor: Colors.white,
+                            disabledBackgroundColor: Colors.black54,
+                            padding: EdgeInsets.symmetric(vertical: 18.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: _isAnalyzing
+                              ? SizedBox(
+                                  height: 48.h,
+                                  width: 48.h,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Analiz Et',
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Icon(Icons.auto_awesome, size: 20.sp),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              SizedBox(height: 40.h),
-              Container(
-                padding: EdgeInsets.fromLTRB(24.w, 24.h, 24.w, 40.h),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(32.r)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 20,
-                      offset: const Offset(0, -5),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed:
-                            _isAnalyzing ? null : () => context.router.pop(),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.grey.shade600,
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                        ),
-                        child: Text(
-                          'Tekrar Çek',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 16.w),
-                    Expanded(
-                      flex: 2,
-                      child: FilledButton(
-                        onPressed: _isAnalyzing
-                            ? null
-                            : () async {
-                                setState(() {
-                                  _isAnalyzing = true;
-                                });
-
-                                if (mounted) {
-                                  context.router.replace(
-                                    AIFashionCritiqueResultScreenRoute(
-                                        imageFile: widget.imageFile),
-                                  );
-                                }
-                              },
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: Colors.black54,
-                          padding: EdgeInsets.symmetric(vertical: 18.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: _isAnalyzing
-                            ? SizedBox(
-                                height: 24.h,
-                                width: 24.h,
-                                child: const CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Analiz Et',
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Icon(Icons.auto_awesome, size: 20.sp),
-                                ],
-                              ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
