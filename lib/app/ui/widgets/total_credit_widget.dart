@@ -61,21 +61,22 @@ class TotalCreditWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
         decoration: BoxDecoration(
-          color: Colors.grey[100],
+          color: Colors.transparent, // Colors.grey[100],
           borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 4,
-              offset: Offset(0, 2),
-            ),
-          ],
+          // boxShadow: const [
+          //   BoxShadow(
+          //     color: Colors.black12,
+          //     blurRadius: 4,
+          //     offset: Offset(0, 2),
+          //   ),
+          // ],
         ),
         child: Text(
           "Free",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: context.black,
+                //color: context.black,
+                color: Colors.transparent,
               ),
         ),
       ),

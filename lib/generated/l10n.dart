@@ -5010,6 +5010,16 @@ class AppLocalizations {
     );
   }
 
+  /// `Wow! Your pieces are amazing ✨|Your closet looks great 👗|What will you wear today? 🤔|Your style speaks 🗣️|Time to make an outfit! 🎨|Show your style! 💃|You picked great pieces 👌|You look very stylish today 😎|Your closet is full of stars ⭐|Your outfits are inspiring 💡|Unique pieces! 💎|You are the style icon 👑`
+  String get closet_welcome_messages {
+    return Intl.message(
+      'Wow! Your pieces are amazing ✨|Your closet looks great 👗|What will you wear today? 🤔|Your style speaks 🗣️|Time to make an outfit! 🎨|Show your style! 💃|You picked great pieces 👌|You look very stylish today 😎|Your closet is full of stars ⭐|Your outfits are inspiring 💡|Unique pieces! 💎|You are the style icon 👑',
+      name: 'closet_welcome_messages',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Guest Account`
   String get guestAccountTitle {
     return Intl.message(

@@ -140,8 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         key: _scaffoldKey,
                         drawer: CustomDrawer(state: state),
                         // Update indices: Closet is now 1, Try-On is now 2 (in router)
-                        appBar: (tabsRouter.activeIndex == 1 ||
-                                tabsRouter.activeIndex == 2)
+                        appBar: (tabsRouter.activeIndex == 2)
                             ? null
                             : AppBar(
                                 forceMaterialTransparency: true,
@@ -158,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 centerTitle: true,
                                 title: CombyLogoSmall(
                                   themeMode: state.themeMode,
-                                  haveText: true,
+                                  haveText: false,
                                 ),
                                 actionsPadding: EdgeInsets.only(right: 12.w),
                                 actions: [
@@ -243,17 +242,6 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
-  }
-
-  String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) {
-      return 'Günaydın ☀️';
-    } else if (hour < 18) {
-      return 'İyi günler 👋';
-    } else {
-      return 'İyi akşamlar 🌙';
-    }
   }
 
   int _getBottomNavIndex(int routerIndex) {

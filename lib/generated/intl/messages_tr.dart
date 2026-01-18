@@ -113,6 +113,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearAll": MessageLookupByLibrary.simpleMessage("Tümünü Temizle"),
         "clearSearch": MessageLookupByLibrary.simpleMessage("Aramayı Temizle"),
         "close": MessageLookupByLibrary.simpleMessage("Kapat"),
+        "closet_welcome_messages": MessageLookupByLibrary.simpleMessage(
+            "Vay canına! Parçaların harika ✨|Gardırobun harika görünüyor 👗|Bugün ne giyeceksin? 🤔|Tarzın kendini belli ediyor 🗣️|Kombin yapma vakti! 🎨|Tarzını göster! 💃|Harika parçalar seçmişsin 👌|Bugün çok şık görünüyorsun 😎|Gardırobun yıldızlarla dolu ⭐|Kombinlerin ilham verici 💡|Benzersiz parçalar! 💎|Sen bir stil ikonusun 👑"),
         "combyAiPlusPlan":
             MessageLookupByLibrary.simpleMessage("Comby AI Plus Planı"),
         "combyAiProPlan":

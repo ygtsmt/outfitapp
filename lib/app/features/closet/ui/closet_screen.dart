@@ -1,6 +1,9 @@
+import 'dart:math';
 import 'dart:ui' as ui;
+import 'package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:comby/core/core.dart';
@@ -59,90 +62,131 @@ class _ClosetScreenState extends State<ClosetScreen>
     }
 
     return Container(
+      padding: EdgeInsets.only(top: 4.h),
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // TabBar
             // Glassmorphic Premium TabBar
-            Container(
-              height: 56.h,
-              padding: EdgeInsets.all(4.w),
-              child: TabBar(
-                controller: _tabController,
-                indicator: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.r),
-                  gradient: LinearGradient(
-                    colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withOpacity(0.8),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+            /* Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BlocBuilder<ProfileBloc, ProfileState>(
+                    builder: (context, state) {
+                      return Text(
+                        _getGreeting(state.profileInfo?.displayName ?? ""),
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                          color: context.baseColor,
+                        ),
+                      );
+                    },
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).primaryColor.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                labelColor: Colors.white,
-                unselectedLabelColor:
-                    Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                labelStyle: TextStyle(
-                  fontSize: 13.sp, // Slightly smaller to fit 4 tabs
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
-                unselectedLabelStyle: TextStyle(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.2,
-                ),
-                overlayColor: WidgetStateProperty.all(Colors.transparent),
-                tabs: [
-                  Tab(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text('Wardrobe'),
-                    ),
-                  ),
-                  Tab(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text('Models'),
-                    ),
-                  ),
-                  Tab(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text('Combines'),
-                    ),
-                  ),
-                  Tab(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text('Critiques'),
-                    ),
+                  Builder(
+                    builder: (context) {
+                      final messages = AppLocalizations.of(context)
+                          .closet_welcome_messages
+                          .split('|');
+      
+                      if (messages.isEmpty) return const SizedBox.shrink();
+      
+                      final randomMessage =
+                          messages[Random().nextInt(messages.length)];
+      
+                      return Text(
+                        randomMessage,
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          color: context.baseColor,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
+            ), */
+            TabBar(
+              padding: EdgeInsets.only(left: 4.w, bottom: 4.h),
+              tabAlignment: TabAlignment.start,
+              controller: _tabController,
+              isScrollable: true,
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(16.r),
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(context).primaryColor,
+                    Theme.of(context).primaryColor.withOpacity(0.8),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).primaryColor.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerColor: Colors.transparent,
+              labelColor: Colors.white,
+              unselectedLabelColor:
+                  Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              labelStyle: TextStyle(
+                fontSize: 13.sp, // Slightly smaller to fit 4 tabs
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+              ),
+              unselectedLabelStyle: TextStyle(
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0,
+              ),
+              overlayColor: WidgetStateProperty.all(Colors.transparent),
+              tabs: [
+                Tab(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text('Wardrobe'),
+                  ),
+                ),
+                Tab(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text('Models'),
+                  ),
+                ),
+                Tab(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text('Combines'),
+                  ),
+                ),
+                Tab(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text('Critiques'),
+                  ),
+                ),
+              ],
             ),
             // TabBarView
             Expanded(
@@ -216,5 +260,19 @@ class _ClosetScreenState extends State<ClosetScreen>
         ),
       ),
     );
+  }
+
+  String _getGreeting(String username) {
+    String name =
+        username.split(" ").length > 1 ? username.split(" ")[0] : username;
+    final noGuestName = name.toLowerCase() != 'guest' ? name : '';
+    final hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Günaydın $noGuestName ☀️ ';
+    } else if (hour < 18) {
+      return 'İyi günler $noGuestName 👋 ';
+    } else {
+      return 'İyi akşamlar $noGuestName 🌙';
+    }
   }
 }

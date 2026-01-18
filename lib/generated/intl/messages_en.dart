@@ -112,6 +112,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearAll": MessageLookupByLibrary.simpleMessage("Clear All"),
         "clearSearch": MessageLookupByLibrary.simpleMessage("Clear Search"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
+        "closet_welcome_messages": MessageLookupByLibrary.simpleMessage(
+            "Wow! Your pieces are amazing ✨|Your closet looks great 👗|What will you wear today? 🤔|Your style speaks 🗣️|Time to make an outfit! 🎨|Show your style! 💃|You picked great pieces 👌|You look very stylish today 😎|Your closet is full of stars ⭐|Your outfits are inspiring 💡|Unique pieces! 💎|You are the style icon 👑"),
         "combyAiPlusPlan":
             MessageLookupByLibrary.simpleMessage("Comby AI Plus Plan"),
         "combyAiProPlan":
