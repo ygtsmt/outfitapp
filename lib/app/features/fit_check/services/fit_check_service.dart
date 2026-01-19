@@ -57,13 +57,15 @@ class FitCheckService {
       2. "overallStyle": A single string describing the style (e.g., "Casual", "Formal", "Streetwear", "Athleisure", "Business Casual", "Vintage", "Minimalist").
       3. "detectedItems": A list of strings naming the visible clothing items (e.g., ["Leather Jacket", "White T-Shirt", "Blue Jeans", "Sneakers"]).
       4. "aiDescription": A cheerful, short styling compliment or observation (max 1 sentence).
+      5. "suggestions": A list of 3 short, actionable style tips or improvements for this outfit.
       
       Example JSON:
       {
         "colorPalette": {"Black": 0.6, "Red": 0.4},
         "overallStyle": "Streetwear",
         "detectedItems": ["Black Hoodie", "Red Joggers", "Sneakers"],
-        "aiDescription": "Love the bold red and black contrast, looks very energetic!"
+        "aiDescription": "Love the bold red and black contrast, looks very energetic!",
+        "suggestions": ["Add a silver chain to elevate the look.", "Try white sneakers for better contrast.", "A beanie would complete the vibe."]
       }
       ''';
 
@@ -86,6 +88,7 @@ class FitCheckService {
         'overallStyle': 'Unknown',
         'detectedItems': <String>[],
         'aiDescription': 'Looking good!',
+        'suggestions': <String>['Stay stylish!', 'Keep experimenting.'],
       };
     }
   }

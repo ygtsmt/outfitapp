@@ -10,6 +10,7 @@ class FitCheckLog {
   final String? overallStyle; // e.g. 'Casual', 'Formal'
   final List<String>? detectedItems; // e.g. ['t-shirt', 'jeans', 'sneakers']
   final String? aiDescription; // Short summary
+  final List<String>? suggestions; // Style tips/improvements
   final bool isPublic; // For future social features
 
   FitCheckLog({
@@ -20,6 +21,7 @@ class FitCheckLog {
     this.overallStyle,
     this.detectedItems,
     this.aiDescription,
+    this.suggestions,
     this.isPublic = false,
   });
 
@@ -32,6 +34,7 @@ class FitCheckLog {
       'overallStyle': overallStyle,
       'detectedItems': detectedItems,
       'aiDescription': aiDescription,
+      'suggestions': suggestions,
       'isPublic': isPublic,
     };
   }
@@ -49,6 +52,9 @@ class FitCheckLog {
           ? List<String>.from(map['detectedItems'])
           : null,
       aiDescription: map['aiDescription'] as String?,
+      suggestions: map['suggestions'] != null
+          ? List<String>.from(map['suggestions'])
+          : null,
       isPublic: map['isPublic'] as bool? ?? false,
     );
   }

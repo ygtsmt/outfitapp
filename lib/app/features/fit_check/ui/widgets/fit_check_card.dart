@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
+import 'package:comby/app/features/fit_check/ui/screens/fit_check_result_screen.dart';
+import 'package:comby/core/core.dart'; // Added for ReusableGalleryPicker
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
@@ -18,76 +20,138 @@ class FitCheckCard extends StatefulWidget {
 }
 
 class _FitCheckCardState extends State<FitCheckCard> {
-  bool _isProcessing = false;
+  Future<void> _showSelectionSheet() async {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 8.h),
 
-  Future<void> _takeFitCheck() async {
+            // Camera Option
+            _buildOptionCard(
+              icon: Icons.camera_alt_outlined,
+              title: 'Fotoğraf Çek',
+              color: const Color(0xFFFF416C),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _takePhoto();
+              },
+            ),
+            SizedBox(height: 4.h),
+
+            // Gallery Option
+            _buildOptionCard(
+              icon: Icons.photo_library_outlined,
+              title: 'Galeriden Seç',
+              color: const Color(0xFF8E2DE2),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                _pickFromGallery();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionCard({
+    required IconData icon,
+    required String title,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: Colors.grey[200]!),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: color,
+                size: 16.sp,
+              ),
+            ),
+            SizedBox(width: 16.w),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.chevron_right,
+              color: Colors.grey[400],
+              size: 24.sp,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _takePhoto() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile == null) return;
+    _navigateToResult(File(pickedFile.path));
+  }
 
-    if (!mounted) return;
-
-    // Show preview and confirmation dialog
-    final confirmed = await showDialog<bool>(
+  Future<void> _pickFromGallery() async {
+    final result = await ReusableGalleryPicker.show(
       context: context,
-      builder: (context) =>
-          _FitCheckPreviewDialog(imageFile: File(pickedFile.path)),
+      title: 'Fit Check Fotoğrafı',
+      mode: GallerySelectionMode.single,
     );
 
-    if (confirmed == true) {
-      _processFitCheck(File(pickedFile.path));
+    if (result?.singleFile != null) {
+      _navigateToResult(result!.singleFile!);
     }
   }
 
-  Future<void> _processFitCheck(File image) async {
-    setState(() => _isProcessing = true);
-
-    try {
-      final service = GetIt.I<FitCheckService>();
-
-      // Upload
-      final imageUrl = await service.uploadFitCheckImage(image);
-
-      // Analyze
-      final metadata = await service.analyzeFitCheckImage(image);
-
-      // Save
-      final log = FitCheckLog(
-        id: DateTime.now().toIso8601String(),
-        imageUrl: imageUrl,
-        createdAt: DateTime.now(),
-        colorPalette: metadata['colorPalette'] != null
-            ? Map<String, double>.from(metadata['colorPalette'])
-            : null,
-        overallStyle: metadata['overallStyle'],
-        detectedItems: metadata['detectedItems'] != null
-            ? List<String>.from(metadata['detectedItems'])
-            : null,
-        aiDescription: metadata['aiDescription'],
-        isPublic: false,
-      );
-
-      await service.saveFitCheck(log);
-
-      if (!mounted) return;
-
-      // Show Success
-      showDialog(
-        context: context,
-        builder: (context) => _FitCheckSuccessDialog(log: log),
-      );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hata oluştu: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isProcessing = false);
-      }
-    }
+  void _navigateToResult(File imageFile) {
+    if (!mounted) return;
+    context.router.push(FitCheckResultScreenRoute(imageFile: imageFile));
   }
 
   @override
@@ -113,7 +177,7 @@ class _FitCheckCardState extends State<FitCheckCard> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: _isProcessing ? null : _takeFitCheck,
+          onTap: _showSelectionSheet,
           borderRadius: BorderRadius.circular(20.r),
           child: Padding(
             padding: EdgeInsets.all(20.w),
@@ -129,16 +193,11 @@ class _FitCheckCardState extends State<FitCheckCard> {
                         color: Colors.white.withOpacity(0.2),
                         shape: BoxShape.circle,
                       ),
-                      child: _isProcessing
-                          ? LoadingAnimationWidget.fourRotatingDots(
-                              color: Colors.white,
-                              size: 24.w,
-                            )
-                          : Icon(
-                              Icons.camera_alt_rounded,
-                              color: Colors.white,
-                              size: 24.sp,
-                            ),
+                      child: Icon(
+                        Icons.camera_alt_rounded,
+                        color: Colors.white,
+                        size: 24.sp,
+                      ),
                     ),
                     SizedBox(width: 8.w),
                     Expanded(
@@ -213,104 +272,6 @@ class _FitCheckCardState extends State<FitCheckCard> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _FitCheckPreviewDialog extends StatelessWidget {
-  final File imageFile;
-
-  const _FitCheckPreviewDialog({required this.imageFile});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Bu fotoğraf nasıl?'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12.r),
-            child: Image.file(
-              imageFile,
-              fit: BoxFit.cover,
-              height: 300.h,
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: Text('İptal'),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: Text('Analiz Et 🔥'),
-        ),
-      ],
-    );
-  }
-}
-
-class _FitCheckSuccessDialog extends StatelessWidget {
-  final FitCheckLog log;
-
-  const _FitCheckSuccessDialog({required this.log});
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-      child: Padding(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Harika Görünüyorsun! ✨',
-              style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16.h),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16.r),
-              child: Image.network(
-                log.imageUrl,
-                height: 200.h,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            if (log.aiDescription != null)
-              Container(
-                padding: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-                  color: Colors.purple.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Text(
-                  log.aiDescription!,
-                  style: TextStyle(
-                    fontStyle: FontStyle.italic,
-                    color: Colors.purple.shade700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            SizedBox(height: 12.h),
-            if (log.overallStyle != null)
-              Text('Tarz: ${log.overallStyle}',
-                  style: TextStyle(fontWeight: FontWeight.w600)),
-            SizedBox(height: 20.h),
-            ElevatedButton(
-              onPressed: () {
-                context.router.push(DashbordTabRouter());
-              },
-              child: Text('Harika!'),
-            ),
-          ],
         ),
       ),
     );

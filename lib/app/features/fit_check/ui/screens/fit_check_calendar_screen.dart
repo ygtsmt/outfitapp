@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comby/app/features/fit_check/models/fit_check_model.dart';
 import 'package:comby/app/features/fit_check/services/fit_check_service.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -63,8 +64,14 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
       body: Column(
         children: [
           _buildCalendar(kPrimaryColor),
-          const Divider(),
-          Expanded(child: _buildEventList()),
+          const Spacer(),
+          Center(
+            child: Text(
+              'Detayları görmek için bir gün seçin',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+          const Spacer(),
         ],
       ),
     );
@@ -93,7 +100,7 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
           shape: BoxShape.circle,
         ),
       ),
-      headerStyle: HeaderStyle(
+      headerStyle: const HeaderStyle(
         formatButtonVisible: false,
         titleCentered: true,
       ),
@@ -104,42 +111,106 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
             _focusedDay = focusedDay;
           });
         }
+
+        final events = _getEventsForDay(selectedDay);
+        if (events.isNotEmpty) {
+          _showDailyEvents(context, selectedDay, events);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Bu tarih için kayıt bulunamadı.'),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        }
       },
       onPageChanged: (focusedDay) {
         _focusedDay = focusedDay;
-        _fetchMonthlyData(focusedDay); // Fetch new data when month swipes
+        _fetchMonthlyData(focusedDay);
       },
     );
   }
 
-  Widget _buildEventList() {
-    final selectedEvents =
-        _selectedDay != null ? _getEventsForDay(_selectedDay!) : [];
+  void _showDailyEvents(
+      BuildContext context, DateTime day, List<FitCheckLog> events) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+          ),
+          child: Column(
+            children: [
+              // Handle Bar
+              Center(
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 12.h),
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+              ),
 
-    if (selectedEvents.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.inventory_2_outlined,
-                size: 60, color: Colors.grey.shade300),
-            SizedBox(height: 16.h),
-            Text(
-              'Bugün için kayıt yok',
-              style: TextStyle(color: Colors.grey),
-            ),
-          ],
+              // Title
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Row(
+                  children: [
+                    Text(
+                      DateFormat('d MMMM yyyy', 'tr_TR').format(day),
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE94057).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Text(
+                        '${events.length} Kombin',
+                        style: TextStyle(
+                          color: const Color(0xFFE94057),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const Divider(),
+
+              // List
+              Expanded(
+                child: ListView.builder(
+                  controller: scrollController,
+                  padding: EdgeInsets.all(16.w),
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    return _buildFitCheckCard(events[index]);
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
-      );
-    }
-
-    return ListView.builder(
-      padding: EdgeInsets.all(16.w),
-      itemCount: selectedEvents.length,
-      itemBuilder: (context, index) {
-        final log = selectedEvents[index];
-        return _buildFitCheckCard(log);
-      },
+      ),
     );
   }
 
@@ -185,9 +256,10 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
           // Image
           ClipRRect(
             borderRadius: BorderRadius.zero,
-            child: Image.network(
-              log.imageUrl,
-              height: 250.h,
+            child: CachedNetworkImage(
+              // Changed to CachedNetworkImage for better performance
+              imageUrl: log.imageUrl,
+              height: 300.h, // Increased height for better visibility
               width: double.infinity,
               fit: BoxFit.cover,
             ),
@@ -221,6 +293,7 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
                                     style: TextStyle(fontSize: 11.sp)),
                                 visualDensity: VisualDensity.compact,
                                 backgroundColor: Colors.grey.shade100,
+                                side: BorderSide.none,
                               ))
                           .toList(),
                     ),

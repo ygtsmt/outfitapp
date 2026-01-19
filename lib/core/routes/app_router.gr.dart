@@ -341,6 +341,21 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    FitCheckResultScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<FitCheckResultScreenRouteArgs>(
+          orElse: () => const FitCheckResultScreenRouteArgs());
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: FitCheckResultScreen(
+          key: args.key,
+          imageFile: args.imageFile,
+          log: args.log,
+        ),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -622,6 +637,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           AIFashionCritiqueResultScreenRoute.name,
           path: '/ai-fashion-critique-result-screen',
+        ),
+        RouteConfig(
+          FitCheckResultScreenRoute.name,
+          path: '/fit-check-result-screen',
         ),
       ];
 }
@@ -1337,6 +1356,46 @@ class AIFashionCritiqueResultScreenRouteArgs {
   @override
   String toString() {
     return 'AIFashionCritiqueResultScreenRouteArgs{key: $key, imageFile: $imageFile, critiqueData: $critiqueData}';
+  }
+}
+
+/// generated route for
+/// [FitCheckResultScreen]
+class FitCheckResultScreenRoute
+    extends PageRouteInfo<FitCheckResultScreenRouteArgs> {
+  FitCheckResultScreenRoute({
+    Key? key,
+    File? imageFile,
+    FitCheckLog? log,
+  }) : super(
+          FitCheckResultScreenRoute.name,
+          path: '/fit-check-result-screen',
+          args: FitCheckResultScreenRouteArgs(
+            key: key,
+            imageFile: imageFile,
+            log: log,
+          ),
+        );
+
+  static const String name = 'FitCheckResultScreenRoute';
+}
+
+class FitCheckResultScreenRouteArgs {
+  const FitCheckResultScreenRouteArgs({
+    this.key,
+    this.imageFile,
+    this.log,
+  });
+
+  final Key? key;
+
+  final File? imageFile;
+
+  final FitCheckLog? log;
+
+  @override
+  String toString() {
+    return 'FitCheckResultScreenRouteArgs{key: $key, imageFile: $imageFile, log: $log}';
   }
 }
 

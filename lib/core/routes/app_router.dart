@@ -14,6 +14,8 @@ import "package:comby/app/features/auth/features/login/ui/login_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/all_tools_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/dashboard_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/user_summary_screen.dart";
+import "package:comby/app/features/fit_check/models/fit_check_model.dart";
+import "package:comby/app/features/fit_check/ui/screens/fit_check_result_screen.dart";
 import "package:comby/app/features/payment/ui/payment_screen.dart";
 import "package:comby/app/features/payment/ui/documents_webview_screen.dart";
 import "package:comby/app/features/payment/ui/watch_ads_screen.dart";
@@ -259,6 +261,11 @@ part "app_router.gr.dart";
     CustomRoute(
       page: AIFashionCritiqueResultScreen,
       path: "/ai-fashion-critique-result-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      page: FitCheckResultScreen,
+      path: "/fit-check-result-screen",
       transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
   ],
