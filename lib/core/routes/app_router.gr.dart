@@ -365,6 +365,20 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    OutfitSuggestionResultScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<OutfitSuggestionResultScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: OutfitSuggestionResultScreen(
+          key: args.key,
+          suggestion: args.suggestion,
+          weather: args.weather,
+        ),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -654,6 +668,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           FitCheckHistoryScreenRoute.name,
           path: '/fit-check-history-screen',
+        ),
+        RouteConfig(
+          OutfitSuggestionResultScreenRoute.name,
+          path: '/outfit-suggestion-result-screen',
         ),
       ];
 }
@@ -1422,6 +1440,46 @@ class FitCheckHistoryScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'FitCheckHistoryScreenRoute';
+}
+
+/// generated route for
+/// [OutfitSuggestionResultScreen]
+class OutfitSuggestionResultScreenRoute
+    extends PageRouteInfo<OutfitSuggestionResultScreenRouteArgs> {
+  OutfitSuggestionResultScreenRoute({
+    Key? key,
+    required OutfitSuggestion suggestion,
+    required WeatherModel weather,
+  }) : super(
+          OutfitSuggestionResultScreenRoute.name,
+          path: '/outfit-suggestion-result-screen',
+          args: OutfitSuggestionResultScreenRouteArgs(
+            key: key,
+            suggestion: suggestion,
+            weather: weather,
+          ),
+        );
+
+  static const String name = 'OutfitSuggestionResultScreenRoute';
+}
+
+class OutfitSuggestionResultScreenRouteArgs {
+  const OutfitSuggestionResultScreenRouteArgs({
+    this.key,
+    required this.suggestion,
+    required this.weather,
+  });
+
+  final Key? key;
+
+  final OutfitSuggestion suggestion;
+
+  final WeatherModel weather;
+
+  @override
+  String toString() {
+    return 'OutfitSuggestionResultScreenRouteArgs{key: $key, suggestion: $suggestion, weather: $weather}';
+  }
 }
 
 /// generated route for

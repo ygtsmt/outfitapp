@@ -1,3 +1,6 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/core/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -5,7 +8,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/app/features/dashboard/data/models/weather_model.dart';
-import 'package:comby/app/features/fal_ai/data/fal_ai_usecase.dart';
 import 'package:comby/core/services/location_service.dart';
 import 'package:comby/core/services/weather_service.dart';
 import 'package:comby/core/services/outfit_suggestion_service.dart';
@@ -149,11 +151,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   }
 
   void _showOutfitBottomSheet(OutfitSuggestion suggestion) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _OutfitSuggestionSheet(
+    context.router.push(
+      OutfitSuggestionResultScreenRoute(
         suggestion: suggestion,
         weather: _weather!,
       ),
@@ -341,7 +340,6 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   Widget _buildWeatherCard() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -362,136 +360,95 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         mainAxisSize: MainAxisSize.min,
         children: [
           // City and action buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    Icons.location_on_rounded,
-                    color: Colors.white,
-                    size: 18.sp,
-                  ),
-                  SizedBox(width: 6.w),
-                  Text(
-                    _weather!.cityName,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  // Generate Outfit Button
-                  GestureDetector(
-                    onTap: _isGeneratingOutfit ? null : _generateOutfit,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+          Padding(
+            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+            child: Column(
+              children: [
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (_isGeneratingOutfit)
-                            SizedBox(
-                              width: 14.w,
-                              height: 14.w,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2.w,
-                              ),
-                            )
-                          else
-                            Icon(
-                              Icons.checkroom_rounded,
-                              color: Colors.white,
-                              size: 16.sp,
-                            ),
+                          Icon(
+                            Icons.location_on_rounded,
+                            color: Colors.white,
+                            size: 18.sp,
+                          ),
                           SizedBox(width: 6.w),
                           Text(
-                            _isGeneratingOutfit ? 'Oluşturuluyor...' : 'Kombin',
+                            _weather!.cityName,
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 12.sp,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  SizedBox(width: 8.w),
-                  // Refresh button
-                  GestureDetector(
-                    onTap: _checkPermissionAndLoadWeather,
-                    child: Icon(
-                      Icons.refresh_rounded,
-                      color: Colors.white70,
-                      size: 22.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          // Temperature and icon
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
+                      GestureDetector(
+                        onTap: _checkPermissionAndLoadWeather,
+                        child: Icon(
+                          Icons.refresh_rounded,
+                          color: Colors.white70,
+                          size: 22.sp,
+                        ),
+                      ),
+                    ]),
+                SizedBox(height: 16.h),
+                // Temperature and icon
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      _weather!.temperatureString,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 56.sp,
-                        fontWeight: FontWeight.bold,
-                        height: 1,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _weather!.temperatureString,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 56.sp,
+                              fontWeight: FontWeight.bold,
+                              height: 1,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            _weather!.capitalizedDescription,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      _weather!.capitalizedDescription,
-                      style: TextStyle(
+                    CachedNetworkImage(
+                      imageUrl: _weather!.iconUrl,
+                      width: 80.w,
+                      height: 80.w,
+                      placeholder: (context, url) => SizedBox(
+                        width: 80.w,
+                        height: 80.w,
+                      ),
+                      errorWidget: (context, url, error) => Icon(
+                        Icons.cloud,
                         color: Colors.white,
-                        fontSize: 16.sp,
+                        size: 60.sp,
                       ),
                     ),
                   ],
                 ),
-              ),
-              CachedNetworkImage(
-                imageUrl: _weather!.iconUrl,
-                width: 80.w,
-                height: 80.w,
-                placeholder: (context, url) => SizedBox(
-                  width: 80.w,
-                  height: 80.w,
-                ),
-                errorWidget: (context, url, error) => Icon(
-                  Icons.cloud,
-                  color: Colors.white,
-                  size: 60.sp,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 8.h),
           // Additional info
           Container(
+            margin: EdgeInsets.symmetric(horizontal: 8.w),
             padding: EdgeInsets.symmetric(
-              horizontal: 16.w,
+              horizontal: 8.w,
               vertical: 12.h,
             ),
             decoration: BoxDecoration(
@@ -521,6 +478,10 @@ class _WeatherWidgetState extends State<WeatherWidget> {
               ],
             ),
           ),
+          SizedBox(height: 8.h),
+          // Kırmızıyı atıp yerine bunu koyarsak:
+          _buildCombinedButton(),
+          // _isGeneratingOutfit ? null : _generateOutfit,
         ],
       ),
     );
@@ -592,270 +553,125 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
     return [Colors.blue.shade400, Colors.blue.shade600];
   }
-}
 
-/// Bottom sheet showing outfit suggestion
-class _OutfitSuggestionSheet extends StatefulWidget {
-  final OutfitSuggestion suggestion;
-  final WeatherModel weather;
-
-  const _OutfitSuggestionSheet({
-    required this.suggestion,
-    required this.weather,
-  });
-
-  @override
-  State<_OutfitSuggestionSheet> createState() => _OutfitSuggestionSheetState();
-}
-
-class _OutfitSuggestionSheetState extends State<_OutfitSuggestionSheet> {
-  bool _isGenerating = false;
-  String? _requestId;
-
-  Future<void> _generateOutfitImage() async {
-    setState(() {
-      _isGenerating = true;
-    });
-
-    try {
-      final falAiUsecase = GetIt.I<FalAiUsecase>();
-      final clothesList = widget.suggestion.closetItems
-          .map((e) =>
-              "${e.color ?? ''} ${e.subcategory ?? ''} ${e.category ?? ''}"
-                  .trim())
-          .join(", ");
-
-      final result = await falAiUsecase.generateGeminiImageEdit(
-        imageUrls: widget.suggestion.imageUrls,
-        prompt:
-            'Put the following clothes: ($clothesList) onto the person in the first image. Keep the person\'s face, body shape, and pose exactly the same. Only change the clothing.',
-        modelAiPrompt: widget.suggestion.model.aiPrompt,
-        usedClosetItems: widget.suggestion.closetItems,
-      );
-
-      if (result != null && result['status'] == 'processing') {
-        setState(() {
-          _requestId = result['id'] as String?;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text('Kombin oluşturuluyor! Kütüphaneden takip edebilirsiniz.'),
-            duration: Duration(seconds: 3),
+  Widget _buildCombinedButton() {
+    return AnimatedContainer(
+        margin: EdgeInsets.all(16.h),
+        duration: const Duration(milliseconds: 300),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24.r), // Daha yumuşak köşeler
+          gradient: LinearGradient(
+            colors: [
+              context.baseColor.withBlue(100),
+              context.baseColor.withBlue(200),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hata: $e')),
-      );
-    } finally {
-      setState(() {
-        _isGenerating = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-      ),
-      child: DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (context, scrollController) {
-          return SingleChildScrollView(
-            controller: scrollController,
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF4E6AFF).withOpacity(0.2),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+          border: Border.all(
+            color: Colors.white.withOpacity(0.05),
+            width: 1,
+          ),
+        ),
+        child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Row(
               children: [
-                // Handle
-                Center(
-                  child: Container(
-                    width: 40.w,
-                    height: 4.h,
-                    decoration: BoxDecoration(
-                      color: colorScheme.onSurface.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(2.r),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20.h),
-
-                // Title
-                Row(
-                  children: [
-                    Icon(
-                      Icons.auto_awesome,
-                      color: colorScheme.primary,
-                      size: 24.sp,
-                    ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      'AI Kombin Önerisi',
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-
-                // Weather info
-                Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Text(
-                    '${widget.weather.temperature.round()}°C • ${widget.weather.capitalizedDescription}',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16.h),
-
-                // AI Reasoning
-                if (widget.suggestion.reasoning.isNotEmpty) ...[
-                  Text(
-                    widget.suggestion.reasoning,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: colorScheme.onSurface.withOpacity(0.7),
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                ],
-
-                // Selected Model
-                Text(
-                  'Model',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface.withOpacity(0.6),
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16.r),
-                  child: CachedNetworkImage(
-                    imageUrl: widget.suggestion.model.imageUrl,
-                    height: 200.h,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(height: 20.h),
-
-                // Selected Clothes
-                Text(
-                  'Seçilen Kıyafetler',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface.withOpacity(0.6),
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                SizedBox(
-                  height: 100.h,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: widget.suggestion.closetItems.length,
-                    itemBuilder: (context, index) {
-                      final item = widget.suggestion.closetItems[index];
-                      return Container(
-                        width: 100.w,
-                        margin: EdgeInsets.only(right: 12.w),
-                        child: Column(
+                // SOL TARAF: Title & Subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                           children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12.r),
-                                child: CachedNetworkImage(
-                                  imageUrl: item.imageUrl,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              item.category ?? item.subcategory ?? '',
+                            const TextSpan(text: 'Gemini '),
+                            TextSpan(
+                              text: '3',
                               style: TextStyle(
-                                fontSize: 10.sp,
-                                color: colorScheme.onSurface.withOpacity(0.6),
+                                color: const Color(0xFF4E6AFF),
+                                fontSize: 22.sp,
+                                shadows: [
+                                  Shadow(
+                                    color: const Color(0xFF4E6AFF)
+                                        .withOpacity(0.7),
+                                    blurRadius: 8,
+                                  ),
+                                ],
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(height: 24.h),
-
-                // Generate Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: _isGenerating || _requestId != null
-                        ? null
-                        : _generateOutfitImage,
-                    icon: _isGenerating
-                        ? SizedBox(
-                            width: 20.w,
-                            height: 20.w,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.w,
-                              color: colorScheme.onPrimary,
-                            ),
-                          )
-                        : Icon(_requestId != null
-                            ? Icons.check_circle
-                            : Icons.auto_fix_high),
-                    label: Text(
-                      _requestId != null
-                          ? 'Oluşturuluyor...'
-                          : (_isGenerating
-                              ? 'Hazırlanıyor...'
-                              : 'Kombini Görselleştir'),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colorScheme.primary,
-                      foregroundColor: colorScheme.onPrimary,
-                      padding: EdgeInsets.symmetric(vertical: 16.h),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.r),
                       ),
-                    ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        'Hava durumuna göre en iyi kombinini oluştur.',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.6),
+                          fontSize: 12.sp,
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 20.h),
+
+                SizedBox(width: 8.w),
+
+                // SAĞ TARAF: Yuvarlak Create Butonu
+                GestureDetector(
+                  onTap: _isGeneratingOutfit ? null : _generateOutfit,
+                  child: Container(
+                    width: 56.w,
+                    height: 56.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF4E6AFF), Color(0xFF7C3AED)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF4E6AFF).withOpacity(0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: _isGeneratingOutfit
+                          ? SizedBox(
+                              width: 24.w,
+                              height: 24.w,
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : Icon(
+                              Icons
+                                  .touch_app, // Veya 'Icons.add' ya da 'Icons.magic_button'
+                              color: Colors.white,
+                              size: 28.sp,
+                            ),
+                    ),
+                  ),
+                )
               ],
-            ),
-          );
-        },
-      ),
-    );
+            )));
   }
 }

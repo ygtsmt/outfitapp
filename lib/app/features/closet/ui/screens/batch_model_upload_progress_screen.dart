@@ -87,7 +87,7 @@ class _BatchModelUploadProgressScreenState
 
       setState(() {
         _currentIndex = i;
-        _currentStatus = 'AI ile analiz ediliyor...';
+        _currentStatus = 'Gemini 3 ile analiz ediliyor...';
       });
 
       _animationController.forward(from: 0);

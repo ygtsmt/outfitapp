@@ -204,6 +204,7 @@ class _QuickTryOnScreenState extends State<QuickTryOnScreen>
         ], // First image is user (model), second is reference
         prompt:
             "Put the clothes from the second image onto the person in the first image.",
+        sourceId: 2, // Quick Try On
         usedClosetItems: null, // Don't link to any permanent items
       );
 
@@ -308,7 +309,7 @@ class _QuickTryOnScreenState extends State<QuickTryOnScreen>
               ),
               SizedBox(height: 16.h),
               Text(
-                'Sihir yapılıyor... ✨',
+                'Gemini 3 ile hazırlanıyor... ✨',
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
               ),
             ],

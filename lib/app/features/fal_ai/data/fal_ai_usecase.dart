@@ -97,6 +97,8 @@ class FalAiUsecase {
   Future<Map<String, dynamic>?> generateGeminiImageEdit({
     required List<String> imageUrls,
     required String prompt,
+    required int
+        sourceId, // 1: TryOn, 2: QuickTryOn, 3: Weather, 4: Weather Regen
     String? modelAiPrompt, // AI-generated description of the model
     List<WardrobeItem>? usedClosetItems, // Items used in the outfit
   }) async {
@@ -165,6 +167,7 @@ class FalAiUsecase {
             'completedAt': null,
             'model': 'gemini-2.5-flash-image-edit',
             'usedClosetItems': serializedClosetItems,
+            'sourceId': sourceId,
           };
 
           // Add to user's Firestore subcollection

@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:before_after/before_after.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:comby/core/asset_paths.dart';
+import 'package:comby/core/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -99,7 +101,8 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildDetailsSection(context, prompt, createdAt, status),
+            _buildDetailsSection(context, prompt, createdAt, status,
+                widget.imageData['sourceId'] as int?),
             SizedBox(height: 24.h),
 
             // Before/After Slider Container
@@ -149,6 +152,16 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
               errorWidget: (_, __, ___) => Container(color: Colors.grey[200]),
             ),
           ),
+          thumbDecoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: context.baseColor,
+            image: DecorationImage(
+                image: AssetImage(
+                  PngPaths.transactions,
+                ),
+                fit: BoxFit.fitWidth,
+                invertColors: true),
+          ),
           after: SizedBox.expand(
             child: CachedNetworkImage(
               imageUrl: afterUrl,
@@ -158,7 +171,6 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
             ),
           ),
           onValueChanged: (v) => setState(() => _sliderValue = v),
-          thumbColor: Colors.white,
           direction: SliderDirection.horizontal,
         );
       },
@@ -261,14 +273,32 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
     );
   }
 
-  Widget _buildDetailsSection(
-      BuildContext context, String prompt, DateTime? createdAt, String status) {
+  Widget _buildDetailsSection(BuildContext context, String prompt,
+      DateTime? createdAt, String status, int? sourceId) {
+    String title = 'AI Combine';
+    if (sourceId != null) {
+      switch (sourceId) {
+        case 1:
+          title = 'Try-On Combine';
+          break;
+        case 2:
+          title = 'Quick Try-On';
+          break;
+        case 3:
+          title = 'Weather Combine';
+          break;
+        case 4:
+          title = 'Weather (Regenerated)';
+          break;
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 20.h),
         Text(
-          'Try-On Combine',
+          title,
           style: TextStyle(
             fontSize: 32.sp,
             fontWeight: FontWeight.w300,
@@ -353,7 +383,7 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
           ),
           SizedBox(width: 8.w),
           Text(
-            'AI ile üretildi',
+            'Gemini 3 ile üretildi',
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w500,

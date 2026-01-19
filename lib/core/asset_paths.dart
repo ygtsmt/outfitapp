@@ -23,6 +23,8 @@ class PngPaths {
   static const String indonesiaFlag = "assets/png/indonesia_flag.png";
   static const String viralOnTiktok = "assets/png/tiktok.png";
   static const String gift = "assets/png/gift.png";
+  static const String beforeAfter = "assets/png/before-after.png";
+  static const String transactions = "assets/png/transaction.png";
   static const String separatePhotoSelected =
       "assets/png/separate_photo_selected.png";
   static const String separatePhotoUnSelected =

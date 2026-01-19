@@ -145,7 +145,11 @@ JSON:''';
       // Pass full lists for parsing to find objects by ID
       return _parseResponse(responseText, models, closetItems);
     } catch (e) {
-      throw OutfitSuggestionException('Failed to suggest outfit: $e');
+      // Log the full error for debugging
+      print('OutfitSuggestionService Error: $e');
+      // Throw a user-friendly message
+      throw OutfitSuggestionException(
+          'Kombin önerisi oluşturulurken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
     }
   }
 
@@ -233,7 +237,9 @@ JSON:''';
         reasoning: reasoning,
       );
     } catch (e) {
-      throw OutfitSuggestionException('Failed to parse response: $e');
+      print('OutfitSuggestionService Parse Error: $e');
+      throw OutfitSuggestionException(
+          'Gelen yanıt işlenirken bir sorun oluştu. Lütfen tekrar deneyin.');
     }
   }
 }

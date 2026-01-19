@@ -174,6 +174,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
       final result = await _falAiUsecase.generateGeminiImageEdit(
         imageUrls: imageUrls,
         prompt: refinedPrompt,
+        sourceId: 1, // TryOn Screen
         modelAiPrompt: _selectedModel!.aiPrompt,
       );
 
@@ -523,7 +524,7 @@ class _TryOnScreenState extends State<TryOnScreen> {
                                         strokeWidth: 2),
                                   ),
                                   SizedBox(width: 12.w),
-                                  const Text("Processing Studio..."),
+                                  const Text("Gemini 3 İşleniyor..."),
                                 ],
                               )
                             : Padding(

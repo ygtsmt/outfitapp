@@ -588,7 +588,7 @@ class _ModelItemDetailScreenState extends State<ModelItemDetailScreen> {
           ),
           SizedBox(width: 8.w),
           Text(
-            'AI ile analiz edildi',
+            'Gemini 3 ile analiz edildi',
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w500,

@@ -218,7 +218,7 @@ class _FitCheckCardState extends State<FitCheckCard> {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'Bugün ne giydin? Outfit check yapalım mı?',
+                            'Bugün ne giydin? Gemini 3 yorumlasın.',
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.9),
                               fontSize: 12.sp,

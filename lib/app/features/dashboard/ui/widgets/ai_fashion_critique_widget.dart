@@ -225,7 +225,7 @@ class _AIFashionCritiqueWidgetState extends State<AIFashionCritiqueWidget> {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'Kombinini puanla ✨',
+                            'Gemini 3 ile kombinini puanla, öneriler al ✨',
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w500,

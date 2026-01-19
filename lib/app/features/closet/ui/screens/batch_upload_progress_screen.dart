@@ -85,7 +85,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
 
       setState(() {
         _currentIndex = i;
-        _currentStatus = 'AI ile analiz ediliyor...';
+        _currentStatus = 'Gemini 3 ile analiz ediliyor...';
       });
 
       _animationController.forward(from: 0);
@@ -106,7 +106,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
   Future<void> _processPhoto(File imageFile) async {
     try {
       setState(() {
-        _currentStatus = 'AI ile analiz ediliyor...';
+        _currentStatus = 'Gemini 3 ile analiz ediliyor...';
       });
 
       // Step 1: AI Analysis

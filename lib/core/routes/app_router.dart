@@ -11,8 +11,10 @@ import "package:comby/app/features/closet/models/wardrobe_item_model.dart";
 import "package:comby/app/features/closet/ui/closet_screen.dart";
 import "package:comby/app/features/auth/features/create_account/ui/create_account_screen.dart";
 import "package:comby/app/features/auth/features/login/ui/login_screen.dart";
+import "package:comby/app/features/dashboard/data/models/weather_model.dart";
 import "package:comby/app/features/dashboard/ui/screens/all_tools_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/dashboard_screen.dart";
+import "package:comby/app/features/dashboard/ui/screens/outfit_suggestion_result_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/user_summary_screen.dart";
 import "package:comby/app/features/fit_check/models/fit_check_model.dart";
 import "package:comby/app/features/fit_check/ui/screens/fit_check_result_screen.dart";
@@ -44,6 +46,7 @@ import "package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_resu
 import "package:comby/app/features/dashboard/ui/screens/ai_critique_camera_screen.dart";
 import "package:comby/app/ui/home_screen.dart";
 import "package:comby/core/core.dart";
+import "package:comby/core/services/outfit_suggestion_service.dart";
 import "package:flutter/material.dart";
 import "package:injectable/injectable.dart";
 import "package:video_player/video_player.dart";
@@ -272,6 +275,12 @@ part "app_router.gr.dart";
     CustomRoute(
       page: FitCheckHistoryScreen,
       path: "/fit-check-history-screen",
+      transitionsBuilder: TransitionsBuilders.slideLeft,
+    ),
+
+    CustomRoute(
+      page: OutfitSuggestionResultScreen,
+      path: "/outfit-suggestion-result-screen",
       transitionsBuilder: TransitionsBuilders.slideLeft,
     ),
   ],
