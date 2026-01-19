@@ -356,6 +356,15 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    FitCheckHistoryScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const FitCheckHistoryScreen(),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -641,6 +650,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           FitCheckResultScreenRoute.name,
           path: '/fit-check-result-screen',
+        ),
+        RouteConfig(
+          FitCheckHistoryScreenRoute.name,
+          path: '/fit-check-history-screen',
         ),
       ];
 }
@@ -1397,6 +1410,18 @@ class FitCheckResultScreenRouteArgs {
   String toString() {
     return 'FitCheckResultScreenRouteArgs{key: $key, imageFile: $imageFile, log: $log}';
   }
+}
+
+/// generated route for
+/// [FitCheckHistoryScreen]
+class FitCheckHistoryScreenRoute extends PageRouteInfo<void> {
+  const FitCheckHistoryScreenRoute()
+      : super(
+          FitCheckHistoryScreenRoute.name,
+          path: '/fit-check-history-screen',
+        );
+
+  static const String name = 'FitCheckHistoryScreenRoute';
 }
 
 /// generated route for

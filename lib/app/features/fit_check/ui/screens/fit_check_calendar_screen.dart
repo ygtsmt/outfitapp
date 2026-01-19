@@ -1,5 +1,5 @@
+import 'package:comby/app/features/fit_check/ui/widgets/fit_check_stats_dashboard.dart';
 import 'package:comby/app/features/fit_check/ui/widgets/fit_check_log_card.dart';
-import 'package:comby/app/features/fit_check/ui/widgets/monthly_stats_instruction.dart';
 import 'package:comby/app/features/fit_check/ui/widgets/recent_overview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +8,7 @@ import 'package:comby/app/features/fit_check/models/fit_check_model.dart';
 import 'package:comby/app/features/fit_check/services/fit_check_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FitCheckCalendarScreen extends StatefulWidget {
   const FitCheckCalendarScreen({super.key});
@@ -81,6 +82,17 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
     // Current theme colors or hardcoded if strictly required
     final kPrimaryColor = Color(0xFFE94057);
 
+    // Get User Name for motivation
+    final user = FirebaseAuth.instance.currentUser;
+    String? userName;
+    if (user != null && !user.isAnonymous) {
+      userName = user.displayName;
+      // If displayName contains space, take first name
+      if (userName != null && userName.contains(' ')) {
+        userName = userName.split(' ')[0];
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Kıyafet Takvimi 📅'),
@@ -90,13 +102,17 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
         children: [
           FitCheckRecentOverview(
             recentFitChecks: _recentFitChecks,
-            events: _events,
-            currentStreak: _currentStreak,
           ),
           const Divider(),
           _buildCalendar(kPrimaryColor),
           const Divider(),
-          const Expanded(child: MonthlyStatsInstruction()),
+          SizedBox(height: 16.h),
+          FitCheckStatsDashboard(
+            events: _events,
+            currentStreak: _currentStreak,
+            userName: userName,
+          ),
+          SizedBox(height: 16.h),
         ],
       ),
     );

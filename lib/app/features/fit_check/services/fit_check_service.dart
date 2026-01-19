@@ -166,6 +166,24 @@ class FitCheckService {
     });
   }
 
+  /// Stream all fit checks ordered by date
+  Stream<List<FitCheckLog>> getAllFitChecksStream() {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) return Stream.value([]);
+
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('fit_checks')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => FitCheckLog.fromMap(doc.data()))
+          .toList();
+    });
+  }
+
   /// Calculates the current streak of consecutive days with Fit Checks
   Future<int> calculateStreak() async {
     final userId = _auth.currentUser?.uid;

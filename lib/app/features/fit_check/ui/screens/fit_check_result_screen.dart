@@ -1,8 +1,13 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:gal/gal.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comby/app/features/fit_check/models/fit_check_model.dart';
 import 'package:comby/app/features/fit_check/services/fit_check_service.dart';
+import 'package:comby/core/constants/layout_constants.dart';
 import 'package:comby/core/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,6 +45,57 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
       _error = 'Görüntülenemedi.';
       _isAnalyzing = false;
     }
+  }
+
+  Future<void> _shareFitCheck() async {
+    if (_currentLog?.imageUrl == null && widget.imageFile == null) return;
+    try {
+      String path;
+      if (widget.imageFile != null) {
+        path = widget.imageFile!.path;
+      } else {
+        path = await _downloadFile(_currentLog!.imageUrl);
+      }
+      await Share.shareXFiles([XFile(path)],
+          text: 'Comby ile kombinimi inceledim! 🌟');
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Paylaşım hatası: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _downloadFitCheck() async {
+    if (_currentLog?.imageUrl == null && widget.imageFile == null) return;
+    try {
+      String path;
+      if (widget.imageFile != null) {
+        path = widget.imageFile!.path;
+      } else {
+        path = await _downloadFile(_currentLog!.imageUrl);
+      }
+      await Gal.putImage(path);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Fotoğraf galeriye kaydedildi! ✅')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Kaydetme hatası: $e')),
+        );
+      }
+    }
+  }
+
+  Future<String> _downloadFile(String url) async {
+    final dir = await getTemporaryDirectory();
+    final path = '${dir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+    await Dio().download(url, path);
+    return path;
   }
 
   Future<void> _startAnalysis() async {
@@ -137,7 +193,7 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
             child: Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
                 child: Row(
                   children: [
                     Container(
@@ -148,6 +204,33 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
                       child: const BackButton(color: Colors.white),
                     ),
                     const Spacer(),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: _shareFitCheck,
+                        icon: const Icon(
+                          Icons.share,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    LayoutConstants.lowEmptyWidth,
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: _downloadFitCheck,
+                        icon: const Icon(
+                          Icons.download,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

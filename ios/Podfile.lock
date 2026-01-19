@@ -1302,6 +1302,9 @@ PODS:
     - Flutter
   - fluttertoast (0.0.2):
     - Flutter
+  - gal (1.0.0):
+    - Flutter
+    - FlutterMacOS
   - geolocator_apple (1.2.0):
     - Flutter
     - FlutterMacOS
@@ -1506,6 +1509,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - gal (from `.symlinks/plugins/gal/darwin`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
   - google_mobile_ads (from `.symlinks/plugins/google_mobile_ads/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
@@ -1580,6 +1584,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
+  gal:
+    :path: ".symlinks/plugins/gal/darwin"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/darwin"
   google_mobile_ads:
@@ -1643,6 +1649,7 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
   fluttertoast: 21eecd6935e7064cc1fcb733a4c5a428f3f24f0f
+  gal: 6a522c75909f1244732d4596d11d6a2f86ff37a5
   geolocator_apple: 66b711889fd333205763b83c9dcf0a57a28c7afd
   Google-Mobile-Ads-SDK: 1dfb0c3cb46c7e2b00b0f4de74a1e06d9ea25d67
   google_mobile_ads: cab27248050510554aa646195eacc393ce7406ad

@@ -40,7 +40,7 @@ class FitCheckStatItem extends StatelessWidget {
                 child: Text(
                   value,
                   style: TextStyle(
-                    fontSize: isStyle ? 14.sp : 18.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
                     color: isAccent ? const Color(0xFFFF9800) : Colors.black87,
                   ),
@@ -53,8 +53,9 @@ class FitCheckStatItem extends StatelessWidget {
                   suffix!, // Use ! as we checked != null
                   style: TextStyle(
                     fontSize: 10.sp,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[600],
+                    fontWeight: isAccent ? FontWeight.bold : FontWeight.w500,
+                    color:
+                        isAccent ? const Color(0xFFFF9800) : Colors.grey[600],
                   ),
                 ),
             ],
