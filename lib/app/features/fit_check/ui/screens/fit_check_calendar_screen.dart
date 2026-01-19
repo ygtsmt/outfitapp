@@ -1,7 +1,9 @@
+import 'package:comby/app/features/fit_check/ui/widgets/fit_check_log_card.dart';
+import 'package:comby/app/features/fit_check/ui/widgets/monthly_stats_instruction.dart';
+import 'package:comby/app/features/fit_check/ui/widgets/recent_overview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comby/app/features/fit_check/models/fit_check_model.dart';
 import 'package:comby/app/features/fit_check/services/fit_check_service.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -18,12 +20,35 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   Map<DateTime, List<FitCheckLog>> _events = {};
+  int _currentStreak = 0;
+  List<FitCheckLog> _recentFitChecks = [];
 
   @override
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
     _fetchMonthlyData(_focusedDay);
+    _fetchStreak();
+    _fetchRecentFitChecks();
+  }
+
+  Future<void> _fetchRecentFitChecks() async {
+    final recent =
+        await GetIt.I<FitCheckService>().getRecentFitChecks(limit: 30);
+    if (mounted) {
+      setState(() {
+        _recentFitChecks = recent;
+      });
+    }
+  }
+
+  Future<void> _fetchStreak() async {
+    final streak = await GetIt.I<FitCheckService>().calculateStreak();
+    if (mounted) {
+      setState(() {
+        _currentStreak = streak;
+      });
+    }
   }
 
   /// Fetches data for the month of the focused day
@@ -63,15 +88,15 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
       ),
       body: Column(
         children: [
-          _buildCalendar(kPrimaryColor),
-          const Spacer(),
-          Center(
-            child: Text(
-              'Detayları görmek için bir gün seçin',
-              style: TextStyle(color: Colors.grey),
-            ),
+          FitCheckRecentOverview(
+            recentFitChecks: _recentFitChecks,
+            events: _events,
+            currentStreak: _currentStreak,
           ),
-          const Spacer(),
+          const Divider(),
+          _buildCalendar(kPrimaryColor),
+          const Divider(),
+          const Expanded(child: MonthlyStatsInstruction()),
         ],
       ),
     );
@@ -203,104 +228,13 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
                   padding: EdgeInsets.all(16.w),
                   itemCount: events.length,
                   itemBuilder: (context, index) {
-                    return _buildFitCheckCard(events[index]);
+                    return FitCheckLogCard(log: events[index]);
                   },
                 ),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildFitCheckCard(FitCheckLog log) {
-    return Card(
-      margin: EdgeInsets.only(bottom: 16.h),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-      elevation: 2,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with Time and Style
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  DateFormat('HH:mm').format(log.createdAt),
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
-                ),
-                if (log.overallStyle != null)
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Text(
-                      log.overallStyle!,
-                      style: TextStyle(
-                          color: Colors.blue.shade700,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-
-          // Image
-          ClipRRect(
-            borderRadius: BorderRadius.zero,
-            child: CachedNetworkImage(
-              // Changed to CachedNetworkImage for better performance
-              imageUrl: log.imageUrl,
-              height: 300.h, // Increased height for better visibility
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-
-          // Details
-          if (log.aiDescription != null || log.detectedItems != null)
-            Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (log.aiDescription != null)
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 8.h),
-                      child: Text(
-                        log.aiDescription!,
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic,
-                            color: Colors.grey.shade700),
-                      ),
-                    ),
-                  if (log.detectedItems != null &&
-                      log.detectedItems!.isNotEmpty)
-                    Wrap(
-                      spacing: 8.w,
-                      runSpacing: 8.h,
-                      children: log.detectedItems!
-                          .map((item) => Chip(
-                                label: Text(item,
-                                    style: TextStyle(fontSize: 11.sp)),
-                                visualDensity: VisualDensity.compact,
-                                backgroundColor: Colors.grey.shade100,
-                                side: BorderSide.none,
-                              ))
-                          .toList(),
-                    ),
-                ],
-              ),
-            ),
-        ],
       ),
     );
   }
