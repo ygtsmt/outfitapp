@@ -5,6 +5,7 @@ import "dart:io";
 import "package:auto_route/auto_route.dart";
 import "package:auto_route/empty_router_widgets.dart";
 import "package:comby/app/bloc/app_bloc.dart";
+import "package:comby/app/features/auth/features/profile/ui/settings_screen.dart";
 import "package:comby/app/features/auth/features/profile/ui/profile_screen.dart";
 import "package:comby/app/features/auth/features/splash/ui/splash_screen.dart";
 import "package:comby/app/features/closet/models/wardrobe_item_model.dart";
@@ -275,6 +276,12 @@ part "app_router.gr.dart";
     CustomRoute(
       page: FitCheckHistoryScreen,
       path: "/fit-check-history-screen",
+      transitionsBuilder: TransitionsBuilders.slideLeft,
+    ),
+
+    CustomRoute(
+      page: SettingsScreen,
+      path: "/settings-screen",
       transitionsBuilder: TransitionsBuilders.slideLeft,
     ),
 

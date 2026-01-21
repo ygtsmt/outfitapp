@@ -62,8 +62,8 @@ class ProfileImageNetwork extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(100.r),
                 ),
-                height: 120.h,
-                width: 120.h,
+                height: 100.h,
+                width: 100.h,
                 child: LoadingAnimationWidget.fourRotatingDots(
                   color: context.baseColor,
                   size: 24.h,
@@ -118,6 +118,8 @@ class ProfileImageNetwork extends StatelessWidget {
                   }
                 },
                 child: Container(
+                  height: 100.h,
+                  width: 100.h,
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: context.baseColor,

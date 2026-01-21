@@ -365,6 +365,15 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    SettingsScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const SettingsScreen(),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     OutfitSuggestionResultScreenRoute.name: (routeData) {
       final args = routeData.argsAs<OutfitSuggestionResultScreenRouteArgs>();
       return CustomPage<dynamic>(
@@ -668,6 +677,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           FitCheckHistoryScreenRoute.name,
           path: '/fit-check-history-screen',
+        ),
+        RouteConfig(
+          SettingsScreenRoute.name,
+          path: '/settings-screen',
         ),
         RouteConfig(
           OutfitSuggestionResultScreenRoute.name,
@@ -1440,6 +1453,18 @@ class FitCheckHistoryScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'FitCheckHistoryScreenRoute';
+}
+
+/// generated route for
+/// [SettingsScreen]
+class SettingsScreenRoute extends PageRouteInfo<void> {
+  const SettingsScreenRoute()
+      : super(
+          SettingsScreenRoute.name,
+          path: '/settings-screen',
+        );
+
+  static const String name = 'SettingsScreenRoute';
 }
 
 /// generated route for

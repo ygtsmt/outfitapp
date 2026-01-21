@@ -151,7 +151,106 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
               ),
             ],
           ),
+
+          // Capsule Score Card
+          Container(
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF4C40F7).withOpacity(0.05),
+                  Color(0xFF4C40F7).withOpacity(0.1)
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16.r),
+              border:
+                  Border.all(color: const Color(0xFF4C40F7).withOpacity(0.1)),
+            ),
+            child: Row(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      height: 50.w,
+                      width: 50.w,
+                      child: CircularProgressIndicator(
+                        value: (_stats?.capsuleScore ?? 0) / 100,
+                        backgroundColor: Colors.grey.shade200,
+                        color: const Color(0xFF4C40F7),
+                        strokeWidth: 6,
+                      ),
+                    ),
+                    Text(
+                      "%${_stats?.capsuleScore ?? 0}",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF4C40F7),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 16.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Kapsül Dolap Skoru",
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        _getCapsuleStatus(_stats?.capsuleScore ?? 0),
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.grey[600],
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           SizedBox(height: 16.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Favori Renkler",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: SizedBox(
+                  height: 24.w,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      _buildColorDot(Colors.black),
+                      _buildColorDot(Colors.white, border: true),
+                      _buildColorDot(Colors.blueGrey),
+                      _buildColorDot(const Color(0xFFE0C097)), // Beige
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+
           // Simple Bar for Categories (Top 3)
           Row(
             children: _stats!.categoryCount.entries.take(3).map((e) {
@@ -183,6 +282,33 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
                 ),
               );
             }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getCapsuleStatus(int score) {
+    if (score >= 90) return "Mükemmel! Tam bir kapsül dolap uzmanısın.";
+    if (score >= 70) return "Harika gidiyorsun, çok dengeli.";
+    if (score >= 50) return "İyi başlangıç, biraz daha denge lazım.";
+    return "Henüz yolun başındasın, dolabını sadeleştir.";
+  }
+
+  Widget _buildColorDot(Color color, {bool border = false}) {
+    return Container(
+      width: 24.w,
+      height: 24.w,
+      margin: EdgeInsets.only(right: 8.w),
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: border ? Border.all(color: Colors.grey.shade300) : null,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
