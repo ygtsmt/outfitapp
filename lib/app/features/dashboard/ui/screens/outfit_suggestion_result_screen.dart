@@ -1,17 +1,21 @@
 import 'dart:async';
+import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/dashboard/data/models/weather_model.dart';
+import 'package:comby/app/features/dashboard/ui/screens/full_screen_image_screen.dart';
 import 'package:comby/app/features/fal_ai/data/fal_ai_usecase.dart';
+import 'package:comby/core/routes/app_router.dart';
 import 'package:comby/core/services/outfit_suggestion_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:comby/app/features/auth/features/profile/services/activity_service.dart';
 
 class OutfitSuggestionResultScreen extends StatefulWidget {
   final OutfitSuggestion suggestion;
@@ -136,6 +140,7 @@ class _OutfitSuggestionResultScreenState
                 _generatedImageUrl = url;
                 _isGenerating = false;
               });
+              GetIt.I<ActivityService>().logActivity('outfit_generated');
               _firestoreSubscription?.cancel();
             }
             return;
@@ -156,6 +161,7 @@ class _OutfitSuggestionResultScreenState
                     _generatedImageUrl = url;
                     _isGenerating = false;
                   });
+                  GetIt.I<ActivityService>().logActivity('outfit_generated');
                   _firestoreSubscription?.cancel();
                 }
               } else {
@@ -354,16 +360,22 @@ class _OutfitSuggestionResultScreenState
     }
 
     if (_generatedImageUrl != null) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(20.r),
-        child: CachedNetworkImage(
-          imageUrl: _generatedImageUrl!,
-          height: 400.h,
-          width: double.infinity,
-          fit: BoxFit.cover,
-          placeholder: (context, url) => Container(
+      return GestureDetector(
+        onTap: () {
+          context.router
+              .push(FullScreenImageScreenRoute(imageUrl: _generatedImageUrl!));
+        },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.r),
+          child: CachedNetworkImage(
+            imageUrl: _generatedImageUrl!,
             height: 400.h,
-            color: colorScheme.surfaceContainerHighest,
+            width: double.infinity,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(
+              height: 400.h,
+              color: colorScheme.surfaceContainerHighest,
+            ),
           ),
         ),
       );
@@ -415,13 +427,19 @@ class _OutfitSuggestionResultScreenState
   Widget _buildModelPreview() {
     return Row(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12.r),
-          child: CachedNetworkImage(
-            imageUrl: _selectedModel.imageUrl,
-            width: 60.w,
-            height: 60.w,
-            fit: BoxFit.cover,
+        GestureDetector(
+          onTap: () {
+            context.router.push(
+                FullScreenImageScreenRoute(imageUrl: _selectedModel.imageUrl));
+          },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12.r),
+            child: CachedNetworkImage(
+              imageUrl: _selectedModel.imageUrl,
+              width: 60.w,
+              height: 60.w,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         SizedBox(width: 12.w),
@@ -442,17 +460,23 @@ class _OutfitSuggestionResultScreenState
         separatorBuilder: (_, __) => SizedBox(width: 8.w),
         itemBuilder: (context, index) {
           final item = _selectedClosetItems[index];
-          return Container(
-            width: 70.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: Colors.grey.withOpacity(0.2)),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12.r),
-              child: CachedNetworkImage(
-                imageUrl: item.imageUrl,
-                fit: BoxFit.cover,
+          return GestureDetector(
+            onTap: () {
+              context.router
+                  .push(FullScreenImageScreenRoute(imageUrl: item.imageUrl));
+            },
+            child: Container(
+              width: 70.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: CachedNetworkImage(
+                  imageUrl: item.imageUrl,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           );

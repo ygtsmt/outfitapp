@@ -51,6 +51,8 @@ class FirebaseUserModel {
   @JsonKey(name: 'user_uploaded_files')
   final List<String>? userUploadedFiles;
 
+  final int? level;
+
   const FirebaseUserModel({
     required this.uid,
     this.displayName,
@@ -69,6 +71,7 @@ class FirebaseUserModel {
     this.platform,
     this.metadata,
     this.userUploadedFiles,
+    this.level,
   });
 
   factory FirebaseUserModel.fromJson(Map<String, dynamic> json) =>
@@ -100,6 +103,7 @@ class FirebaseUserModel {
         'lastSignInTime': user.metadata.lastSignInTime?.toIso8601String(),
       },
       'user_uploaded_files': [], // Yeni hesap için boş liste
+      'level': 1,
     };
   }
 }

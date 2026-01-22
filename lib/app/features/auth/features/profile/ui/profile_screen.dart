@@ -39,14 +39,11 @@ class ProfileScreen extends StatelessWidget {
             },
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 32),
+                padding: EdgeInsets.only(bottom: 8.h),
                 child: AdaptiveBuilder(
                   layoutDelegate: AdaptiveLayoutDelegateWithMinimallScreenType(
                     handset: (final BuildContext context, final Screen screen) {
-                      return const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: ProfileInfoScreen(),
-                      );
+                      return ProfileInfoScreen();
                     },
                     tablet: (final BuildContext context, final Screen screen) {
                       return const Row(

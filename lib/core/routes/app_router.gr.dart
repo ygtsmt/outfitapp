@@ -388,6 +388,16 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    FullScreenImageScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<FullScreenImageScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: FullScreenImageScreen(imageUrl: args.imageUrl),
+        transitionsBuilder: TransitionsBuilders.zoomIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -685,6 +695,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           OutfitSuggestionResultScreenRoute.name,
           path: '/outfit-suggestion-result-screen',
+        ),
+        RouteConfig(
+          FullScreenImageScreenRoute.name,
+          path: '/full-screen-image-screen',
         ),
       ];
 }
@@ -1504,6 +1518,31 @@ class OutfitSuggestionResultScreenRouteArgs {
   @override
   String toString() {
     return 'OutfitSuggestionResultScreenRouteArgs{key: $key, suggestion: $suggestion, weather: $weather}';
+  }
+}
+
+/// generated route for
+/// [FullScreenImageScreen]
+class FullScreenImageScreenRoute
+    extends PageRouteInfo<FullScreenImageScreenRouteArgs> {
+  FullScreenImageScreenRoute({required String imageUrl})
+      : super(
+          FullScreenImageScreenRoute.name,
+          path: '/full-screen-image-screen',
+          args: FullScreenImageScreenRouteArgs(imageUrl: imageUrl),
+        );
+
+  static const String name = 'FullScreenImageScreenRoute';
+}
+
+class FullScreenImageScreenRouteArgs {
+  const FullScreenImageScreenRouteArgs({required this.imageUrl});
+
+  final String imageUrl;
+
+  @override
+  String toString() {
+    return 'FullScreenImageScreenRouteArgs{imageUrl: $imageUrl}';
   }
 }
 

@@ -9,8 +9,10 @@ import 'package:comby/app/features/auth/features/profile/ui/widgets/style_dna_wi
 import 'package:comby/app/features/auth/features/profile/ui/widgets/activity_heatmap_widget.dart';
 import 'package:comby/app/features/auth/features/profile/ui/widgets/settings_button.dart';
 import 'package:comby/app/features/closet/ui/widgets/wardrobe_analytics_widget.dart';
+import 'package:comby/app/features/auth/features/profile/services/style_dna_service.dart';
 import 'package:comby/app/ui/widgets/personal_info_card_widget.dart';
 import 'package:comby/app/ui/widgets/profile_security_card_widget.dart';
+import 'package:comby/app/features/auth/features/profile/services/activity_service.dart';
 import 'package:comby/app/ui/widgets/custom_gradient_button.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/utils.dart';
@@ -28,6 +30,25 @@ class ProfileInfoScreen extends StatefulWidget {
 class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
+  // Style DNA Data
+  Map<String, int> _styleScores = {
+    'Casual': 0,
+    'Classic': 0,
+    'Sporty': 0,
+    'Vintage': 0,
+    'Minimal': 0,
+  };
+  String _styleAnalysis = "Analiz ediliyor...";
+  String _styleTitle = "Yükleniyor...";
+  bool _isStyleLoading = true;
+
+  // Activity Data
+  int _streak = 0;
+  int _outfitCount = 0;
+  int _fitCheckCount = 0;
+  Map<DateTime, int> _heatmapData = {};
+  bool _isActivityLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -35,8 +56,53 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
       final currentUser = auth.currentUser;
       if (currentUser != null) {
         getIt<ProfileBloc>().add(FetchProfileInfoEvent(currentUser.uid));
+        _loadStyleDNA();
+        _loadActivityStats();
       }
     });
+  }
+
+  Future<void> _loadStyleDNA() async {
+    try {
+      final result = await getIt<StyleDNAService>().analyzeStyle();
+      if (mounted) {
+        setState(() {
+          _styleScores = result['scores'] as Map<String, int>;
+          _styleAnalysis = result['analysis'] as String;
+          _styleTitle = result['title'] as String;
+          _isStyleLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _styleAnalysis = "Analiz yüklenemedi.";
+          _styleTitle = "Stil Kaşifi";
+          _isStyleLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _loadActivityStats() async {
+    final activityService = GetIt.I<ActivityService>();
+    try {
+      final streak = await activityService.getCurrentStreak();
+      final stats = await activityService.getUserStats();
+      final heatmap = await activityService.getHeatmapData();
+
+      if (mounted) {
+        setState(() {
+          _streak = streak;
+          _outfitCount = stats['outfit'] ?? 0;
+          _fitCheckCount = stats['fit_check'] ?? 0;
+          _heatmapData = heatmap;
+          _isActivityLoading = false;
+        });
+      }
+    } catch (e) {
+      print("Error loading activity stats: $e");
+    }
   }
 
   @override
@@ -74,11 +140,17 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                     uid: profileState.profileInfo?.uid ??
                         FirebaseAuth.instance.currentUser?.uid ??
                         "",
+                    styleTitle: _styleTitle,
+                    level: 1,
                   ),
                   SizedBox(height: 8.h),
 
                   // 2. Style DNA (Radar Chart + Colors)
-                  const StyleDNAWidget(),
+                  StyleDNAWidget(
+                    styleScores: _styleScores,
+                    analysis: _styleAnalysis,
+                    isLoading: _isStyleLoading,
+                  ),
                   SizedBox(height: 8.h),
 
                   // 3. Wardrobe Analytics (Value, Sustainability, Categories)
@@ -86,7 +158,13 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                   SizedBox(height: 8.h),
 
                   // 4. Activity Heatmap
-                  const ActivityHeatmapWidget(),
+                  ActivityHeatmapWidget(
+                    streak: _streak,
+                    outfitCount: _outfitCount,
+                    fitCheckCount: _fitCheckCount,
+                    heatmapData: _heatmapData,
+                    isLoading: _isActivityLoading,
+                  ),
                   SizedBox(height: 8.h),
 
                   // 5. Settings Button (To open Settings Screen)

@@ -31,6 +31,7 @@ class UserProfile {
       userUsedPremiumTemplate; // Kullanıcı premium template kullandı mı? (false = kullanabilir, true = kullandı, abonelik/kredi alana kadar kullanamaz)
   final bool?
       isDebug; // Debug hesabı mı? (true = debug, false/null = production)
+  final int? level;
 
   UserProfile(
       {this.displayName,
@@ -58,7 +59,8 @@ class UserProfile {
       this.userUploadedFiles,
       this.isCanWatchAds,
       this.userUsedPremiumTemplate,
-      this.isDebug});
+      this.isDebug,
+      this.level});
 
   // JSON'dan model oluşturma
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -95,6 +97,7 @@ class UserProfile {
       userUsedPremiumTemplate:
           json['profile_info']?['user_used_premium_template'] ?? false,
       isDebug: json['profile_info']?['is_debug'] ?? false,
+      level: json['profile_info']?['level'] ?? 1,
     );
   }
 }

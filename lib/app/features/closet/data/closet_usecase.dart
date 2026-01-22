@@ -8,6 +8,8 @@ import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/core/core.dart';
 import 'package:injectable/injectable.dart';
+import 'package:get_it/get_it.dart';
+import 'package:comby/app/features/closet/services/closet_analysis_service.dart';
 
 @injectable
 class ClosetUseCase {
@@ -212,6 +214,15 @@ class ClosetUseCase {
           .set(item.toMap());
 
       log('Closet item added successfully');
+
+      // Update aggregated stats
+      try {
+        GetIt.I<WardrobeAnalysisService>()
+            .updateAggregatedStats(userId, item, isAdd: true);
+      } catch (e) {
+        log('Error updating stats on add: $e');
+      }
+
       return EventStatus.success;
     } catch (e) {
       log('addClosetItem error: $e');
@@ -232,6 +243,14 @@ class ClosetUseCase {
           .update(item.toMap());
 
       log('Closet item updated successfully');
+
+      // Recalculate stats fully on update (since we don't know old values to decrement)
+      try {
+        GetIt.I<WardrobeAnalysisService>().recalculateAndSaveStats(userId);
+      } catch (e) {
+        log('Error updating stats on update: $e');
+      }
+
       return EventStatus.success;
     } catch (e) {
       log('updateClosetItem error: $e');

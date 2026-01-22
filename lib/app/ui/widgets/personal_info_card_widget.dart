@@ -27,42 +27,6 @@ class PersonalInfoCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 4.w,
-                    height: 24.h,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          context.baseColor,
-                          context.baseColor.withOpacity(0.7),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(2.r),
-                    ),
-                    margin: EdgeInsets.only(right: 8.w),
-                  ),
-                  Icon(
-                    Icons.person_outline,
-                    color: context.baseColor,
-                    size: 20.h,
-                  ),
-                  SizedBox(width: 8.w),
-                  Text(
-                    AppLocalizations.of(context).personalInformation,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black87,
-                        ),
-                  ),
-                ],
-              ),
-              Divider(
-                color: Colors.grey[200],
-              ),
-              LayoutConstants.tinyEmptyHeight,
-
               // Info Tiles
               Container(
                 decoration: BoxDecoration(
@@ -97,6 +61,57 @@ class PersonalInfoCard extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildMenuTile(BuildContext context,
+      {required IconData icon,
+      required String title,
+      String? subtitle,
+      VoidCallback? onTap}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ListTile(
+        onTap: onTap,
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+        leading: Container(
+          padding: EdgeInsets.all(8.w),
+          decoration: BoxDecoration(
+            color: Colors.grey[50],
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          child: Icon(icon, color: Colors.grey[700], size: 22.sp),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        subtitle: subtitle != null
+            ? Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Colors.grey[500],
+                ),
+              )
+            : null,
+        trailing:
+            Icon(Icons.arrow_forward_ios, size: 14.sp, color: Colors.grey[300]),
+      ),
     );
   }
 

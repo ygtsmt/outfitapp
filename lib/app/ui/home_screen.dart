@@ -140,7 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         key: _scaffoldKey,
                         drawer: CustomDrawer(state: state),
                         // Update indices: Closet is now 1, Try-On is now 2 (in router)
-                        appBar: (tabsRouter.activeIndex == 2)
+                        appBar: (tabsRouter.activeIndex == 2 ||
+                                tabsRouter.activeIndex == 3 ||
+                                tabsRouter.activeIndex == 1)
                             ? null
                             : AppBar(
                                 forceMaterialTransparency: true,

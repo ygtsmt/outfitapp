@@ -559,26 +559,19 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         margin: EdgeInsets.all(16.h),
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24.r), // Daha yumuşak köşeler
           gradient: LinearGradient(
-            colors: [
-              context.baseColor.withBlue(100),
-              context.baseColor.withBlue(200),
-            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
+            colors: [Colors.deepPurple.shade600, Colors.deepPurple.shade900],
           ),
+          borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF4E6AFF).withOpacity(0.2),
+              color: _getGradientColors().first.withOpacity(0.9),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
           ],
-          border: Border.all(
-            color: Colors.white.withOpacity(0.05),
-            width: 1,
-          ),
         ),
         child: Padding(
             padding: EdgeInsets.all(16.w),
@@ -638,17 +631,17 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                     width: 56.w,
                     height: 56.w,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF4E6AFF), Color(0xFF7C3AED)],
+                      gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
+                        colors: _getGradientColors(),
                       ),
+                      borderRadius: BorderRadius.circular(20.r),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF4E6AFF).withOpacity(0.4),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
+                          color: _getGradientColors().first.withOpacity(0.4),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
                         ),
                       ],
                     ),

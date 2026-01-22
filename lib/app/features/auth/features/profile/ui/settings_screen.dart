@@ -134,7 +134,7 @@ class SettingsScreen extends StatelessWidget {
       required String title,
       String? subtitle,
       VoidCallback? onTap}) {
-    return Container(
+     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),

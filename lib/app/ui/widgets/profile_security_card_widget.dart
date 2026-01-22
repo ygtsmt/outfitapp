@@ -31,40 +31,6 @@ class ProfileSecurityCardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          Row(
-            spacing: 8.h,
-            children: [
-              Container(
-                width: 4.w,
-                height: 24.h,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      context.baseColor,
-                      context.baseColor.withOpacity(0.7),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
-              ),
-              Icon(
-                Icons.security_outlined,
-                color: context.baseColor,
-                size: 20.h,
-              ),
-              Text(
-                AppLocalizations.of(context).accountInformation,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-              ),
-            ],
-          ),
-          Divider(
-            color: Colors.grey[200],
-          ),
-          LayoutConstants.tinyEmptyHeight,
 
           // Password Info
           Container(

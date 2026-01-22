@@ -238,12 +238,15 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
                   height: 24.w,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
-                    children: [
-                      _buildColorDot(Colors.black),
-                      _buildColorDot(Colors.white, border: true),
-                      _buildColorDot(Colors.blueGrey),
-                      _buildColorDot(const Color(0xFFE0C097)), // Beige
-                    ],
+                    children: topColors.map((e) {
+                      final colorName = e.key;
+                      // Logic to determine if border is needed (e.g. for white)
+                      final isWhite = colorName.toLowerCase() == 'white';
+                      return _buildColorDot(
+                        _getColorFromName(colorName),
+                        border: isWhite,
+                      );
+                    }).toList(),
                   ),
                 ),
               ),

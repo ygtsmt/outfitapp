@@ -7,6 +7,8 @@ import 'package:comby/core/core.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:comby/app/features/fit_check/models/fit_check_model.dart';
 import 'package:injectable/injectable.dart';
+import 'package:get_it/get_it.dart';
+import 'package:comby/app/features/auth/features/profile/services/activity_service.dart';
 
 @injectable
 class FitCheckService {
@@ -105,6 +107,13 @@ class FitCheckService {
           .collection('fit_checks')
           .doc(log.id)
           .set(log.toMap());
+
+      // Log activity
+      try {
+        GetIt.I<ActivityService>().logActivity('fit_check_completed');
+      } catch (e) {
+        // Ignore activity log error
+      }
     } catch (e) {
       throw Exception('Failed to save fit check: $e');
     }

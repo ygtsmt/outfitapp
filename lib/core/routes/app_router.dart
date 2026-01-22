@@ -15,6 +15,7 @@ import "package:comby/app/features/auth/features/login/ui/login_screen.dart";
 import "package:comby/app/features/dashboard/data/models/weather_model.dart";
 import "package:comby/app/features/dashboard/ui/screens/all_tools_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/dashboard_screen.dart";
+import "package:comby/app/features/dashboard/ui/screens/full_screen_image_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/outfit_suggestion_result_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/user_summary_screen.dart";
 import "package:comby/app/features/fit_check/models/fit_check_model.dart";
@@ -289,6 +290,12 @@ part "app_router.gr.dart";
       page: OutfitSuggestionResultScreen,
       path: "/outfit-suggestion-result-screen",
       transitionsBuilder: TransitionsBuilders.slideLeft,
+    ),
+
+    CustomRoute(
+      page: FullScreenImageScreen,
+      path: "/full-screen-image-screen",
+      transitionsBuilder: TransitionsBuilders.zoomIn,
     ),
   ],
 )

@@ -71,7 +71,7 @@ class DashboardScreen extends StatelessWidget {
           const FitCheckCard(),
 
           // Closet Analytics
-          const WardrobeAnalyticsWidget(),
+          //  const WardrobeAnalyticsWidget(),
         ],
       ),
     );

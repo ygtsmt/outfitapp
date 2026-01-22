@@ -109,6 +109,7 @@ class CreateAccountUseCase {
       'user_used_premium_template':
           false, // Premium template kullanma hakkı var
       'is_debug': kDebugMode, // Debug mode'da oluşturulan hesaplar işaretlensin
+      'level': 1,
     };
 
     await userDoc.set({'profile_info': profileInfo}, SetOptions(merge: true));

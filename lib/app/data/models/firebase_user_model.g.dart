@@ -28,6 +28,7 @@ FirebaseUserModel _$FirebaseUserModelFromJson(Map<String, dynamic> json) =>
       userUploadedFiles: (json['user_uploaded_files'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      level: (json['level'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$FirebaseUserModelToJson(FirebaseUserModel instance) =>
@@ -50,4 +51,5 @@ Map<String, dynamic> _$FirebaseUserModelToJson(FirebaseUserModel instance) =>
       'platform': instance.platform,
       'metadata': instance.metadata,
       'user_uploaded_files': instance.userUploadedFiles,
+      'level': instance.level,
     };
