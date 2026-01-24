@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:before_after/before_after.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comby/core/asset_paths.dart';
+import 'package:comby/core/constants/layout_constants.dart';
 import 'package:comby/core/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,69 +55,65 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
             children: [
               _buildDetailsSection(context, prompt, createdAt, status,
                   widget.imageData['sourceId'] as int?),
-              SizedBox(height: 24.h),
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDetailsSection(context, prompt, createdAt, status,
-                widget.imageData['sourceId'] as int?),
-            SizedBox(height: 24.h),
+              LayoutConstants.centralEmptyHeight,
 
-            // Before/After Slider Container
-            Container(
-              height: 500.h,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24.r),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 30,
-                    offset: Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24.r),
-                child: Stack(
-                  children: [
-                    _buildBeforeAfterSlider(beforeImageUrl, imageUrl),
-                    if (imageUrl != null)
-                      Positioned(
-                        top: 12.h,
-                        right: 12.w,
-                        child: GestureDetector(
-                          onTap: () =>
-                              _openFullscreenViewer(context, imageUrl),
-                          child: Container(
-                            padding: EdgeInsets.all(8.w),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 8,
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.fullscreen,
-                              color: Colors.black87,
-                              size: 24.sp,
+              // Before/After Slider Container
+              Container(
+                height: 400.h,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 30,
+                      offset: Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24.r),
+                  child: Stack(
+                    children: [
+                      _buildBeforeAfterSlider(beforeImageUrl, imageUrl),
+                      if (imageUrl != null)
+                        Positioned(
+                          top: 12.h,
+                          right: 12.w,
+                          child: GestureDetector(
+                            onTap: () =>
+                                _openFullscreenViewer(context, imageUrl),
+                            child: Container(
+                              padding: EdgeInsets.all(8.w),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.9),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 8,
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                Icons.fullscreen,
+                                color: Colors.black87,
+                                size: 24.sp,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            if (usedClosetItems != null && usedClosetItems.isNotEmpty)
-              _buildUsedItemsSection(context, usedClosetItems),
+              if (usedClosetItems != null && usedClosetItems.isNotEmpty)
+                _buildUsedItemsSection(context, usedClosetItems),
 
-            SizedBox(height: 50.h),
-          ],
+              SizedBox(height: 50.h),
+            ],
+          ),
         ),
       ),
     );
@@ -201,7 +198,7 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
 
   Widget _buildUsedItemsSection(BuildContext context, List<dynamic> items) {
     return Container(
-      margin: EdgeInsets.only(top: 32.h),
+      margin: EdgeInsets.only(top: 8.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
