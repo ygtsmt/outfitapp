@@ -24,6 +24,7 @@ class ProfileHeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Text("Profile Header"),
         Row(
           spacing: 8.w,
           children: [

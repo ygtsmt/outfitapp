@@ -7,12 +7,16 @@ class StyleDNAWidget extends StatefulWidget {
   final Map<String, int> styleScores;
   final String analysis;
   final bool isLoading;
+  final VoidCallback? onRefresh;
+  final DateTime? lastUpdated;
 
   const StyleDNAWidget({
     super.key,
     required this.styleScores,
     required this.analysis,
     this.isLoading = false,
+    this.onRefresh,
+    this.lastUpdated,
   });
 
   @override
@@ -49,13 +53,29 @@ class _StyleDNAWidgetState extends State<StyleDNAWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Stil DNA'sı",
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "Stil DNA'sı",
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          if (widget.onRefresh != null)
+                            GestureDetector(
+                              onTap: widget.isLoading ? null : widget.onRefresh,
+                              child: Icon(
+                                Icons.refresh,
+                                size: 20.sp,
+                                color: widget.isLoading
+                                    ? Colors.grey[400]
+                                    : context.baseColor,
+                              ),
+                            ),
+                        ],
                       ),
                       SizedBox(height: 8.h),
                       Text(
@@ -96,7 +116,15 @@ class _StyleDNAWidgetState extends State<StyleDNAWidget> {
                           fontWeight: FontWeight.bold,
                           color: Colors.grey[400],
                         ),
-                      )
+                      ),
+                      if (widget.lastUpdated != null)
+                        Text(
+                          _formatLastUpdated(widget.lastUpdated!),
+                          style: TextStyle(
+                            fontSize: 9.sp,
+                            color: Colors.grey[400],
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -156,5 +184,30 @@ class _StyleDNAWidgetState extends State<StyleDNAWidget> {
         ],
       ),
     );
+  }
+
+  String _formatLastUpdated(DateTime lastUpdated) {
+    final now = DateTime.now();
+    final difference = now.difference(lastUpdated);
+
+    if (difference.inDays == 0) {
+      if (difference.inHours == 0) {
+        if (difference.inMinutes == 0) {
+          return 'Şimdi güncellendi';
+        }
+        return '${difference.inMinutes} dakika önce';
+      }
+      return 'Bugün güncellendi';
+    } else if (difference.inDays == 1) {
+      return 'Dün güncellendi';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} gün önce';
+    } else if (difference.inDays < 30) {
+      final weeks = (difference.inDays / 7).floor();
+      return '$weeks hafta önce';
+    } else {
+      final months = (difference.inDays / 30).floor();
+      return '$months ay önce';
+    }
   }
 }

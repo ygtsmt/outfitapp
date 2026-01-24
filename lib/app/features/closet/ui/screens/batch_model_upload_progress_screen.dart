@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
+import 'package:comby/core/constants/layout_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
@@ -189,18 +190,21 @@ class _BatchModelUploadProgressScreenState
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: const Text('Modeller İşleniyor'),
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-      ),
       body: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(24.w),
+            padding: EdgeInsets.all(16.h),
             child: Column(
               children: [
-                SizedBox(height: 24.h),
+                Text(
+                  'Modeller İşleniyor',
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                LayoutConstants.highEmptyHeight,
 
                 // Current Photo Preview with Counter
                 if (_currentIndex < widget.imageFiles.length)
@@ -346,6 +350,34 @@ class _BatchModelUploadProgressScreenState
                 ),
 
                 SizedBox(height: 32.h),
+
+                // Manual Navigation Button (Fallback)
+                if (!_isProcessing)
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 24.h),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 56.h,
+                      child: ElevatedButton(
+                        onPressed: _navigateToResult,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.baseColor,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        child: Text(
+                          'Sonuçları Gör',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

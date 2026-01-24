@@ -34,7 +34,10 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
 
   // Helper to map color names to Flutter Colors
   Color _getColorFromName(String name) {
-    switch (name.toLowerCase()) {
+    final lowerName = name.toLowerCase();
+
+    // Exact matches first
+    switch (lowerName) {
       case 'black':
         return Colors.black;
       case 'white':
@@ -44,24 +47,59 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
         return Colors.grey;
       case 'blue':
         return Colors.blue;
+      case 'dark blue':
+      case 'navy':
+      case 'navy blue':
+        return Colors.blue.shade900;
+      case 'light blue':
+      case 'sky blue':
+        return Colors.blue.shade300;
       case 'red':
         return Colors.red;
+      case 'dark red':
+      case 'maroon':
+        return Colors.red.shade900;
+      case 'light red':
+      case 'pink':
+        return Colors.pink;
       case 'green':
         return Colors.green;
+      case 'dark green':
+        return Colors.green.shade900;
+      case 'light green':
+        return Colors.green.shade300;
       case 'yellow':
         return Colors.yellow;
       case 'purple':
         return Colors.purple;
+      case 'dark purple':
+        return Colors.purple.shade900;
+      case 'light purple':
+      case 'lavender':
+        return Colors.purple.shade300;
       case 'orange':
         return Colors.orange;
-      case 'pink':
-        return Colors.pink;
       case 'brown':
         return Colors.brown;
       case 'beige':
+      case 'cream':
         return Color(0xFFF5F5DC);
       default:
-        return Colors.teal; // Fallback
+        // Smart fallback: if name contains a base color, use that
+        if (lowerName.contains('blue')) return Colors.blue;
+        if (lowerName.contains('red')) return Colors.red;
+        if (lowerName.contains('green')) return Colors.green;
+        if (lowerName.contains('yellow')) return Colors.yellow;
+        if (lowerName.contains('purple')) return Colors.purple;
+        if (lowerName.contains('orange')) return Colors.orange;
+        if (lowerName.contains('pink')) return Colors.pink;
+        if (lowerName.contains('brown')) return Colors.brown;
+        if (lowerName.contains('grey') || lowerName.contains('gray'))
+          return Colors.grey;
+        if (lowerName.contains('black')) return Colors.black;
+        if (lowerName.contains('white')) return Colors.grey.shade200;
+
+        return Colors.teal; // Final fallback
     }
   }
 

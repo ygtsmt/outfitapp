@@ -45,60 +45,16 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Container(
-            padding: EdgeInsets.all(8.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
-                  blurRadius: 12,
-                ),
-              ],
-            ),
-            child: Icon(
-              Icons.arrow_back_ios_new,
-              color: Colors.grey[800],
-              size: 18.sp,
-            ),
-          ),
-          onPressed: () => context.router.pop(),
-        ),
-        actions: [
-          if (imageUrl != null)
-            IconButton(
-              icon: Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 12,
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.fullscreen,
-                  color: Theme.of(context).primaryColor,
-                  size: 20.sp,
-                ),
-              ),
-              onPressed: () => _openFullscreenViewer(context, imageUrl),
-            ),
-          SizedBox(width: 16.w),
-        ],
-      ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: Column(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDetailsSection(context, prompt, createdAt, status,
+                  widget.imageData['sourceId'] as int?),
+              SizedBox(height: 24.h),
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildDetailsSection(context, prompt, createdAt, status,
@@ -121,7 +77,38 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24.r),
-                child: _buildBeforeAfterSlider(beforeImageUrl, imageUrl),
+                child: Stack(
+                  children: [
+                    _buildBeforeAfterSlider(beforeImageUrl, imageUrl),
+                    if (imageUrl != null)
+                      Positioned(
+                        top: 12.h,
+                        right: 12.w,
+                        child: GestureDetector(
+                          onTap: () =>
+                              _openFullscreenViewer(context, imageUrl),
+                          child: Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 8,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.fullscreen,
+                              color: Colors.black87,
+                              size: 24.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
 
@@ -275,20 +262,22 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
 
   Widget _buildDetailsSection(BuildContext context, String prompt,
       DateTime? createdAt, String status, int? sourceId) {
-    String title = 'AI Combine';
+    const title = 'Kombin Detayı';
+    String subtitle = 'AI Kombin';
+
     if (sourceId != null) {
       switch (sourceId) {
         case 1:
-          title = 'Try-On Combine';
+          subtitle = 'Try-On Modu';
           break;
         case 2:
-          title = 'Quick Try-On';
+          subtitle = 'Hızlı Try-On';
           break;
         case 3:
-          title = 'Weather Combine';
+          subtitle = 'Hava Durumu Önerisi';
           break;
         case 4:
-          title = 'Weather (Regenerated)';
+          subtitle = 'Hava Durumu (Yenilenmiş)';
           break;
       }
     }
@@ -296,103 +285,99 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 20.h),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 32.sp,
-            fontWeight: FontWeight.w300,
-            color: Colors.grey[900],
-            letterSpacing: 1.2,
-          ),
-        ),
-        if (createdAt != null) ...[
-          SizedBox(height: 8.h),
-          Text(
-            DateFormat('dd MMM yyyy, HH:mm').format(createdAt),
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).primaryColor,
-              letterSpacing: 1.5,
+        SizedBox(height: 12.h),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Back Button
+            GestureDetector(
+              onTap: () => context.router.pop(),
+              child: Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.black87,
+                  size: 20.sp,
+                ),
+              ),
             ),
-          ),
-        ],
-        SizedBox(height: 24.h),
-        Container(
-          width: 50.w,
-          height: 2,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Theme.of(context).primaryColor.withOpacity(0.5),
-                Theme.of(context).primaryColor.withOpacity(0.1),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(1),
-          ),
-        ),
-        SizedBox(height: 24.h),
-        if (prompt.isNotEmpty) ...[
-          Text(
-            'PROMPT',
-            style: TextStyle(
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[400],
-              letterSpacing: 1.5,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            prompt,
-            style: TextStyle(
-              fontSize: 15.sp,
-              height: 1.5,
-              fontWeight: FontWeight.w400,
-              color: Colors.grey[800],
-            ),
-          ),
-        ],
-        SizedBox(height: 24.h),
-        _buildAIBadge(context),
-      ],
-    );
-  }
+            SizedBox(width: 16.w),
 
-  Widget _buildAIBadge(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.grey[100]!,
-            Colors.grey[50]!,
+            // Title and Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 22.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[900],
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      if (createdAt != null)
+                        Text(
+                          DateFormat('d MMM, HH:mm').format(createdAt),
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  Row(
+                    children: [
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Container(
+                        width: 4.w,
+                        height: 4.w,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Icon(
+                        Icons.auto_awesome,
+                        size: 14.sp,
+                        color: Colors.amber,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Gemini 3',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.auto_awesome,
-            size: 14.sp,
-            color: Theme.of(context).primaryColor,
-          ),
-          SizedBox(width: 8.w),
-          Text(
-            'Gemini 3 ile üretildi',
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey[600],
-              letterSpacing: 0.3,
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 

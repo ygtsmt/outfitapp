@@ -24,6 +24,8 @@ class ActivityService {
     // 1. Log Daily Activity (for Heatmap)
     final dailyDocRef = _getUserActivityCol(uid).doc(dateKey);
 
+    int newTotalCount = 0;
+
     try {
       await _firestore.runTransaction((transaction) async {
         final snapshot = await transaction.get(dailyDocRef);
@@ -35,14 +37,17 @@ class ActivityService {
             type: 1,
             'total_count': 1,
           });
+          newTotalCount = 1;
         } else {
           final data = snapshot.data() ?? {};
           final currentTypeCount = (data[type] as int?) ?? 0;
           final currentTotal = (data['total_count'] as int?) ?? 0;
 
+          newTotalCount = currentTotal + 1;
+
           transaction.update(dailyDocRef, {
             type: currentTypeCount + 1,
-            'total_count': currentTotal + 1,
+            'total_count': newTotalCount,
             'date': Timestamp.fromDate(today),
           });
         }
@@ -53,6 +58,9 @@ class ActivityService {
 
       // 3. Update Streak (Optimized)
       await _updateStreak(uid, todayNormalized);
+
+      // 4. Update Heatmap Cache
+      await _updateHeatmapCache(uid, todayNormalized, newTotalCount);
     } catch (e) {
       print("Error logging activity: $e");
     }
@@ -132,19 +140,87 @@ class ActivityService {
   }
 
   /// Fetches activity for the heatmap (last N days)
+  /// Uses cached aggregated data for performance (1 read instead of ~30)
   Future<Map<DateTime, int>> getHeatmapData({int days = 30}) async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return {};
 
-    final now = DateTime.now();
-    final startDate = now.subtract(Duration(days: days));
-
     try {
+      // 1. Try cache first
+      final cacheDoc = await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('stats')
+          .doc('heatmap')
+          .get();
+
+      if (cacheDoc.exists && cacheDoc.data() != null) {
+        final data = cacheDoc.data()!;
+        final last30Days = data['last_30_days'] as Map<String, dynamic>?;
+
+        if (last30Days != null) {
+          Map<DateTime, int> heatmap = {};
+          last30Days.forEach((key, value) {
+            final parts = key.split('-');
+            if (parts.length == 3) {
+              try {
+                final date = DateTime(
+                  int.parse(parts[0]),
+                  int.parse(parts[1]),
+                  int.parse(parts[2]),
+                );
+                heatmap[date] = value as int;
+              } catch (e) {
+                print("Error parsing date key $key: $e");
+              }
+            }
+          });
+          return heatmap;
+        }
+      }
+
+      // 2. Fallback: Build cache from activity collection
+      return await _buildHeatmapCache(uid, days);
+    } catch (e) {
+      print("Error fetching heatmap data: $e");
+      return {};
+    }
+  }
+
+  /// Updates the heatmap cache with today's activity count
+  Future<void> _updateHeatmapCache(
+      String uid, DateTime date, int totalCount) async {
+    try {
+      final heatmapRef = _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('stats')
+          .doc('heatmap');
+
+      final dateKey =
+          "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+
+      await heatmapRef.set({
+        'last_30_days.$dateKey': totalCount,
+        'last_updated': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print("Error updating heatmap cache: $e");
+    }
+  }
+
+  /// Builds heatmap cache from activity collection (fallback)
+  Future<Map<DateTime, int>> _buildHeatmapCache(String uid, int days) async {
+    try {
+      final now = DateTime.now();
+      final startDate = now.subtract(Duration(days: days));
+
       final snapshot = await _getUserActivityCol(uid)
           .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
           .get();
 
       Map<DateTime, int> heatmap = {};
+      Map<String, int> cacheData = {};
 
       for (var doc in snapshot.docs) {
         final data = doc.data();
@@ -155,11 +231,27 @@ class ActivityService {
           final date = timestamp.toDate();
           final normalizedDate = DateTime(date.year, date.month, date.day);
           heatmap[normalizedDate] = total;
+
+          final dateKey =
+              "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+          cacheData[dateKey] = total;
         }
       }
+
+      // Save to cache for future use
+      await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('stats')
+          .doc('heatmap')
+          .set({
+        'last_30_days': cacheData,
+        'last_updated': FieldValue.serverTimestamp(),
+      });
+
       return heatmap;
     } catch (e) {
-      print("Error fetching heatmap data: $e");
+      print("Error building heatmap cache: $e");
       return {};
     }
   }

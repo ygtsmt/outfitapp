@@ -41,6 +41,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
   String _styleAnalysis = "Analiz ediliyor...";
   String _styleTitle = "Yükleniyor...";
   bool _isStyleLoading = true;
+  DateTime? _styleLastUpdated;
 
   // Activity Data
   int _streak = 0;
@@ -70,16 +71,70 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
           _styleScores = result['scores'] as Map<String, int>;
           _styleAnalysis = result['analysis'] as String;
           _styleTitle = result['title'] as String;
+          _styleLastUpdated = result['last_updated'] as DateTime?;
           _isStyleLoading = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _styleAnalysis = "Analiz yüklenemedi.";
+          _styleAnalysis =
+              "Analiz yüklenemedi. Lütfen internet bağlantınızı kontrol edin.";
           _styleTitle = "Stil Kaşifi";
           _isStyleLoading = false;
         });
+      }
+    }
+  }
+
+  Future<void> _refreshStyleDNA() async {
+    setState(() {
+      _isStyleLoading = true;
+    });
+
+    try {
+      final result =
+          await getIt<StyleDNAService>().analyzeStyle(forceRefresh: true);
+      if (mounted) {
+        setState(() {
+          _styleScores = result['scores'] as Map<String, int>;
+          _styleAnalysis = result['analysis'] as String;
+          _styleTitle = result['title'] as String;
+          _styleLastUpdated = DateTime.now();
+          _isStyleLoading = false;
+        });
+
+        // Show success feedback
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Stil analizi güncellendi!'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _styleAnalysis =
+              "Analiz yüklenemedi. Lütfen internet bağlantınızı kontrol edin.";
+          _styleTitle = "Stil Kaşifi";
+          _isStyleLoading = false;
+        });
+
+        // Show error feedback
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Stil analizi yüklenemedi. Tekrar deneyin.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+            action: SnackBarAction(
+              label: 'Tekrar Dene',
+              textColor: Colors.white,
+              onPressed: _refreshStyleDNA,
+            ),
+          ),
+        );
       }
     }
   }
@@ -89,7 +144,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
     try {
       final streak = await activityService.getCurrentStreak();
       final stats = await activityService.getUserStats();
-      final heatmap = await activityService.getHeatmapData();
+      final heatmap = await activityService.getHeatmapData(days: 14);
 
       if (mounted) {
         setState(() {
@@ -150,6 +205,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                     styleScores: _styleScores,
                     analysis: _styleAnalysis,
                     isLoading: _isStyleLoading,
+                    onRefresh: _refreshStyleDNA,
+                    lastUpdated: _styleLastUpdated,
                   ),
                   SizedBox(height: 8.h),
 

@@ -1,28 +1,16 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
-import 'dart:io';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/bloc/app_bloc.dart';
-import 'package:comby/app/core/services/revenue_cat_service.dart';
 import 'package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:comby/app/features/auth/features/profile/data/profile_usecase.dart';
 import 'package:comby/app/ui/widgets/language_dropdown.dart';
 import 'package:comby/core/constants/layout_constants.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/generated/l10n.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/foundation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:comby/core/data_sources/local_data_source/secure_data_storage.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:comby/core/utils.dart';
+import 'package:comby/core/routes/app_router.dart';
 import 'package:in_app_review/in_app_review.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -37,47 +25,6 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-  bool _isRestoring = false;
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  Future<void> _restorePurchases() async {
-    setState(() => _isRestoring = true);
-
-    try {
-      final success = await RevenueCatService.restorePurchases();
-
-      if (success) {
-        // Refresh profile to get updated subscription status
-        if (auth.currentUser != null) {
-          getIt<ProfileBloc>()
-              .add(FetchProfileInfoEvent(auth.currentUser!.uid));
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Purchases restored successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('No purchases found to restore.'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to restore purchases. Please try again.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      setState(() => _isRestoring = false);
-    }
-  }
-
   /// Dil'e göre document URL'ini çözümle
   String resolveDocumentByLocale(
     String currentLocale,
@@ -128,58 +75,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               color: context.baseColor)),
                 ],
               ),
-              /*   Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 4.w,
-                        height: 24.h,
-                        color: context.baseColor,
-                        margin: const EdgeInsets.only(
-                            right: 8), // Yazıdan biraz boşluk
-                      ),
-                      Text(
-                        AppLocalizations.of(context)
-                            .app_settings,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-     */
               const Divider(),
               LanguageDropdown(
                 selectedLocale:
                     widget.state.languageLocale?.languageCode ?? 'en',
               ),
-              // Spacer(),
               LayoutConstants.tinyEmptyHeight,
-              /* ListTile(
-                leading: Icon(
-                  Icons.star_border_outlined,
-                ),
-                title: Text(
-                  AppLocalizations.of(context).rateUs,
-                  style: TextStyle(
-                    fontSize: 8.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                onTap: () async {
-                  final Uri url = Uri.parse(
-                      'https://play.google.com/store/apps/details?id=com.example.comby');
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
-                  }
-                },
-              ), */
+
               // Feedback
               ListTile(
                 leading: const Icon(
@@ -223,27 +125,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   );
                 },
               ),
-              // Debug: Reset Bonus (Only for testing)
 
-              // Delete Account
-              ListTile(
-                leading: const Icon(
-                  Icons.delete_forever_outlined,
-                  color: Colors.red,
-                ),
-                title: Text(
-                  AppLocalizations.of(context).deleteAccount,
-                  style: TextStyle(
-                    fontSize: 8.sp,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.red,
-                  ),
-                ),
-                onTap: () {
-                  _showDeleteAccountDialog(context);
-                },
-              ),
-              // Privacy Policy ve Terms of Service
+              // Privacy Policy
               ListTile(
                 leading: Icon(
                   Icons.privacy_tip_outlined,
@@ -265,74 +148,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   );
                 },
               ),
-
-              ListTile(
-                leading: Icon(
-                  Icons.description_outlined,
-                  color: context.baseColor,
-                ),
-                title: Text(
-                  AppLocalizations.of(context).termsOfService,
-                  style: TextStyle(
-                    fontSize: 8.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                onTap: () {
-                  context.router.push(
-                    DocumentsWebViewScreenRoute(
-                      pdfUrl: "https://www.comby.ai/#/terms",
-                      title: AppLocalizations.of(context).termsOfService,
-                    ),
-                  );
-                },
-              ),
-              if (Platform.isIOS)
-                // Apple Standard EULA
-                ListTile(
-                  leading: Icon(
-                    Icons.gavel_outlined,
-                    color: context.baseColor,
-                  ),
-                  title: Text(
-                    'Apple Standard EULA',
-                    style: TextStyle(
-                      fontSize: 8.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  onTap: () {
-                    context.router.push(
-                      DocumentsWebViewScreenRoute(
-                        pdfUrl:
-                            'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/',
-                        title: 'Apple Standard EULA',
-                      ),
-                    );
-                  },
-                ),
-              if (Platform.isIOS)
-                ListTile(
-                  onTap: _isRestoring ? null : _restorePurchases,
-                  leading: _isRestoring
-                      ? SizedBox(
-                          width: 16.w,
-                          height: 16.h,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                context.baseColor),
-                          ),
-                        )
-                      : Icon(Icons.restore, size: 18.sp),
-                  title: Text(
-                    AppLocalizations.of(context).restorePurchases,
-                    style: TextStyle(
-                      fontSize: 8.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
 
               ListTile(
                 title: FutureBuilder<PackageInfo>(
@@ -390,7 +205,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       );
                     }
                     return const SizedBox.shrink();
-                    // Debug için snapshot durumunu yazdır
                   },
                 ),
               ),
@@ -483,83 +297,5 @@ class _CustomDrawerState extends State<CustomDrawer> {
         );
       }
     });
-  }
-
-  void _showDeleteAccountDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(
-            AppLocalizations.of(context).deleteAccountWarning,
-            style: const TextStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(
-            AppLocalizations.of(context).deleteAccountWarningDescription,
-            style: const TextStyle(fontSize: 14),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-              child: Text(
-                AppLocalizations.of(context).cancel,
-                style: const TextStyle(color: Colors.grey),
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                await _deleteAccount(context);
-              },
-              child: Text(
-                AppLocalizations.of(context).deleteMyAccount,
-                style: const TextStyle(color: Colors.red),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _deleteAccount(BuildContext context) async {
-    try {
-      // ProfileUseCase'i kullanarak hesabı sil
-      final profileUseCase = ProfileUseCase(
-        auth: FirebaseAuth.instance,
-        googleSignIn: GoogleSignIn(),
-        firestore: FirebaseFirestore.instance,
-        secureDataStorage: SecureDataStorage(const FlutterSecureStorage()),
-      );
-
-      await profileUseCase.deleteAccount();
-
-      // Başarılı silme sonrası toast mesajı göster
-      if (context.mounted) {
-        Utils.showToastMessage(
-          context: context,
-          content: AppLocalizations.of(context).accountDeletedSuccessfully,
-        );
-
-        // Kısa bir süre sonra splash screen'e yönlendir
-        Future.delayed(const Duration(seconds: 2), () {
-          if (context.mounted) {
-            context.router.replaceAll([const SplashScreenRoute()]);
-          }
-        });
-      }
-    } catch (e) {
-      if (context.mounted) {
-        Utils.showToastMessage(
-          context: context,
-          content: '${AppLocalizations.of(context).accountDeletionError}: $e',
-        );
-      }
-    }
   }
 }

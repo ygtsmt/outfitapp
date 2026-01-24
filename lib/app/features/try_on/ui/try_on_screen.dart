@@ -14,6 +14,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter/services.dart';
 import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:comby/core/routes/app_router.dart';
+import 'package:comby/app/features/closet/ui/closet_screen.dart';
 // import 'package:comby/app/features/closet/ui/widgets/models_tab_content.dart'; // Might be needed for some widgets or just use generic
 // import 'package:sizer/sizer.dart'; // Removed Sizer
 
@@ -176,13 +178,31 @@ class _TryOnScreenState extends State<TryOnScreen> {
         prompt: refinedPrompt,
         sourceId: 1, // TryOn Screen
         modelAiPrompt: _selectedModel!.aiPrompt,
+        usedClosetItems: _selectedClothes,
       );
 
       if (result != null && result['status'] == 'processing') {
-        setState(() {
-          _statusMessage = 'Request sent successfully!';
-          _requestId = result['id'];
-        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content:
+                  Text('İstek başarıyla gönderildi! Kombin hazırlanıyor...'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Force open Combines tab (Index 2)
+          ClosetScreen.tabNotifier.value = 2;
+
+          // Navigate to Closet > Combines
+          context.router.navigate(
+            const HomeScreenRoute(
+              children: [
+                ClosetTabRouter(),
+              ],
+            ),
+          );
+        }
       } else {
         setState(() {
           _statusMessage = 'Request failed. Please try again.';

@@ -112,9 +112,11 @@ class WardrobeAnalysisService {
         final colors = Map<String, int>.from(currentStats.colorDistribution);
         final color = item.color;
         if (color != null && color.isNotEmpty) {
-          final mainColor = color.split(' ').last;
-          final count = colors[mainColor] ?? 0;
-          colors[mainColor] = isAdd ? count + 1 : (count > 0 ? count - 1 : 0);
+          // Use full color name with normalization
+          final normalizedColor = color.toLowerCase().trim();
+          final count = colors[normalizedColor] ?? 0;
+          colors[normalizedColor] =
+              isAdd ? count + 1 : (count > 0 ? count - 1 : 0);
         }
 
         // Recalculate score with new numbers
@@ -160,8 +162,9 @@ class WardrobeAnalysisService {
         // Color Distribution
         final color = itemMap['color'] as String?;
         if (color != null && color.isNotEmpty) {
-          final mainColor = color.split(' ').last;
-          colors[mainColor] = (colors[mainColor] ?? 0) + 1;
+          // Use full color name with normalization
+          final normalizedColor = color.toLowerCase().trim();
+          colors[normalizedColor] = (colors[normalizedColor] ?? 0) + 1;
         }
       }
 

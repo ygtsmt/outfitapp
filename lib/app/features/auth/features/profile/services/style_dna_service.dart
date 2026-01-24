@@ -18,37 +18,38 @@ class StyleDNAService {
     );
   }
 
-  Future<Map<String, dynamic>> analyzeStyle() async {
+  Future<Map<String, dynamic>> analyzeStyle({bool forceRefresh = false}) async {
     final userId = _auth.currentUser?.uid;
     if (userId == null) return {};
 
     try {
-      // 1. Check for valid cached data
-      final cacheDoc = await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('style_dna')
-          .doc('current')
-          .get();
+      // 1. Check for cached data (unless force refresh)
+      if (!forceRefresh) {
+        final cacheDoc = await _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('style_dna')
+            .doc('current')
+            .get();
 
-      if (cacheDoc.exists) {
-        final data = cacheDoc.data();
-        if (data != null && data['last_updated'] != null) {
-          final lastUpdated = (data['last_updated'] as Timestamp).toDate();
-          final difference = DateTime.now().difference(lastUpdated).inDays;
-
-          // If cache is less than 7 days old, use it
-          if (difference < 7) {
-            return {
-              'scores': Map<String, int>.from(data['scores'] ?? {}),
-              'analysis': data['analysis'] ?? '',
-              'title': data['title'] ?? '',
-            };
+        if (cacheDoc.exists && cacheDoc.data() != null) {
+          final data = cacheDoc.data()!;
+          // Return cached data regardless of age
+          DateTime? lastUpdated;
+          if (data['last_updated'] != null) {
+            lastUpdated = (data['last_updated'] as Timestamp).toDate();
           }
+
+          return {
+            'scores': Map<String, int>.from(data['scores'] ?? {}),
+            'analysis': data['analysis'] ?? '',
+            'title': data['title'] ?? '',
+            'last_updated': lastUpdated,
+          };
         }
       }
 
-      // 2. Fetch Wardrobe Items (No cache or expired)
+      // 2. Fetch Wardrobe Items (No cache or force refresh)
       final snapshot = await _firestore
           .collection('users')
           .doc(userId)
