@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/dashboard/data/models/weather_model.dart';
@@ -196,11 +195,8 @@ class _OutfitSuggestionResultScreenState
   }
 
   Future<void> _changeModel() async {
-    final result = await showModalBottomSheet<ModelItem>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const _ModelSelectionSheet(),
+    final result = await context.router.push<ModelItem>(
+      const ModelGallerySelectionScreenRoute(),
     );
 
     if (result != null && result.id != _selectedModel.id) {
@@ -213,21 +209,26 @@ class _OutfitSuggestionResultScreenState
   }
 
   Future<void> _changeItems() async {
-    // For now simplified single item selection or we can build a multi selector
-    // Let's implement a multi-select sheet
-    final result = await showModalBottomSheet<List<WardrobeItem>>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _ClosetItemSelectionSheet(
-        initialSelection: _selectedClosetItems,
-      ),
+    final result = await context.router.push<WardrobeItem>(
+      const GallerySelectionScreenRoute(),
     );
 
     if (result != null) {
-      setState(() {
-        _selectedClosetItems = result;
-      });
+      // Add to list if not already present
+      if (!_selectedClosetItems.any((e) => e.id == result.id)) {
+        setState(() {
+          if (_selectedClosetItems.length < 5) {
+            _selectedClosetItems.add(result);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Maksimum 5 kıyafet seçebilirsiniz'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+        });
+      }
     }
   }
 
@@ -257,7 +258,7 @@ class _OutfitSuggestionResultScreenState
             Center(
               child: _buildResultImage(colorScheme),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: 8.h),
 
             // Controls Section
             Text(
@@ -268,7 +269,10 @@ class _OutfitSuggestionResultScreenState
                 color: colorScheme.onSurface,
               ),
             ),
-            SizedBox(height: 16.h),
+
+            SizedBox(height: 4.h),
+            Divider(),
+            SizedBox(height: 4.h),
 
             // Model Selection
             _buildSelectionRow(
@@ -277,7 +281,6 @@ class _OutfitSuggestionResultScreenState
               child: _buildModelPreview(),
               onTap: _isGenerating ? null : _changeModel,
             ),
-            SizedBox(height: 16.h),
 
             // Closet Items Selection
             _buildSelectionRow(
@@ -287,7 +290,7 @@ class _OutfitSuggestionResultScreenState
               onTap: _isGenerating ? null : _changeItems,
             ),
 
-            SizedBox(height: 32.h),
+            SizedBox(height: 8.h),
 
             // Regenerate Button
             SizedBox(
@@ -418,7 +421,6 @@ class _OutfitSuggestionResultScreenState
               )
           ],
         ),
-        SizedBox(height: 8.h),
         child,
       ],
     );
@@ -453,8 +455,10 @@ class _OutfitSuggestionResultScreenState
 
   Widget _buildClosetItemsPreview() {
     return SizedBox(
-      height: 80.h,
+      height: 70.h,
+      width: double.infinity,
       child: ListView.separated(
+        shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         itemCount: _selectedClosetItems.length,
         separatorBuilder: (_, __) => SizedBox(width: 8.w),
@@ -467,6 +471,7 @@ class _OutfitSuggestionResultScreenState
             },
             child: Container(
               width: 70.w,
+              height: 70.h,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(color: Colors.grey.withOpacity(0.2)),
@@ -481,187 +486,6 @@ class _OutfitSuggestionResultScreenState
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-// --- Helper Sheets ---
-
-class _ModelSelectionSheet extends StatelessWidget {
-  const _ModelSelectionSheet();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 0.7.sh,
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      padding: EdgeInsets.all(20.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Model Seç",
-              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)),
-          SizedBox(height: 16.h),
-          Expanded(
-            child: FutureBuilder<List<ModelItem>>(
-              future: GetIt.I<ClosetUseCase>().getUserModelItems(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError ||
-                    !snapshot.hasData ||
-                    snapshot.data!.isEmpty) {
-                  return const Center(child: Text("Model bulunamadı"));
-                }
-                final models = snapshot.data!;
-                return GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.8,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10),
-                  itemCount: models.length,
-                  itemBuilder: (context, index) {
-                    final model = models[index];
-                    return GestureDetector(
-                      onTap: () => Navigator.pop(context, model),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.r),
-                        child: CachedNetworkImage(
-                            imageUrl: model.imageUrl, fit: BoxFit.cover),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ClosetItemSelectionSheet extends StatefulWidget {
-  final List<WardrobeItem> initialSelection;
-  const _ClosetItemSelectionSheet({required this.initialSelection});
-
-  @override
-  State<_ClosetItemSelectionSheet> createState() =>
-      _ClosetItemSelectionSheetState();
-}
-
-class _ClosetItemSelectionSheetState extends State<_ClosetItemSelectionSheet> {
-  late List<WardrobeItem> _selected;
-
-  @override
-  void initState() {
-    super.initState();
-    _selected = List.from(widget.initialSelection);
-  }
-
-  void _toggleSelection(WardrobeItem item) {
-    setState(() {
-      if (_selected.any((e) => e.id == item.id)) {
-        _selected.removeWhere((e) => e.id == item.id);
-      } else {
-        if (_selected.length < 5) {
-          // Limit max items
-          _selected.add(item);
-        }
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 0.8.sh,
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      padding: EdgeInsets.all(20.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("Kıyafetleri Seç (${_selected.length}/5)",
-                  style:
-                      TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold)),
-              TextButton(
-                  onPressed: () => Navigator.pop(context, _selected),
-                  child: const Text("Tamam"))
-            ],
-          ),
-          SizedBox(height: 16.h),
-          Expanded(
-            child: FutureBuilder<List<WardrobeItem>>(
-              future: GetIt.I<ClosetUseCase>()
-                  .getUserClosetItems(), // Fetch all or filter? Fetch all for now
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError ||
-                    !snapshot.hasData ||
-                    snapshot.data!.isEmpty) {
-                  return const Center(child: Text("Kıyafet bulunamadı"));
-                }
-                final items = snapshot.data!;
-                return GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8),
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-                    final isSelected = _selected.any((e) => e.id == item.id);
-                    return GestureDetector(
-                      onTap: () => _toggleSelection(item),
-                      child: Stack(
-                        children: [
-                          Positioned.fill(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12.r),
-                              child: CachedNetworkImage(
-                                  imageUrl: item.imageUrl, fit: BoxFit.cover),
-                            ),
-                          ),
-                          if (isSelected)
-                            Positioned.fill(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .primaryColor
-                                      .withOpacity(0.4),
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  border: Border.all(
-                                      color: Theme.of(context).primaryColor,
-                                      width: 3),
-                                ),
-                                child: const Center(
-                                    child:
-                                        Icon(Icons.check, color: Colors.white)),
-                              ),
-                            ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
       ),
     );
   }

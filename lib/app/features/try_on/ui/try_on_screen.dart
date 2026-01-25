@@ -26,7 +26,16 @@ class LocalColors {
 }
 
 class TryOnScreen extends StatefulWidget {
-  const TryOnScreen({super.key});
+  final ModelItem? initialModel;
+  final List<WardrobeItem>? initialClothes;
+  final String? alternativeModelUrl; // Combine photo URL for toggle
+
+  const TryOnScreen({
+    super.key,
+    this.initialModel,
+    this.initialClothes,
+    this.alternativeModelUrl,
+  });
 
   @override
   State<TryOnScreen> createState() => _TryOnScreenState();
@@ -37,11 +46,26 @@ class _TryOnScreenState extends State<TryOnScreen> {
   final ClosetUseCase _closetUseCase = GetIt.I<ClosetUseCase>();
 
   ModelItem? _selectedModel; // Changed from String? _selectedModelUrl
-  final List<WardrobeItem> _selectedClothes = [];
+  List<WardrobeItem> _selectedClothes = [];
+  bool _useAlternativePhoto = false; // Toggle state for photo switching
 
   bool _isLoading = false;
   String? _statusMessage;
   String? _requestId;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedModel = widget.initialModel;
+    _selectedClothes =
+        widget.initialClothes != null ? List.from(widget.initialClothes!) : [];
+  }
+
+  void _togglePhoto() {
+    setState(() {
+      _useAlternativePhoto = !_useAlternativePhoto;
+    });
+  }
 
   // Random Selection Implementation
   Future<void> _selectRandomModel() async {
@@ -465,9 +489,15 @@ class _TryOnScreenState extends State<TryOnScreen> {
                       context, "MODEL", "Select who will try on the clothes"),
                   const SizedBox(height: 16),
                   _ModelSelector(
-                    imageUrl: _selectedModel?.imageUrl,
+                    imageUrl: _useAlternativePhoto &&
+                            widget.alternativeModelUrl != null
+                        ? widget.alternativeModelUrl
+                        : _selectedModel?.imageUrl,
                     onTap: _showModelSelection,
                     onRandomSelect: _selectRandomModel,
+                    alternativeUrl: widget.alternativeModelUrl,
+                    isShowingAlternative: _useAlternativePhoto,
+                    onTogglePhoto: _togglePhoto,
                   ),
                   const SizedBox(height: 32),
                   Row(
@@ -653,11 +683,17 @@ class _ModelSelector extends StatelessWidget {
   final String? imageUrl;
   final VoidCallback onTap;
   final VoidCallback onRandomSelect;
+  final String? alternativeUrl;
+  final bool isShowingAlternative;
+  final VoidCallback? onTogglePhoto;
 
   const _ModelSelector({
     required this.imageUrl,
     required this.onTap,
     required this.onRandomSelect,
+    this.alternativeUrl,
+    this.isShowingAlternative = false,
+    this.onTogglePhoto,
   });
 
   @override
@@ -767,8 +803,40 @@ class _ModelSelector extends StatelessWidget {
                             bottom: Radius.circular(22)),
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // Toggle button (only show if alternative exists)
+                          if (alternativeUrl != null && onTogglePhoto != null)
+                            GestureDetector(
+                              onTap: onTogglePhoto,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      isShowingAlternative
+                                          ? Icons.person_outline
+                                          : Icons.auto_awesome,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      isShowingAlternative
+                                          ? "Use Original Photo"
+                                          : "Use AI Photo",
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),

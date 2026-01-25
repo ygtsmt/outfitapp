@@ -18,6 +18,8 @@ class CritiquesTabContent extends StatefulWidget {
 class _CritiquesTabContentState extends State<CritiquesTabContent>
     with AutomaticKeepAliveClientMixin {
   Stream<QuerySnapshot>? _critiquesStream;
+  int _crossAxisCount = 2;
+  double _baseScaleFactor = 1.0;
 
   @override
   bool get wantKeepAlive => true;
@@ -84,25 +86,42 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
           );
         }
 
-        return GridView.builder(
-          padding: EdgeInsets.all(16.w),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.7,
-            crossAxisSpacing: 16.w,
-            mainAxisSpacing: 16.h,
-          ),
-          itemCount: docs.length,
-          itemBuilder: (context, index) {
-            final data = docs[index].data() as Map<String, dynamic>;
-            return _buildCritiqueCard(data);
+        return GestureDetector(
+          onScaleStart: (details) {
+            _baseScaleFactor = _crossAxisCount.toDouble();
           },
+          onScaleUpdate: (details) {
+            // Squaring the scale makes the resize trigger faster (higher sensitivity)
+            final effectiveScale = details.scale * details.scale;
+            final newCount = (_baseScaleFactor / effectiveScale).round();
+            final clampedCount = newCount.clamp(2, 4);
+
+            if (_crossAxisCount != clampedCount) {
+              setState(() {
+                _crossAxisCount = clampedCount;
+              });
+            }
+          },
+          child: GridView.builder(
+            padding: EdgeInsets.all(0.w),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _crossAxisCount,
+              childAspectRatio: 0.7,
+              crossAxisSpacing: 0.w,
+              mainAxisSpacing: 0.h,
+            ),
+            itemCount: docs.length,
+            itemBuilder: (context, index) {
+              final data = docs[index].data() as Map<String, dynamic>;
+              return _buildCritiqueCard(data, _crossAxisCount);
+            },
+          ),
         );
       },
     );
   }
 
-  Widget _buildCritiqueCard(Map<String, dynamic> data) {
+  Widget _buildCritiqueCard(Map<String, dynamic> data, int crossAxisCount) {
     final imageUrl = data['imageUrl'] as String?;
     final score = data['score'] as int? ?? 0;
     final createdAt = (data['createdAt'] as Timestamp?)?.toDate();
@@ -120,7 +139,6 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -130,7 +148,6 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20.r),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -166,7 +183,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                 top: 10.w,
                 right: 10.w,
                 child: Container(
-                  padding: EdgeInsets.all(8.w),
+                  padding: EdgeInsets.all(0.w),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
@@ -180,7 +197,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                   child: Text(
                     score.toString(),
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: crossAxisCount >= 3 ? 10.sp : 14.sp,
                       fontWeight: FontWeight.w900,
                       color: _getScoreColor(score),
                     ),
@@ -199,7 +216,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                       formattedDate,
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.9),
-                        fontSize: 12.sp,
+                        fontSize: crossAxisCount >= 3 ? 10.sp : 12.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -207,7 +224,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                       'AI Analiz',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14.sp,
+                        fontSize: crossAxisCount >= 3 ? 12.sp : 14.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

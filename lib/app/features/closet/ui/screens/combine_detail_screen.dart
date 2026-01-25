@@ -1,9 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:before_after/before_after.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:comby/app/features/closet/models/model_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
+import 'package:comby/app/ui/widgets/fullscreen_image_viewer.dart';
 import 'package:comby/core/asset_paths.dart';
 import 'package:comby/core/constants/layout_constants.dart';
 import 'package:comby/core/extensions.dart';
+import 'package:comby/core/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -47,9 +51,10 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.only(bottom: 32.h, left: 16.w, right: 16.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -210,9 +215,9 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
               color: Colors.grey[800],
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 8.h),
           SizedBox(
-            height: 110.h,
+            height: 90.h,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: items.length,
@@ -223,6 +228,7 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
                 final category = item['category'] as String? ?? 'Item';
 
                 return Column(
+                  spacing: 2.h,
                   children: [
                     Container(
                       width: 70.w,
@@ -239,7 +245,6 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
                             : Icon(Icons.checkroom, color: Colors.grey[400]),
                       ),
                     ),
-                    SizedBox(height: 6.h),
                     Text(
                       category.toUpperCase(),
                       style: TextStyle(
@@ -250,6 +255,23 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
                   ],
                 );
               },
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: _onRegenerate,
+              icon: Icon(
+                Icons.refresh_rounded,
+                size: 20.sp,
+              ),
+              label: Text(
+                'Yeniden Oluştur',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ],
@@ -379,65 +401,54 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
   }
 
   void _openFullscreenViewer(BuildContext context, String imageUrl) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        opaque: false,
-        barrierColor: Colors.black87,
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return FadeTransition(
-            opacity: animation,
-            child: Scaffold(
-              backgroundColor: Colors.black,
-              body: Stack(
-                children: [
-                  Center(
-                    child: InteractiveViewer(
-                      minScale: 0.5,
-                      maxScale: 4.0,
-                      child: Hero(
-                        tag: 'fullscreen_combine_$imageUrl',
-                        child: CachedNetworkImage(
-                          imageUrl: imageUrl,
-                          fit: BoxFit.contain,
-                          placeholder: (context, url) => const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          ),
-                          errorWidget: (_, __, ___) => Icon(
-                            Icons.broken_image_outlined,
-                            color: Colors.white54,
-                            size: 64.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: MediaQuery.of(context).padding.top + 16.h,
-                    right: 16.w,
-                    child: GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Container(
-                        padding: EdgeInsets.all(12.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 24.sp,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+    FullscreenImageViewer.show(
+      context,
+      imageUrl: imageUrl,
+      heroTag: 'fullscreen_combine_$imageUrl',
+    );
+  }
+
+  void _onRegenerate() {
+    final inputImages = widget.imageData['inputImages'] as List<dynamic>?;
+    final output = widget.imageData['output'] as List<dynamic>?;
+    final usedClosetItems =
+        widget.imageData['usedClosetItems'] as List<dynamic>?;
+
+    if (inputImages == null || inputImages.isEmpty) return;
+
+    // Original photo (before image) for regeneration
+    final modelUrl = inputImages[0] as String;
+
+    // Combine photo (AI-generated result) as alternative
+    final combineUrl =
+        output != null && output.isNotEmpty ? output[0] as String? : null;
+
+    final List<WardrobeItem> clothes = usedClosetItems != null
+        ? usedClosetItems
+            .map((e) => WardrobeItem.fromMap(e as Map<String, dynamic>))
+            .toList()
+        : [];
+
+    context.router.navigate(
+      HomeScreenRoute(
+        children: [
+          TryOnTabRouter(
+            children: [
+              TryOnScreenRoute(
+                initialModel: ModelItem(
+                  id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
+                  imageUrl: modelUrl,
+                  createdAt: DateTime.now(),
+                  // In a real scenario, we could fetch the full ModelItem
+                  // to get the aiPrompt, but URL is often enough for a retry.
+                ),
+                initialClothes: clothes,
+                alternativeModelUrl:
+                    combineUrl, // Pass combine photo for toggle
               ),
-            ),
-          );
-        },
+            ],
+          ),
+        ],
       ),
     );
   }

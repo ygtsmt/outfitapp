@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comby/app/features/closet/services/clothing_analysis_service.dart';
 import 'package:comby/app/features/closet/ui/closet_screen.dart';
+import 'package:comby/app/ui/widgets/fullscreen_image_viewer.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/routes/app_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -197,6 +198,46 @@ class _AIFashionCritiqueResultScreenState
                               Colors.black.withOpacity(0.8),
                             ],
                             stops: const [0.4, 0.7, 1.0],
+                          ),
+                        ),
+                      ),
+                      // Top Left - Close Button
+                      Positioned(
+                        top: MediaQuery.of(context).padding.top + 16.h,
+                        left: 16.w,
+                        child: GestureDetector(
+                          onTap: () => context.router.pop(),
+                          child: Container(
+                            padding: EdgeInsets.all(10.w),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 24.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Top Right - Fullscreen Button
+                      Positioned(
+                        top: MediaQuery.of(context).padding.top + 16.h,
+                        right: 16.w,
+                        child: GestureDetector(
+                          onTap: _openFullscreenViewer,
+                          child: Container(
+                            padding: EdgeInsets.all(10.w),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.fullscreen,
+                              color: Colors.white,
+                              size: 24.sp,
+                            ),
                           ),
                         ),
                       ),
@@ -856,5 +897,15 @@ class _AIFashionCritiqueResultScreenState
     if (score >= 70) return const Color(0xFF2196F3); // Blue
     if (score >= 50) return const Color(0xFFFFC107); // Amber
     return const Color(0xFFFF5252); // Red
+  }
+
+  void _openFullscreenViewer() {
+    FullscreenImageViewer.show(
+      context,
+      imageUrl: widget.imageFile == null ? _imageUrl : null,
+      imageFile: widget.imageFile,
+      showShareButton: true,
+      showDownloadButton: true,
+    );
   }
 }

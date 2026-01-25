@@ -555,29 +555,58 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   }
 
   Widget _buildCombinedButton() {
-    return AnimatedContainer(
-        margin: EdgeInsets.all(16.h),
-        duration: const Duration(milliseconds: 300),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Colors.deepPurple.shade600, Colors.deepPurple.shade900],
-          ),
-          borderRadius: BorderRadius.circular(20.r),
-          boxShadow: [
-            BoxShadow(
-              color: _getGradientColors().first.withOpacity(0.9),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
+    return Container(
+      margin: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 16.h),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.25),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.3),
+          width: 1.5,
         ),
-        child: Padding(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: _isGeneratingOutfit ? null : _generateOutfit,
+          borderRadius: BorderRadius.circular(20.r),
+          splashColor: Colors.white.withOpacity(0.2),
+          highlightColor: Colors.white.withOpacity(0.1),
+          child: Padding(
             padding: EdgeInsets.all(16.w),
             child: Row(
               children: [
-                // SOL TARAF: Title & Subtitle
+                // SOL TARAF: Icon + Title & Subtitle
+                Container(
+                  width: 48.w,
+                  height: 48.w,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(14.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.auto_awesome,
+                    color: _getGradientColors().first,
+                    size: 24.sp,
+                  ),
+                ),
+
+                SizedBox(width: 12.w),
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -586,37 +615,45 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                       RichText(
                         text: TextSpan(
                           style: TextStyle(
-                            fontSize: 18.sp,
+                            fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 4,
+                              ),
+                            ],
                           ),
                           children: [
                             const TextSpan(text: 'Gemini '),
                             TextSpan(
                               text: '3',
                               style: TextStyle(
-                                color: const Color(0xFF4E6AFF),
-                                fontSize: 22.sp,
-                                shadows: [
-                                  Shadow(
-                                    color: const Color(0xFF4E6AFF)
-                                        .withOpacity(0.7),
-                                    blurRadius: 8,
-                                  ),
-                                ],
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(height: 4.h),
+                      SizedBox(height: 2.h),
                       Text(
-                        'Hava durumuna göre en iyi kombinini oluştur.',
+                        'Hava durumuna göre en iyi kombinini oluştur',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
-                          fontSize: 12.sp,
-                          height: 1.3,
+                          color: Colors.white.withOpacity(0.95),
+                          fontSize: 11.sp,
+                          height: 1.2,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 3,
+                            ),
+                          ],
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -624,47 +661,36 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
                 SizedBox(width: 8.w),
 
-                // SAĞ TARAF: Yuvarlak Create Butonu
-                GestureDetector(
-                  onTap: _isGeneratingOutfit ? null : _generateOutfit,
-                  child: Container(
-                    width: 56.w,
-                    height: 56.w,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: _getGradientColors(),
-                      ),
-                      borderRadius: BorderRadius.circular(20.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: _getGradientColors().first.withOpacity(0.4),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: _isGeneratingOutfit
-                          ? SizedBox(
-                              width: 24.w,
-                              height: 24.w,
-                              child: const CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2.5,
-                              ),
-                            )
-                          : Icon(
-                              Icons
-                                  .touch_app, // Veya 'Icons.add' ya da 'Icons.magic_button'
+                // SAĞ TARAF: Arrow veya Loading
+                Container(
+                  width: 40.w,
+                  height: 40.w,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Center(
+                    child: _isGeneratingOutfit
+                        ? SizedBox(
+                            width: 20.w,
+                            height: 20.w,
+                            child: CircularProgressIndicator(
                               color: Colors.white,
-                              size: 28.sp,
+                              strokeWidth: 2.5,
                             ),
-                    ),
+                          )
+                        : Icon(
+                            Icons.arrow_forward_rounded,
+                            color: Colors.white,
+                            size: 24.sp,
+                          ),
                   ),
                 )
               ],
-            )));
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

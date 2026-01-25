@@ -127,6 +127,7 @@ part "app_router.gr.dart";
           name: "TryOnTabRouter",
           path: "try-on",
           transitionsBuilder: TransitionsBuilders.fadeIn,
+          
           children: [
             CustomRoute(
               page: TryOnScreen,

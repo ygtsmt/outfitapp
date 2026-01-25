@@ -80,6 +80,7 @@ class _WardrobeTabContentState extends State<WardrobeTabContent>
                 children: [
                   _AddWardrobeItemButton(
                     onTap: () => _pickImageAndAddItem(context),
+                    crossAxisCount: _crossAxisCount,
                   ),
                   SizedBox(height: 24.h),
                   Text(
@@ -124,6 +125,7 @@ class _WardrobeTabContentState extends State<WardrobeTabContent>
                   if (index == 0) {
                     return _AddWardrobeItemButton(
                       onTap: () => _pickImageAndAddItem(context),
+                      crossAxisCount: _crossAxisCount,
                     );
                   }
                   final item = items[index - 1];
@@ -133,7 +135,10 @@ class _WardrobeTabContentState extends State<WardrobeTabContent>
                         ClosetItemDetailScreenRoute(closetItem: item),
                       );
                     },
-                    child: _ClosetItemCard(item: item),
+                    child: _ClosetItemCard(
+                      item: item,
+                      crossAxisCount: _crossAxisCount,
+                    ),
                   );
                 },
               ),
@@ -147,8 +152,12 @@ class _WardrobeTabContentState extends State<WardrobeTabContent>
 
 class _ClosetItemCard extends StatelessWidget {
   final WardrobeItem item;
+  final int crossAxisCount;
 
-  const _ClosetItemCard({required this.item});
+  const _ClosetItemCard({
+    required this.item,
+    required this.crossAxisCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +189,10 @@ class _ClosetItemCard extends StatelessWidget {
             top: 8.h,
             left: 8.w,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              padding: EdgeInsets.symmetric(
+                horizontal: crossAxisCount == 4 ? 4.w : 8.w,
+                vertical: crossAxisCount == 4 ? 2.h : 4.h,
+              ),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.6),
                 borderRadius: BorderRadius.circular(8.r),
@@ -189,7 +201,11 @@ class _ClosetItemCard extends StatelessWidget {
                 item.category!,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 10.sp,
+                  fontSize: crossAxisCount == 4
+                      ? 8.sp
+                      : crossAxisCount == 3
+                          ? 9.sp
+                          : 10.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -202,8 +218,12 @@ class _ClosetItemCard extends StatelessWidget {
 
 class _AddWardrobeItemButton extends StatelessWidget {
   final VoidCallback onTap;
+  final int crossAxisCount;
 
-  const _AddWardrobeItemButton({required this.onTap});
+  const _AddWardrobeItemButton({
+    required this.onTap,
+    required this.crossAxisCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -227,8 +247,16 @@ class _AddWardrobeItemButton extends StatelessWidget {
             children: [
               // İkon Alanı - Beyaz yuvarlak ve hafif gölge (Model butonuyla aynı)
               Container(
-                height: 56.w,
-                width: 56.w,
+                height: crossAxisCount == 4
+                    ? 36.w
+                    : crossAxisCount == 3
+                        ? 48.w
+                        : 56.w,
+                width: crossAxisCount == 4
+                    ? 36.w
+                    : crossAxisCount == 3
+                        ? 48.w
+                        : 56.w,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -242,7 +270,11 @@ class _AddWardrobeItemButton extends StatelessWidget {
                 ),
                 child: Icon(
                   Icons.checkroom_outlined, // Gardırop için modern askı ikonu
-                  size: 28.sp,
+                  size: crossAxisCount == 4
+                      ? 18.sp
+                      : crossAxisCount == 3
+                          ? 24.sp
+                          : 28.sp,
                   color: primaryColor,
                 ),
               ),
@@ -252,7 +284,11 @@ class _AddWardrobeItemButton extends StatelessWidget {
                 'Yeni Ekle',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 12.sp,
+                  fontSize: crossAxisCount == 4
+                      ? 9.sp
+                      : crossAxisCount == 3
+                          ? 10.sp
+                          : 12.sp,
                   fontWeight: FontWeight.bold,
                   color: primaryColor.withOpacity(0.9),
                   letterSpacing: -0.2,

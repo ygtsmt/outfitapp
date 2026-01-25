@@ -186,7 +186,6 @@ class _ModelItemDetailScreenState extends State<ModelItemDetailScreen> {
                   ),
 
                   // Extra space at bottom
-                  SizedBox(height: 100.h),
                 ],
               ),
             ),

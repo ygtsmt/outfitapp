@@ -473,9 +473,16 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     TryOnScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<TryOnScreenRouteArgs>(
+          orElse: () => const TryOnScreenRouteArgs());
       return CustomPage<dynamic>(
         routeData: routeData,
-        child: const TryOnScreen(),
+        child: TryOnScreen(
+          key: args.key,
+          initialModel: args.initialModel,
+          initialClothes: args.initialClothes,
+          alternativeModelUrl: args.alternativeModelUrl,
+        ),
         transitionsBuilder: TransitionsBuilders.fadeIn,
         opaque: true,
         barrierDismissible: false,
@@ -1660,12 +1667,44 @@ class ClosetScreenRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [TryOnScreen]
-class TryOnScreenRoute extends PageRouteInfo<void> {
-  const TryOnScreenRoute()
-      : super(
+class TryOnScreenRoute extends PageRouteInfo<TryOnScreenRouteArgs> {
+  TryOnScreenRoute({
+    Key? key,
+    ModelItem? initialModel,
+    List<WardrobeItem>? initialClothes,
+    String? alternativeModelUrl,
+  }) : super(
           TryOnScreenRoute.name,
           path: 'try-on-screen',
+          args: TryOnScreenRouteArgs(
+            key: key,
+            initialModel: initialModel,
+            initialClothes: initialClothes,
+            alternativeModelUrl: alternativeModelUrl,
+          ),
         );
 
   static const String name = 'TryOnScreenRoute';
+}
+
+class TryOnScreenRouteArgs {
+  const TryOnScreenRouteArgs({
+    this.key,
+    this.initialModel,
+    this.initialClothes,
+    this.alternativeModelUrl,
+  });
+
+  final Key? key;
+
+  final ModelItem? initialModel;
+
+  final List<WardrobeItem>? initialClothes;
+
+  final String? alternativeModelUrl;
+
+  @override
+  String toString() {
+    return 'TryOnScreenRouteArgs{key: $key, initialModel: $initialModel, initialClothes: $initialClothes, alternativeModelUrl: $alternativeModelUrl}';
+  }
 }
