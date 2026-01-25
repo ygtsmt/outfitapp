@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:comby/core/core.dart';
+import 'package:comby/core/utils/api_retry_helper.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
@@ -126,19 +127,23 @@ class FalAiUsecase {
         final keyId = apiKey.split(':')[0];
         log('🔑 Using Fal AI API Key with ID: ${keyId.substring(0, keyId.length < 8 ? keyId.length : 8)}...');
       }
-      final response = await http.post(
-        uri,
-        headers: {
-          "Authorization": "Key $apiKey",
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "prompt": prompt,
-          "image_urls": imageUrls,
-          "num_images": 1,
-          "aspect_ratio": "auto",
-          "output_format": "png",
-        }),
+      // Hackathon için retry mekanizması ekledik
+      final response = await ApiRetryHelper.withRetry(
+        () => http.post(
+          uri,
+          headers: {
+            "Authorization": "Key $apiKey",
+            "Content-Type": "application/json",
+          },
+          body: jsonEncode({
+            "prompt": prompt,
+            "image_urls": imageUrls,
+            "num_images": 1,
+            "aspect_ratio": "auto",
+            "output_format": "png",
+          }),
+        ),
+        maxRetries: 2, // 2 retry yeterli hackathon için
       );
 
       log('Gemini Image Edit Response Status: ${response.statusCode}');

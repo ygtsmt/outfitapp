@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:comby/core/utils/api_retry_helper.dart';
 import 'package:http/http.dart' as http;
 
 /// Service for removing background from images using fal.ai rembg API
@@ -18,15 +19,19 @@ class BackgroundRemovalService {
   /// Note: The returned URL is temporary, download and save to your own storage
   Future<String> removeBackground(String imageUrl) async {
     try {
-      final response = await http.post(
-        Uri.parse(_rembgEndpoint),
-        headers: {
-          'Authorization': 'Key $_falApiKey',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'image_url': imageUrl,
-        }),
+      // Hackathon için retry mekanizması
+      final response = await ApiRetryHelper.withRetry(
+        () => http.post(
+          Uri.parse(_rembgEndpoint),
+          headers: {
+            'Authorization': 'Key $_falApiKey',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'image_url': imageUrl,
+          }),
+        ),
+        maxRetries: 2,
       );
 
       if (response.statusCode != 200) {
