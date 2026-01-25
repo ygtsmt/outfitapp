@@ -46,6 +46,7 @@ import "package:comby/app/features/try_on/ui/quick_try_on_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_preview_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_result_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/ai_critique_camera_screen.dart";
+import "package:comby/app/features/chat/ui/chat_screen.dart";
 import "package:comby/app/ui/home_screen.dart";
 import "package:comby/core/core.dart";
 import "package:comby/core/services/outfit_suggestion_service.dart";
@@ -110,6 +111,20 @@ part "app_router.gr.dart";
         ),
         CustomRoute(
           page: EmptyRouterPage,
+          name: "ChatTabRouter",
+          path: "chat",
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+          children: [
+            CustomRoute(
+              page: ChatScreen,
+              path: "chat-screen",
+              initial: true,
+              transitionsBuilder: TransitionsBuilders.fadeIn,
+            ),
+          ],
+        ),
+        CustomRoute(
+          page: EmptyRouterPage,
           name: "ClosetTabRouter",
           path: "closet",
           transitionsBuilder: TransitionsBuilders.fadeIn,
@@ -127,7 +142,6 @@ part "app_router.gr.dart";
           name: "TryOnTabRouter",
           path: "try-on",
           transitionsBuilder: TransitionsBuilders.fadeIn,
-          
           children: [
             CustomRoute(
               page: TryOnScreen,

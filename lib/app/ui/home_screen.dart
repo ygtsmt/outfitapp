@@ -116,9 +116,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<AppBloc, AppState>(
       builder: (final context, final state) {
         return AutoTabsRouter(
-          routes: const [
+          routes:  [
             DashbordTabRouter(),
             ClosetTabRouter(),
+            ChatTabRouter(),
             TryOnTabRouter(),
             ProfileTabRouter(),
           ],
@@ -140,9 +141,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         key: _scaffoldKey,
                         drawer: CustomDrawer(state: state),
                         // Update indices: Closet is now 1, Try-On is now 2 (in router)
-                        appBar: (tabsRouter.activeIndex == 2 ||
-                                tabsRouter.activeIndex == 3 ||
-                                tabsRouter.activeIndex == 1)
+                        appBar: (tabsRouter.activeIndex == 3 || // TryOn
+                                tabsRouter.activeIndex == 1 || // Closet
+                                tabsRouter.activeIndex == 2) // Chat
                             ? null
                             : AppBar(
                                 forceMaterialTransparency: true,
@@ -202,19 +203,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                     : const Icon(Icons.checkroom_outlined),
                                 label: 'Closet',
                               ),
-                              const BottomNavigationBarItem(
-                                icon: Icon(Icons.camera_alt_outlined),
-                                activeIcon: Icon(Icons.camera_alt),
-                                label: 'Quick Try',
-                              ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 2
+                                    ? const Icon(Icons.chat_bubble)
+                                    : const Icon(Icons.chat_bubble_outline),
+                                label: 'Chat',
+                              ),
+                              BottomNavigationBarItem(
+                                icon: tabsRouter.activeIndex == 3
                                     ? const Icon(Icons.history_edu)
                                     : const Icon(Icons.history_edu_outlined),
                                 label: 'Try-On',
                               ),
                               BottomNavigationBarItem(
-                                icon: tabsRouter.activeIndex == 3
+                                icon: tabsRouter.activeIndex == 4
                                     ? const Icon(
                                         Icons.person,
                                       )
@@ -227,12 +229,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: (value) {
                               if (value == 0) tabsRouter.setActiveIndex(0);
                               if (value == 1) tabsRouter.setActiveIndex(1);
-                              if (value == 2) {
-                                context.router
-                                    .pushNamed('/quick-try-on-screen');
-                              }
-                              if (value == 3) tabsRouter.setActiveIndex(2);
-                              if (value == 4) tabsRouter.setActiveIndex(3);
+                              if (value == 2)
+                                tabsRouter.setActiveIndex(2); // Chat
+                              if (value == 3)
+                                tabsRouter.setActiveIndex(3); // Try-On
+                              if (value == 4)
+                                tabsRouter.setActiveIndex(4); // Profile
                             },
                           ),
                         ));
@@ -249,8 +251,9 @@ class _HomeScreenState extends State<HomeScreen> {
   int _getBottomNavIndex(int routerIndex) {
     if (routerIndex == 0) return 0; // Dashboard
     if (routerIndex == 1) return 1; // Closet
-    if (routerIndex == 2) return 3; // Combines (Try-On)
-    if (routerIndex == 3) return 4; // Profile
+    if (routerIndex == 2) return 2; // Chat
+    if (routerIndex == 3) return 3; // Try-On
+    if (routerIndex == 4) return 4; // Profile
     return 0;
   }
 }

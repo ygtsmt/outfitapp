@@ -8,7 +8,7 @@ const String refreshTokenKey = "refreshToken";
 const String themeMode = "themeMode";
 String languageLocale = const Locale('tr').languageCode;
 const String passwordRegex = r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$";
-const geminiApiKey = "AIzaSyDtyjdmaTJ9lH3AOc3ysvGpJzOpw_QHef4";
+const geminiApiKey = "AIzaSyAf9A5aK2dNOjhUxi_L9tmv8E5_Y6HAQlQ";
 const String falAiApiKey =
     "5b24d2fb-ed5d-473e-a5e7-f339cfb6fe40:7d0e42fc249d678cfbab8fb2c4b213e0"; // Fal.ai API key'ini buraya ekleyin
 

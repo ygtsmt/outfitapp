@@ -416,6 +416,15 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    ChatTabRouter.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const EmptyRouterPage(),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     ClosetTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -458,6 +467,15 @@ class _$AppRouter extends RootStackRouter {
       return CustomPage<dynamic>(
         routeData: routeData,
         child: ProfileScreen(key: args.key),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
+    ChatScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const ChatScreen(),
         transitionsBuilder: TransitionsBuilders.fadeIn,
         opaque: true,
         barrierDismissible: false,
@@ -548,6 +566,25 @@ class _$AppRouter extends RootStackRouter {
                   ProfileScreenRoute.name,
                   path: 'profile-screen',
                   parent: ProfileTabRouter.name,
+                ),
+              ],
+            ),
+            RouteConfig(
+              ChatTabRouter.name,
+              path: 'chat',
+              parent: HomeScreenRoute.name,
+              children: [
+                RouteConfig(
+                  '#redirect',
+                  path: '',
+                  parent: ChatTabRouter.name,
+                  redirectTo: 'chat-screen',
+                  fullMatch: true,
+                ),
+                RouteConfig(
+                  ChatScreenRoute.name,
+                  path: 'chat-screen',
+                  parent: ChatTabRouter.name,
                 ),
               ],
             ),
@@ -1581,6 +1618,19 @@ class ProfileTabRouter extends PageRouteInfo<void> {
 
 /// generated route for
 /// [EmptyRouterPage]
+class ChatTabRouter extends PageRouteInfo<void> {
+  const ChatTabRouter({List<PageRouteInfo>? children})
+      : super(
+          ChatTabRouter.name,
+          path: 'chat',
+          initialChildren: children,
+        );
+
+  static const String name = 'ChatTabRouter';
+}
+
+/// generated route for
+/// [EmptyRouterPage]
 class ClosetTabRouter extends PageRouteInfo<void> {
   const ClosetTabRouter({List<PageRouteInfo>? children})
       : super(
@@ -1651,6 +1701,18 @@ class ProfileScreenRouteArgs {
   String toString() {
     return 'ProfileScreenRouteArgs{key: $key}';
   }
+}
+
+/// generated route for
+/// [ChatScreen]
+class ChatScreenRoute extends PageRouteInfo<void> {
+  const ChatScreenRoute()
+      : super(
+          ChatScreenRoute.name,
+          path: 'chat-screen',
+        );
+
+  static const String name = 'ChatScreenRoute';
 }
 
 /// generated route for

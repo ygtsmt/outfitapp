@@ -3,6 +3,7 @@ import "package:comby/app/features/auth/features/create_account/bloc/create_acco
 import "package:comby/app/features/auth/features/login/bloc/login_bloc.dart";
 import "package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart";
 import "package:comby/app/features/auth/features/splash/bloc/splash_bloc.dart";
+import "package:comby/app/features/chat/bloc/chat_bloc.dart";
 import "package:comby/app/features/closet/bloc/closet_bloc.dart";
 import "package:comby/app/features/payment/bloc/payment_bloc.dart";
 import "package:comby/app/features/report/bloc/report_bloc.dart";
@@ -68,6 +69,9 @@ class _AppScreenState extends State<AppScreen> {
         ),
         BlocProvider<ReportBloc>(
           create: (final context) => getIt<ReportBloc>(),
+        ),
+        BlocProvider<ChatBloc>(
+          create: (final context) => getIt<ChatBloc>(),
         ),
       ],
       child: BlocBuilder<AppBloc, AppState>(
