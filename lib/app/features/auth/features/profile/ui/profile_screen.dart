@@ -85,7 +85,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             SizedBox(height: 24.h),
             Text(
-              'Profil Erişimi Gerekli',
+              AppLocalizations.of(context).profileAccessRequired,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.grey[700],
@@ -94,7 +94,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Text(
-              'Profil bilgilerinizi görüntülemek ve düzenlemek için giriş yapmanız gerekir.',
+              AppLocalizations.of(context).profileAccessDescription,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[600],
                   ),

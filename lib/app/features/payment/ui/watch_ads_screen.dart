@@ -54,8 +54,8 @@ class _WatchAdsScreenState extends State<WatchAdsScreen> {
       if (canWatchAds == false) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Reklam izleme yetkiniz bulunmamaktadır.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).noAdPermission),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
           ),

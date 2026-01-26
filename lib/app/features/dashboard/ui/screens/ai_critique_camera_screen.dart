@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:comby/generated/l10n.dart';
 
 class AIFashionCritiqueCameraScreen extends StatefulWidget {
   const AIFashionCritiqueCameraScreen({super.key});
@@ -56,7 +57,9 @@ class _AIFashionCritiqueCameraScreenState
     if (status.isDenied) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kamera izni gerekli')),
+          SnackBar(
+              content:
+                  Text(AppLocalizations.of(context).cameraPermissionRequired)),
         );
       }
       return;
@@ -190,7 +193,7 @@ class _AIFashionCritiqueCameraScreenState
             child: Column(
               children: [
                 Text(
-                  'Kombinini Çek',
+                  AppLocalizations.of(context).captureYourCombine,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20.sp,
@@ -257,7 +260,7 @@ class _AIFashionCritiqueCameraScreenState
         margin: EdgeInsets.symmetric(horizontal: 40.w, vertical: 120.h),
         child: Center(
           child: Text(
-            'Kombinini ortala',
+            AppLocalizations.of(context).centerYourCombine,
             style: TextStyle(
               color: Colors.white.withOpacity(0.5),
               fontSize: 14.sp,

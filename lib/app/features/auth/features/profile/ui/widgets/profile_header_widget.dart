@@ -1,8 +1,9 @@
-import 'package:comby/core/core.dart';
 import 'package:comby/app/ui/widgets/profile_image_network.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfileHeaderWidget extends StatelessWidget {
   final String? photoUrl;
@@ -51,7 +52,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                     border: Border.all(color: Colors.white, width: 2),
                   ),
                   child: Text(
-                    "Lvl $level",
+                    AppLocalizations.of(context).levelLabel(level),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 10.sp,
@@ -98,7 +99,7 @@ class ProfileHeaderWidget extends StatelessWidget {
                       Clipboard.setData(ClipboardData(text: uid));
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text("UID Copied"),
+                          content: Text(AppLocalizations.of(context).uidCopied),
                           duration: const Duration(seconds: 1),
                         ),
                       );
@@ -118,8 +119,10 @@ class ProfileHeaderWidget extends StatelessWidget {
                           SizedBox(width: 4.w),
                           Text(
                             uid.length > 7
-                                ? "ID: ${uid.substring(0, 7)}..."
-                                : "ID: $uid",
+                                ? AppLocalizations.of(context)
+                                        .uidLabel(uid.substring(0, 7)) +
+                                    "..."
+                                : AppLocalizations.of(context).uidLabel(uid),
                             style: TextStyle(
                                 fontSize: 12.sp, color: Colors.grey.shade700),
                           ),

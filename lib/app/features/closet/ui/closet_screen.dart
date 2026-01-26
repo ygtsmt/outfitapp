@@ -156,7 +156,7 @@ class _ClosetScreenState extends State<ClosetScreen>
                       borderRadius: BorderRadius.circular(16.r),
                     ),
                     alignment: Alignment.center,
-                    child: const Text('Wardrobe'),
+                    child: Text(AppLocalizations.of(context).wardrobe),
                   ),
                 ),
                 Tab(
@@ -165,7 +165,7 @@ class _ClosetScreenState extends State<ClosetScreen>
                       borderRadius: BorderRadius.circular(16.r),
                     ),
                     alignment: Alignment.center,
-                    child: const Text('Models'),
+                    child: Text(AppLocalizations.of(context).models),
                   ),
                 ),
                 Tab(
@@ -174,7 +174,7 @@ class _ClosetScreenState extends State<ClosetScreen>
                       borderRadius: BorderRadius.circular(16.r),
                     ),
                     alignment: Alignment.center,
-                    child: const Text('Combines'),
+                    child: Text(AppLocalizations.of(context).combines),
                   ),
                 ),
                 Tab(
@@ -183,7 +183,7 @@ class _ClosetScreenState extends State<ClosetScreen>
                       borderRadius: BorderRadius.circular(16.r),
                     ),
                     alignment: Alignment.center,
-                    child: const Text('Critiques'),
+                    child: Text(AppLocalizations.of(context).critiques),
                   ),
                 ),
               ],
@@ -220,7 +220,7 @@ class _ClosetScreenState extends State<ClosetScreen>
             ),
             SizedBox(height: 24.h),
             Text(
-              'Closet Erişimi Gerekli',
+              AppLocalizations.of(context).closetAccessRequired,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.grey[700],
@@ -229,7 +229,7 @@ class _ClosetScreenState extends State<ClosetScreen>
             ),
             SizedBox(height: 16.h),
             Text(
-              'Closet içeriğinizi görüntülemek için giriş yapmanız gerekir.',
+              AppLocalizations.of(context).closetAccessDescription,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[600],
                   ),
@@ -268,11 +268,11 @@ class _ClosetScreenState extends State<ClosetScreen>
     final noGuestName = name.toLowerCase() != 'guest' ? name : '';
     final hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Günaydın $noGuestName ☀️ ';
+      return '${AppLocalizations.of(context).goodMorning} $noGuestName ☀️ ';
     } else if (hour < 18) {
-      return 'İyi günler $noGuestName 👋 ';
+      return '${AppLocalizations.of(context).goodAfternoon} $noGuestName 👋 ';
     } else {
-      return 'İyi akşamlar $noGuestName 🌙';
+      return '${AppLocalizations.of(context).goodEvening} $noGuestName 🌙';
     }
   }
 }

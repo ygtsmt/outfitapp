@@ -7,6 +7,7 @@ import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/core/core.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:comby/generated/l10n.dart';
 
 class ModelsTabContent extends StatefulWidget {
   const ModelsTabContent({super.key});
@@ -48,7 +49,8 @@ class _ModelsTabContentState extends State<ModelsTabContent>
             state.errorMessage!.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Hata: ${state.errorMessage}'),
+              content: Text(AppLocalizations.of(context)
+                  .errorOccurred(state.errorMessage!)),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 3),
             ),
@@ -82,7 +84,7 @@ class _ModelsTabContentState extends State<ModelsTabContent>
                 ),
                 SizedBox(height: 24.h),
                 Text(
-                  'Model fotoğrafı bulunamadı\nYeni model eklemek için yukarıdaki butona tıklayın',
+                  '${AppLocalizations.of(context).noModelsFound}\n${AppLocalizations.of(context).clickButtonAboveToAddModel}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[600],
                       ),
@@ -219,7 +221,7 @@ class _AddModelItemButton extends StatelessWidget {
                 height: 8.h,
               ),
               Text(
-                'Model Ekle',
+                AppLocalizations.of(context).addModel,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12.sp,

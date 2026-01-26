@@ -192,33 +192,80 @@ class WardrobeAnalysisService {
     }
   }
 
+  /// Calculate capsule wardrobe score (0-100)
+  /// Components:
+  /// 1. Quantity Score (25%)
+  /// 2. Balance Score (20%)
+  /// 3. Color Harmony (20%)
+  /// 4. Versatility Score (25%)
+  /// 5. Essential Items (10%)
   int _calculateCapsuleScore(
       int totalItems, Map<String, int> categories, Map<String, int> colors) {
     if (totalItems == 0) return 0;
 
     double score = 0;
 
-    // 1. Quantity Score (30%)
-    if (totalItems >= 20 && totalItems <= 60) {
-      score += 30;
-    } else if (totalItems > 10 && totalItems <= 100) {
-      score += 15;
-    }
+    // 1. Quantity Score (25%) - STRICTER
+    score += _calculateQuantityScore(totalItems);
 
-    // 2. Balance Score (40%)
-    int tops = categories['top'] ?? categories['Top'] ?? 0;
-    int bottoms = categories['bottom'] ?? categories['Bottom'] ?? 0;
+    // 2. Balance Score (20%)
+    score += _calculateBalanceScore(categories);
+
+    // 3. Color Harmony (20%) - NEW
+    score += _calculateColorHarmony(totalItems, colors);
+
+    // 4. Versatility Score (25%) - NEW (simplified for now)
+    score += _calculateVersatilityScore(totalItems, colors);
+
+    // 5. Essential Items (10%) - NEW
+    score += _checkEssentialItems(categories, colors);
+
+    return score.round().clamp(0, 100);
+  }
+
+  /// 1. Quantity Score (25%)
+  double _calculateQuantityScore(int total) {
+    if (total >= 30 && total <= 50) return 25.0; // Sweet spot
+    if (total >= 20 && total < 30) return 15.0; // Getting there
+    if (total >= 51 && total <= 70) return 15.0;
+    if (total >= 15 && total < 20) return 8.0; // Too small
+    if (total >= 71 && total <= 100) return 8.0;
+    return 0.0; // Too small (<15) or too large (>100)
+  }
+
+  /// 2. Balance Score (20%)
+  double _calculateBalanceScore(Map<String, int> categories) {
+    double score = 0;
+
+    // Top/Bottom balance (10pts)
+    int tops = (categories['top'] ?? 0) + (categories['Top'] ?? 0);
+    int bottoms = (categories['bottom'] ?? 0) + (categories['Bottom'] ?? 0);
 
     if (tops > 0 && bottoms > 0) {
       double ratio = bottoms / tops;
-      if (ratio >= 0.4 && ratio <= 1.5) {
-        score += 40;
-      } else if (ratio > 0.1) {
-        score += 20;
+      if (ratio >= 0.5 && ratio <= 1.5) {
+        score += 10.0;
+      } else if (ratio >= 0.3 && ratio <= 2.0) {
+        score += 5.0;
       }
     }
 
-    // 3. Neutrality/Cohesion Score (30%)
+    // Category diversity (10pts)
+    int shoes = (categories['shoes'] ?? 0) + (categories['Shoes'] ?? 0);
+    int outerwear =
+        (categories['outerwear'] ?? 0) + (categories['Outerwear'] ?? 0);
+
+    if (shoes > 0) score += 5.0;
+    if (outerwear > 0) score += 5.0;
+
+    return score;
+  }
+
+  /// 3. Color Harmony (20%) - NEW
+  double _calculateColorHarmony(int totalItems, Map<String, int> colors) {
+    double score = 0;
+
+    // Count neutrals
     final neutrals = [
       'black',
       'white',
@@ -227,22 +274,124 @@ class WardrobeAnalysisService {
       'beige',
       'navy',
       'blue',
-      'brown'
+      'brown',
+      'cream'
     ];
+
     int neutralCount = 0;
     colors.forEach((key, value) {
-      if (neutrals.contains(key.toLowerCase())) {
+      if (neutrals.any((n) => key.toLowerCase().contains(n))) {
         neutralCount += value;
       }
     });
 
     double neutralRatio = neutralCount / totalItems;
-    if (neutralRatio >= 0.5) {
-      score += 30;
-    } else if (neutralRatio >= 0.3) {
-      score += 15;
+    int colorCount = colors.length;
+
+    // Ideal: 60%+ neutrals, <=5 colors
+    if (neutralRatio >= 0.6 && colorCount <= 5) {
+      score = 20.0;
+    }
+    // Good: 50%+ neutrals, <=7 colors
+    else if (neutralRatio >= 0.5 && colorCount <= 7) {
+      score = 15.0;
+    }
+    // OK: 40%+ neutrals, <=10 colors
+    else if (neutralRatio >= 0.4 && colorCount <= 10) {
+      score = 10.0;
+    }
+    // Needs work
+    else if (neutralRatio >= 0.3) {
+      score = 5.0;
     }
 
-    return score.round().clamp(0, 100);
+    return score;
+  }
+
+  /// 4. Versatility Score (25%) - NEW
+  /// Simplified: Based on color cohesion and neutral base
+  double _calculateVersatilityScore(int totalItems, Map<String, int> colors) {
+    double score = 0;
+
+    // More neutrals = higher versatility (items match better)
+    final neutrals = [
+      'black',
+      'white',
+      'grey',
+      'gray',
+      'beige',
+      'navy',
+      'blue',
+      'brown',
+      'cream'
+    ];
+
+    int neutralCount = 0;
+    colors.forEach((key, value) {
+      if (neutrals.any((n) => key.toLowerCase().contains(n))) {
+        neutralCount += value;
+      }
+    });
+
+    double neutralRatio = neutralCount / totalItems;
+
+    // High versatility: 70%+ neutral
+    if (neutralRatio >= 0.7) {
+      score = 25.0;
+    }
+    // Good: 60%+ neutral
+    else if (neutralRatio >= 0.6) {
+      score = 20.0;
+    }
+    // Medium: 50%+ neutral
+    else if (neutralRatio >= 0.5) {
+      score = 15.0;
+    }
+    // Low: 40%+ neutral
+    else if (neutralRatio >= 0.4) {
+      score = 10.0;
+    }
+    // Very low: <40%
+    else {
+      score = 5.0;
+    }
+
+    return score;
+  }
+
+  /// 5. Essential Items Check (10%) - NEW
+  double _checkEssentialItems(
+      Map<String, int> categories, Map<String, int> colors) {
+    double score = 0;
+    int found = 0;
+
+    // 1. Has tops (required)
+    int tops = (categories['top'] ?? 0) + (categories['Top'] ?? 0);
+    if (tops > 0) found++;
+
+    // 2. Has bottoms (required)
+    int bottoms = (categories['bottom'] ?? 0) + (categories['Bottom'] ?? 0);
+    if (bottoms > 0) found++;
+
+    // 3. Has shoes (required)
+    int shoes = (categories['shoes'] ?? 0) + (categories['Shoes'] ?? 0);
+    if (shoes > 0) found++;
+
+    // 4. Has neutral colors (required)
+    bool hasNeutral = colors.keys.any((color) {
+      final lower = color.toLowerCase();
+      return lower.contains('black') ||
+          lower.contains('white') ||
+          lower.contains('grey') ||
+          lower.contains('gray') ||
+          lower.contains('beige') ||
+          lower.contains('navy');
+    });
+    if (hasNeutral) found++;
+
+    // Score: 2.5 points per essential
+    score = (found / 4) * 10.0;
+
+    return score;
   }
 }

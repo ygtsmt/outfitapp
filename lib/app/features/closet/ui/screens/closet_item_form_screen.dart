@@ -8,6 +8,7 @@ import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/closet/services/clothing_analysis_service.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/services/background_removal_service.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter_image_map/flutter_image_map.dart';
 
 class ClosetItemFormScreen extends StatefulWidget {
@@ -185,7 +186,9 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
                 'assets/png/body_map_woman.png',
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
-                  return const Center(child: Text('Body Map Image Not Found'));
+                  return Center(
+                      child: Text(
+                          AppLocalizations.of(context).bodyMapImageNotFound));
                 },
               ),
               isDebug: isDebugMode,
@@ -380,7 +383,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Closet Item Ekle'),
+        title: Text(AppLocalizations.of(context).addClosetItem),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.router.pop(),
@@ -417,7 +420,9 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
                     )
                   : Icon(Icons.auto_awesome, size: 20.sp),
               label: Text(
-                isAnalyzing ? 'Analyzing...' : '✨ Analyze with AI',
+                isAnalyzing
+                    ? AppLocalizations.of(context).analyzingEllipsis
+                    : '✨ ${AppLocalizations.of(context).analyzeWithAI}',
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
@@ -439,7 +444,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Select Item Type',
+                  AppLocalizations.of(context).selectItemType,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -449,7 +454,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
                 Row(
                   children: [
                     Text(
-                      'Debug Mode',
+                      AppLocalizations.of(context).debugMode,
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: Colors.grey[600],
@@ -476,8 +481,9 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
             Center(
               child: Text(
                 selectedSubcategory != null
-                    ? 'Selected: ${(selectedSubcategory ?? "").toUpperCase()}'
-                    : 'Tap a body part to select category',
+                    ? AppLocalizations.of(context).selectedLabel(
+                        (selectedSubcategory ?? "").toUpperCase())
+                    : AppLocalizations.of(context).tapToSelectCategory,
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
@@ -490,7 +496,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
 
             // Collapsible Details
             ExpansionTile(
-              title: const Text('Item Details (Optional)'),
+              title: Text(AppLocalizations.of(context).itemDetailsOptional),
               initiallyExpanded: false,
               children: [
                 Padding(
@@ -498,7 +504,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
                   child: Column(
                     children: [
                       _buildDropdown(
-                        label: 'Kategori * (Zorunlu)',
+                        label: AppLocalizations.of(context).mandatoryCategory,
                         value: selectedSubcategory,
                         items: allSubcategories,
                         onChanged: (value) {
@@ -509,7 +515,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
                       ),
                       SizedBox(height: 12.h),
                       _buildDropdown(
-                        label: 'Renk (Opsiyonel)',
+                        label: AppLocalizations.of(context).colorOptional,
                         value: selectedColor,
                         items: colors,
                         onChanged: (value) {
@@ -520,7 +526,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
                       ),
                       SizedBox(height: 12.h),
                       _buildDropdown(
-                        label: 'Desen (Opsiyonel)',
+                        label: AppLocalizations.of(context).patternOptional,
                         value: selectedPattern,
                         items: patterns,
                         onChanged: (value) {
@@ -531,7 +537,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
                       ),
                       SizedBox(height: 12.h),
                       _buildDropdown(
-                        label: 'Mevsim (Opsiyonel)',
+                        label: AppLocalizations.of(context).seasonOptional,
                         value: selectedSeason,
                         items: seasons,
                         onChanged: (value) {
@@ -542,7 +548,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
                       ),
                       SizedBox(height: 12.h),
                       _buildDropdown(
-                        label: 'Kumaş (Opsiyonel)',
+                        label: AppLocalizations.of(context).fabricOptional,
                         value: selectedMaterial,
                         items: materials,
                         onChanged: (value) {
@@ -581,7 +587,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
                       ),
                     )
                   : Text(
-                      'Kaydet',
+                      AppLocalizations.of(context).save,
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -624,7 +630,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
     return TextFormField(
       controller: _brandController,
       decoration: InputDecoration(
-        labelText: 'Marka (Opsiyonel)',
+        labelText: AppLocalizations.of(context).brandOptional,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
@@ -667,14 +673,14 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
           size: 48.sp,
         ),
         title: Text(
-          'Geçersiz Fotoğraf',
+          AppLocalizations.of(context).invalidPhoto,
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
         content: Text(
-          'Lütfen sadece giyim, ayakkabı, çanta, takı veya aksesuar fotoğrafı yükleyin.',
+          AppLocalizations.of(context).invalidPhotoDescription,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14.sp,
@@ -688,7 +694,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
               context.router.pop(); // Go back to previous screen
             },
             child: Text(
-              'Geri Dön',
+              AppLocalizations.of(context).goBack,
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 14.sp,
@@ -706,7 +712,7 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
               ),
             ),
             child: Text(
-              'Manuel Devam Et',
+              AppLocalizations.of(context).continueManually,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 14.sp,
@@ -778,7 +784,8 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              '✨ AI Analysis Complete! Found: ${selectedSubcategory?.toUpperCase()}$brandInfo',
+              AppLocalizations.of(context).aiAnalysisComplete(
+                  '${selectedSubcategory?.toUpperCase()}$brandInfo'),
             ),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 2),
@@ -794,11 +801,12 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('AI Analysis Failed: ${e.toString()}'),
+            content: Text(
+                AppLocalizations.of(context).aiAnalysisFailed(e.toString())),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
             action: SnackBarAction(
-              label: 'Retry',
+              label: AppLocalizations.of(context).retry,
               textColor: Colors.white,
               onPressed: _analyzeWithAI,
             ),
@@ -811,13 +819,13 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
   void _showCategoryBottomSheet(String regionKey, List<String> categories) {
     // Region display names
     final regionNames = {
-      'head': 'Baş / Yüz',
-      'hands': 'Eller / Bileklik',
-      'torso': 'Üst Gövde',
-      'legs': 'Alt Gövde',
-      'feet': 'Ayaklar',
-      'accessories': 'Aksesuarlar',
-      'upper_body': 'Üst Gövde',
+      'head': AppLocalizations.of(context).headFace,
+      'hands': AppLocalizations.of(context).handsWrists,
+      'torso': AppLocalizations.of(context).upperTorso,
+      'legs': AppLocalizations.of(context).lowerTorso,
+      'feet': AppLocalizations.of(context).feet,
+      'accessories': AppLocalizations.of(context).accessories,
+      'upper_body': AppLocalizations.of(context).upperBody,
     };
 
     showModalBottomSheet(
@@ -833,7 +841,8 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Kategori Seç: ${regionNames[regionKey] ?? regionKey}',
+                AppLocalizations.of(context)
+                    .selectCategory(regionNames[regionKey] ?? regionKey),
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -911,8 +920,8 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
   Future<void> _saveItem() async {
     if (!_canSave()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Lütfen kategori seçiniz'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).pleaseSelectCategory),
           backgroundColor: Colors.red,
         ),
       );
@@ -999,7 +1008,8 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hata: ${e.toString()}'),
+            content:
+                Text(AppLocalizations.of(context).errorOccurred(e.toString())),
             backgroundColor: Colors.red,
           ),
         );

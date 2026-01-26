@@ -1,12 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
 import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/routes/app_router.dart';
+import 'package:comby/generated/l10n.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class ClosetItemDetailScreen extends StatefulWidget {
@@ -87,17 +88,18 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
           borderRadius: BorderRadius.circular(16.r),
         ),
         title: Text(
-          'Silmek istiyor musunuz?',
+          AppLocalizations.of(context).deleteConfirmationTitle,
           style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
         ),
         content: Text(
-          'Bu işlem geri alınamaz.',
+          AppLocalizations.of(context).thisActionCannotBeUndone,
           style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('İptal', style: TextStyle(color: Colors.grey[600])),
+            child: Text(AppLocalizations.of(context).cancel,
+                style: TextStyle(color: Colors.grey[600])),
           ),
           TextButton(
             onPressed: () {
@@ -106,7 +108,7 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
               context.router.pop();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Sil'),
+            child: Text(AppLocalizations.of(context).delete),
           ),
         ],
       ),
@@ -138,7 +140,8 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
           if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Hata: ${state.errorMessage}'),
+                content: Text(AppLocalizations.of(context)
+                    .errorOccurred(state.errorMessage!)),
                 backgroundColor: Colors.red,
               ),
             );
@@ -245,7 +248,7 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
                         size: 28.sp,
                       ),
                       Text(
-                        'Kaydırarak görseli büyüt',
+                        AppLocalizations.of(context).scrollToEnlarge,
                         style: TextStyle(
                           fontSize: 11.sp,
                           color: Colors.grey[400],
@@ -450,7 +453,7 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              'Yakınlaştırmak için çimdikle',
+                              AppLocalizations.of(context).pinchToZoom,
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 color: iconColor.withOpacity(0.7),
@@ -483,7 +486,8 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
           children: [
             // Category title
             Text(
-              _capitalizeFirst(item.subcategory ?? 'Ürün'),
+              _capitalizeFirst(
+                  item.subcategory ?? AppLocalizations.of(context).product),
               style: TextStyle(
                 fontSize: 36.sp,
                 fontWeight: FontWeight.w300,
@@ -542,20 +546,24 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
   Widget _buildDetailsGrid(BuildContext context, WardrobeItem item) {
     final details = <MapEntry<String, String>>[];
 
+    final l10n = AppLocalizations.of(context);
     if (item.color != null) {
-      details.add(MapEntry('Renk', _capitalizeFirst(item.color!)));
+      details.add(MapEntry(l10n.colorLabel, _capitalizeFirst(item.color!)));
     }
     if (item.pattern != null) {
-      details.add(MapEntry('Desen', _capitalizeFirst(item.pattern!)));
+      details.add(MapEntry(l10n.patternLabel, _capitalizeFirst(item.pattern!)));
     }
     if (item.material != null) {
-      details.add(MapEntry('Kumaş', _capitalizeFirst(item.material!)));
+      details
+          .add(MapEntry(l10n.materialLabel, _capitalizeFirst(item.material!)));
     }
     if (item.season != null) {
-      details.add(MapEntry('Mevsim', _getSeasonName(item.season!)));
+      details.add(
+          MapEntry(l10n.seasonLabel, _getSeasonName(context, item.season!)));
     }
     if (item.category != null) {
-      details.add(MapEntry('Kategori', _capitalizeFirst(item.category!)));
+      details
+          .add(MapEntry(l10n.categoryLabel, _capitalizeFirst(item.category!)));
     }
 
     if (details.isEmpty) {
@@ -570,7 +578,9 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
           context,
           label: entry.key,
           value: entry.value,
-          color: entry.key == 'Renk' ? _getColorFromName(item.color!) : null,
+          color: entry.key == AppLocalizations.of(context).colorLabel
+              ? _getColorFromName(item.color!)
+              : null,
         );
       }).toList(),
     );
@@ -657,7 +667,7 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
           ),
           SizedBox(width: 8.w),
           Text(
-            'Gemini 3 ile analiz edildi',
+            AppLocalizations.of(context).analyzedWithGemini,
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w500,
@@ -705,7 +715,7 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    'Benzer Ürünler',
+                    AppLocalizations.of(context).similarItems,
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
@@ -715,7 +725,8 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
                   ),
                   const Spacer(),
                   Text(
-                    '${similarItems.length} ürün',
+                    AppLocalizations.of(context)
+                        .itemsCount(similarItems.length),
                     style: TextStyle(
                       fontSize: 11.sp,
                       color: Colors.grey[400],
@@ -846,13 +857,14 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
     return text[0].toUpperCase() + text.substring(1);
   }
 
-  String _getSeasonName(String season) {
+  String _getSeasonName(BuildContext context, String season) {
+    final l10n = AppLocalizations.of(context);
     final names = {
-      'summer': 'Yaz',
-      'winter': 'Kış',
-      'spring': 'İlkbahar',
-      'autumn': 'Sonbahar',
-      'all': 'Tüm Sezonlar',
+      'summer': l10n.summer,
+      'winter': l10n.winter,
+      'spring': l10n.spring,
+      'autumn': l10n.autumn,
+      'all': l10n.allSeasons,
     };
     return names[season.toLowerCase()] ?? _capitalizeFirst(season);
   }

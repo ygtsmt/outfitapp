@@ -28,14 +28,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m3(fileName) => "الملف: ${fileName}";
 
-  static String m4(count) =>
+  static String m4(required, available) => "نقاط غير كافية";
+
+  static String m5(count) =>
       "لقد وصلت إلى الحد الأقصى للاسترداد (${count}/10).";
 
-  static String m5(fileSize) => "الحجم: ${fileSize}";
+  static String m6(fileSize) => "الحجم: ${fileSize}";
 
-  static String m6(seed) => "بدأ تجديد القالب بالبذرة: ${seed}";
+  static String m7(seed) => "بدأ تجديد القالب بالبذرة: ${seed}";
 
-  static String m7(credits) =>
+  static String m8(credits) =>
       "تحويل حساب الضيف الخاص بك إلى حساب كامل:\n• الاحتفاظ بجميع نقاطك (${credits})\n• الاحتفاظ بجميع مقاطع الفيديو والمحتوى الخاص بك\n• مزامنة البيانات عبر الأجهزة\n• تأمين حسابك بكلمة مرور";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -394,8 +396,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "initializing":
             MessageLookupByLibrary.simpleMessage("مرحباً بك في Comby..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("صورة الإدخال"),
-        "insufficientCredits":
-            MessageLookupByLibrary.simpleMessage("نقاط غير كافية"),
+        "insufficientCredits": m4,
         "insufficient_credit":
             MessageLookupByLibrary.simpleMessage("رصيد غير كافٍ"),
         "invalid_credential": MessageLookupByLibrary.simpleMessage(
@@ -587,7 +588,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "فشل الاسترداد. يرجى المحاولة مرة أخرى."),
         "refundLimitReached":
             MessageLookupByLibrary.simpleMessage("تم الوصول إلى حد الاسترداد"),
-        "refundLimitReachedDescription": m4,
+        "refundLimitReachedDescription": m5,
         "refundProcessedSuccessfully":
             MessageLookupByLibrary.simpleMessage("تمت معالجة الاسترداد بنجاح!"),
         "refundProcessedSuccessfullyDefault":
@@ -688,7 +689,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_button_text":
             MessageLookupByLibrary.simpleMessage("ليس لديك حساب؟ "),
         "sizeLabel": MessageLookupByLibrary.simpleMessage("الحجم"),
-        "sizeText": m5,
+        "sizeText": m6,
         "startGenerating": MessageLookupByLibrary.simpleMessage("بدء التوليد"),
         "start_image": MessageLookupByLibrary.simpleMessage("صورة البداية"),
         "startedAtLabel": MessageLookupByLibrary.simpleMessage("بدأ في: "),
@@ -708,7 +709,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "successfully": MessageLookupByLibrary.simpleMessage("بنجاح"),
         "tail_image": MessageLookupByLibrary.simpleMessage("صورة النهاية"),
         "tapToSelect": MessageLookupByLibrary.simpleMessage("اضغط للتحديد"),
-        "templateRegenerationStarted": m6,
+        "templateRegenerationStarted": m7,
         "termsOfService": MessageLookupByLibrary.simpleMessage("شروط الخدمة"),
         "terms_of_service_required": MessageLookupByLibrary.simpleMessage(
             "يجب عليك الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة."),
@@ -743,7 +744,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("فتح جميع الميزات"),
         "updateButton": MessageLookupByLibrary.simpleMessage("تحديث"),
         "upgradeAccount": MessageLookupByLibrary.simpleMessage("ترقية الحساب"),
-        "upgradeAccountDescription": m7,
+        "upgradeAccountDescription": m8,
         "upgradeAccountForReviewCredit": MessageLookupByLibrary.simpleMessage(
             "للمطالبة بـ 60 نقطة مجانية، يرجى ترقية حسابك أولاً"),
         "upgradeAccountMessage": MessageLookupByLibrary.simpleMessage(

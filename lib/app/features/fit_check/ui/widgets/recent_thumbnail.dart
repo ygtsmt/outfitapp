@@ -61,7 +61,8 @@ class RecentFitCheckThumbnail extends StatelessWidget {
             ),
             SizedBox(height: 4.h),
             Text(
-              DateFormat('d MMM', 'tr_TR').format(log.createdAt),
+              DateFormat('d MMM', Localizations.localeOf(context).toString())
+                  .format(log.createdAt),
               style: TextStyle(
                 fontSize: 10.sp,
                 color: Colors.grey[600],

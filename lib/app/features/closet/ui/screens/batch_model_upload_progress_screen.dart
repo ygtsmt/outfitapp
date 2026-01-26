@@ -1,13 +1,14 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
-import 'package:comby/core/constants/layout_constants.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/app/features/closet/services/model_analysis_service.dart';
+import 'package:comby/core/constants/layout_constants.dart';
 import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 /// Result model for batch model upload
@@ -55,7 +56,7 @@ class _BatchModelUploadProgressScreenState
 
   int _currentIndex = 0;
   bool _isProcessing = true;
-  String _currentStatus = 'Hazırlanıyor...';
+  String _currentStatus = '';
 
   final List<ModelItem> _successfulItems = [];
   final List<FailedModelInfo> _failedPhotos = [];
@@ -73,7 +74,21 @@ class _BatchModelUploadProgressScreenState
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-    _startProcessing();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        _startProcessing(l10n);
+      }
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_currentStatus.isEmpty) {
+      _currentStatus = AppLocalizations.of(context).preparing;
+    }
   }
 
   @override
@@ -82,18 +97,18 @@ class _BatchModelUploadProgressScreenState
     super.dispose();
   }
 
-  Future<void> _startProcessing() async {
+  Future<void> _startProcessing(AppLocalizations l10n) async {
     for (int i = 0; i < widget.imageFiles.length; i++) {
       if (!mounted) return;
 
       setState(() {
         _currentIndex = i;
-        _currentStatus = 'Gemini 3 ile analiz ediliyor...';
+        _currentStatus = l10n.analyzingWithGemini3;
       });
 
       _animationController.forward(from: 0);
 
-      await _processPhoto(widget.imageFiles[i]);
+      await _processPhoto(widget.imageFiles[i], l10n);
     }
 
     if (!mounted) return;
@@ -106,10 +121,10 @@ class _BatchModelUploadProgressScreenState
     _navigateToResult();
   }
 
-  Future<void> _processPhoto(File imageFile) async {
+  Future<void> _processPhoto(File imageFile, AppLocalizations l10n) async {
     try {
       setState(() {
-        _currentStatus = 'Model analiz ediliyor...';
+        _currentStatus = l10n.analyzingModel;
       });
 
       // Step 1: AI Analysis
@@ -119,8 +134,8 @@ class _BatchModelUploadProgressScreenState
       final isValid = analysisResult['isValidModel']?.toLowerCase() == 'true';
 
       if (!isValid) {
-        final reason = analysisResult['invalidReason'] ??
-            'Bu fotoğraf kıyafet giydirilebilecek bir model değil';
+        final reason =
+            analysisResult['invalidReason'] ?? l10n.notValidModelReason;
         _failedPhotos.add(FailedModelInfo(
           imageFile: imageFile,
           reason: reason,
@@ -129,7 +144,7 @@ class _BatchModelUploadProgressScreenState
       }
 
       setState(() {
-        _currentStatus = 'Yükleniyor...';
+        _currentStatus = l10n.uploading;
       });
 
       // Step 2: Upload image
@@ -137,7 +152,7 @@ class _BatchModelUploadProgressScreenState
       final imageUrl = await closetUseCase.uploadModelImage(imageFile);
 
       setState(() {
-        _currentStatus = 'Kaydediliyor...';
+        _currentStatus = l10n.saving;
       });
 
       // Step 3: Create model item with AI-extracted data
@@ -166,7 +181,7 @@ class _BatchModelUploadProgressScreenState
     } catch (e) {
       _failedPhotos.add(FailedModelInfo(
         imageFile: imageFile,
-        reason: 'İşlem hatası: ${e.toString()}',
+        reason: l10n.processingError(e.toString()),
       ));
     }
   }
@@ -198,7 +213,7 @@ class _BatchModelUploadProgressScreenState
             child: Column(
               children: [
                 Text(
-                  'Modeller İşleniyor',
+                  AppLocalizations.of(context).processingModels,
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
@@ -305,7 +320,8 @@ class _BatchModelUploadProgressScreenState
                           ),
                           SizedBox(width: 8.w),
                           Text(
-                            'Başarılı: ${_successfulItems.length}',
+                            AppLocalizations.of(context)
+                                .successCountLabel(_successfulItems.length),
                             style: TextStyle(
                               fontSize: 14.sp,
                               color: Colors.grey[700],
@@ -323,7 +339,8 @@ class _BatchModelUploadProgressScreenState
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              'Başarısız: ${_failedPhotos.length}',
+                              AppLocalizations.of(context)
+                                  .failCountLabel(_failedPhotos.length),
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: Colors.red,
@@ -369,7 +386,7 @@ class _BatchModelUploadProgressScreenState
                           ),
                         ),
                         child: Text(
-                          'Sonuçları Gör',
+                          AppLocalizations.of(context).viewResults,
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.bold,

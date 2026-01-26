@@ -1,5 +1,6 @@
 import 'package:comby/app/features/fit_check/models/fit_check_model.dart';
 import 'package:comby/app/features/fit_check/ui/widgets/recent_thumbnail.dart';
+import 'package:comby/generated/l10n.dart';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:comby/core/routes/app_router.dart';
@@ -30,7 +31,7 @@ class FitCheckRecentOverview extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'SON 30 GÜN',
+                  AppLocalizations.of(context).last30Days,
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w600,
@@ -43,7 +44,7 @@ class FitCheckRecentOverview extends StatelessWidget {
                     context.router.push(const FitCheckHistoryScreenRoute());
                   },
                   child: Text(
-                    'Tümü >',
+                    AppLocalizations.of(context).allTabs,
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w600,
@@ -61,7 +62,7 @@ class FitCheckRecentOverview extends StatelessWidget {
             child: recentFitChecks.isEmpty
                 ? Center(
                     child: Text(
-                      'Henüz FitCheck kaydı yok',
+                      AppLocalizations.of(context).noFitCheckLogsYet,
                       style: TextStyle(
                         color: Colors.grey[400],
                         fontSize: 12.sp,

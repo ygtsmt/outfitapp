@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:comby/app/features/fal_ai/data/fal_ai_usecase.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -69,7 +70,9 @@ class _QuickTryTabContentState extends State<QuickTryTabContent>
     if (status.isDenied) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kamera izni gerekli')),
+          SnackBar(
+              content:
+                  Text(AppLocalizations.of(context).cameraPermissionRequired)),
         );
       }
       return;
@@ -223,7 +226,9 @@ class _QuickTryTabContentState extends State<QuickTryTabContent>
       debugPrint('Error processing try-on: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hata: $e')),
+          SnackBar(
+              content: Text(
+                  AppLocalizations.of(context).errorOccurred(e.toString()))),
         );
         setState(() {
           _currentStep = TryOnStep.captureUser; // Reset
@@ -275,7 +280,8 @@ class _QuickTryTabContentState extends State<QuickTryTabContent>
           debugPrint('❌ Quick Try: Generation failed');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('İşlem başarısız oldu.')),
+              SnackBar(
+                  content: Text(AppLocalizations.of(context).operationFailed)),
             );
             setState(() {
               _isLoading = false;
@@ -314,7 +320,7 @@ class _QuickTryTabContentState extends State<QuickTryTabContent>
               ),
               SizedBox(height: 16.h),
               Text(
-                'Gemini 3 ile hazırlanıyor... ✨',
+                AppLocalizations.of(context).geminiProcessing,
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
               ),
             ],
@@ -363,8 +369,8 @@ class _QuickTryTabContentState extends State<QuickTryTabContent>
               children: [
                 Text(
                   _currentStep == TryOnStep.captureUser
-                      ? 'Kendini Çek'
-                      : 'Kıyafeti Çek',
+                      ? AppLocalizations.of(context).captureYourself
+                      : AppLocalizations.of(context).captureClothes,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20.sp,
@@ -432,8 +438,8 @@ class _QuickTryTabContentState extends State<QuickTryTabContent>
         child: Center(
           child: Text(
             _currentStep == TryOnStep.captureUser
-                ? 'Yüzünü ve vücudunu hizala'
-                : 'Kıyafeti ortala',
+                ? AppLocalizations.of(context).alignFaceAndBody
+                : AppLocalizations.of(context).centerTheClothes,
             style: TextStyle(
               color: Colors.white.withOpacity(0.5),
               fontSize: 14.sp,
@@ -464,8 +470,8 @@ class _QuickTryTabContentState extends State<QuickTryTabContent>
 
     if (imageUrl == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Sonuç')),
-        body: const Center(child: Text('Görüntü yüklenemedi.')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context).result)),
+        body: Center(child: Text(AppLocalizations.of(context).imageLoadFailed)),
       );
     }
 
@@ -527,7 +533,7 @@ class _QuickTryTabContentState extends State<QuickTryTabContent>
                 foregroundColor: Colors.black,
                 minimumSize: Size(double.infinity, 50.h),
               ),
-              child: const Text('Yeni Dene'),
+              child: Text(AppLocalizations.of(context).tryAgain),
             ),
           ),
         ]));

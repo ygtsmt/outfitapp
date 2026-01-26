@@ -30,7 +30,7 @@ class DashboardScreen extends StatelessWidget {
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (context, state) {
                   return Text(
-                    _getGreeting(state.profileInfo?.displayName ?? ""),
+                    _getGreeting(context, state.profileInfo?.displayName ?? ""),
                     style: TextStyle(
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
@@ -77,17 +77,18 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  String _getGreeting(String username) {
+  String _getGreeting(BuildContext context, String username) {
     String name =
         username.split(" ").length > 1 ? username.split(" ")[0] : username;
     final noGuestName = name.toLowerCase() != 'guest' ? name : '';
     final hour = DateTime.now().hour;
+    final l10n = AppLocalizations.of(context);
     if (hour < 12) {
-      return 'Günaydın $noGuestName ☀️ ';
+      return l10n.goodMorning(noGuestName);
     } else if (hour < 18) {
-      return 'İyi günler $noGuestName 👋 ';
+      return l10n.goodAfternoon(noGuestName);
     } else {
-      return 'İyi akşamlar $noGuestName 🌙';
+      return l10n.goodEvening(noGuestName);
     }
   }
 }

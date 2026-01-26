@@ -1,5 +1,6 @@
 import 'package:comby/app/features/fit_check/models/fit_check_model.dart';
 import 'package:comby/app/features/fit_check/ui/widgets/fit_check_stat_item.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -37,7 +38,7 @@ class FitCheckStatsDashboard extends StatelessWidget {
     }
 
     // Motivational Text Logic
-    String motivationText = 'Henüz bir seri yakalamadın. Bugün başla!';
+    String motivationText = AppLocalizations.of(context).noStreakYet;
     Color motivationColor = Colors.grey[600]!;
 
     // Helper to personalize text
@@ -49,16 +50,17 @@ class FitCheckStatsDashboard extends StatelessWidget {
     }
 
     if (currentStreak >= 30) {
-      motivationText = personalize('Efsanevi! 🏆 Gerçek bir stil ikonusun');
+      motivationText =
+          personalize(AppLocalizations.of(context).streakLegendary);
       motivationColor = Colors.purple;
     } else if (currentStreak >= 7) {
-      motivationText = personalize('Harikasın! 🔥 Bir haftalık istikrar');
+      motivationText = personalize(AppLocalizations.of(context).streakAwesome);
       motivationColor = Colors.orange[700]!;
     } else if (currentStreak >= 3) {
-      motivationText = personalize('Süper gidiyorsun! 🚀 Seriyi bozma');
+      motivationText = personalize(AppLocalizations.of(context).streakSuper);
       motivationColor = Colors.blue[700]!;
     } else if (currentStreak > 0) {
-      motivationText = personalize('Güzel başlangıç! ✨ Devam et');
+      motivationText = personalize(AppLocalizations.of(context).streakGood);
       motivationColor = Colors.green[700]!;
     }
 
@@ -82,20 +84,20 @@ class FitCheckStatsDashboard extends StatelessWidget {
           child: Row(
             children: [
               FitCheckStatItem(
-                label: 'Toplam',
+                label: AppLocalizations.of(context).total,
                 value: '$totalChecks',
-                suffix: ' Check',
+                suffix: ' ${AppLocalizations.of(context).check}',
               ),
               _buildDivider(),
               FitCheckStatItem(
-                label: 'Mevcut Seri',
+                label: AppLocalizations.of(context).currentStreak,
                 value: '$currentStreak',
-                suffix: ' Gün',
+                suffix: ' ${AppLocalizations.of(context).day}',
                 isAccent: true, // Highlight streak
               ),
               _buildDivider(),
               FitCheckStatItem(
-                label: 'Favori Tarz',
+                label: AppLocalizations.of(context).favoriteStyle,
                 value: topStyle.length == 1 ? '🤔' : topStyle,
                 isStyle: true,
               ),

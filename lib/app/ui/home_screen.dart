@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<AppBloc, AppState>(
       builder: (final context, final state) {
         return AutoTabsRouter(
-          routes:  [
+          routes: [
             DashbordTabRouter(),
             ClosetTabRouter(),
             ChatTabRouter(),
@@ -195,25 +195,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                 icon: tabsRouter.activeIndex == 0
                                     ? const Icon(Icons.dashboard)
                                     : const Icon(Icons.dashboard_outlined),
-                                label: 'Dashboard',
+                                label:
+                                    AppLocalizations.of(context).homeDashboard,
                               ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 1
                                     ? const Icon(Icons.checkroom)
                                     : const Icon(Icons.checkroom_outlined),
-                                label: 'Closet',
+                                label: AppLocalizations.of(context).homeCloset,
                               ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 2
                                     ? const Icon(Icons.chat_bubble)
                                     : const Icon(Icons.chat_bubble_outline),
-                                label: 'Chat',
+                                label: AppLocalizations.of(context).homeChat,
                               ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 3
                                     ? const Icon(Icons.history_edu)
                                     : const Icon(Icons.history_edu_outlined),
-                                label: 'Try-On',
+                                label: AppLocalizations.of(context).homeTryOn,
                               ),
                               BottomNavigationBarItem(
                                 icon: tabsRouter.activeIndex == 4

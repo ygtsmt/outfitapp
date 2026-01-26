@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:comby/generated/l10n.dart';
 
 class MonthlyStatsInstruction extends StatelessWidget {
   const MonthlyStatsInstruction({super.key});
@@ -10,7 +11,7 @@ class MonthlyStatsInstruction extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(20.w),
         child: Text(
-          'Geçmiş kombinleri incelemek için takvimden gün seçin 👆',
+          AppLocalizations.of(context).instructionSelectDay,
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.grey[400],

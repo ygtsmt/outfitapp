@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:comby/generated/l10n.dart';
 
 /// Widget to preview selected media before sending
 class MediaPreviewWidget extends StatelessWidget {
@@ -32,7 +33,8 @@ class MediaPreviewWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Seçili Medya (${mediaPaths.length})',
+                AppLocalizations.of(context)
+                    .selectedMediaCount(mediaPaths.length),
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
@@ -109,7 +111,7 @@ class _MediaThumbnail extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4.r),
                       ),
                       child: Text(
-                        'VİDEO',
+                        AppLocalizations.of(context).videoLabelUpper,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 8.sp,

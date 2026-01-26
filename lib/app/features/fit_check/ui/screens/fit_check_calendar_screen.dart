@@ -1,6 +1,7 @@
 import 'package:comby/app/features/fit_check/ui/widgets/fit_check_stats_dashboard.dart';
 import 'package:comby/app/features/fit_check/ui/widgets/fit_check_log_card.dart';
 import 'package:comby/app/features/fit_check/ui/widgets/recent_overview.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
@@ -95,7 +96,7 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kıyafet Takvimi 📅'),
+        title: Text(AppLocalizations.of(context).outfitCalendar),
         centerTitle: true,
       ),
       body: Column(
@@ -158,8 +159,8 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
           _showDailyEvents(context, selectedDay, events);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Bu tarih için kayıt bulunamadı.'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).noRecordFoundForDate),
               duration: Duration(seconds: 1),
             ),
           );
@@ -208,7 +209,9 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
                 child: Row(
                   children: [
                     Text(
-                      DateFormat('d MMMM yyyy', 'tr_TR').format(day),
+                      DateFormat('d MMMM yyyy',
+                              Localizations.localeOf(context).toString())
+                          .format(day),
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
@@ -223,7 +226,7 @@ class _FitCheckCalendarScreenState extends State<FitCheckCalendarScreen> {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Text(
-                        '${events.length} Kombin',
+                        '${events.length} ${AppLocalizations.of(context).kombins}',
                         style: TextStyle(
                           color: const Color(0xFFE94057),
                           fontWeight: FontWeight.bold,

@@ -1,4 +1,5 @@
 import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,7 +45,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return const Center(child: Text('Giriş yapmanız gerekiyor'));
+      return Center(child: Text(AppLocalizations.of(context).loginRequired));
     }
 
     return StreamBuilder<QuerySnapshot>(
@@ -60,7 +61,9 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
         }
 
         if (snapshot.hasError) {
-          return Center(child: Text('Hata: ${snapshot.error}'));
+          return Center(
+              child: Text(AppLocalizations.of(context)
+                  .errorOccurred(snapshot.error.toString())));
         }
 
         final docs = snapshot.data?.docs ?? [];
@@ -74,7 +77,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                     size: 64.sp, color: Colors.grey[300]),
                 SizedBox(height: 16.h),
                 Text(
-                  'Henüz stil analizi yok',
+                  AppLocalizations.of(context).noStyleAnalysisYet,
                   style: TextStyle(
                     fontSize: 16.sp,
                     color: Colors.grey[600],
@@ -221,7 +224,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                       ),
                     ),
                     Text(
-                      'AI Analiz',
+                      AppLocalizations.of(context).aiAnalysis,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: crossAxisCount >= 3 ? 12.sp : 14.sp,

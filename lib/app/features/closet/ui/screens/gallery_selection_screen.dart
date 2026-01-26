@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 
 /// Gallery Selection Screen for Closet items.
 /// This screen uses the reusable gallery picker for photo selection.
@@ -24,7 +25,7 @@ class _GallerySelectionScreenState extends State<GallerySelectionScreen> {
   Future<void> _openGalleryPicker() async {
     final result = await ReusableGalleryPicker.show(
       context: context,
-      title: 'Fotoğraf Seç',
+      title: AppLocalizations.of(context).selectPhoto,
       mode: GallerySelectionMode.multi,
       maxSelection: 50,
       enableCrop: false, // Crop disabled for multi-select

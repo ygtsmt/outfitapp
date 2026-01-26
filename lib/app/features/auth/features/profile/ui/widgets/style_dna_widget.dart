@@ -1,4 +1,5 @@
 import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,7 +57,7 @@ class _StyleDNAWidgetState extends State<StyleDNAWidget> {
                       Row(
                         children: [
                           Text(
-                            "Stil DNA'sı",
+                            AppLocalizations.of(context).styleDnaTitle,
                             style: TextStyle(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
@@ -193,21 +194,21 @@ class _StyleDNAWidgetState extends State<StyleDNAWidget> {
     if (difference.inDays == 0) {
       if (difference.inHours == 0) {
         if (difference.inMinutes == 0) {
-          return 'Şimdi güncellendi';
+          return AppLocalizations.of(context).updatedNow;
         }
-        return '${difference.inMinutes} dakika önce';
+        return AppLocalizations.of(context).minutesAgo(difference.inMinutes);
       }
-      return 'Bugün güncellendi';
+      return AppLocalizations.of(context).updatedToday;
     } else if (difference.inDays == 1) {
-      return 'Dün güncellendi';
+      return AppLocalizations.of(context).updatedYesterday;
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} gün önce';
+      return AppLocalizations.of(context).daysAgo(difference.inDays);
     } else if (difference.inDays < 30) {
       final weeks = (difference.inDays / 7).floor();
-      return '$weeks hafta önce';
+      return AppLocalizations.of(context).weeksAgo(weeks);
     } else {
       final months = (difference.inDays / 30).floor();
-      return '$months ay önce';
+      return AppLocalizations.of(context).monthsAgo(months);
     }
   }
 }

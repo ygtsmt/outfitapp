@@ -5,6 +5,7 @@ import 'package:comby/core/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:comby/generated/l10n.dart';
 
 class AIFashionCritiquePreviewScreen extends StatefulWidget {
   final File imageFile;
@@ -170,7 +171,8 @@ class _AIFashionCritiquePreviewScreenState
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Analiz Et',
+                                      AppLocalizations.of(context)
+                                          .analyzeButton,
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.bold,

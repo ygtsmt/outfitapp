@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:comby/generated/l10n.dart';
 
 class FitCheckResultScreen extends StatefulWidget {
   final File? imageFile;
@@ -42,7 +43,7 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
     } else if (widget.imageFile != null) {
       _startAnalysis();
     } else {
-      _error = 'Görüntülenemedi.';
+      _error = AppLocalizations.of(context).couldNotBeViewed;
       _isAnalyzing = false;
     }
   }
@@ -57,11 +58,12 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
         path = await _downloadFile(_currentLog!.imageUrl);
       }
       await Share.shareXFiles([XFile(path)],
-          text: 'Comby ile kombinimi inceledim! 🌟');
+          text: AppLocalizations.of(context).shareMessageFitCheck);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Paylaşım hatası: $e')),
+          SnackBar(
+              content: Text('${AppLocalizations.of(context).shareError}: $e')),
         );
       }
     }
@@ -79,13 +81,15 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
       await Gal.putImage(path);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Fotoğraf galeriye kaydedildi! ✅')),
+          SnackBar(
+              content: Text(AppLocalizations.of(context).photoSavedToGallery)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Kaydetme hatası: $e')),
+          SnackBar(
+              content: Text('${AppLocalizations.of(context).saveError}: $e')),
         );
       }
     }
@@ -139,7 +143,8 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Analiz sırasında bir hata oluştu: $e';
+          _error =
+              '${AppLocalizations.of(context).errorOccurred(e.toString())}';
           _isAnalyzing = false;
         });
       }
@@ -286,7 +291,7 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
           ),
           SizedBox(height: 24.h),
           Text(
-            'Kombinin Analiz Ediliyor...',
+            AppLocalizations.of(context).analyzingOutfit,
             style: TextStyle(
               fontSize: 20.sp,
               fontWeight: FontWeight.bold,
@@ -295,7 +300,7 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
           ),
           SizedBox(height: 8.h),
           Text(
-            'Gemini AI, tarzını, renklerini ve uyumunu inceliyor.',
+            AppLocalizations.of(context).analyzingOutfitWithGemini,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14.sp,
@@ -393,7 +398,7 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
         // Suggestions Section (New)
         if (log.suggestions != null && log.suggestions!.isNotEmpty) ...[
           Text(
-            "Stil Önerileri",
+            AppLocalizations.of(context).styleSuggestions,
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,
@@ -450,7 +455,7 @@ class _FitCheckResultScreenState extends State<FitCheckResultScreen> {
               elevation: 0,
             ),
             child: Text(
-              "Ana Sayfa",
+              AppLocalizations.of(context).homePage,
               style: TextStyle(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,

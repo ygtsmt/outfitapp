@@ -181,7 +181,7 @@ String getTicketLabel(BuildContext context, String? ticket) {
     case 'popular':
       return l10n.ticket_popular;
     case 'premium':
-      return 'PREMIUM 🔥';
+      return l10n.ticket_premium;
     default:
       return ticket;
   }

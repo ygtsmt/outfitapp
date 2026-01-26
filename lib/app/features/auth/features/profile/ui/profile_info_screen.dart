@@ -38,8 +38,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
     'Vintage': 0,
     'Minimal': 0,
   };
-  String _styleAnalysis = "Analiz ediliyor...";
-  String _styleTitle = "Yükleniyor...";
+  String _styleAnalysis = "";
+  String _styleTitle = "";
   bool _isStyleLoading = true;
   DateTime? _styleLastUpdated;
 
@@ -78,9 +78,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _styleAnalysis =
-              "Analiz yüklenemedi. Lütfen internet bağlantınızı kontrol edin.";
-          _styleTitle = "Stil Kaşifi";
+          _styleAnalysis = AppLocalizations.of(context).analysisLoadFailed;
+          _styleTitle = AppLocalizations.of(context).styleExplorer;
           _isStyleLoading = false;
         });
       }
@@ -107,7 +106,7 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
         // Show success feedback
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Stil analizi güncellendi!'),
+            content: Text(AppLocalizations.of(context).styleAnalysisUpdated),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -116,20 +115,19 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _styleAnalysis =
-              "Analiz yüklenemedi. Lütfen internet bağlantınızı kontrol edin.";
-          _styleTitle = "Stil Kaşifi";
+          _styleAnalysis = AppLocalizations.of(context).analysisLoadFailed;
+          _styleTitle = AppLocalizations.of(context).styleExplorer;
           _isStyleLoading = false;
         });
 
         // Show error feedback
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Stil analizi yüklenemedi. Tekrar deneyin.'),
+            content: Text(AppLocalizations.of(context).styleAnalysisLoadFailed),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 3),
             action: SnackBarAction(
-              label: 'Tekrar Dene',
+              label: AppLocalizations.of(context).retry,
               textColor: Colors.white,
               onPressed: _refreshStyleDNA,
             ),

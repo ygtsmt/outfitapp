@@ -28,15 +28,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m3(fileName) => "File: ${fileName}";
 
-  static String m4(count) =>
+  static String m4(required, available) => "Kredit tidak cukup";
+
+  static String m5(count) =>
       "Anda telah mencapai batas pengembalian dana maksimum (${count}/10).";
 
-  static String m5(fileSize) => "Ukuran: ${fileSize}";
+  static String m6(fileSize) => "Ukuran: ${fileSize}";
 
-  static String m6(seed) =>
+  static String m7(seed) =>
       "Pembuatan ulang template dimulai dengan seed: ${seed}";
 
-  static String m7(credits) =>
+  static String m8(credits) =>
       "Ubah akun tamu Anda menjadi akun penuh:\n• Pertahankan semua kredit Anda (${credits})\n• Pertahankan semua video dan konten Anda\n• Sinkronkan data di seluruh perangkat\n• Amankan akun Anda dengan kata sandi";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -396,8 +398,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "initializing":
             MessageLookupByLibrary.simpleMessage("Selamat datang di Comby..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("Gambar Input"),
-        "insufficientCredits":
-            MessageLookupByLibrary.simpleMessage("Kredit tidak cukup"),
+        "insufficientCredits": m4,
         "insufficient_credit":
             MessageLookupByLibrary.simpleMessage("Kredit tidak cukup"),
         "invalid_credential": MessageLookupByLibrary.simpleMessage(
@@ -591,7 +592,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Pengembalian dana gagal. Silakan coba lagi."),
         "refundLimitReached": MessageLookupByLibrary.simpleMessage(
             "Batas Pengembalian Dana Tercapai"),
-        "refundLimitReachedDescription": m4,
+        "refundLimitReachedDescription": m5,
         "refundProcessedSuccessfully": MessageLookupByLibrary.simpleMessage(
             "Pengembalian dana berhasil diproses!"),
         "refundProcessedSuccessfullyDefault":
@@ -695,7 +696,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_button_text":
             MessageLookupByLibrary.simpleMessage("Belum punya akun? "),
         "sizeLabel": MessageLookupByLibrary.simpleMessage("Ukuran"),
-        "sizeText": m5,
+        "sizeText": m6,
         "startGenerating":
             MessageLookupByLibrary.simpleMessage("Mulai Membuat"),
         "start_image": MessageLookupByLibrary.simpleMessage("Gambar Awal"),
@@ -719,7 +720,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "tail_image": MessageLookupByLibrary.simpleMessage("Gambar Akhir"),
         "tapToSelect":
             MessageLookupByLibrary.simpleMessage("Ketuk untuk memilih"),
-        "templateRegenerationStarted": m6,
+        "templateRegenerationStarted": m7,
         "termsOfService":
             MessageLookupByLibrary.simpleMessage("Ketentuan Layanan"),
         "terms_of_service_required": MessageLookupByLibrary.simpleMessage(
@@ -756,7 +757,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "updateButton": MessageLookupByLibrary.simpleMessage("Perbarui"),
         "upgradeAccount":
             MessageLookupByLibrary.simpleMessage("Tingkatkan Akun"),
-        "upgradeAccountDescription": m7,
+        "upgradeAccountDescription": m8,
         "upgradeAccountForReviewCredit": MessageLookupByLibrary.simpleMessage(
             "Untuk mengklaim 60 kredit gratis, silakan tingkatkan akun Anda terlebih dahulu"),
         "upgradeAccountMessage": MessageLookupByLibrary.simpleMessage(

@@ -51,8 +51,22 @@ class PersonalInfoCard extends StatelessWidget {
                     _buildInfoTile(
                       context,
                       AppLocalizations.of(context).email,
-                      state.profileInfo?.email ?? '',
+                      state.profileInfo?.email ??
+                          AppLocalizations.of(context).notProvided,
                       Icons.email_outlined,
+                    ),
+                    Divider(
+                      height: 1,
+                      color: Colors.grey[300]!,
+                      indent: 60.w,
+                      endIndent: 16.w,
+                    ),
+                    _buildInfoTile(
+                      context,
+                      AppLocalizations.of(context).authMethod,
+                      _getAuthProviderDisplayName(
+                          context, state.profileInfo?.authProvider),
+                      _getAuthProviderIcon(state.profileInfo?.authProvider),
                     ),
                   ],
                 ),
@@ -156,7 +170,9 @@ class PersonalInfoCard extends StatelessWidget {
                 _buildEditableUsername(context, value)
               else
                 Text(
-                  value.isEmpty ? 'Not provided' : value,
+                  value.isEmpty
+                      ? AppLocalizations.of(context).notProvided
+                      : value,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.black87,
                     fontWeight: FontWeight.w600,
@@ -174,7 +190,9 @@ class PersonalInfoCard extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            currentUsername.isEmpty ? 'Not provided' : currentUsername,
+            currentUsername.isEmpty
+                ? AppLocalizations.of(context).notProvided
+                : currentUsername,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.black87,
                   fontWeight: FontWeight.w600,
@@ -222,16 +240,17 @@ class PersonalInfoCard extends StatelessWidget {
     );
   }
 
-  String _getAuthProviderDisplayName(String? authProvider) {
+  String _getAuthProviderDisplayName(
+      BuildContext context, String? authProvider) {
     switch (authProvider?.toLowerCase()) {
       case 'google':
-        return 'Google Sign-In';
+        return AppLocalizations.of(context).googleSignIn;
       case 'apple':
-        return 'Apple Sign-In';
+        return AppLocalizations.of(context).appleSignIn;
       case 'email':
-        return 'Email & Password';
+        return AppLocalizations.of(context).emailPasswordLogin;
       default:
-        return 'Unknown';
+        return AppLocalizations.of(context).unknown;
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comby/app/features/fit_check/models/fit_check_model.dart';
 import 'package:comby/app/features/fit_check/services/fit_check_service.dart';
 import 'package:comby/core/routes/app_router.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
@@ -36,7 +37,7 @@ class _FitCheckHistoryScreenState extends State<FitCheckHistoryScreen> {
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
-              title: const Text('Geçmiş Kombinler'),
+              title: Text(AppLocalizations.of(context).pastCombines),
               surfaceTintColor: Colors.transparent,
               backgroundColor: Colors.white,
               centerTitle: true,
@@ -84,7 +85,7 @@ class _FitCheckHistoryScreenState extends State<FitCheckHistoryScreen> {
                       ),
                       SizedBox(height: 16.h),
                       Text(
-                        'Henüz geçmiş kayıt bulunmuyor.',
+                        AppLocalizations.of(context).noPastRecords,
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: Colors.grey[500],
@@ -110,7 +111,7 @@ class _FitCheckHistoryScreenState extends State<FitCheckHistoryScreen> {
                       ),
                       SizedBox(height: 16.h),
                       Text(
-                        'Filtrelere uygun kayıt bulunamadı.',
+                        AppLocalizations.of(context).noFilterResults,
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: Colors.grey[500],
@@ -147,7 +148,9 @@ class _FitCheckHistoryScreenState extends State<FitCheckHistoryScreen> {
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
                           child: Text(
-                            DateFormat('MMMM yyyy', 'tr_TR').format(monthDate),
+                            DateFormat('MMMM yyyy',
+                                    Localizations.localeOf(context).toString())
+                                .format(monthDate),
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.bold,
@@ -296,7 +299,7 @@ class _FitCheckHistoryScreenState extends State<FitCheckHistoryScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Filtrele',
+                        AppLocalizations.of(context).filterTitle,
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
@@ -310,7 +313,7 @@ class _FitCheckHistoryScreenState extends State<FitCheckHistoryScreen> {
                             _selectedColors.clear();
                           });
                         },
-                        child: const Text('Temizle'),
+                        child: Text(AppLocalizations.of(context).clearAll),
                       ),
                     ],
                   ),
@@ -320,34 +323,34 @@ class _FitCheckHistoryScreenState extends State<FitCheckHistoryScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildFilterSection(
-                            title: 'Tarih',
+                            title: AppLocalizations.of(context).dateTitle,
                             children: [
                               _buildFilterChip(
-                                  'Tümü',
+                                  AppLocalizations.of(context).all,
                                   'all',
                                   _selectedTimeFilter,
                                   (val) => setModalState(
                                       () => _selectedTimeFilter = val)),
                               _buildFilterChip(
-                                  'Bugün',
+                                  AppLocalizations.of(context).today,
                                   'today',
                                   _selectedTimeFilter,
                                   (val) => setModalState(
                                       () => _selectedTimeFilter = val)),
                               _buildFilterChip(
-                                  'Dün',
+                                  AppLocalizations.of(context).yesterday,
                                   'yesterday',
                                   _selectedTimeFilter,
                                   (val) => setModalState(
                                       () => _selectedTimeFilter = val)),
                               _buildFilterChip(
-                                  'Son 7 Gün',
+                                  AppLocalizations.of(context).last7Days,
                                   'week',
                                   _selectedTimeFilter,
                                   (val) => setModalState(
                                       () => _selectedTimeFilter = val)),
                               _buildFilterChip(
-                                  'Son 30 Gün',
+                                  AppLocalizations.of(context).last30Days,
                                   'month',
                                   _selectedTimeFilter,
                                   (val) => setModalState(
@@ -356,7 +359,7 @@ class _FitCheckHistoryScreenState extends State<FitCheckHistoryScreen> {
                           ),
                           if (uniqueStyles.isNotEmpty)
                             _buildFilterSection(
-                              title: 'Tarz',
+                              title: AppLocalizations.of(context).styleTitle,
                               children: uniqueStyles.map((style) {
                                 final isSelected =
                                     _selectedStyles.contains(style);
@@ -391,7 +394,7 @@ class _FitCheckHistoryScreenState extends State<FitCheckHistoryScreen> {
                             ),
                           if (uniqueColors.isNotEmpty)
                             _buildFilterSection(
-                              title: 'Renkler',
+                              title: AppLocalizations.of(context).colorsTitle,
                               children: uniqueColors.map((color) {
                                 final isSelected =
                                     _selectedColors.contains(color);
@@ -444,7 +447,7 @@ class _FitCheckHistoryScreenState extends State<FitCheckHistoryScreen> {
                         ),
                       ),
                       child: Text(
-                        'Uygula',
+                        AppLocalizations.of(context).apply,
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,

@@ -8,6 +8,7 @@ import 'package:comby/core/asset_paths.dart';
 import 'package:comby/core/constants/layout_constants.dart';
 import 'package:comby/core/extensions.dart';
 import 'package:comby/core/routes/app_router.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -172,7 +173,7 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
         color: Colors.grey[100],
         child: Center(
           child: Text(
-            'Görsel yok',
+            AppLocalizations.of(context).noImage,
             style: TextStyle(color: Colors.grey[500]),
           ),
         ),
@@ -208,7 +209,7 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Kullanılan Parçalar',
+            AppLocalizations.of(context).usedItems,
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
@@ -266,7 +267,7 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
                 size: 20.sp,
               ),
               label: Text(
-                'Yeniden Oluştur',
+                AppLocalizations.of(context).regenerate,
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
@@ -281,22 +282,22 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
 
   Widget _buildDetailsSection(BuildContext context, String prompt,
       DateTime? createdAt, String status, int? sourceId) {
-    const title = 'Kombin Detayı';
-    String subtitle = 'AI Kombin';
+    final title = AppLocalizations.of(context).combineDetail;
+    String subtitle = AppLocalizations.of(context).aiCombine;
 
     if (sourceId != null) {
       switch (sourceId) {
         case 1:
-          subtitle = 'Try-On Modu';
+          subtitle = AppLocalizations.of(context).tryOnMode;
           break;
         case 2:
-          subtitle = 'Hızlı Try-On';
+          subtitle = AppLocalizations.of(context).quickTryOn;
           break;
         case 3:
-          subtitle = 'Hava Durumu Önerisi';
+          subtitle = AppLocalizations.of(context).weatherSuggestion;
           break;
         case 4:
-          subtitle = 'Hava Durumu (Yenilenmiş)';
+          subtitle = AppLocalizations.of(context).weatherRenewed;
           break;
       }
     }
@@ -382,7 +383,7 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
                       ),
                       SizedBox(width: 4.w),
                       Text(
-                        'Gemini 3',
+                        AppLocalizations.of(context).gemini3,
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600,

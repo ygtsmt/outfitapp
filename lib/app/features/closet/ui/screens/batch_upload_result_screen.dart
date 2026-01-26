@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:comby/core/constants/layout_constants.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/closet/ui/screens/batch_upload_progress_screen.dart';
@@ -74,7 +75,7 @@ class _BatchUploadResultScreenState extends State<BatchUploadResultScreen>
             child: Column(
               children: [
                 Text(
-                  'İşlem Tamamlandı',
+                  AppLocalizations.of(context).processCompleted,
                   style: TextStyle(
                     fontSize: 24.sp,
                     fontWeight: FontWeight.bold,
@@ -118,8 +119,11 @@ class _BatchUploadResultScreenState extends State<BatchUploadResultScreen>
                     children: [
                       Text(
                         hasFailures
-                            ? '$totalCount fotoğraftan $successCount\'${successCount == 1 ? 'i' : 'si'} başarıyla eklendi!'
-                            : 'Tüm fotoğraflar başarıyla eklendi!',
+                            ? AppLocalizations.of(context)
+                                .photosAddedSuccessfully(
+                                    successCount, totalCount)
+                            : AppLocalizations.of(context)
+                                .allPhotosAddedSuccessfully,
                         style: TextStyle(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
@@ -149,7 +153,8 @@ class _BatchUploadResultScreenState extends State<BatchUploadResultScreen>
                               ),
                               SizedBox(width: 8.w),
                               Text(
-                                '$failCount fotoğraf kıyafet olarak algılanamadı',
+                                AppLocalizations.of(context)
+                                    .photosNotIdentifiedAsClothing(failCount),
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   color: Colors.red[700],
@@ -172,14 +177,14 @@ class _BatchUploadResultScreenState extends State<BatchUploadResultScreen>
                       _buildStatCard(
                         icon: Icons.check_circle,
                         iconColor: Colors.green,
-                        label: 'Başarılı',
+                        label: AppLocalizations.of(context).successful,
                         value: successCount.toString(),
                       ),
                       SizedBox(width: 16.w),
                       _buildStatCard(
                         icon: Icons.error,
                         iconColor: Colors.red,
-                        label: 'Başarısız',
+                        label: AppLocalizations.of(context).failed,
                         value: failCount.toString(),
                       ),
                     ],
@@ -194,7 +199,7 @@ class _BatchUploadResultScreenState extends State<BatchUploadResultScreen>
                       onPressed: _onReview,
                       icon: Icon(Icons.visibility, size: 20.sp),
                       label: Text(
-                        'Başarısız Fotoğrafları Gözden Geçir',
+                        AppLocalizations.of(context).reviewFailedPhotos,
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
@@ -224,7 +229,7 @@ class _BatchUploadResultScreenState extends State<BatchUploadResultScreen>
                       ),
                     ),
                     child: Text(
-                      'Tamam',
+                      AppLocalizations.of(context).done,
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,

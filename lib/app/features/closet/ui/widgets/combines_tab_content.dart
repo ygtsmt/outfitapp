@@ -1,4 +1,5 @@
 import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -44,8 +45,8 @@ class _CombinesTabContentState extends State<CombinesTabContent>
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      return const Center(
-        child: Text('Giriş yapmanız gerekiyor'),
+      return Center(
+        child: Text(AppLocalizations.of(context).loginRequired),
       );
     }
 
@@ -63,7 +64,8 @@ class _CombinesTabContentState extends State<CombinesTabContent>
 
         if (snapshot.hasError) {
           return Center(
-            child: Text('Hata: ${snapshot.error}'),
+            child: Text(AppLocalizations.of(context)
+                .errorOccurred(snapshot.error.toString())),
           );
         }
 
@@ -91,7 +93,7 @@ class _CombinesTabContentState extends State<CombinesTabContent>
                 ),
                 SizedBox(height: 24.h),
                 Text(
-                  'Henüz combine bulunamadı',
+                  AppLocalizations.of(context).noCombinesFound,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Colors.grey[600],
                       ),
@@ -99,7 +101,7 @@ class _CombinesTabContentState extends State<CombinesTabContent>
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  'Yeni combine oluşturmak için yukarıdaki butona tıklayın',
+                  AppLocalizations.of(context).clickButtonAboveToCreateCombine,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.grey[500],
                       ),
@@ -214,7 +216,7 @@ class _CombineImageCard extends StatelessWidget {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            'Hazırlanıyor...',
+                            AppLocalizations.of(context).preparing,
                             style: TextStyle(
                               fontSize: 10.sp,
                               color: Theme.of(context)
@@ -236,7 +238,7 @@ class _CombineImageCard extends StatelessWidget {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'Hata',
+                            AppLocalizations.of(context).failed,
                             style: TextStyle(
                               fontSize: 10.sp,
                               color: Theme.of(context).colorScheme.error,
@@ -323,7 +325,7 @@ class AddCombineItemButton extends StatelessWidget {
               SizedBox(height: 8.h),
               // Yazı Alanı
               Text(
-                'Kombin Oluştur',
+                AppLocalizations.of(context).createCombine,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12.sp,

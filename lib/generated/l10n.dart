@@ -890,10 +890,10 @@ class AppLocalizations {
     );
   }
 
-  /// `Free`
+  /// `Free Plan`
   String get freePlan {
     return Intl.message(
-      'Free',
+      'Free Plan',
       name: 'freePlan',
       desc: '',
       args: [],
@@ -3440,10 +3440,10 @@ class AppLocalizations {
     );
   }
 
-  /// `UID copied`
+  /// `UID copied!`
   String get uidCopied {
     return Intl.message(
-      'UID copied',
+      'UID copied!',
       name: 'uidCopied',
       desc: '',
       args: [],
@@ -3800,13 +3800,13 @@ class AppLocalizations {
     );
   }
 
-  /// `Insufficient credits`
-  String get insufficientCredits {
+  /// `Insufficient credits. Required: {required}, Available: {available}`
+  String insufficientCredits(Object required, Object available) {
     return Intl.message(
-      'Insufficient credits',
+      'Insufficient credits. Required: $required, Available: $available',
       name: 'insufficientCredits',
       desc: '',
-      args: [],
+      args: [required, available],
     );
   }
 
@@ -5097,6 +5097,3096 @@ class AppLocalizations {
       name: 'signInWithAccount',
       desc: '',
       args: [],
+    );
+  }
+
+  /// `Combine Detail`
+  String get combineDetail {
+    return Intl.message(
+      'Combine Detail',
+      name: 'combineDetail',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AI Combine`
+  String get aiCombine {
+    return Intl.message(
+      'AI Combine',
+      name: 'aiCombine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try-On Mode`
+  String get tryOnMode {
+    return Intl.message(
+      'Try-On Mode',
+      name: 'tryOnMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quick Try-On`
+  String get quickTryOn {
+    return Intl.message(
+      'Quick Try-On',
+      name: 'quickTryOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weather Suggestion`
+  String get weatherSuggestion {
+    return Intl.message(
+      'Weather Suggestion',
+      name: 'weatherSuggestion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weather (Renewed)`
+  String get weatherRenewed {
+    return Intl.message(
+      'Weather (Renewed)',
+      name: 'weatherRenewed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Used Items`
+  String get usedItems {
+    return Intl.message(
+      'Used Items',
+      name: 'usedItems',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Regenerate`
+  String get regenerate {
+    return Intl.message(
+      'Regenerate',
+      name: 'regenerate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gemini 3`
+  String get gemini3 {
+    return Intl.message(
+      'Gemini 3',
+      name: 'gemini3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No image`
+  String get noImage {
+    return Intl.message(
+      'No image',
+      name: 'noImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `I'm sharing my combine from Comby! 🌟`
+  String get shareCombineText {
+    return Intl.message(
+      'I\'m sharing my combine from Comby! 🌟',
+      name: 'shareCombineText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share error`
+  String get shareError {
+    return Intl.message(
+      'Share error',
+      name: 'shareError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Photo saved to gallery! ✅`
+  String get photoSavedToGallery {
+    return Intl.message(
+      'Photo saved to gallery! ✅',
+      name: 'photoSavedToGallery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save error`
+  String get saveError {
+    return Intl.message(
+      'Save error',
+      name: 'saveError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share`
+  String get share {
+    return Intl.message(
+      'Share',
+      name: 'share',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Download`
+  String get download {
+    return Intl.message(
+      'Download',
+      name: 'download',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Operation failed.`
+  String get operationFailed {
+    return Intl.message(
+      'Operation failed.',
+      name: 'operationFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Result`
+  String get result {
+    return Intl.message(
+      'Result',
+      name: 'result',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Image could not be loaded.`
+  String get imageLoadFailed {
+    return Intl.message(
+      'Image could not be loaded.',
+      name: 'imageLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try Again`
+  String get tryAgain {
+    return Intl.message(
+      'Try Again',
+      name: 'tryAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You need to log in`
+  String get loginRequired {
+    return Intl.message(
+      'You need to log in',
+      name: 'loginRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Model deleted`
+  String get modelDeleted {
+    return Intl.message(
+      'Model deleted',
+      name: 'modelDeleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Image could not be generated.`
+  String get imageGenerationFailed {
+    return Intl.message(
+      'Image could not be generated.',
+      name: 'imageGenerationFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Combine critique saved!`
+  String get combineCritiqueSaved {
+    return Intl.message(
+      'Combine critique saved!',
+      name: 'combineCritiqueSaved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Successful`
+  String get successful {
+    return Intl.message(
+      'Successful',
+      name: 'successful',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed`
+  String get failed {
+    return Intl.message(
+      'Failed',
+      name: 'failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Style analysis updated!`
+  String get styleAnalysisUpdated {
+    return Intl.message(
+      'Style analysis updated!',
+      name: 'styleAnalysisUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Style analysis could not be loaded. Please try again.`
+  String get styleAnalysisLoadFailed {
+    return Intl.message(
+      'Style analysis could not be loaded. Please try again.',
+      name: 'styleAnalysisLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Past Combines`
+  String get pastCombines {
+    return Intl.message(
+      'Past Combines',
+      name: 'pastCombines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wardrobe`
+  String get wardrobe {
+    return Intl.message(
+      'Wardrobe',
+      name: 'wardrobe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Models`
+  String get models {
+    return Intl.message(
+      'Models',
+      name: 'models',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Combines`
+  String get combines {
+    return Intl.message(
+      'Combines',
+      name: 'combines',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Critiques`
+  String get critiques {
+    return Intl.message(
+      'Critiques',
+      name: 'critiques',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a category`
+  String get pleaseSelectCategory {
+    return Intl.message(
+      'Please select a category',
+      name: 'pleaseSelectCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Model`
+  String get addModel {
+    return Intl.message(
+      'Add Model',
+      name: 'addModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Model added successfully`
+  String get modelAddedSuccessfully {
+    return Intl.message(
+      'Model added successfully',
+      name: 'modelAddedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Process Completed`
+  String get processCompleted {
+    return Intl.message(
+      'Process Completed',
+      name: 'processCompleted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You do not have permission to watch ads.`
+  String get noAdPermission {
+    return Intl.message(
+      'You do not have permission to watch ads.',
+      name: 'noAdPermission',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Request sent successfully! Combine is being prepared...`
+  String get requestSentSuccessfully {
+    return Intl.message(
+      'Request sent successfully! Combine is being prepared...',
+      name: 'requestSentSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a model and at least one cloth`
+  String get pleaseSelectModelAndCloth {
+    return Intl.message(
+      'Please select a model and at least one cloth',
+      name: 'pleaseSelectModelAndCloth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Surprise Me`
+  String get surpriseMe {
+    return Intl.message(
+      'Surprise Me',
+      name: 'surpriseMe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Felt`
+  String get felt {
+    return Intl.message(
+      'Felt',
+      name: 'felt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Humidity`
+  String get humidity {
+    return Intl.message(
+      'Humidity',
+      name: 'humidity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wind`
+  String get wind {
+    return Intl.message(
+      'Wind',
+      name: 'wind',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your wardrobe is empty! Add items.`
+  String get wardrobeEmpty {
+    return Intl.message(
+      'Your wardrobe is empty! Add items.',
+      name: 'wardrobeEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current Streak`
+  String get currentStreak {
+    return Intl.message(
+      'Current Streak',
+      name: 'currentStreak',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Favorite Style`
+  String get favoriteStyle {
+    return Intl.message(
+      'Favorite Style',
+      name: 'favoriteStyle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No record found for this date.`
+  String get noRecordFoundForDate {
+    return Intl.message(
+      'No record found for this date.',
+      name: 'noRecordFoundForDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Color (Optional)`
+  String get colorOptional {
+    return Intl.message(
+      'Color (Optional)',
+      name: 'colorOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pattern (Optional)`
+  String get patternOptional {
+    return Intl.message(
+      'Pattern (Optional)',
+      name: 'patternOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Season (Optional)`
+  String get seasonOptional {
+    return Intl.message(
+      'Season (Optional)',
+      name: 'seasonOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fabric (Optional)`
+  String get fabricOptional {
+    return Intl.message(
+      'Fabric (Optional)',
+      name: 'fabricOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Body Map Image Not Found`
+  String get bodyMapImageNotFound {
+    return Intl.message(
+      'Body Map Image Not Found',
+      name: 'bodyMapImageNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Closet Item`
+  String get addClosetItem {
+    return Intl.message(
+      'Add Closet Item',
+      name: 'addClosetItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item Details (Optional)`
+  String get itemDetailsOptional {
+    return Intl.message(
+      'Item Details (Optional)',
+      name: 'itemDetailsOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Combine Result`
+  String get combineResult {
+    return Intl.message(
+      'Combine Result',
+      name: 'combineResult',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Preparing...`
+  String get preparing {
+    return Intl.message(
+      'Preparing...',
+      name: 'preparing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analyzing...`
+  String get analyzing {
+    return Intl.message(
+      'Analyzing...',
+      name: 'analyzing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} of {total} photos added successfully!`
+  String photosAddedSuccessfully(int count, int total) {
+    return Intl.message(
+      '$count of $total photos added successfully!',
+      name: 'photosAddedSuccessfully',
+      desc: '',
+      args: [count, total],
+    );
+  }
+
+  /// `All photos added successfully!`
+  String get allPhotosAddedSuccessfully {
+    return Intl.message(
+      'All photos added successfully!',
+      name: 'allPhotosAddedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} of {total} models added successfully!`
+  String modelsAddedSuccessfully(int count, int total) {
+    return Intl.message(
+      '$count of $total models added successfully!',
+      name: 'modelsAddedSuccessfully',
+      desc: '',
+      args: [count, total],
+    );
+  }
+
+  /// `All models added successfully!`
+  String get allModelsAddedSuccessfully {
+    return Intl.message(
+      'All models added successfully!',
+      name: 'allModelsAddedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `✨ AI Analysis Complete! Found: {category}`
+  String aiAnalysisComplete(String category) {
+    return Intl.message(
+      '✨ AI Analysis Complete! Found: $category',
+      name: 'aiAnalysisComplete',
+      desc: '',
+      args: [category],
+    );
+  }
+
+  /// `AI Analysis Failed: {error}`
+  String aiAnalysisFailed(String error) {
+    return Intl.message(
+      'AI Analysis Failed: $error',
+      name: 'aiAnalysisFailed',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `You haven't caught a streak yet. Start today!`
+  String get noStreakYet {
+    return Intl.message(
+      'You haven\'t caught a streak yet. Start today!',
+      name: 'noStreakYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Head / Face`
+  String get headFace {
+    return Intl.message(
+      'Head / Face',
+      name: 'headFace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upper Body`
+  String get upperBody {
+    return Intl.message(
+      'Upper Body',
+      name: 'upperBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lower Body`
+  String get lowerBody {
+    return Intl.message(
+      'Lower Body',
+      name: 'lowerBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Feet`
+  String get feet {
+    return Intl.message(
+      'Feet',
+      name: 'feet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Accessories`
+  String get accessories {
+    return Intl.message(
+      'Accessories',
+      name: 'accessories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analysis could not be loaded. Please check your internet connection.`
+  String get analysisLoadFailed {
+    return Intl.message(
+      'Analysis could not be loaded. Please check your internet connection.',
+      name: 'analysisLoadFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Style Explorer`
+  String get styleExplorer {
+    return Intl.message(
+      'Style Explorer',
+      name: 'styleExplorer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analyzing with Gemini 3...`
+  String get analyzingWithGemini3 {
+    return Intl.message(
+      'Analyzing with Gemini 3...',
+      name: 'analyzingWithGemini3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Removing background...`
+  String get removingBackground {
+    return Intl.message(
+      'Removing background...',
+      name: 'removingBackground',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Processing image...`
+  String get processingImage {
+    return Intl.message(
+      'Processing image...',
+      name: 'processingImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saving...`
+  String get saving {
+    return Intl.message(
+      'Saving...',
+      name: 'saving',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analyzing model...`
+  String get analyzingModel {
+    return Intl.message(
+      'Analyzing model...',
+      name: 'analyzingModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Uploading...`
+  String get uploading {
+    return Intl.message(
+      'Uploading...',
+      name: 'uploading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This photo is not a clothing item or accessory`
+  String get notAFashionItem {
+    return Intl.message(
+      'This photo is not a clothing item or accessory',
+      name: 'notAFashionItem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Brand (Optional)`
+  String get brandOptional {
+    return Intl.message(
+      'Brand (Optional)',
+      name: 'brandOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Category: {category}`
+  String selectCategory(String category) {
+    return Intl.message(
+      'Select Category: $category',
+      name: 'selectCategory',
+      desc: '',
+      args: [category],
+    );
+  }
+
+  /// `Hands / Wrists`
+  String get handsWrists {
+    return Intl.message(
+      'Hands / Wrists',
+      name: 'handsWrists',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upper Torso`
+  String get upperTorso {
+    return Intl.message(
+      'Upper Torso',
+      name: 'upperTorso',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lower Torso`
+  String get lowerTorso {
+    return Intl.message(
+      'Lower Torso',
+      name: 'lowerTorso',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Day`
+  String get day {
+    return Intl.message(
+      'Day',
+      name: 'day',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Days`
+  String get days {
+    return Intl.message(
+      'Days',
+      name: 'days',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check`
+  String get check {
+    return Intl.message(
+      'Check',
+      name: 'check',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checks`
+  String get checks {
+    return Intl.message(
+      'Checks',
+      name: 'checks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Color Match`
+  String get colorMatch {
+    return Intl.message(
+      'Color Match',
+      name: 'colorMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total`
+  String get total {
+    return Intl.message(
+      'Total',
+      name: 'total',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Good morning {name} ☀️`
+  String goodMorning(String name) {
+    return Intl.message(
+      'Good morning $name ☀️',
+      name: 'goodMorning',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Good afternoon {name} 👋`
+  String goodAfternoon(String name) {
+    return Intl.message(
+      'Good afternoon $name 👋',
+      name: 'goodAfternoon',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Good evening {name} 🌙`
+  String goodEvening(String name) {
+    return Intl.message(
+      'Good evening $name 🌙',
+      name: 'goodEvening',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Dashboard`
+  String get homeDashboard {
+    return Intl.message(
+      'Dashboard',
+      name: 'homeDashboard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Closet`
+  String get homeCloset {
+    return Intl.message(
+      'Closet',
+      name: 'homeCloset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Chat`
+  String get homeChat {
+    return Intl.message(
+      'Chat',
+      name: 'homeChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try-On`
+  String get homeTryOn {
+    return Intl.message(
+      'Try-On',
+      name: 'homeTryOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Location not received`
+  String get locationNotReceived {
+    return Intl.message(
+      'Location not received',
+      name: 'locationNotReceived',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weather info not received`
+  String get weatherInfoNotReceived {
+    return Intl.message(
+      'Weather info not received',
+      name: 'weatherInfoNotReceived',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You need to add a model`
+  String get needToAddModel {
+    return Intl.message(
+      'You need to add a model',
+      name: 'needToAddModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You need to add clothes to your wardrobe`
+  String get needToAddCloth {
+    return Intl.message(
+      'You need to add clothes to your wardrobe',
+      name: 'needToAddCloth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not create outfit suggestion`
+  String get outfitSuggestionFailed {
+    return Intl.message(
+      'Could not create outfit suggestion',
+      name: 'outfitSuggestionFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading weather...`
+  String get loadingWeather {
+    return Intl.message(
+      'Loading weather...',
+      name: 'loadingWeather',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weather`
+  String get weather {
+    return Intl.message(
+      'Weather',
+      name: 'weather',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We need location permission to show the weather for your location.`
+  String get locationPermissionRequired {
+    return Intl.message(
+      'We need location permission to show the weather for your location.',
+      name: 'locationPermissionRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Give Location Permission`
+  String get giveLocationPermission {
+    return Intl.message(
+      'Give Location Permission',
+      name: 'giveLocationPermission',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create your best outfit based on weather`
+  String get weatherBasedOutfitSuggestion {
+    return Intl.message(
+      'Create your best outfit based on weather',
+      name: 'weatherBasedOutfitSuggestion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take Photo`
+  String get takePhoto {
+    return Intl.message(
+      'Take Photo',
+      name: 'takePhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select from Gallery`
+  String get selectFromGallery {
+    return Intl.message(
+      'Select from Gallery',
+      name: 'selectFromGallery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Outfit`
+  String get selectOutfit {
+    return Intl.message(
+      'Select Outfit',
+      name: 'selectOutfit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AI Style Consultant`
+  String get aiStyleConsultant {
+    return Intl.message(
+      'AI Style Consultant',
+      name: 'aiStyleConsultant',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rate your outfit and get suggestions with Gemini 3 ✨`
+  String get aiStyleConsultantSubtitle {
+    return Intl.message(
+      'Rate your outfit and get suggestions with Gemini 3 ✨',
+      name: 'aiStyleConsultantSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View Error: Data not found.`
+  String get viewErrorDataNotFound {
+    return Intl.message(
+      'View Error: Data not found.',
+      name: 'viewErrorDataNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unknown`
+  String get unknown {
+    return Intl.message(
+      'Unknown',
+      name: 'unknown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data processing error: {error}`
+  String dataProcessingError(Object error) {
+    return Intl.message(
+      'Data processing error: $error',
+      name: 'dataProcessingError',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `Areas for Improvement`
+  String get improvableAreas {
+    return Intl.message(
+      'Areas for Improvement',
+      name: 'improvableAreas',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stylist Opinions`
+  String get stylistOpinions {
+    return Intl.message(
+      'Stylist Opinions',
+      name: 'stylistOpinions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Home Page`
+  String get homePage {
+    return Intl.message(
+      'Home Page',
+      name: 'homePage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SCORE`
+  String get scoreLabel {
+    return Intl.message(
+      'SCORE',
+      name: 'scoreLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not create request.`
+  String get requestCreationFailed {
+    return Intl.message(
+      'Could not create request.',
+      name: 'requestCreationFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You can select a maximum of 5 clothes.`
+  String get max5ClothesError {
+    return Intl.message(
+      'You can select a maximum of 5 clothes.',
+      name: 'max5ClothesError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gemini 3 Outfit Result`
+  String get geminiResultTitle {
+    return Intl.message(
+      'Gemini 3 Outfit Result',
+      name: 'geminiResultTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Combine Details`
+  String get combineDetails {
+    return Intl.message(
+      'Combine Details',
+      name: 'combineDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Model`
+  String get model {
+    return Intl.message(
+      'Model',
+      name: 'model',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clothes`
+  String get clothes {
+    return Intl.message(
+      'Clothes',
+      name: 'clothes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Regenerating...`
+  String get regeneratingCombine {
+    return Intl.message(
+      'Regenerating...',
+      name: 'regeneratingCombine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Regenerate Combine`
+  String get regenerateCombine {
+    return Intl.message(
+      'Regenerate Combine',
+      name: 'regenerateCombine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gemini 3 is generating the combine...`
+  String get geminiGeneratingCombine {
+    return Intl.message(
+      'Gemini 3 is generating the combine...',
+      name: 'geminiGeneratingCombine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This process may take 10-15 seconds`
+  String get processEstimatedTime {
+    return Intl.message(
+      'This process may take 10-15 seconds',
+      name: 'processEstimatedTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change`
+  String get change {
+    return Intl.message(
+      'Change',
+      name: 'change',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected Model`
+  String get selectedModel {
+    return Intl.message(
+      'Selected Model',
+      name: 'selectedModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Camera permission is required`
+  String get cameraPermissionRequired {
+    return Intl.message(
+      'Camera permission is required',
+      name: 'cameraPermissionRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Capture Your Combine`
+  String get captureYourCombine {
+    return Intl.message(
+      'Capture Your Combine',
+      name: 'captureYourCombine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Center your combine`
+  String get centerYourCombine {
+    return Intl.message(
+      'Center your combine',
+      name: 'centerYourCombine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fit Check Photo`
+  String get fitCheckPhoto {
+    return Intl.message(
+      'Fit Check Photo',
+      name: 'fitCheckPhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily Fit Check`
+  String get dailyFitCheck {
+    return Intl.message(
+      'Daily Fit Check',
+      name: 'dailyFitCheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `What did you wear today? Let Gemini 3 comment.`
+  String get dailyFitCheckSubtitle {
+    return Intl.message(
+      'What did you wear today? Let Gemini 3 comment.',
+      name: 'dailyFitCheckSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `History`
+  String get history {
+    return Intl.message(
+      'History',
+      name: 'history',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Closet Analysis`
+  String get closetAnalysis {
+    return Intl.message(
+      'Closet Analysis',
+      name: 'closetAnalysis',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} Pieces`
+  String piecesCount(Object count) {
+    return Intl.message(
+      '$count Pieces',
+      name: 'piecesCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Capsule Closet Score`
+  String get capsuleClosetScore {
+    return Intl.message(
+      'Capsule Closet Score',
+      name: 'capsuleClosetScore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Favorite Colors`
+  String get favoriteColors {
+    return Intl.message(
+      'Favorite Colors',
+      name: 'favoriteColors',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Excellent! You're a true capsule closet expert.`
+  String get capsuleStatusPerfect {
+    return Intl.message(
+      'Excellent! You\'re a true capsule closet expert.',
+      name: 'capsuleStatusPerfect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You're doing great, very balanced.`
+  String get capsuleStatusGreat {
+    return Intl.message(
+      'You\'re doing great, very balanced.',
+      name: 'capsuleStatusGreat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Good start, needs a bit more balance.`
+  String get capsuleStatusGood {
+    return Intl.message(
+      'Good start, needs a bit more balance.',
+      name: 'capsuleStatusGood',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You're just at the beginning, simplify your closet.`
+  String get capsuleStatusBeginner {
+    return Intl.message(
+      'You\'re just at the beginning, simplify your closet.',
+      name: 'capsuleStatusBeginner',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PREMIUM 🔥`
+  String get ticket_premium {
+    return Intl.message(
+      'PREMIUM 🔥',
+      name: 'ticket_premium',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} Day Streak`
+  String dailyStreakCount(Object count) {
+    return Intl.message(
+      '$count Day Streak',
+      name: 'dailyStreakCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Start Streak!`
+  String get startStreak {
+    return Intl.message(
+      'Start Streak!',
+      name: 'startStreak',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add New`
+  String get addNew {
+    return Intl.message(
+      'Add New',
+      name: 'addNew',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Closet content not found\nClick the button above to add a new item`
+  String get closetEmptyMessage {
+    return Intl.message(
+      'Closet content not found\nClick the button above to add a new item',
+      name: 'closetEmptyMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Do you want to delete?`
+  String get deleteConfirmationTitle {
+    return Intl.message(
+      'Do you want to delete?',
+      name: 'deleteConfirmationTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Model?`
+  String get deleteModelConfirmationTitle {
+    return Intl.message(
+      'Delete Model?',
+      name: 'deleteModelConfirmationTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This action cannot be undone.`
+  String get thisActionCannotBeUndone {
+    return Intl.message(
+      'This action cannot be undone.',
+      name: 'thisActionCannotBeUndone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scroll to enlarge image`
+  String get scrollToEnlarge {
+    return Intl.message(
+      'Scroll to enlarge image',
+      name: 'scrollToEnlarge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pinch to zoom`
+  String get pinchToZoom {
+    return Intl.message(
+      'Pinch to zoom',
+      name: 'pinchToZoom',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analyzed with Gemini 3`
+  String get analyzedWithGemini {
+    return Intl.message(
+      'Analyzed with Gemini 3',
+      name: 'analyzedWithGemini',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Similar Items`
+  String get similarItems {
+    return Intl.message(
+      'Similar Items',
+      name: 'similarItems',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} items`
+  String itemsCount(Object count) {
+    return Intl.message(
+      '$count items',
+      name: 'itemsCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Color`
+  String get colorLabel {
+    return Intl.message(
+      'Color',
+      name: 'colorLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pattern`
+  String get patternLabel {
+    return Intl.message(
+      'Pattern',
+      name: 'patternLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Material`
+  String get materialLabel {
+    return Intl.message(
+      'Material',
+      name: 'materialLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Season`
+  String get seasonLabel {
+    return Intl.message(
+      'Season',
+      name: 'seasonLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category`
+  String get categoryLabel {
+    return Intl.message(
+      'Category',
+      name: 'categoryLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Summer`
+  String get summer {
+    return Intl.message(
+      'Summer',
+      name: 'summer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Winter`
+  String get winter {
+    return Intl.message(
+      'Winter',
+      name: 'winter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Spring`
+  String get spring {
+    return Intl.message(
+      'Spring',
+      name: 'spring',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Autumn`
+  String get autumn {
+    return Intl.message(
+      'Autumn',
+      name: 'autumn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All Seasons`
+  String get allSeasons {
+    return Intl.message(
+      'All Seasons',
+      name: 'allSeasons',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Product`
+  String get product {
+    return Intl.message(
+      'Product',
+      name: 'product',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Appearance`
+  String get appearance {
+    return Intl.message(
+      'Appearance',
+      name: 'appearance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Body Type`
+  String get bodyType {
+    return Intl.message(
+      'Body Type',
+      name: 'bodyType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Skin Tone`
+  String get skinTone {
+    return Intl.message(
+      'Skin Tone',
+      name: 'skinTone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pose`
+  String get pose {
+    return Intl.message(
+      'Pose',
+      name: 'pose',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date`
+  String get dateLabel {
+    return Intl.message(
+      'Date',
+      name: 'dateLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full Body`
+  String get fullBody {
+    return Intl.message(
+      'Full Body',
+      name: 'fullBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upper Body`
+  String get upperBodyPart {
+    return Intl.message(
+      'Upper Body',
+      name: 'upperBodyPart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Lower Body`
+  String get lowerBodyPart {
+    return Intl.message(
+      'Lower Body',
+      name: 'lowerBodyPart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Face Only`
+  String get faceOnly {
+    return Intl.message(
+      'Face Only',
+      name: 'faceOnly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unnamed Model`
+  String get unnamedModel {
+    return Intl.message(
+      'Unnamed Model',
+      name: 'unnamedModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analyzing...`
+  String get analyzingEllipsis {
+    return Intl.message(
+      'Analyzing...',
+      name: 'analyzingEllipsis',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analyze with AI`
+  String get analyzeWithAI {
+    return Intl.message(
+      'Analyze with AI',
+      name: 'analyzeWithAI',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Item Type`
+  String get selectItemType {
+    return Intl.message(
+      'Select Item Type',
+      name: 'selectItemType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Debug Mode`
+  String get debugMode {
+    return Intl.message(
+      'Debug Mode',
+      name: 'debugMode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected: {value}`
+  String selectedLabel(Object value) {
+    return Intl.message(
+      'Selected: $value',
+      name: 'selectedLabel',
+      desc: '',
+      args: [value],
+    );
+  }
+
+  /// `Tap a body part to select category`
+  String get tapToSelectCategory {
+    return Intl.message(
+      'Tap a body part to select category',
+      name: 'tapToSelectCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category * (Mandatory)`
+  String get mandatoryCategory {
+    return Intl.message(
+      'Category * (Mandatory)',
+      name: 'mandatoryCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid Photo`
+  String get invalidPhoto {
+    return Intl.message(
+      'Invalid Photo',
+      name: 'invalidPhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please only upload photos of clothing, shoes, bags, jewelry or accessories.`
+  String get invalidPhotoDescription {
+    return Intl.message(
+      'Please only upload photos of clothing, shoes, bags, jewelry or accessories.',
+      name: 'invalidPhotoDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Go Back`
+  String get goBack {
+    return Intl.message(
+      'Go Back',
+      name: 'goBack',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue Manually`
+  String get continueManually {
+    return Intl.message(
+      'Continue Manually',
+      name: 'continueManually',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No combines found`
+  String get noCombinesFound {
+    return Intl.message(
+      'No combines found',
+      name: 'noCombinesFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click the button above to create a new combine`
+  String get clickButtonAboveToCreateCombine {
+    return Intl.message(
+      'Click the button above to create a new combine',
+      name: 'clickButtonAboveToCreateCombine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No style analysis yet`
+  String get noStyleAnalysisYet {
+    return Intl.message(
+      'No style analysis yet',
+      name: 'noStyleAnalysisYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AI Analysis`
+  String get aiAnalysis {
+    return Intl.message(
+      'AI Analysis',
+      name: 'aiAnalysis',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No model photos found`
+  String get noModelsFound {
+    return Intl.message(
+      'No model photos found',
+      name: 'noModelsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click the button above to add a new model`
+  String get clickButtonAboveToAddModel {
+    return Intl.message(
+      'Click the button above to add a new model',
+      name: 'clickButtonAboveToAddModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create Combine`
+  String get createCombine {
+    return Intl.message(
+      'Create Combine',
+      name: 'createCombine',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Model`
+  String get selectModel {
+    return Intl.message(
+      'Select Model',
+      name: 'selectModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Cloth`
+  String get selectCloth {
+    return Intl.message(
+      'Select Cloth',
+      name: 'selectCloth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select who will try on the clothes`
+  String get modelSubtitle {
+    return Intl.message(
+      'Select who will try on the clothes',
+      name: 'modelSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick items to mix & match`
+  String get wardrobeSubtitle {
+    return Intl.message(
+      'Pick items to mix & match',
+      name: 'wardrobeSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} selected`
+  String nSelected(Object count) {
+    return Intl.message(
+      '$count selected',
+      name: 'nSelected',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Gemini 3 Processing... ✨`
+  String get geminiProcessing {
+    return Intl.message(
+      'Gemini 3 Processing... ✨',
+      name: 'geminiProcessing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to choose from library`
+  String get tapToChooseFromLibrary {
+    return Intl.message(
+      'Tap to choose from library',
+      name: 'tapToChooseFromLibrary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use Original Photo`
+  String get useOriginalPhoto {
+    return Intl.message(
+      'Use Original Photo',
+      name: 'useOriginalPhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use AI Photo`
+  String get useAiPhoto {
+    return Intl.message(
+      'Use AI Photo',
+      name: 'useAiPhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Capture Yourself`
+  String get captureYourself {
+    return Intl.message(
+      'Capture Yourself',
+      name: 'captureYourself',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Capture Clothes`
+  String get captureClothes {
+    return Intl.message(
+      'Capture Clothes',
+      name: 'captureClothes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Align your face and body`
+  String get alignFaceAndBody {
+    return Intl.message(
+      'Align your face and body',
+      name: 'alignFaceAndBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Center the clothes`
+  String get centerTheClothes {
+    return Intl.message(
+      'Center the clothes',
+      name: 'centerTheClothes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Model Name (Optional)`
+  String get modelNameOptional {
+    return Intl.message(
+      'Model Name (Optional)',
+      name: 'modelNameOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. Summer model, Sport model`
+  String get modelNameHint {
+    return Intl.message(
+      'e.g. Summer model, Sport model',
+      name: 'modelNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Virtual Cabin`
+  String get virtualCabin {
+    return Intl.message(
+      'Virtual Cabin',
+      name: 'virtualCabin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quick Try`
+  String get quickTry {
+    return Intl.message(
+      'Quick Try',
+      name: 'quickTry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Closet Access Required`
+  String get closetAccessRequired {
+    return Intl.message(
+      'Closet Access Required',
+      name: 'closetAccessRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You need to log in to view your closet content.`
+  String get closetAccessDescription {
+    return Intl.message(
+      'You need to log in to view your closet content.',
+      name: 'closetAccessDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outfit Calendar 📅`
+  String get outfitCalendar {
+    return Intl.message(
+      'Outfit Calendar 📅',
+      name: 'outfitCalendar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Combine`
+  String get kombin {
+    return Intl.message(
+      'Combine',
+      name: 'kombin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Combines`
+  String get kombins {
+    return Intl.message(
+      'Combines',
+      name: 'kombins',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Legendary! 🏆 You're a true style icon`
+  String get streakLegendary {
+    return Intl.message(
+      'Legendary! 🏆 You\'re a true style icon',
+      name: 'streakLegendary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Awesome! 🔥 A week of consistency`
+  String get streakAwesome {
+    return Intl.message(
+      'Awesome! 🔥 A week of consistency',
+      name: 'streakAwesome',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Doing great! 🚀 Keep the streak`
+  String get streakSuper {
+    return Intl.message(
+      'Doing great! 🚀 Keep the streak',
+      name: 'streakSuper',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Good start! ✨ Keep it up`
+  String get streakGood {
+    return Intl.message(
+      'Good start! ✨ Keep it up',
+      name: 'streakGood',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `LAST 30 DAYS`
+  String get last30Days {
+    return Intl.message(
+      'LAST 30 DAYS',
+      name: 'last30Days',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All >`
+  String get allTabs {
+    return Intl.message(
+      'All >',
+      name: 'allTabs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No FitCheck records yet`
+  String get noFitCheckLogsYet {
+    return Intl.message(
+      'No FitCheck records yet',
+      name: 'noFitCheckLogsYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No past records found yet.`
+  String get noPastRecords {
+    return Intl.message(
+      'No past records found yet.',
+      name: 'noPastRecords',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No records found matching filters.`
+  String get noFilterResults {
+    return Intl.message(
+      'No records found matching filters.',
+      name: 'noFilterResults',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Filter`
+  String get filterTitle {
+    return Intl.message(
+      'Filter',
+      name: 'filterTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date`
+  String get dateTitle {
+    return Intl.message(
+      'Date',
+      name: 'dateTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get all {
+    return Intl.message(
+      'All',
+      name: 'all',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today`
+  String get today {
+    return Intl.message(
+      'Today',
+      name: 'today',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yesterday`
+  String get yesterday {
+    return Intl.message(
+      'Yesterday',
+      name: 'yesterday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last 7 Days`
+  String get last7Days {
+    return Intl.message(
+      'Last 7 Days',
+      name: 'last7Days',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Style`
+  String get styleTitle {
+    return Intl.message(
+      'Style',
+      name: 'styleTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Colors`
+  String get colorsTitle {
+    return Intl.message(
+      'Colors',
+      name: 'colorsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apply`
+  String get apply {
+    return Intl.message(
+      'Apply',
+      name: 'apply',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gallery Access Required`
+  String get galleryAccessRequired {
+    return Intl.message(
+      'Gallery Access Required',
+      name: 'galleryAccessRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You need to grant gallery access to select your photos. Please go to settings and allow gallery access.`
+  String get galleryAccessDescription {
+    return Intl.message(
+      'You need to grant gallery access to select your photos. Please go to settings and allow gallery access.',
+      name: 'galleryAccessDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Go to Settings`
+  String get goToSettings {
+    return Intl.message(
+      'Go to Settings',
+      name: 'goToSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You can select a maximum of {count} photos`
+  String maxPhotoSelectionLimit(Object count) {
+    return Intl.message(
+      'You can select a maximum of $count photos',
+      name: 'maxPhotoSelectionLimit',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count} / {total} selected`
+  String nOfMaxSelected(Object count, Object total) {
+    return Intl.message(
+      '$count / $total selected',
+      name: 'nOfMaxSelected',
+      desc: '',
+      args: [count, total],
+    );
+  }
+
+  /// `Clear Selection`
+  String get clearSelection {
+    return Intl.message(
+      'Clear Selection',
+      name: 'clearSelection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saving...`
+  String get savingEllipsis {
+    return Intl.message(
+      'Saving...',
+      name: 'savingEllipsis',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analyzing Outfit...`
+  String get analyzingOutfit {
+    return Intl.message(
+      'Analyzing Outfit...',
+      name: 'analyzingOutfit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your stylist is doing a detailed analysis`
+  String get stylistDetailedAnalysis {
+    return Intl.message(
+      'Your stylist is doing a detailed analysis',
+      name: 'stylistDetailedAnalysis',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Photo`
+  String get selectPhoto {
+    return Intl.message(
+      'Select Photo',
+      name: 'selectPhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not be viewed.`
+  String get couldNotBeViewed {
+    return Intl.message(
+      'Could not be viewed.',
+      name: 'couldNotBeViewed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `I analyzed my outfit with Comby! 🌟`
+  String get shareMessageFitCheck {
+    return Intl.message(
+      'I analyzed my outfit with Comby! 🌟',
+      name: 'shareMessageFitCheck',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gemini AI is examining your style, colors and harmony.`
+  String get analyzingOutfitWithGemini {
+    return Intl.message(
+      'Gemini AI is examining your style, colors and harmony.',
+      name: 'analyzingOutfitWithGemini',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Style Suggestions`
+  String get styleSuggestions {
+    return Intl.message(
+      'Style Suggestions',
+      name: 'styleSuggestions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select a day from the calendar to review past combinations 👆`
+  String get instructionSelectDay {
+    return Intl.message(
+      'Select a day from the calendar to review past combinations 👆',
+      name: 'instructionSelectDay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Analyze`
+  String get analyzeButton {
+    return Intl.message(
+      'Analyze',
+      name: 'analyzeButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Media`
+  String get selectMedia {
+    return Intl.message(
+      'Select Media',
+      name: 'selectMedia',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error occurred`
+  String get errorOccurredChat {
+    return Intl.message(
+      'Error occurred',
+      name: 'errorOccurredChat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ask something to AI Assistant!`
+  String get askSomethingToAi {
+    return Intl.message(
+      'Ask something to AI Assistant!',
+      name: 'askSomethingToAi',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Write your message...`
+  String get writeYourMessage {
+    return Intl.message(
+      'Write your message...',
+      name: 'writeYourMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected Media ({count})`
+  String selectedMediaCount(Object count) {
+    return Intl.message(
+      'Selected Media ($count)',
+      name: 'selectedMediaCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `VIDEO`
+  String get videoLabelUpper {
+    return Intl.message(
+      'VIDEO',
+      name: 'videoLabelUpper',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Closet`
+  String get closet {
+    return Intl.message(
+      'Closet',
+      name: 'closet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings and Personal Info`
+  String get settingsPersonalInfo {
+    return Intl.message(
+      'Settings and Personal Info',
+      name: 'settingsPersonalInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Authentication Method`
+  String get authMethod {
+    return Intl.message(
+      'Authentication Method',
+      name: 'authMethod',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not provided`
+  String get notProvided {
+    return Intl.message(
+      'Not provided',
+      name: 'notProvided',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Google Sign-In`
+  String get googleSignIn {
+    return Intl.message(
+      'Google Sign-In',
+      name: 'googleSignIn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apple Sign-In`
+  String get appleSignIn {
+    return Intl.message(
+      'Apple Sign-In',
+      name: 'appleSignIn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email & Password`
+  String get emailPasswordLogin {
+    return Intl.message(
+      'Email & Password',
+      name: 'emailPasswordLogin',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🔍 Searching for information for "{query}"...`
+  String searchingForInfo(Object query) {
+    return Intl.message(
+      '🔍 Searching for information for "$query"...',
+      name: 'searchingForInfo',
+      desc: '',
+      args: [query],
+    );
+  }
+
+  /// `Profile Access Required`
+  String get profileAccessRequired {
+    return Intl.message(
+      'Profile Access Required',
+      name: 'profileAccessRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You need to log in to view and edit your profile.`
+  String get profileAccessDescription {
+    return Intl.message(
+      'You need to log in to view and edit your profile.',
+      name: 'profileAccessDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Style DNA`
+  String get styleDnaTitle {
+    return Intl.message(
+      'Style DNA',
+      name: 'styleDnaTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Updated now`
+  String get updatedNow {
+    return Intl.message(
+      'Updated now',
+      name: 'updatedNow',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} minutes ago`
+  String minutesAgo(Object count) {
+    return Intl.message(
+      '$count minutes ago',
+      name: 'minutesAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Updated today`
+  String get updatedToday {
+    return Intl.message(
+      'Updated today',
+      name: 'updatedToday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Updated yesterday`
+  String get updatedYesterday {
+    return Intl.message(
+      'Updated yesterday',
+      name: 'updatedYesterday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} days ago`
+  String daysAgo(Object count) {
+    return Intl.message(
+      '$count days ago',
+      name: 'daysAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count} weeks ago`
+  String weeksAgo(Object count) {
+    return Intl.message(
+      '$count weeks ago',
+      name: 'weeksAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `{count} months ago`
+  String monthsAgo(Object count) {
+    return Intl.message(
+      '$count months ago',
+      name: 'monthsAgo',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Style Journal`
+  String get styleJournal {
+    return Intl.message(
+      'Style Journal',
+      name: 'styleJournal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} Day Streak`
+  String dayStreak(Object count) {
+    return Intl.message(
+      '$count Day Streak',
+      name: 'dayStreak',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Lvl {level}`
+  String levelLabel(Object level) {
+    return Intl.message(
+      'Lvl $level',
+      name: 'levelLabel',
+      desc: '',
+      args: [level],
+    );
+  }
+
+  /// `ID: {id}`
+  String uidLabel(Object id) {
+    return Intl.message(
+      'ID: $id',
+      name: 'uidLabel',
+      desc: '',
+      args: [id],
+    );
+  }
+
+  /// `Settings`
+  String get settingsTitle {
+    return Intl.message(
+      'Settings',
+      name: 'settingsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account & Security`
+  String get accountAndSecurity {
+    return Intl.message(
+      'Account & Security',
+      name: 'accountAndSecurity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Purchases`
+  String get purchases {
+    return Intl.message(
+      'Purchases',
+      name: 'purchases',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Legal & Info`
+  String get legalAndInfo {
+    return Intl.message(
+      'Legal & Info',
+      name: 'legalAndInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apple Standard EULA`
+  String get appleEula {
+    return Intl.message(
+      'Apple Standard EULA',
+      name: 'appleEula',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App Preferences`
+  String get appPreferences {
+    return Intl.message(
+      'App Preferences',
+      name: 'appPreferences',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notifications`
+  String get notifications {
+    return Intl.message(
+      'Notifications',
+      name: 'notifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Language & Region`
+  String get languageAndRegion {
+    return Intl.message(
+      'Language & Region',
+      name: 'languageAndRegion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English (US)`
+  String get currentLanguageName {
+    return Intl.message(
+      'English (US)',
+      name: 'currentLanguageName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account Operations`
+  String get accountOperations {
+    return Intl.message(
+      'Account Operations',
+      name: 'accountOperations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Version {version}`
+  String versionInfo(Object version) {
+    return Intl.message(
+      'Version $version',
+      name: 'versionInfo',
+      desc: '',
+      args: [version],
+    );
+  }
+
+  /// `Processing Models`
+  String get processingModels {
+    return Intl.message(
+      'Processing Models',
+      name: 'processingModels',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Successful: {count}`
+  String successCountLabel(Object count) {
+    return Intl.message(
+      'Successful: $count',
+      name: 'successCountLabel',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Failed: {count}`
+  String failCountLabel(Object count) {
+    return Intl.message(
+      'Failed: $count',
+      name: 'failCountLabel',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `View Results`
+  String get viewResults {
+    return Intl.message(
+      'View Results',
+      name: 'viewResults',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This photo is not a model that can be dressed`
+  String get notValidModelReason {
+    return Intl.message(
+      'This photo is not a model that can be dressed',
+      name: 'notValidModelReason',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Processing error: {error}`
+  String processingError(Object error) {
+    return Intl.message(
+      'Processing error: $error',
+      name: 'processingError',
+      desc: '',
+      args: [error],
+    );
+  }
+
+  /// `{count} photos could not be recognized as models`
+  String modelsNotRecognized(Object count) {
+    return Intl.message(
+      '$count photos could not be recognized as models',
+      name: 'modelsNotRecognized',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Review Failed Photos`
+  String get reviewFailedPhotos {
+    return Intl.message(
+      'Review Failed Photos',
+      name: 'reviewFailedPhotos',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed Models ({current}/{total})`
+  String failedModelsTitle(Object current, Object total) {
+    return Intl.message(
+      'Failed Models ($current/$total)',
+      name: 'failedModelsTitle',
+      desc: '',
+      args: [current, total],
+    );
+  }
+
+  /// `Why failed?`
+  String get whyFailed {
+    return Intl.message(
+      'Why failed?',
+      name: 'whyFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Skip`
+  String get skip {
+    return Intl.message(
+      'Skip',
+      name: 'skip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Finish`
+  String get finish {
+    return Intl.message(
+      'Finish',
+      name: 'finish',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manual Add`
+  String get manualAdd {
+    return Intl.message(
+      'Manual Add',
+      name: 'manualAdd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Processing Items`
+  String get processingItems {
+    return Intl.message(
+      'Processing Items',
+      name: 'processingItems',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed Photos ({current}/{total})`
+  String failedPhotosTitle(Object current, Object total) {
+    return Intl.message(
+      'Failed Photos ($current/$total)',
+      name: 'failedPhotosTitle',
+      desc: '',
+      args: [current, total],
+    );
+  }
+
+  /// `{count} photos could not be identified as fashion items`
+  String photosNotIdentifiedAsClothing(Object count) {
+    return Intl.message(
+      '$count photos could not be identified as fashion items',
+      name: 'photosNotIdentifiedAsClothing',
+      desc: '',
+      args: [count],
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +8,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:comby/generated/l10n.dart';
 
 /// Selection mode for the gallery picker
 enum GallerySelectionMode {
@@ -163,9 +165,9 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          title: const Text('Galeri Erişimi Gerekli'),
-          content: const Text(
-            'Fotoğraflarınızı seçebilmek için galeri erişimine izin vermeniz gerekiyor. Lütfen ayarlara gidip galeri erişimi için izin verin.',
+          title: Text(AppLocalizations.of(context).galleryAccessRequired),
+          content: Text(
+            AppLocalizations.of(context).galleryAccessDescription,
           ),
           actions: [
             TextButton(
@@ -173,7 +175,7 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop(); // Pop gallery picker
               },
-              child: const Text('İptal'),
+              child: Text(AppLocalizations.of(context).cancel),
             ),
             TextButton(
               onPressed: () {
@@ -183,7 +185,7 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
                   _requestPermissionAndLoadPhotos();
                 });
               },
-              child: const Text('Ayarlara Git'),
+              child: Text(AppLocalizations.of(context).goToSettings),
             ),
           ],
         ),
@@ -296,8 +298,8 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('Maksimum ${widget.maxSelection} fotoğraf seçebilirsiniz'),
+            content: Text(AppLocalizations.of(context)
+                .maxPhotoSelectionLimit(widget.maxSelection)),
             duration: const Duration(seconds: 2),
             backgroundColor: Colors.orange,
           ),
@@ -330,7 +332,7 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
   }
 
   void _returnWithResult(List<File> files, {required bool wasCropped}) {
-    Navigator.of(context).pop(GallerySelectionResult(
+    context.router.pop(GallerySelectionResult(
       selectedFiles: files,
       wasCropped: wasCropped,
     ));
@@ -353,7 +355,8 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_isMultiMode && _selectedPhotos.isNotEmpty
-            ? '${_selectedPhotos.length} / ${widget.maxSelection} seçildi'
+            ? AppLocalizations.of(context)
+                .nOfMaxSelected(_selectedPhotos.length, widget.maxSelection)
             : widget.title),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -364,7 +367,7 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
             IconButton(
               icon: const Icon(Icons.clear),
               onPressed: _clearSelection,
-              tooltip: 'Seçimi Temizle',
+              tooltip: AppLocalizations.of(context).clearSelection,
             ),
         ],
       ),
@@ -388,7 +391,7 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
                         ),
                         SizedBox(height: 16.h),
                         Text(
-                          'Galeri erişimi gerekli',
+                          AppLocalizations.of(context).galleryAccessRequired,
                           style: TextStyle(
                             fontSize: 16.sp,
                             color: Colors.grey[600],
@@ -396,7 +399,7 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
                         ),
                         SizedBox(height: 8.h),
                         Text(
-                          'Ayarlardan izin verin',
+                          AppLocalizations.of(context).goToSettings,
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: Colors.grey[500],
@@ -434,7 +437,7 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
                 backgroundColor: context.baseColor,
                 icon: const Icon(Icons.arrow_forward, color: Colors.white),
                 label: Text(
-                  'Devam Et (${_selectedPhotos.length}/${widget.maxSelection})',
+                  '${AppLocalizations.of(context).continueButton} (${_selectedPhotos.length}/${widget.maxSelection})',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -467,7 +470,7 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
             ),
             SizedBox(height: 8.h),
             Text(
-              'Kamera',
+              AppLocalizations.of(context).camera,
               style: TextStyle(
                 fontSize: 12.sp,
                 color: Colors.grey[600],

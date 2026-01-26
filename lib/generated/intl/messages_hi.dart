@@ -28,14 +28,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m3(fileName) => "फ़ाइल: ${fileName}";
 
-  static String m4(count) =>
+  static String m4(required, available) => "अपर्याप्त क्रेडिट";
+
+  static String m5(count) =>
       "आप अधिकतम रिफंड सीमा (${count}/10) तक पहुँच चुके हैं।";
 
-  static String m5(fileSize) => "आकार: ${fileSize}";
+  static String m6(fileSize) => "आकार: ${fileSize}";
 
-  static String m6(seed) => "बीज के साथ टेम्प्लेट पुनर्जनन शुरू हुआ: ${seed}";
+  static String m7(seed) => "बीज के साथ टेम्प्लेट पुनर्जनन शुरू हुआ: ${seed}";
 
-  static String m7(credits) =>
+  static String m8(credits) =>
       "अपने अतिथि खाते को एक पूर्ण खाते में बदलें:\n• अपने सभी क्रेडिट (${credits}) को रखें\n• अपने सभी वीडियो और सामग्री को रखें\n• डिवाइसों में डेटा सिंक करें\n• अपने खाते को पासवर्ड से सुरक्षित करें";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -392,8 +394,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "initializing":
             MessageLookupByLibrary.simpleMessage("Comby में आपका स्वागत है..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("इनपुट छवि"),
-        "insufficientCredits":
-            MessageLookupByLibrary.simpleMessage("अपर्याप्त क्रेडिट"),
+        "insufficientCredits": m4,
         "insufficient_credit":
             MessageLookupByLibrary.simpleMessage("अपर्याप्त क्रेडिट"),
         "invalid_credential": MessageLookupByLibrary.simpleMessage(
@@ -588,7 +589,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "रिफंड विफल। कृपया पुन: प्रयास करें।"),
         "refundLimitReached":
             MessageLookupByLibrary.simpleMessage("रिफंड सीमा पहुँची"),
-        "refundLimitReachedDescription": m4,
+        "refundLimitReachedDescription": m5,
         "refundProcessedSuccessfully": MessageLookupByLibrary.simpleMessage(
             "रिफंड सफलतापूर्वक संसाधित हुआ!"),
         "refundProcessedSuccessfullyDefault":
@@ -693,7 +694,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_button_text":
             MessageLookupByLibrary.simpleMessage("खाता नहीं है? "),
         "sizeLabel": MessageLookupByLibrary.simpleMessage("आकार"),
-        "sizeText": m5,
+        "sizeText": m6,
         "startGenerating":
             MessageLookupByLibrary.simpleMessage("जनरेट करना शुरू करें"),
         "start_image": MessageLookupByLibrary.simpleMessage("प्रारंभिक छवि"),
@@ -716,7 +717,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "tail_image": MessageLookupByLibrary.simpleMessage("अंतिम छवि"),
         "tapToSelect":
             MessageLookupByLibrary.simpleMessage("चुनने के लिए टैप करें"),
-        "templateRegenerationStarted": m6,
+        "templateRegenerationStarted": m7,
         "termsOfService":
             MessageLookupByLibrary.simpleMessage("सेवा की शर्तें"),
         "terms_of_service_required": MessageLookupByLibrary.simpleMessage(
@@ -750,7 +751,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "updateButton": MessageLookupByLibrary.simpleMessage("अपडेट करें"),
         "upgradeAccount":
             MessageLookupByLibrary.simpleMessage("खाता अपग्रेड करें"),
-        "upgradeAccountDescription": m7,
+        "upgradeAccountDescription": m8,
         "upgradeAccountForReviewCredit": MessageLookupByLibrary.simpleMessage(
             "60 मुफ़्त क्रेडिट का दावा करने के लिए, कृपया पहले अपना खाता अपग्रेड करें"),
         "upgradeAccountMessage": MessageLookupByLibrary.simpleMessage(

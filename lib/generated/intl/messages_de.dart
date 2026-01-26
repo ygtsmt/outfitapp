@@ -28,15 +28,17 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m3(fileName) => "Datei: ${fileName}";
 
-  static String m4(count) =>
+  static String m4(required, available) => "Unzureichende Credits";
+
+  static String m5(count) =>
       "Sie haben die maximale Rückerstattungsgrenze erreicht (${count}/10).";
 
-  static String m5(fileSize) => "Größe: ${fileSize}";
+  static String m6(fileSize) => "Größe: ${fileSize}";
 
-  static String m6(seed) =>
+  static String m7(seed) =>
       "Vorlagen-Neugenerierung mit Seed gestartet: ${seed}";
 
-  static String m7(credits) =>
+  static String m8(credits) =>
       "Wandeln Sie Ihr Gastkonto in ein vollwertiges Konto um:\n• Behalten Sie alle Ihre Credits (${credits})\n• Behalten Sie alle Ihre Videos und Inhalte\n• Daten über Geräte hinweg synchronisieren\n• Sichern Sie Ihr Konto mit einem Passwort";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -405,8 +407,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "initializing":
             MessageLookupByLibrary.simpleMessage("Willkommen bei Comby..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("Eingabebild"),
-        "insufficientCredits":
-            MessageLookupByLibrary.simpleMessage("Unzureichende Credits"),
+        "insufficientCredits": m4,
         "insufficient_credit":
             MessageLookupByLibrary.simpleMessage("Unzureichender Credit"),
         "invalid_credential": MessageLookupByLibrary.simpleMessage(
@@ -602,7 +603,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rückerstattung fehlgeschlagen. Bitte versuchen Sie es erneut."),
         "refundLimitReached": MessageLookupByLibrary.simpleMessage(
             "Rückerstattungsgrenze erreicht"),
-        "refundLimitReachedDescription": m4,
+        "refundLimitReachedDescription": m5,
         "refundProcessedSuccessfully": MessageLookupByLibrary.simpleMessage(
             "Rückerstattung erfolgreich bearbeitet!"),
         "refundProcessedSuccessfullyDefault":
@@ -707,7 +708,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_button_text":
             MessageLookupByLibrary.simpleMessage("Sie haben noch kein Konto? "),
         "sizeLabel": MessageLookupByLibrary.simpleMessage("Größe"),
-        "sizeText": m5,
+        "sizeText": m6,
         "startGenerating":
             MessageLookupByLibrary.simpleMessage("Generierung starten"),
         "start_image": MessageLookupByLibrary.simpleMessage("Startbild"),
@@ -731,7 +732,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "tail_image": MessageLookupByLibrary.simpleMessage("Endbild"),
         "tapToSelect":
             MessageLookupByLibrary.simpleMessage("Zum Auswählen tippen"),
-        "templateRegenerationStarted": m6,
+        "templateRegenerationStarted": m7,
         "termsOfService":
             MessageLookupByLibrary.simpleMessage("Nutzungsbedingungen"),
         "terms_of_service_required": MessageLookupByLibrary.simpleMessage(
@@ -768,7 +769,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "updateButton": MessageLookupByLibrary.simpleMessage("Aktualisieren"),
         "upgradeAccount":
             MessageLookupByLibrary.simpleMessage("Konto upgraden"),
-        "upgradeAccountDescription": m7,
+        "upgradeAccountDescription": m8,
         "upgradeAccountForReviewCredit": MessageLookupByLibrary.simpleMessage(
             "Um 60 kostenlose Credits zu beanspruchen, müssen Sie zuerst Ihr Konto upgraden"),
         "upgradeAccountMessage": MessageLookupByLibrary.simpleMessage(

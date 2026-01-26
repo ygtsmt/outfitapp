@@ -46,8 +46,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Purchases restored successfully!'),
+            SnackBar(
+              content:
+                  Text(AppLocalizations.of(context).restorePurchasesSuccess),
               backgroundColor: Colors.green,
             ),
           );
@@ -55,8 +56,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('No purchases found to restore.'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).restorePurchasesEmpty),
               backgroundColor: Colors.orange,
             ),
           );
@@ -65,8 +66,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to restore purchases. Please try again.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).restorePurchasesError),
             backgroundColor: Colors.red,
           ),
         );
@@ -163,7 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(
         forceMaterialTransparency: true,
         title: Text(
-          "Ayarlar",
+          AppLocalizations.of(context).settingsTitle,
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -183,7 +184,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           children: [
             // Modern "Account" Section
-            _buildSectionHeader(context, "Hesap & Güvenlik"),
+            _buildSectionHeader(
+                context, AppLocalizations.of(context).accountAndSecurity),
             SizedBox(height: 12.h),
 
             const PersonalInfoCard(),
@@ -194,7 +196,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             // Satın Alma Section (iOS Only)
             if (Platform.isIOS) ...[
-              _buildSectionHeader(context, "Satın Alma İşlemleri"),
+              _buildSectionHeader(
+                  context, AppLocalizations.of(context).purchases),
               SizedBox(height: 12.h),
               _buildMenuTile(
                 context,
@@ -218,7 +221,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
 
             // Yasal & Bilgi Section
-            _buildSectionHeader(context, "Yasal & Bilgi"),
+            _buildSectionHeader(
+                context, AppLocalizations.of(context).legalAndInfo),
             SizedBox(height: 12.h),
             _buildMenuTile(
               context,
@@ -252,13 +256,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildMenuTile(
                 context,
                 icon: Icons.gavel_outlined,
-                title: 'Apple Standard EULA',
+                title: AppLocalizations.of(context).appleEula,
                 onTap: () {
                   context.router.push(
                     DocumentsWebViewScreenRoute(
                       pdfUrl:
                           'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/',
-                      title: 'Apple Standard EULA',
+                      title: AppLocalizations.of(context).appleEula,
                     ),
                   );
                 },
@@ -268,12 +272,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             SizedBox(height: 32.h),
 
             // Preferences Section
-            _buildSectionHeader(context, "Uygulama Tercihleri"),
+            _buildSectionHeader(
+                context, AppLocalizations.of(context).appPreferences),
             SizedBox(height: 12.h),
             _buildMenuTile(
               context,
               icon: Icons.notifications_outlined,
-              title: "Bildirimler",
+              title: AppLocalizations.of(context).notifications,
               onTap: () {
                 // Future impl
               },
@@ -282,8 +287,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildMenuTile(
               context,
               icon: Icons.language,
-              title: "Dil & Bölge",
-              subtitle: "Türkçe (TR)",
+              title: AppLocalizations.of(context).languageAndRegion,
+              subtitle: AppLocalizations.of(context).currentLanguageName,
               onTap: () {
                 // Future impl
               },
@@ -292,7 +297,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             SizedBox(height: 32.h),
 
             // Hesap Silme (Dangerous Zone)
-            _buildSectionHeader(context, "Hesap İşlemleri",
+            _buildSectionHeader(
+                context, AppLocalizations.of(context).accountOperations,
                 color: Colors.redAccent),
             SizedBox(height: 12.h),
             _buildMenuTile(
@@ -320,7 +326,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             SizedBox(height: 24.h),
             Text(
-              "Versiyon 1.0.0",
+              AppLocalizations.of(context).versionInfo("1.0.0"),
               style: TextStyle(
                 color: Colors.grey[400],
                 fontSize: 12.sp,

@@ -1,21 +1,22 @@
 import 'package:auto_route/auto_route.dart';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_it/get_it.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
+import 'package:comby/app/features/closet/models/model_item_model.dart';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
+import 'package:comby/app/features/closet/ui/closet_screen.dart';
 import 'package:comby/app/features/fal_ai/data/fal_ai_usecase.dart';
 import 'package:comby/app/features/try_on/ui/widgets/user_selection_sheet.dart';
 import 'package:comby/core/core.dart';
-import 'dart:io';
-import 'package:comby/app/features/closet/models/model_item_model.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:flutter/services.dart';
-import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:comby/core/routes/app_router.dart';
-import 'package:comby/app/features/closet/ui/closet_screen.dart';
+import 'package:comby/generated/l10n.dart';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_it/get_it.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 // Helper class for local colors since AppColors is not found
 class LocalColors {
@@ -123,8 +124,9 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
   Future<void> _generateImage() async {
     if (_selectedModel == null || _selectedClothes.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please select a model and at least one cloth')),
+        SnackBar(
+            content:
+                Text(AppLocalizations.of(context).pleaseSelectModelAndCloth)),
       );
       return;
     }
@@ -164,9 +166,9 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
       if (result != null && result['status'] == 'processing') {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content:
-                  Text('İstek başarıyla gönderildi! Kombin hazırlanıyor...'),
+                  Text(AppLocalizations.of(context).requestSentSuccessfully),
               backgroundColor: Colors.green,
             ),
           );
@@ -331,19 +333,19 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
       backgroundColor: Colors.transparent,
       builder: (context) {
         return UserSelectionSheet(
-          title: 'Select Model',
+          title: AppLocalizations.of(context).selectModel,
           fetchItems: () async => await _closetUseCase.getUserModelItems(),
           leadingItems: [
             _buildSelectionOption(
               context,
               icon: Icons.photo_library_rounded,
-              label: 'Gallery',
+              label: AppLocalizations.of(context).gallery,
               onTap: _openGallerySelection,
             ),
             _buildSelectionOption(
               context,
               icon: Icons.camera_alt_rounded,
-              label: 'Camera',
+              label: AppLocalizations.of(context).camera,
               onTap: _openModelCameraSelection,
             ),
           ],
@@ -365,19 +367,19 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => UserSelectionSheet(
-        title: 'Select Cloth',
+        title: AppLocalizations.of(context).selectCloth,
         fetchItems: () async => await _closetUseCase.getUserClosetItems(),
         leadingItems: [
           _buildSelectionOption(
             context,
             icon: Icons.photo_library_rounded,
-            label: 'Gallery',
+            label: AppLocalizations.of(context).gallery,
             onTap: _openClosetGallerySelection,
           ),
           _buildSelectionOption(
             context,
             icon: Icons.camera_alt_rounded,
-            label: 'Camera',
+            label: AppLocalizations.of(context).camera,
             onTap: _openClosetCameraSelection,
           ),
         ],
@@ -443,7 +445,9 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionTitle(
-                      context, "MODEL", "Select who will try on the clothes"),
+                      context,
+                      AppLocalizations.of(context).model.toUpperCase(),
+                      AppLocalizations.of(context).modelSubtitle),
                   const SizedBox(height: 16),
                   _ModelSelector(
                     imageUrl: _useAlternativePhoto &&
@@ -463,13 +467,18 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
                     children: [
                       Expanded(
                         child: _buildSectionTitle(
-                            context, "WARDROBE", "Pick items to mix & match"),
+                            context,
+                            AppLocalizations.of(context)
+                                .homeCloset
+                                .toUpperCase(),
+                            AppLocalizations.of(context).wardrobeSubtitle),
                       ),
                       if (_selectedClothes.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Text(
-                            "${_selectedClothes.length} selected",
+                            AppLocalizations.of(context)
+                                .nSelected(_selectedClothes.length),
                             style: TextStyle(
                                 color: colorScheme.onSurface.withOpacity(0.6),
                                 fontSize: 12),
@@ -531,13 +540,13 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
                                         strokeWidth: 2),
                                   ),
                                   SizedBox(width: 12.w),
-                                  const Text("Gemini 3 İşleniyor..."),
+                                  const Text("Gemini 3 Processing..."),
                                 ],
                               )
                             : Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 20.h),
                                 child: Text(
-                                  'Try-on',
+                                  AppLocalizations.of(context).tryOnMode,
                                   style: TextStyle(
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.bold,
@@ -705,7 +714,7 @@ class _ModelSelector extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    "Select a Model",
+                    AppLocalizations.of(context).selectModel,
                     style: TextStyle(
                       color: colorScheme.onSurface,
                       fontSize: 16,
@@ -714,7 +723,7 @@ class _ModelSelector extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Tap to choose from library",
+                    AppLocalizations.of(context).tapToChooseFromLibrary,
                     style: TextStyle(
                         color: colorScheme.onSurface.withOpacity(0.5),
                         fontSize: 12),
@@ -733,7 +742,7 @@ class _ModelSelector extends StatelessWidget {
                       ),
                     ),
                     icon: const Icon(Icons.shuffle_rounded, size: 20),
-                    label: const Text("Surprise Me",
+                    label: Text(AppLocalizations.of(context).surpriseMe,
                         style: TextStyle(fontWeight: FontWeight.w600)),
                   ),
                 ],
@@ -785,8 +794,10 @@ class _ModelSelector extends StatelessWidget {
                                     const SizedBox(width: 4),
                                     Text(
                                       isShowingAlternative
-                                          ? "Use Original Photo"
-                                          : "Use AI Photo",
+                                          ? AppLocalizations.of(context)
+                                              .useOriginalPhoto
+                                          : AppLocalizations.of(context)
+                                              .useAiPhoto,
                                       style: const TextStyle(
                                           color: Colors.white, fontSize: 12),
                                     ),

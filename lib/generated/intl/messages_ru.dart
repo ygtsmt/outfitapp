@@ -28,14 +28,16 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m3(fileName) => "Файл: ${fileName}";
 
-  static String m4(count) =>
+  static String m4(required, available) => "Недостаточно кредитов";
+
+  static String m5(count) =>
       "Вы достигли максимального лимита возврата средств (${count}/10).";
 
-  static String m5(fileSize) => "Размер: ${fileSize}";
+  static String m6(fileSize) => "Размер: ${fileSize}";
 
-  static String m6(seed) => "Перегенерация шаблона начата с сидом: ${seed}";
+  static String m7(seed) => "Перегенерация шаблона начата с сидом: ${seed}";
 
-  static String m7(credits) =>
+  static String m8(credits) =>
       "Превратите свой гостевой аккаунт в полный:\n• Сохраните все свои кредиты (${credits})\n• Сохраните все свои видео и контент\n• Синхронизируйте данные между устройствами\n• Защитите свой аккаунт паролем";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -412,8 +414,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Добро пожаловать в Comby..."),
         "inputImage":
             MessageLookupByLibrary.simpleMessage("Входное Изображение"),
-        "insufficientCredits":
-            MessageLookupByLibrary.simpleMessage("Недостаточно кредитов"),
+        "insufficientCredits": m4,
         "insufficient_credit":
             MessageLookupByLibrary.simpleMessage("Недостаточно кредитов"),
         "invalid_credential": MessageLookupByLibrary.simpleMessage(
@@ -608,7 +609,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Возврат средств не удался. Пожалуйста, попробуйте снова."),
         "refundLimitReached": MessageLookupByLibrary.simpleMessage(
             "Лимит Возврата Средств Достигнут"),
-        "refundLimitReachedDescription": m4,
+        "refundLimitReachedDescription": m5,
         "refundProcessedSuccessfully": MessageLookupByLibrary.simpleMessage(
             "Возврат средств успешно обработан!"),
         "refundProcessedSuccessfullyDefault":
@@ -713,7 +714,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_button_text":
             MessageLookupByLibrary.simpleMessage("Нет аккаунта? "),
         "sizeLabel": MessageLookupByLibrary.simpleMessage("Размер"),
-        "sizeText": m5,
+        "sizeText": m6,
         "startGenerating":
             MessageLookupByLibrary.simpleMessage("Начать Генерировать"),
         "start_image":
@@ -739,7 +740,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Конечное Изображение"),
         "tapToSelect":
             MessageLookupByLibrary.simpleMessage("Нажмите, чтобы выбрать"),
-        "templateRegenerationStarted": m6,
+        "templateRegenerationStarted": m7,
         "termsOfService":
             MessageLookupByLibrary.simpleMessage("Условия Обслуживания"),
         "terms_of_service_required": MessageLookupByLibrary.simpleMessage(
@@ -776,7 +777,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "updateButton": MessageLookupByLibrary.simpleMessage("Обновить"),
         "upgradeAccount":
             MessageLookupByLibrary.simpleMessage("Обновить Аккаунт"),
-        "upgradeAccountDescription": m7,
+        "upgradeAccountDescription": m8,
         "upgradeAccountForReviewCredit": MessageLookupByLibrary.simpleMessage(
             "Чтобы забрать 60 бесплатных кредитов, сначала обновите свой аккаунт"),
         "upgradeAccountMessage": MessageLookupByLibrary.simpleMessage(

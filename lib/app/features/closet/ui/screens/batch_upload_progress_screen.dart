@@ -1,14 +1,15 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
-import 'package:comby/core/constants/layout_constants.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/closet/services/clothing_analysis_service.dart';
+import 'package:comby/core/constants/layout_constants.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/services/background_removal_service.dart';
+import 'package:comby/generated/l10n.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// Result model for batch upload
 class BatchUploadResult {
@@ -56,7 +57,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
 
   int _currentIndex = 0;
   bool _isProcessing = true;
-  String _currentStatus = 'Hazırlanıyor...';
+  String _currentStatus = '';
 
   final List<WardrobeItem> _successfulItems = [];
   final List<FailedPhotoInfo> _failedPhotos = [];
@@ -71,7 +72,20 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
       duration: const Duration(milliseconds: 300),
     );
 
-    _startProcessing();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        _startProcessing(l10n);
+      }
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_currentStatus.isEmpty) {
+      _currentStatus = AppLocalizations.of(context).preparing;
+    }
   }
 
   @override
@@ -80,18 +94,18 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
     super.dispose();
   }
 
-  Future<void> _startProcessing() async {
+  Future<void> _startProcessing(AppLocalizations l10n) async {
     for (int i = 0; i < widget.imageFiles.length; i++) {
       if (!mounted) return;
 
       setState(() {
         _currentIndex = i;
-        _currentStatus = 'Gemini 3 ile analiz ediliyor...';
+        _currentStatus = l10n.analyzingWithGemini3;
       });
 
       _animationController.forward(from: 0);
 
-      await _processPhoto(widget.imageFiles[i]);
+      await _processPhoto(widget.imageFiles[i], l10n);
     }
 
     if (!mounted) return;
@@ -104,10 +118,10 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
     _navigateToResult();
   }
 
-  Future<void> _processPhoto(File imageFile) async {
+  Future<void> _processPhoto(File imageFile, AppLocalizations l10n) async {
     try {
       setState(() {
-        _currentStatus = 'Gemini 3 ile analiz ediliyor...';
+        _currentStatus = l10n.analyzingWithGemini3;
       });
 
       // Step 1: AI Analysis
@@ -118,8 +132,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
           analysisResult['isValidFashionItem']?.toLowerCase() == 'true';
 
       if (!isValid) {
-        final reason = analysisResult['invalidReason'] ??
-            'Bu fotoğraf bir kıyafet veya aksesuar değil';
+        final reason = analysisResult['invalidReason'] ?? l10n.notAFashionItem;
         _failedPhotos.add(FailedPhotoInfo(
           imageFile: imageFile,
           reason: reason,
@@ -128,7 +141,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
       }
 
       setState(() {
-        _currentStatus = 'Arka plan kaldırılıyor...';
+        _currentStatus = l10n.removingBackground;
       });
 
       // Step 2: Upload and remove background
@@ -140,7 +153,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
       String finalImageUrl;
       try {
         setState(() {
-          _currentStatus = 'Görsel işleniyor...';
+          _currentStatus = l10n.processingImage;
         });
 
         final falAiTransparentUrl =
@@ -160,7 +173,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
       }
 
       setState(() {
-        _currentStatus = 'Kaydediliyor...';
+        _currentStatus = l10n.saving;
       });
 
       // Step 3: Create closet item
@@ -187,7 +200,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
     } catch (e) {
       _failedPhotos.add(FailedPhotoInfo(
         imageFile: imageFile,
-        reason: 'İşlem hatası: ${e.toString()}',
+        reason: l10n.processingError(e.toString()),
       ));
     }
   }
@@ -353,7 +366,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
                       _buildStatItem(
                         icon: Icons.check_circle_outline,
                         color: const Color(0xFF4CAF50), // Bright Green
-                        label: 'Başarılı',
+                        label: AppLocalizations.of(context).successful,
                         value: _successfulItems.length.toString(),
                       ),
                       if (_failedPhotos.isNotEmpty) ...[
@@ -365,7 +378,7 @@ class _BatchUploadProgressScreenState extends State<BatchUploadProgressScreen>
                         _buildStatItem(
                           icon: Icons.error_outline,
                           color: const Color(0xFFFF5252), // Bright Red
-                          label: 'Başarısız',
+                          label: AppLocalizations.of(context).failed,
                           value: _failedPhotos.length.toString(),
                         ),
                       ],

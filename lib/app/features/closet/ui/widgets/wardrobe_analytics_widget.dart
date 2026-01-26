@@ -1,8 +1,9 @@
+import 'package:comby/app/features/closet/services/closet_analysis_service.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
-import 'package:comby/app/features/closet/services/closet_analysis_service.dart';
 
 class WardrobeAnalyticsWidget extends StatefulWidget {
   const WardrobeAnalyticsWidget({super.key});
@@ -119,7 +120,7 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(20.r),
         ),
-        child: Center(child: Text("Henüz dolabın boş! Ürün ekle.")),
+        child: Center(child: Text(AppLocalizations.of(context).wardrobeEmpty)),
       );
     }
 
@@ -151,7 +152,7 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Dolap Analizi",
+                    AppLocalizations.of(context).closetAnalysis,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
@@ -159,7 +160,8 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
                     ),
                   ),
                   Text(
-                    "${_stats!.totalItems} Parça",
+                    AppLocalizations.of(context)
+                        .piecesCount(_stats!.totalItems),
                     style: TextStyle(
                       fontSize: 24.sp,
                       fontWeight: FontWeight.w800,
@@ -235,7 +237,7 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Kapsül Dolap Skoru",
+                        AppLocalizations.of(context).capsuleClosetScore,
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
@@ -244,7 +246,7 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
                       ),
                       SizedBox(height: 4.h),
                       Text(
-                        _getCapsuleStatus(_stats?.capsuleScore ?? 0),
+                        _getCapsuleStatus(context, _stats?.capsuleScore ?? 0),
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: Colors.grey[600],
@@ -263,7 +265,7 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Favori Renkler",
+                AppLocalizations.of(context).favoriteColors,
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Colors.grey[600],
@@ -329,11 +331,12 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
     );
   }
 
-  String _getCapsuleStatus(int score) {
-    if (score >= 90) return "Mükemmel! Tam bir kapsül dolap uzmanısın.";
-    if (score >= 70) return "Harika gidiyorsun, çok dengeli.";
-    if (score >= 50) return "İyi başlangıç, biraz daha denge lazım.";
-    return "Henüz yolun başındasın, dolabını sadeleştir.";
+  String _getCapsuleStatus(BuildContext context, int score) {
+    final l10n = AppLocalizations.of(context);
+    if (score >= 90) return l10n.capsuleStatusPerfect;
+    if (score >= 70) return l10n.capsuleStatusGreat;
+    if (score >= 50) return l10n.capsuleStatusGood;
+    return l10n.capsuleStatusBeginner;
   }
 
   Widget _buildColorDot(Color color, {bool border = false}) {

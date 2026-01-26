@@ -28,7 +28,7 @@ class SettingsButton extends StatelessWidget {
           child: Icon(Icons.settings_outlined, color: Colors.grey[700]),
         ),
         title: Text(
-          "Ayarlar ve Kişisel Bilgiler",
+          AppLocalizations.of(context).settingsPersonalInfo,
           style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 14.sp,

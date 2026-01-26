@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/closet/ui/screens/batch_model_upload_progress_screen.dart';
@@ -68,7 +69,7 @@ class _BatchModelUploadResultScreenState
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('İşlem Tamamlandı'),
+        title: Text(AppLocalizations.of(context).processCompleted),
         automaticallyImplyLeading: false,
         centerTitle: true,
       ),
@@ -118,8 +119,10 @@ class _BatchModelUploadResultScreenState
                   children: [
                     Text(
                       hasFailures
-                          ? '$totalCount modelden $successCount\'${successCount == 1 ? 'i' : 'si'} başarıyla eklendi!'
-                          : 'Tüm modeller başarıyla eklendi!',
+                          ? AppLocalizations.of(context)
+                              .modelsAddedSuccessfully(successCount, totalCount)
+                          : AppLocalizations.of(context)
+                              .allModelsAddedSuccessfully,
                       style: TextStyle(
                         fontSize: 22.sp,
                         fontWeight: FontWeight.bold,
@@ -149,7 +152,8 @@ class _BatchModelUploadResultScreenState
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              '$failCount fotoğraf model olarak algılanamadı',
+                              AppLocalizations.of(context)
+                                  .modelsNotRecognized(failCount),
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: Colors.red[700],
@@ -175,7 +179,7 @@ class _BatchModelUploadResultScreenState
                       child: _buildStatCard(
                         icon: Icons.check_circle,
                         iconColor: Colors.green,
-                        label: 'Başarılı',
+                        label: AppLocalizations.of(context).successful,
                         value: successCount.toString(),
                       ),
                     ),
@@ -184,7 +188,7 @@ class _BatchModelUploadResultScreenState
                       child: _buildStatCard(
                         icon: Icons.error,
                         iconColor: Colors.red,
-                        label: 'Başarısız',
+                        label: AppLocalizations.of(context).failed,
                         value: failCount.toString(),
                       ),
                     ),
@@ -202,7 +206,7 @@ class _BatchModelUploadResultScreenState
                     onPressed: _onReview,
                     icon: Icon(Icons.visibility, size: 20.sp),
                     label: Text(
-                      'Başarısız Fotoğrafları Gözden Geçir',
+                      AppLocalizations.of(context).reviewFailedPhotos,
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -232,7 +236,7 @@ class _BatchModelUploadResultScreenState
                     ),
                   ),
                   child: Text(
-                    'Tamam',
+                    AppLocalizations.of(context).done,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,

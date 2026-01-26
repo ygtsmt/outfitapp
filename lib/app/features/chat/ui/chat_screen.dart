@@ -1,15 +1,13 @@
 import 'dart:io';
-import 'package:auto_route/auto_route.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get_it/get_it.dart';
 import 'package:comby/app/features/chat/bloc/chat_bloc.dart';
-import 'package:comby/app/features/chat/data/chat_usecase.dart';
 import 'package:comby/app/features/chat/widgets/markdown_text.dart';
 import 'package:comby/app/features/chat/widgets/media_preview_widget.dart';
 import 'package:comby/core/ui/widgets/reusable_gallery_picker.dart';
+import 'package:comby/generated/l10n.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -53,7 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _pickMedia(BuildContext context) async {
     final result = await ReusableGalleryPicker.show(
       context: context,
-      title: 'Medya Seç',
+      title: AppLocalizations.of(context).selectMedia,
       mode: GallerySelectionMode.multi,
       maxSelection: 5,
       enableCrop: false,
@@ -79,7 +77,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 } else if (state.status == ChatStatus.failure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text(state.errorMessage ?? 'Hata oluştu')),
+                        content: Text(state.errorMessage ??
+                            AppLocalizations.of(context).errorOccurredChat)),
                   );
                 }
               },
@@ -93,7 +92,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         Icon(Icons.chat_bubble_outline,
                             size: 60.sp, color: Colors.grey),
                         SizedBox(height: 16.h),
-                        Text("AI Asistana bir şeyler sorun!",
+                        Text(AppLocalizations.of(context).askSomethingToAi,
                             style:
                                 TextStyle(color: Colors.grey, fontSize: 16.sp)),
                       ],
@@ -168,8 +167,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 child: TextField(
                   controller: _textController,
-                  decoration: const InputDecoration(
-                    hintText: 'Mesajınızı yazın...',
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context).writeYourMessage,
                     border: InputBorder.none,
                   ),
                   onSubmitted: (_) => _sendMessage(),

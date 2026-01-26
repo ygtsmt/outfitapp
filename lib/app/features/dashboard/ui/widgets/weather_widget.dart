@@ -1,16 +1,17 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:comby/core/core.dart';
-import 'package:comby/core/routes/app_router.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:get_it/get_it.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/app/features/dashboard/data/models/weather_model.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
+import 'package:comby/core/routes/app_router.dart';
 import 'package:comby/core/services/location_service.dart';
-import 'package:comby/core/services/weather_service.dart';
 import 'package:comby/core/services/outfit_suggestion_service.dart';
+import 'package:comby/core/services/weather_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:get_it/get_it.dart';
 
 /// Weather widget that shows current weather based on user's location
 /// Shows permission request if location access is not granted
@@ -59,7 +60,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     if (position == null) {
       setState(() {
         _isLoading = false;
-        _errorMessage = 'Konum alınamadı';
+        _errorMessage = AppLocalizations.of(context).locationNotReceived;
       });
       return;
     }
@@ -74,7 +75,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       _weather = weather;
       _isLoading = false;
       if (weather == null) {
-        _errorMessage = 'Hava durumu bilgisi alınamadı';
+        _errorMessage = AppLocalizations.of(context).weatherInfoNotReceived;
       }
     });
   }
@@ -104,12 +105,12 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       final closetItems = await closetUseCase.getUserClosetItems();
 
       if (models.isEmpty) {
-        _showErrorSnackbar('Model eklemeniz gerekiyor');
+        _showErrorSnackbar(AppLocalizations.of(context).needToAddModel);
         return;
       }
 
       if (closetItems.isEmpty) {
-        _showErrorSnackbar('Dolabınıza kıyafet eklemeniz gerekiyor');
+        _showErrorSnackbar(AppLocalizations.of(context).needToAddCloth);
         return;
       }
 
@@ -121,7 +122,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       );
 
       if (suggestion == null) {
-        _showErrorSnackbar('Kombin önerisi oluşturulamadı');
+        _showErrorSnackbar(AppLocalizations.of(context).outfitSuggestionFailed);
         return;
       }
 
@@ -130,7 +131,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         _showOutfitBottomSheet(suggestion);
       }
     } catch (e) {
-      _showErrorSnackbar('Hata: $e');
+      _showErrorSnackbar(
+          AppLocalizations.of(context).errorOccurred(e.toString()));
     } finally {
       if (mounted) {
         setState(() {
@@ -211,7 +213,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           ),
           SizedBox(height: 12.h),
           Text(
-            'Hava durumu yükleniyor...',
+            AppLocalizations.of(context).loadingWeather,
             style: TextStyle(
               color: Colors.white,
               fontSize: 14.sp,
@@ -254,7 +256,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           ),
           SizedBox(height: 16.h),
           Text(
-            'Hava Durumu',
+            AppLocalizations.of(context).weather,
             style: TextStyle(
               color: Colors.white,
               fontSize: 18.sp,
@@ -263,7 +265,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           ),
           SizedBox(height: 8.h),
           Text(
-            'Konumunuza göre hava durumu görmek için\nkonum iznine ihtiyacımız var.',
+            AppLocalizations.of(context).locationPermissionRequired,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white70,
@@ -274,7 +276,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           ElevatedButton.icon(
             onPressed: _requestPermission,
             icon: const Icon(Icons.location_on_rounded),
-            label: const Text('Konum İzni Ver'),
+            label: Text(AppLocalizations.of(context).giveLocationPermission),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: Colors.grey.shade900,
@@ -317,7 +319,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           ),
           SizedBox(height: 12.h),
           Text(
-            _errorMessage ?? 'Bir hata oluştu',
+            _errorMessage ?? AppLocalizations.of(context).common_error,
             style: TextStyle(
               color: Colors.white,
               fontSize: 14.sp,
@@ -327,9 +329,9 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           TextButton.icon(
             onPressed: _checkPermissionAndLoadWeather,
             icon: const Icon(Icons.refresh_rounded, color: Colors.white),
-            label: const Text(
-              'Tekrar Dene',
-              style: TextStyle(color: Colors.white),
+            label: Text(
+              AppLocalizations.of(context).tryAgain,
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -460,19 +462,19 @@ class _WeatherWidgetState extends State<WeatherWidget> {
               children: [
                 _buildInfoItem(
                   icon: Icons.thermostat_rounded,
-                  label: 'Hissedilen',
+                  label: AppLocalizations.of(context).felt,
                   value: _weather!.feelsLikeString,
                 ),
                 _buildDivider(),
                 _buildInfoItem(
                   icon: Icons.water_drop_rounded,
-                  label: 'Nem',
+                  label: AppLocalizations.of(context).humidity,
                   value: '${_weather!.humidity}%',
                 ),
                 _buildDivider(),
                 _buildInfoItem(
                   icon: Icons.air_rounded,
-                  label: 'Rüzgar',
+                  label: AppLocalizations.of(context).wind,
                   value: '${_weather!.windSpeed.round()} km/s',
                 ),
               ],
@@ -640,7 +642,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                       ),
                       SizedBox(height: 2.h),
                       Text(
-                        'Hava durumuna göre en iyi kombinini oluştur',
+                        AppLocalizations.of(context)
+                            .weatherBasedOutfitSuggestion,
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.95),
                           fontSize: 11.sp,

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/routes/app_router.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -42,7 +43,7 @@ class _AIFashionCritiqueWidgetState extends State<AIFashionCritiqueWidget> {
             // Camera Option
             _buildOptionCard(
               icon: Icons.camera_alt_outlined,
-              title: 'Fotoğraf Çek',
+              title: AppLocalizations.of(context).takePhoto,
               color: const Color(0xFFFF416C),
               onTap: () {
                 Navigator.pop(sheetContext);
@@ -54,13 +55,13 @@ class _AIFashionCritiqueWidgetState extends State<AIFashionCritiqueWidget> {
             // Gallery Option
             _buildOptionCard(
               icon: Icons.photo_library_outlined,
-              title: 'Galeriden Seç',
+              title: AppLocalizations.of(context).selectFromGallery,
               color: const Color(0xFF8E2DE2),
               onTap: () async {
                 Navigator.pop(sheetContext);
                 final result = await ReusableGalleryPicker.show(
                   context: context,
-                  title: 'Kombin Seç',
+                  title: AppLocalizations.of(context).selectOutfit,
                   mode: GallerySelectionMode.single,
                 );
 
@@ -208,7 +209,7 @@ class _AIFashionCritiqueWidgetState extends State<AIFashionCritiqueWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'AI Stil Danışmanı',
+                            AppLocalizations.of(context).aiStyleConsultant,
                             style: TextStyle(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
@@ -225,7 +226,8 @@ class _AIFashionCritiqueWidgetState extends State<AIFashionCritiqueWidget> {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'Gemini 3 ile kombinini puanla, öneriler al ✨',
+                            AppLocalizations.of(context)
+                                .aiStyleConsultantSubtitle,
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w500,

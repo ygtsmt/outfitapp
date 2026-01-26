@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
+import 'package:comby/core/core.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
-import 'package:comby/core/core.dart';
 
 class AddWardrobeItemFormDialog extends StatefulWidget {
   final File imageFile;
@@ -187,7 +188,7 @@ class _AddWardrobeItemFormDialogState extends State<AddWardrobeItemFormDialog> {
                     ),
                     SizedBox(height: 12.h),
                     _buildDropdown(
-                      label: 'Renk (Opsiyonel)',
+                      label: AppLocalizations.of(context).colorOptional,
                       value: selectedColor,
                       items: colors,
                       onChanged: (value) {
@@ -198,7 +199,7 @@ class _AddWardrobeItemFormDialogState extends State<AddWardrobeItemFormDialog> {
                     ),
                     SizedBox(height: 12.h),
                     _buildDropdown(
-                      label: 'Desen (Opsiyonel)',
+                      label: AppLocalizations.of(context).patternOptional,
                       value: selectedPattern,
                       items: patterns,
                       onChanged: (value) {
@@ -209,7 +210,7 @@ class _AddWardrobeItemFormDialogState extends State<AddWardrobeItemFormDialog> {
                     ),
                     SizedBox(height: 12.h),
                     _buildDropdown(
-                      label: 'Mevsim (Opsiyonel)',
+                      label: AppLocalizations.of(context).seasonOptional,
                       value: selectedSeason,
                       items: seasons,
                       onChanged: (value) {
@@ -220,7 +221,7 @@ class _AddWardrobeItemFormDialogState extends State<AddWardrobeItemFormDialog> {
                     ),
                     SizedBox(height: 12.h),
                     _buildDropdown(
-                      label: 'Kumaş (Opsiyonel)',
+                      label: AppLocalizations.of(context).fabricOptional,
                       value: selectedMaterial,
                       items: materials,
                       onChanged: (value) {
@@ -299,7 +300,7 @@ class _AddWardrobeItemFormDialogState extends State<AddWardrobeItemFormDialog> {
   Widget _buildBrandTextField() {
     return TextFormField(
       decoration: InputDecoration(
-        labelText: 'Marka (Opsiyonel)',
+        labelText: AppLocalizations.of(context).brandOptional,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
@@ -324,8 +325,8 @@ class _AddWardrobeItemFormDialogState extends State<AddWardrobeItemFormDialog> {
   void _saveItem() {
     if (!_canSave()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Lütfen kategori seçiniz'),
+         SnackBar(
+          content: Text(AppLocalizations.of(context).pleaseSelectCategory),
           backgroundColor: Colors.red,
         ),
       );

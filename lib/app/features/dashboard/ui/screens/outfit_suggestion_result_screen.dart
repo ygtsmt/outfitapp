@@ -9,6 +9,7 @@ import 'package:comby/app/features/dashboard/ui/screens/full_screen_image_screen
 import 'package:comby/app/features/fal_ai/data/fal_ai_usecase.dart';
 import 'package:comby/core/routes/app_router.dart';
 import 'package:comby/core/services/outfit_suggestion_service.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -99,10 +100,10 @@ class _OutfitSuggestionResultScreenState
         });
         _listenToResult(requestId);
       } else {
-        _handleError('İstek oluşturulamadı.');
+        _handleError(AppLocalizations.of(context).requestCreationFailed);
       }
     } catch (e) {
-      _handleError('Hata oluştu: $e');
+      _handleError(AppLocalizations.of(context).common_error);
     }
   }
 
@@ -176,7 +177,7 @@ class _OutfitSuggestionResultScreenState
         }
       } else if (status == 'failed' || status == 'error') {
         print('Status failed or error: $status');
-        _handleError('İşlem başarısız oldu.');
+        _handleError(AppLocalizations.of(context).failed);
         _firestoreSubscription?.cancel();
       } else {
         print('Snapshot data: $data');
@@ -221,8 +222,8 @@ class _OutfitSuggestionResultScreenState
             _selectedClosetItems.add(result);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Maksimum 5 kıyafet seçebilirsiniz'),
+              SnackBar(
+                content: Text(AppLocalizations.of(context).max5ClothesError),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -240,7 +241,7 @@ class _OutfitSuggestionResultScreenState
       appBar: AppBar(
         forceMaterialTransparency: true,
         title: Text(
-          'Gemini 3 Kombin Sonucu',
+          AppLocalizations.of(context).geminiResultTitle,
           style: TextStyle(
             fontSize: 20.sp,
             fontWeight: FontWeight.bold,
@@ -262,7 +263,7 @@ class _OutfitSuggestionResultScreenState
 
             // Controls Section
             Text(
-              'Kombin Detayları',
+              AppLocalizations.of(context).combineDetails,
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
@@ -277,7 +278,7 @@ class _OutfitSuggestionResultScreenState
             // Model Selection
             _buildSelectionRow(
               context,
-              title: "Model",
+              title: AppLocalizations.of(context).model,
               child: _buildModelPreview(),
               onTap: _isGenerating ? null : _changeModel,
             ),
@@ -285,7 +286,7 @@ class _OutfitSuggestionResultScreenState
             // Closet Items Selection
             _buildSelectionRow(
               context,
-              title: "Kıyafetler",
+              title: AppLocalizations.of(context).clothes,
               child: _buildClosetItemsPreview(),
               onTap: _isGenerating ? null : _changeItems,
             ),
@@ -309,7 +310,9 @@ class _OutfitSuggestionResultScreenState
                             color: colorScheme.onPrimary, strokeWidth: 2))
                     : const Icon(Icons.refresh_rounded),
                 label: Text(
-                  _isGenerating ? 'Hazırlanıyor...' : 'Kombini Yenile',
+                  _isGenerating
+                      ? AppLocalizations.of(context).regeneratingCombine
+                      : AppLocalizations.of(context).regenerateCombine,
                   style:
                       TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                 ),
@@ -347,12 +350,12 @@ class _OutfitSuggestionResultScreenState
             ),
             SizedBox(height: 16.h),
             Text(
-              'Gemini 3 kombini oluşturuyor...',
+              AppLocalizations.of(context).geminiGeneratingCombine,
               style: TextStyle(color: colorScheme.onSurface, fontSize: 14.sp),
             ),
             SizedBox(height: 8.h),
             Text(
-              'Bu işlem 10-15 saniye sürebilir',
+              AppLocalizations.of(context).processEstimatedTime,
               style: TextStyle(
                   color: colorScheme.onSurface.withOpacity(0.6),
                   fontSize: 12.sp),
@@ -392,7 +395,8 @@ class _OutfitSuggestionResultScreenState
         color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
         borderRadius: BorderRadius.circular(20.r),
       ),
-      child: Center(child: Text("Görsel oluşturulamadı.")),
+      child: Center(
+          child: Text(AppLocalizations.of(context).imageGenerationFailed)),
     );
   }
 
@@ -416,7 +420,7 @@ class _OutfitSuggestionResultScreenState
             if (onTap != null)
               TextButton(
                 onPressed: onTap,
-                child: Text("Değiştir",
+                child: Text(AppLocalizations.of(context).change,
                     style: TextStyle(color: colorScheme.primary)),
               )
           ],
@@ -446,7 +450,7 @@ class _OutfitSuggestionResultScreenState
         ),
         SizedBox(width: 12.w),
         Text(
-          "Seçili Model",
+          AppLocalizations.of(context).selectedModel,
           style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
         ),
       ],

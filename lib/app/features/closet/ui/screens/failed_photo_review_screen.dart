@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/closet/ui/screens/batch_upload_progress_screen.dart';
@@ -74,7 +75,8 @@ class _FailedPhotoReviewScreenState extends State<FailedPhotoReviewScreen> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: Text(
-          'Başarısız Fotoğraflar (${_currentPage + 1}/${widget.failedPhotos.length})',
+          AppLocalizations.of(context)
+              .failedPhotosTitle(_currentPage + 1, widget.failedPhotos.length),
         ),
         leading: IconButton(
           icon: const Icon(Icons.close),
@@ -174,7 +176,7 @@ class _FailedPhotoReviewScreenState extends State<FailedPhotoReviewScreen> {
                       ),
                       SizedBox(width: 8.w),
                       Text(
-                        'Neden Başarısız?',
+                        AppLocalizations.of(context).whyFailed,
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
@@ -217,8 +219,8 @@ class _FailedPhotoReviewScreenState extends State<FailedPhotoReviewScreen> {
                   ),
                   child: Text(
                     _currentPage < widget.failedPhotos.length - 1
-                        ? 'Atla'
-                        : 'Bitir',
+                        ? AppLocalizations.of(context).skip
+                        : AppLocalizations.of(context).finish,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
@@ -234,7 +236,7 @@ class _FailedPhotoReviewScreenState extends State<FailedPhotoReviewScreen> {
                   onPressed: () => _onManualAdd(failedPhoto),
                   icon: Icon(Icons.edit, size: 20.sp),
                   label: Text(
-                    'Manuel Ekle',
+                    AppLocalizations.of(context).manualAdd,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,

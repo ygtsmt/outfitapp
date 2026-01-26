@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 import 'package:comby/app/features/chat/data/chat_usecase.dart';
 import 'package:comby/app/features/chat/utils/parse_image_urls.dart';
+import 'package:comby/generated/l10n.dart';
 
 part 'chat_event.dart';
 part 'chat_state.dart';
@@ -48,7 +49,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       /// 🔥 TOOL İSTEDİ
       if (result is ChatSearchResult) {
-        final searchInfo = '🔍 "${result.query}" için bilgi aranıyor...';
+        final searchInfo =
+            AppLocalizations.current.searchingForInfo(result.query);
 
         final searchingBubble = ChatMessage(text: searchInfo, isUser: false);
 

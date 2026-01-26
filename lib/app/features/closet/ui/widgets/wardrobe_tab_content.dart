@@ -7,6 +7,7 @@ import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/core/core.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:comby/generated/l10n.dart';
 
 class WardrobeTabContent extends StatefulWidget {
   const WardrobeTabContent({super.key});
@@ -48,7 +49,8 @@ class _WardrobeTabContentState extends State<WardrobeTabContent>
             state.errorMessage!.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Hata: ${state.errorMessage}'),
+              content: Text(AppLocalizations.of(context)
+                  .errorOccurred(state.errorMessage!)),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 3),
             ),
@@ -84,7 +86,7 @@ class _WardrobeTabContentState extends State<WardrobeTabContent>
                   ),
                   SizedBox(height: 24.h),
                   Text(
-                    'Closet içeriği bulunamadı\nYeni item eklemek için yukarıdaki butona tıklayın',
+                    AppLocalizations.of(context).closetEmptyMessage,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.grey[600],
                         ),
@@ -281,7 +283,7 @@ class _AddWardrobeItemButton extends StatelessWidget {
               SizedBox(height: 8.h),
               // Yazı Alanı
               Text(
-                'Yeni Ekle',
+                AppLocalizations.of(context).addNew,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: crossAxisCount == 4

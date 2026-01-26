@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:comby/app/features/fit_check/services/fit_check_service.dart';
+import 'package:comby/generated/l10n.dart';
 
 class StreakWidget extends StatefulWidget {
   final bool isOverlay;
@@ -94,7 +95,9 @@ class _StreakWidgetState extends State<StreakWidget>
             ),
           SizedBox(width: 6.w),
           Text(
-            _streak > 0 ? '$_streak Günlük Seri' : 'Seriyi Başlat!',
+            _streak > 0
+                ? AppLocalizations.of(context).dailyStreakCount(_streak)
+                : AppLocalizations.of(context).startStreak,
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.bold,

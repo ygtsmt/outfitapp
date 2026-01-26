@@ -4,6 +4,7 @@ import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/try_on/ui/widgets/virtual_cabin_tab_content.dart';
 import 'package:comby/app/features/try_on/ui/widgets/quick_try_tab_content.dart';
+import 'package:comby/generated/l10n.dart';
 
 class TryOnScreen extends StatefulWidget {
   final ModelItem? initialModel;
@@ -37,9 +38,9 @@ class _TryOnScreenState extends State<TryOnScreen> {
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
               ),
-              tabs: const [
-                Tab(text: 'Sanal Kabin'),
-                Tab(text: 'Hızlı Dene'),
+              tabs: [
+                Tab(text: AppLocalizations.of(context).virtualCabin),
+                Tab(text: AppLocalizations.of(context).quickTry),
               ],
             ),
             Expanded(

@@ -11,6 +11,7 @@ import 'package:comby/app/features/fit_check/ui/widgets/streak_widget.dart';
 import 'package:comby/core/routes/app_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:comby/generated/l10n.dart';
 
 class FitCheckCard extends StatefulWidget {
   const FitCheckCard({super.key});
@@ -47,7 +48,7 @@ class _FitCheckCardState extends State<FitCheckCard> {
             // Camera Option
             _buildOptionCard(
               icon: Icons.camera_alt_outlined,
-              title: 'Fotoğraf Çek',
+              title: AppLocalizations.of(context).takePhoto,
               color: const Color(0xFFFF416C),
               onTap: () {
                 Navigator.pop(sheetContext);
@@ -59,7 +60,7 @@ class _FitCheckCardState extends State<FitCheckCard> {
             // Gallery Option
             _buildOptionCard(
               icon: Icons.photo_library_outlined,
-              title: 'Galeriden Seç',
+              title: AppLocalizations.of(context).selectFromGallery,
               color: const Color(0xFF8E2DE2),
               onTap: () {
                 Navigator.pop(sheetContext);
@@ -140,7 +141,7 @@ class _FitCheckCardState extends State<FitCheckCard> {
   Future<void> _pickFromGallery() async {
     final result = await ReusableGalleryPicker.show(
       context: context,
-      title: 'Fit Check Fotoğrafı',
+      title: AppLocalizations.of(context).fitCheckPhoto,
       mode: GallerySelectionMode.single,
     );
 
@@ -207,7 +208,7 @@ class _FitCheckCardState extends State<FitCheckCard> {
                           Row(
                             children: [
                               Text(
-                                'Günlük Fit Check',
+                                AppLocalizations.of(context).dailyFitCheck,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18.sp,
@@ -218,7 +219,7 @@ class _FitCheckCardState extends State<FitCheckCard> {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'Bugün ne giydin? Gemini 3 yorumlasın.',
+                            AppLocalizations.of(context).dailyFitCheckSubtitle,
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.9),
                               fontSize: 12.sp,
@@ -252,7 +253,7 @@ class _FitCheckCardState extends State<FitCheckCard> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              "History",
+                              AppLocalizations.of(context).history,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12.sp,

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -89,7 +90,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
       final path = await _getFilePath();
       await Share.shareXFiles(
         [XFile(path)],
-        text: 'Comby ile kombinimi paylaşıyorum! 🌟',
+        text: AppLocalizations.of(context).shareCombineText,
       );
 
       if (mounted) {
@@ -100,7 +101,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
         Navigator.of(context).pop(); // Loading dialog'u kapat
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Paylaşım hatası: $e'),
+            content: Text('${AppLocalizations.of(context).shareError}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -124,8 +125,8 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
       if (mounted) {
         Navigator.of(context).pop(); // Loading dialog'u kapat
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Fotoğraf galeriye kaydedildi! ✅'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).photoSavedToGallery),
             backgroundColor: Colors.green,
           ),
         );
@@ -135,7 +136,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
         Navigator.of(context).pop(); // Loading dialog'u kapat
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Kaydetme hatası: $e'),
+            content: Text('${AppLocalizations.of(context).saveError}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -237,7 +238,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              'Paylaş',
+                              AppLocalizations.of(context).share,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.sp,
@@ -271,7 +272,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              'İndir',
+                              AppLocalizations.of(context).download,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.sp,

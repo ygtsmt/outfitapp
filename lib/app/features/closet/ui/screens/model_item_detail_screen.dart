@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
+import 'package:comby/app/features/closet/models/model_item_model.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
-import 'package:comby/app/features/closet/models/model_item_model.dart';
-
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 
@@ -56,17 +56,18 @@ class _ModelItemDetailScreenState extends State<ModelItemDetailScreen> {
           borderRadius: BorderRadius.circular(16.r),
         ),
         title: Text(
-          'Modeli Sil?',
+          AppLocalizations.of(context).deleteModelConfirmationTitle,
           style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
         ),
         content: Text(
-          'Bu işlem geri alınamaz.',
+          AppLocalizations.of(context).thisActionCannotBeUndone,
           style: TextStyle(fontSize: 14.sp, color: Colors.grey[600]),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('İptal', style: TextStyle(color: Colors.grey[600])),
+            child: Text(AppLocalizations.of(context).cancel,
+                style: TextStyle(color: Colors.grey[600])),
           ),
           TextButton(
             onPressed: () {
@@ -74,15 +75,15 @@ class _ModelItemDetailScreenState extends State<ModelItemDetailScreen> {
               GetIt.I<ClosetBloc>()
                   .add(DeleteModelItemEvent(widget.modelItem.id));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Model silindi'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context).modelDeleted),
                   backgroundColor: Colors.green,
                 ),
               );
               context.router.pop();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Sil'),
+            child: Text(AppLocalizations.of(context).delete),
           ),
         ],
       ),
@@ -114,7 +115,8 @@ class _ModelItemDetailScreenState extends State<ModelItemDetailScreen> {
           if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Hata: ${state.errorMessage}'),
+                content: Text(AppLocalizations.of(context)
+                    .errorOccurred(state.errorMessage!)),
                 backgroundColor: Colors.red,
               ),
             );
@@ -212,7 +214,7 @@ class _ModelItemDetailScreenState extends State<ModelItemDetailScreen> {
                         size: 28.sp,
                       ),
                       Text(
-                        'Kaydırarak görseli büyüt',
+                        AppLocalizations.of(context).scrollToEnlarge,
                         style: TextStyle(
                           fontSize: 11.sp,
                           color: Colors.grey[600],
@@ -429,7 +431,8 @@ class _ModelItemDetailScreenState extends State<ModelItemDetailScreen> {
           children: [
             // Model Name
             Text(
-              _capitalizeFirst(item.name ?? 'İsimsiz Model'),
+              _capitalizeFirst(
+                  item.name ?? AppLocalizations.of(context).unnamedModel),
               style: TextStyle(
                 fontSize: 32.sp,
                 fontWeight: FontWeight.w300,
@@ -486,22 +489,24 @@ class _ModelItemDetailScreenState extends State<ModelItemDetailScreen> {
   Widget _buildDetailsGrid(BuildContext context, ModelItem item) {
     final details = <MapEntry<String, String>>[];
 
+    final l10n = AppLocalizations.of(context);
     if (item.bodyPart != null) {
-      details.add(MapEntry('Görünüm', _formatBodyPart(item.bodyPart!)));
+      details.add(
+          MapEntry(l10n.appearance, _formatBodyPart(context, item.bodyPart!)));
     }
     if (item.bodyType != null) {
-      details.add(MapEntry('Vücut Tipi', _capitalizeFirst(item.bodyType!)));
+      details.add(MapEntry(l10n.bodyType, _capitalizeFirst(item.bodyType!)));
     }
     if (item.skinTone != null) {
-      details.add(MapEntry('Ten Rengi', _capitalizeFirst(item.skinTone!)));
+      details.add(MapEntry(l10n.skinTone, _capitalizeFirst(item.skinTone!)));
     }
     if (item.pose != null) {
-      details.add(MapEntry('Poz', _capitalizeFirst(item.pose!)));
+      details.add(MapEntry(l10n.pose, _capitalizeFirst(item.pose!)));
     }
 
     // Add create date as a detail
-    details.add(
-        MapEntry('Tarih', DateFormat('dd MMM yyyy').format(item.createdAt)));
+    details.add(MapEntry(
+        l10n.dateLabel, DateFormat('dd MMM yyyy').format(item.createdAt)));
 
     return Wrap(
       spacing: 40.w,
@@ -516,16 +521,17 @@ class _ModelItemDetailScreenState extends State<ModelItemDetailScreen> {
     );
   }
 
-  String _formatBodyPart(String part) {
+  String _formatBodyPart(BuildContext context, String part) {
+    final l10n = AppLocalizations.of(context);
     switch (part.toLowerCase()) {
       case 'full_body':
-        return 'Tam Boy';
+        return l10n.fullBody;
       case 'upper_body':
-        return 'Üst Vücut';
+        return l10n.upperBodyPart;
       case 'lower_body':
-        return 'Alt Vücut';
+        return l10n.lowerBodyPart;
       case 'face_only':
-        return 'Sadece Yüz';
+        return l10n.faceOnly;
       default:
         return _capitalizeFirst(part.replaceAll('_', ' '));
     }
@@ -587,7 +593,7 @@ class _ModelItemDetailScreenState extends State<ModelItemDetailScreen> {
           ),
           SizedBox(width: 8.w),
           Text(
-            'Gemini 3 ile analiz edildi',
+            AppLocalizations.of(context).analyzedWithGemini,
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w500,

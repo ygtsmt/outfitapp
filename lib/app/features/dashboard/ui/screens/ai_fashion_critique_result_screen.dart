@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:auto_route/auto_route.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comby/app/features/closet/services/clothing_analysis_service.dart';
 import 'package:comby/app/features/closet/ui/closet_screen.dart';
@@ -57,7 +58,7 @@ class _AIFashionCritiqueResultScreenState
       _startAnalysis();
     } else {
       setState(() {
-        _error = 'Görüntüleme hatası: Veri bulunamadı.';
+        _error = AppLocalizations.of(context).viewErrorDataNotFound;
         _isLoading = false;
       });
     }
@@ -68,8 +69,10 @@ class _AIFashionCritiqueResultScreenState
       final data = widget.critiqueData!;
       setState(() {
         _score = (data['score'] ?? 0) as int;
-        _style = (data['style'] ?? 'Bilinmiyor') as String;
-        _colorHarmony = (data['colorHarmony'] ?? 'Bilinmiyor') as String;
+        _style =
+            (data['style'] ?? AppLocalizations.of(context).unknown) as String;
+        _colorHarmony = (data['colorHarmony'] ??
+            AppLocalizations.of(context).unknown) as String;
         _feedback = List<String>.from(data['feedback'] ?? []);
         _imageUrl = data['imageUrl'] as String?;
         // Parse missing points if available in saved data (might be old data without it)
@@ -84,7 +87,7 @@ class _AIFashionCritiqueResultScreenState
       _fadeController.forward();
     } catch (e) {
       setState(() {
-        _error = 'Veri işleme hatası: $e';
+        _error = AppLocalizations.of(context).dataProcessingError(e.toString());
         _isLoading = false;
       });
     }
@@ -270,7 +273,7 @@ class _AIFashionCritiqueResultScreenState
                               Expanded(
                                 child: _buildModernInfoCard(
                                   icon: Icons.checkroom_rounded,
-                                  label: 'Tarz',
+                                  label: AppLocalizations.of(context).style,
                                   value: _style,
                                   color:
                                       const Color(0xFF7E57C2), // Premium Purple
@@ -281,7 +284,8 @@ class _AIFashionCritiqueResultScreenState
                               Expanded(
                                 child: _buildModernInfoCard(
                                   icon: Icons.palette_rounded,
-                                  label: 'Renk Uyumu',
+                                  label:
+                                      AppLocalizations.of(context).colorMatch,
                                   value: _colorHarmony,
                                   color:
                                       const Color(0xFFFF7043), // Premium Orange
@@ -315,7 +319,8 @@ class _AIFashionCritiqueResultScreenState
                                   ),
                                   SizedBox(width: 16.w),
                                   Text(
-                                    'Geliştirilebilir Alanlar',
+                                    AppLocalizations.of(context)
+                                        .improvableAreas,
                                     style: TextStyle(
                                       fontSize: 20.sp,
                                       fontWeight: FontWeight.w800,
@@ -362,7 +367,7 @@ class _AIFashionCritiqueResultScreenState
                             ),
                             SizedBox(width: 16.w),
                             Text(
-                              'Stilist Görüşleri',
+                              AppLocalizations.of(context).stylistOpinions,
                               style: TextStyle(
                                 fontSize: 22.sp,
                                 fontWeight: FontWeight.w800,
@@ -401,7 +406,7 @@ class _AIFashionCritiqueResultScreenState
                                     elevation: 0,
                                   ),
                                   child: Text(
-                                    'Kapat',
+                                    AppLocalizations.of(context).close,
                                     style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.bold,
@@ -428,7 +433,7 @@ class _AIFashionCritiqueResultScreenState
                                         ),
                                       ),
                                       child: Text(
-                                        'Kaydet',
+                                        AppLocalizations.of(context).save,
                                         style: TextStyle(
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.bold,
@@ -459,7 +464,7 @@ class _AIFashionCritiqueResultScreenState
                                         elevation: 0,
                                       ),
                                       child: Text(
-                                        'Ana Sayfa',
+                                        AppLocalizations.of(context).homePage,
                                         style: TextStyle(
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.bold,
@@ -493,7 +498,7 @@ class _AIFashionCritiqueResultScreenState
                       const CircularProgressIndicator(color: Colors.white),
                       SizedBox(height: 16.h),
                       Text(
-                        'Kaydediliyor...',
+                        AppLocalizations.of(context).savingEllipsis,
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -539,7 +544,8 @@ class _AIFashionCritiqueResultScreenState
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Kombin değerlendirmesi kaydedildi!')),
+          SnackBar(
+              content: Text(AppLocalizations.of(context).combineCritiqueSaved)),
         );
 
         // Force open Critiques tab
@@ -557,7 +563,9 @@ class _AIFashionCritiqueResultScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hata: $e')),
+          SnackBar(
+              content: Text(
+                  AppLocalizations.of(context).errorOccurred(e.toString()))),
         );
       }
     } finally {
@@ -616,7 +624,7 @@ class _AIFashionCritiqueResultScreenState
                     ),
                   ),
                   Text(
-                    'PUAN',
+                    AppLocalizations.of(context).scoreLabel,
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w800,
@@ -869,7 +877,7 @@ class _AIFashionCritiqueResultScreenState
                 ),
                 SizedBox(height: 32.h),
                 Text(
-                  'Kombinin İnceleniyor...',
+                  AppLocalizations.of(context).analyzingOutfit,
                   style: TextStyle(
                     color: Colors.black87,
                     fontSize: 22.sp,
@@ -878,7 +886,7 @@ class _AIFashionCritiqueResultScreenState
                 ),
                 SizedBox(height: 8.h),
                 Text(
-                  'Stil danışmanın detaylı analiz yapıyor',
+                  AppLocalizations.of(context).stylistDetailedAnalysis,
                   style: TextStyle(
                     color: Colors.grey.shade600,
                     fontSize: 14.sp,

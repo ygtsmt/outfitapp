@@ -28,13 +28,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m3(fileName) => "文件：${fileName}";
 
-  static String m4(count) => "您已达到最大退款限制 (${count}/10)。";
+  static String m4(required, available) => "积分不足";
 
-  static String m5(fileSize) => "大小：${fileSize}";
+  static String m5(count) => "您已达到最大退款限制 (${count}/10)。";
 
-  static String m6(seed) => "模板重新生成开始，种子：${seed}";
+  static String m6(fileSize) => "大小：${fileSize}";
 
-  static String m7(credits) =>
+  static String m7(seed) => "模板重新生成开始，种子：${seed}";
+
+  static String m8(credits) =>
       "将您的访客账户升级为完整账户：\n• 保留您的所有积分 (${credits})\n• 保留您的所有视频和内容\n• 在设备之间同步数据\n• 使用密码保护您的账户";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
@@ -331,7 +333,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "images": MessageLookupByLibrary.simpleMessage("图像"),
         "initializing": MessageLookupByLibrary.simpleMessage("欢迎使用 Comby..."),
         "inputImage": MessageLookupByLibrary.simpleMessage("输入图像"),
-        "insufficientCredits": MessageLookupByLibrary.simpleMessage("积分不足"),
+        "insufficientCredits": m4,
         "insufficient_credit": MessageLookupByLibrary.simpleMessage("积分不足"),
         "invalid_credential":
             MessageLookupByLibrary.simpleMessage("无效的凭据。请重试。"),
@@ -484,7 +486,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "refundCreditTitle": MessageLookupByLibrary.simpleMessage("退还积分"),
         "refundFailed": MessageLookupByLibrary.simpleMessage("退款失败。请重试。"),
         "refundLimitReached": MessageLookupByLibrary.simpleMessage("达到退款限制"),
-        "refundLimitReachedDescription": m4,
+        "refundLimitReachedDescription": m5,
         "refundProcessedSuccessfully":
             MessageLookupByLibrary.simpleMessage("退款处理成功！"),
         "refundProcessedSuccessfullyDefault":
@@ -566,7 +568,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_button_link": MessageLookupByLibrary.simpleMessage("注册"),
         "signup_button_text": MessageLookupByLibrary.simpleMessage("还没有账户？ "),
         "sizeLabel": MessageLookupByLibrary.simpleMessage("大小"),
-        "sizeText": m5,
+        "sizeText": m6,
         "startGenerating": MessageLookupByLibrary.simpleMessage("开始生成"),
         "start_image": MessageLookupByLibrary.simpleMessage("起始图像"),
         "startedAtLabel": MessageLookupByLibrary.simpleMessage("开始于："),
@@ -584,7 +586,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "successfully": MessageLookupByLibrary.simpleMessage("成功地"),
         "tail_image": MessageLookupByLibrary.simpleMessage("结束图像"),
         "tapToSelect": MessageLookupByLibrary.simpleMessage("点击选择"),
-        "templateRegenerationStarted": m6,
+        "templateRegenerationStarted": m7,
         "termsOfService": MessageLookupByLibrary.simpleMessage("服务条款"),
         "terms_of_service_required":
             MessageLookupByLibrary.simpleMessage("您必须同意服务条款和隐私政策才能继续。"),
@@ -616,7 +618,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "unlockAllFeatures": MessageLookupByLibrary.simpleMessage("解锁所有功能"),
         "updateButton": MessageLookupByLibrary.simpleMessage("更新"),
         "upgradeAccount": MessageLookupByLibrary.simpleMessage("升级账户"),
-        "upgradeAccountDescription": m7,
+        "upgradeAccountDescription": m8,
         "upgradeAccountForReviewCredit":
             MessageLookupByLibrary.simpleMessage("要领取 60 个免费积分，请先升级您的账户"),
         "upgradeAccountMessage": MessageLookupByLibrary.simpleMessage(
