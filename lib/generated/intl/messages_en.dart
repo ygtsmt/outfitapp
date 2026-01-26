@@ -554,6 +554,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "firstPerson": MessageLookupByLibrary.simpleMessage("First Person"),
         "fitCheckPhoto":
             MessageLookupByLibrary.simpleMessage("Fit Check Photo"),
+        "fitChecks": MessageLookupByLibrary.simpleMessage("FitChecks"),
         "forceUpdateInfo": MessageLookupByLibrary.simpleMessage(
             "New features and improvements await you!"),
         "forceUpdateMessage": MessageLookupByLibrary.simpleMessage(

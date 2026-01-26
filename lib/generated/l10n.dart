@@ -7460,6 +7460,16 @@ class AppLocalizations {
     );
   }
 
+  /// `FitChecks`
+  String get fitChecks {
+    return Intl.message(
+      'FitChecks',
+      name: 'fitChecks',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Date`
   String get dateTitle {
     return Intl.message(

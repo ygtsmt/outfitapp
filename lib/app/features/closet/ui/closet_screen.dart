@@ -13,6 +13,7 @@ import 'package:comby/app/features/closet/ui/widgets/models_tab_content.dart';
 import 'package:comby/app/features/closet/ui/widgets/combines_tab_content.dart';
 import 'package:comby/app/features/closet/ui/widgets/critiques_tab_content.dart';
 import 'package:comby/app/features/closet/ui/widgets/wardrobe_analytics_widget.dart';
+import 'package:comby/app/features/closet/ui/widgets/fit_checks_tab_content.dart';
 import 'package:comby/core/routes/app_router.dart';
 import 'package:comby/app/features/closet/services/closet_analysis_service.dart';
 import 'package:get_it/get_it.dart';
@@ -40,7 +41,7 @@ class _ClosetScreenState extends State<ClosetScreen>
     _loadStats();
 
     _tabController = TabController(
-      length: 4,
+      length: 5,
       vsync: this,
       initialIndex: ClosetScreen.tabNotifier.value,
     );
@@ -170,6 +171,7 @@ class _ClosetScreenState extends State<ClosetScreen>
                               _buildTab(AppLocalizations.of(context).models),
                               _buildTab(AppLocalizations.of(context).combines),
                               _buildTab(AppLocalizations.of(context).critiques),
+                              _buildTab(AppLocalizations.of(context).fitChecks),
                             ],
                           ),
                         ),
@@ -187,6 +189,7 @@ class _ClosetScreenState extends State<ClosetScreen>
               ModelsTabContent(),
               CombinesTabContent(),
               CritiquesTabContent(),
+              FitChecksTabContent(),
             ],
           ),
         ),

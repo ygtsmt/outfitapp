@@ -551,6 +551,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "firstPerson": MessageLookupByLibrary.simpleMessage("İlk Görsel"),
         "fitCheckPhoto":
             MessageLookupByLibrary.simpleMessage("Fit Check Fotoğrafı"),
+        "fitChecks": MessageLookupByLibrary.simpleMessage("FitCheck\'ler"),
         "forceUpdateInfo": MessageLookupByLibrary.simpleMessage(
             "Yeni özellikler ve iyileştirmeler sizi bekliyor!"),
         "forceUpdateMessage": MessageLookupByLibrary.simpleMessage(
