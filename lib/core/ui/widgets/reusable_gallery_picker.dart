@@ -251,11 +251,11 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
 
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Color(0xFF2F2B52),
+        statusBarColor: Color(0xFF452D54),
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Color(0xFF2F2B52),
+        systemNavigationBarColor: Color(0xFF452D54),
         systemNavigationBarIconBrightness: Brightness.light,
-        systemNavigationBarDividerColor: Color(0xFF2F2B52),
+        systemNavigationBarDividerColor: Color(0xFF452D54),
       ),
     );
 

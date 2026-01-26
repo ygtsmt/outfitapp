@@ -89,7 +89,6 @@ class _ClosetScreenState extends State<ClosetScreen>
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
       body: SafeArea(
         bottom: false,
         child: NestedScrollView(
@@ -98,7 +97,7 @@ class _ClosetScreenState extends State<ClosetScreen>
               // 1. Premium Header with Greeting and Analytics
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(12.w, 16.h, 8.w, 12.h),
+                  padding: EdgeInsets.fromLTRB(12.w, 8.h, 8.w, 12.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -116,15 +115,13 @@ class _ClosetScreenState extends State<ClosetScreen>
                   minHeight: 36.h,
                   child: Container(
                     padding: EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[50]!.withOpacity(0.8),
-                    ),
+                    decoration: BoxDecoration(),
                     child: ClipRRect(
                       child: BackdropFilter(
                         filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                         child: Center(
                           child: TabBar(
-                            padding: EdgeInsets.only(left: 12.w),
+                            padding: EdgeInsets.only(left: 12.w, right: 12.w),
                             tabAlignment: TabAlignment.start,
                             controller: _tabController,
                             isScrollable: true,
@@ -153,7 +150,7 @@ class _ClosetScreenState extends State<ClosetScreen>
                             indicatorSize: TabBarIndicatorSize.tab,
                             dividerColor: Colors.transparent,
                             labelColor: Colors.white,
-                            unselectedLabelColor: Colors.grey[600],
+                            unselectedLabelColor: context.baseColor,
                             labelStyle: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w700,

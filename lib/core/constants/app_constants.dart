@@ -16,17 +16,17 @@ List<PlatformUiSettings>? cropperUiSettings = [
   AndroidUiSettings(
     lockAspectRatio: false, // Kullanıcı istediği gibi crop yapabilir
     toolbarTitle: AppLocalizations.current.crop_image,
-    toolbarColor: Color(0xFF2F2B52),
+    toolbarColor: Color(0xFF452D54),
 
-    activeControlsWidgetColor: Color(0xFF2F2B52),
+    activeControlsWidgetColor: Color(0xFF452D54),
 
     toolbarWidgetColor: Colors.white,
-    backgroundColor: Color(0xFF2F2B52),
-    cropFrameColor: Color(0xFF2F2B52),
-    cropGridColor: Color(0xFF2F2B52).withOpacity(0.5),
+    backgroundColor: Color(0xFF452D54),
+    cropFrameColor: Color(0xFF452D54),
+    cropGridColor: Color(0xFF452D54).withOpacity(0.5),
 
     showCropGrid: false,
-    statusBarColor: Color(0xFF2F2B52),
+    statusBarColor: Color(0xFF452D54),
     hideBottomControls: false, // butonlar görünür
     initAspectRatio: CropAspectRatioPreset.original,
     // SAFE AREA AYARLARI - Eski Android cihazlar için

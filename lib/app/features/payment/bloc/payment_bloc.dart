@@ -58,7 +58,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
           Utils.showToastMessage(
             context: event.context,
             content: AppLocalizations.current.credits_added_successfully,
-            color: const Color(0xFF2F2B52),
+            color: const Color(0xFF452D54),
           );
         }
       } catch (e) {
