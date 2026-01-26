@@ -15,3 +15,16 @@ class SendMessageEvent extends ChatEvent {
   @override
   List<Object> get props => [message];
 }
+
+class SelectMediaEvent extends ChatEvent {
+  final List<String> mediaPaths;
+
+  const SelectMediaEvent(this.mediaPaths);
+
+  @override
+  List<Object> get props => [mediaPaths];
+}
+
+class ClearMediaEvent extends ChatEvent {
+  const ClearMediaEvent();
+}

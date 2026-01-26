@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:comby/app/features/chat/bloc/chat_bloc.dart';
 import 'package:comby/app/features/chat/data/chat_usecase.dart';
+import 'package:comby/app/features/chat/widgets/markdown_text.dart';
+import 'package:comby/app/features/chat/widgets/media_preview_widget.dart';
+import 'package:comby/core/ui/widgets/reusable_gallery_picker.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -46,6 +50,22 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  Future<void> _pickMedia(BuildContext context) async {
+    final result = await ReusableGalleryPicker.show(
+      context: context,
+      title: 'Medya Seç',
+      mode: GallerySelectionMode.multi,
+      maxSelection: 5,
+      enableCrop: false,
+      showCameraButton: true,
+    );
+
+    if (result != null && result.selectedFiles.isNotEmpty && mounted) {
+      final paths = result.selectedFiles.map((f) => f.path).toList();
+      context.read<ChatBloc>().add(SelectMediaEvent(paths));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +103,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
                 return ListView.builder(
                   controller: _scrollController,
-                  padding: EdgeInsets.all(8.w),
                   itemCount: state.messages.length +
                       (state.status == ChatStatus.loading ? 1 : 0),
                   itemBuilder: (context, index) {
@@ -96,6 +115,17 @@ class _ChatScreenState extends State<ChatScreen> {
                 );
               },
             ),
+          ),
+          // ✅ Media preview above input
+          BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              return MediaPreviewWidget(
+                mediaPaths: state.selectedMedia,
+                onClear: () {
+                  context.read<ChatBloc>().add(const ClearMediaEvent());
+                },
+              );
+            },
           ),
           _buildInputArea(context),
         ],
@@ -119,6 +149,13 @@ class _ChatScreenState extends State<ChatScreen> {
       child: SafeArea(
         child: Row(
           children: [
+            // ✅ Attachment button
+            IconButton(
+              icon: const Icon(Icons.attach_file),
+              onPressed: () => _pickMedia(context),
+              color: Theme.of(context).primaryColor,
+            ),
+            SizedBox(width: 8.w),
             Expanded(
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -205,9 +242,93 @@ class _MessageBubble extends StatelessWidget {
                 ),
             ],
           ),
-          child: Text(
-            message.text,
-            style: TextStyle(color: textColor, fontSize: 14.sp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ✅ Kullanıcının gönderdiği local media (user messages)
+              if (message.localMediaPaths != null &&
+                  message.localMediaPaths!.isNotEmpty) ...[
+                Wrap(
+                  spacing: 8.w,
+                  runSpacing: 8.h,
+                  children: message.localMediaPaths!.map((path) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: Image.file(
+                        File(path),
+                        width: 120.w,
+                        height: 120.w,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 120.w,
+                            height: 120.w,
+                            color: Colors.grey[300],
+                            child: Icon(Icons.broken_image, color: Colors.grey),
+                          );
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 12.h),
+              ],
+              // ✅ AI'dan gelen görseller (imageUrls)
+              if (message.imageUrls != null &&
+                  message.imageUrls!.isNotEmpty) ...[
+                SizedBox(height: 12.h),
+                Wrap(
+                  spacing: 8.w,
+                  runSpacing: 8.h,
+                  children: message.imageUrls!.map((url) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(8.r),
+                      child: Image.network(
+                        url,
+                        width: 120.w,
+                        height: 120.w,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 120.w,
+                            height: 120.w,
+                            color: Colors.grey[300],
+                            child: Icon(Icons.broken_image, color: Colors.grey),
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            width: 80.w,
+                            height: 80.w,
+                            color: Colors.grey[200],
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 12.h),
+              ],
+              // ✅ Metin ALTA (açıklama) - Bold desteğiyle
+              MarkdownText(
+                message.text,
+                style: TextStyle(
+                  color: textColor?.withOpacity(0.8),
+                  fontSize: 12.sp,
+                ),
+              ),
+            ],
           ),
         ),
       ],
