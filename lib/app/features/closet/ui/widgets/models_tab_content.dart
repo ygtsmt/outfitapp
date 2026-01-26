@@ -81,6 +81,7 @@ class _ModelsTabContentState extends State<ModelsTabContent>
               children: [
                 _AddModelItemButton(
                   onTap: () => _pickImageAndAddItem(context),
+                  crossAxisCount: _crossAxisCount,
                 ),
                 SizedBox(height: 24.h),
                 Text(
@@ -115,15 +116,19 @@ class _ModelsTabContentState extends State<ModelsTabContent>
                 getIt<ClosetBloc>().add(const RefreshModelItemsEvent());
               },
               child: GridView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: _crossAxisCount,
                   childAspectRatio: 0.75,
+                  crossAxisSpacing: 12.w,
+                  mainAxisSpacing: 12.h,
                 ),
                 itemCount: items.length + 1, // +1 for add button
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return _AddModelItemButton(
                       onTap: () => _pickImageAndAddItem(context),
+                      crossAxisCount: _crossAxisCount, // Pass crossAxisCount
                     );
                   }
                   final item = items[index - 1];
@@ -152,21 +157,35 @@ class _ModelItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      child: CachedNetworkImage(
-        imageUrl: item.imageUrl,
-        fit: BoxFit.cover,
-        placeholder: (context, url) => Center(
-          child: LoadingAnimationWidget.fourRotatingDots(
-            color: Theme.of(context).colorScheme.primary,
-            size: 12.h,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
-        errorWidget: (_, __, ___) => Center(
-          child: Icon(
-            Icons.broken_image,
-            color: Colors.grey[400],
-            size: 48.sp,
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.r),
+        child: CachedNetworkImage(
+          imageUrl: item.imageUrl,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Center(
+            child: LoadingAnimationWidget.fourRotatingDots(
+              color: Theme.of(context).colorScheme.primary,
+              size: 16.h,
+            ),
+          ),
+          errorWidget: (_, __, ___) => Center(
+            child: Icon(
+              Icons.broken_image,
+              color: Colors.grey[400],
+              size: 32.sp,
+            ),
           ),
         ),
       ),
@@ -176,8 +195,12 @@ class _ModelItemCard extends StatelessWidget {
 
 class _AddModelItemButton extends StatelessWidget {
   final VoidCallback onTap;
+  final int crossAxisCount;
 
-  const _AddModelItemButton({required this.onTap});
+  const _AddModelItemButton({
+    required this.onTap,
+    required this.crossAxisCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -185,53 +208,52 @@ class _AddModelItemButton extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-          border:
-              Border.symmetric(horizontal: BorderSide(color: context.gray3))),
+        color: primaryColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: primaryColor.withOpacity(0.1),
+          width: 2,
+        ),
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24.r), // Daha yumuşak köşeler
-        child: AspectRatio(
-          aspectRatio: 0.75,
-          child: Column(
-            mainAxisSize: MainAxisSize.min, // İçeriğe göre daralır
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // İkon Alanı - Daha derinlikli bir görünüm
-              Container(
-                height: 56.w,
-                width: 56.w,
-                decoration: BoxDecoration(
-                  color: Colors.white, // İkonun arkasını temiz beyaz yapıyoruz
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.person_outline, // Daha modern bir ikon
-                  size: 30.sp,
-                  color: primaryColor,
-                ),
+        borderRadius: BorderRadius.circular(20.r),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icon Area
+            Container(
+              height: crossAxisCount == 4 ? 40.w : 52.w,
+              width: crossAxisCount == 4 ? 40.w : 52.w,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withOpacity(0.15),
+                    blurRadius: 15,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-              SizedBox(
-                height: 8.h,
+              child: Icon(
+                Icons.person_add_rounded,
+                size: crossAxisCount == 4 ? 24.sp : 32.sp,
+                color: primaryColor,
               ),
-              Text(
-                AppLocalizations.of(context).addModel,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                  color: primaryColor.withOpacity(0.9),
-                  letterSpacing: -0.2,
-                ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              AppLocalizations.of(context).addModel,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: crossAxisCount == 4 ? 10.sp : 12.sp,
+                fontWeight: FontWeight.w800,
+                color: primaryColor,
+                letterSpacing: -0.2,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

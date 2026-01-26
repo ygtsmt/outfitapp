@@ -2,9 +2,9 @@
 import "package:flutter_screenutil/flutter_screenutil.dart";
 import "package:comby/app/bloc/app_bloc.dart";
 import "package:comby/core/extensions.dart";
-import "package:comby/core/asset_paths.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import "package:google_fonts/google_fonts.dart";
 
 class CombyLogo extends StatelessWidget {
   const CombyLogo({
@@ -20,17 +20,16 @@ class CombyLogo extends StatelessWidget {
     return Column(
       children: [
         if (haveText)
-          Text('Comby',
+          Text('Combsy',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  fontSize: 34.sp,
+              style: GoogleFonts.balooBhai2(
+                  fontSize: 56.sp,
                   fontWeight: FontWeight.bold,
-                  fontFamily: 'Futura',
                   color: context.baseColor)),
         BlocBuilder<AppBloc, AppState>(
           builder: (context, state) {
             return Image.asset(
-              PngPaths.logo,
+              'assets/png/launcher_icon_ios.png',
             );
           },
         )

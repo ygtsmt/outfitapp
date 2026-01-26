@@ -7400,6 +7400,66 @@ class AppLocalizations {
     );
   }
 
+  /// `Wardrobe`
+  String get wardrobeLabel {
+    return Intl.message(
+      'Wardrobe',
+      name: 'wardrobeLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Capsule`
+  String get capsuleLabel {
+    return Intl.message(
+      'Capsule',
+      name: 'capsuleLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Filter Options`
+  String get filterOptions {
+    return Intl.message(
+      'Filter Options',
+      name: 'filterOptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category`
+  String get category {
+    return Intl.message(
+      'Category',
+      name: 'category',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Color`
+  String get color {
+    return Intl.message(
+      'Color',
+      name: 'color',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Season`
+  String get season {
+    return Intl.message(
+      'Season',
+      name: 'season',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Date`
   String get dateTitle {
     return Intl.message(

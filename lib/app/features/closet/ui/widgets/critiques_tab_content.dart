@@ -106,12 +106,12 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
             }
           },
           child: GridView.builder(
-            padding: EdgeInsets.all(0.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: _crossAxisCount,
               childAspectRatio: 0.7,
-              crossAxisSpacing: 0.w,
-              mainAxisSpacing: 0.h,
+              crossAxisSpacing: 12.w,
+              mainAxisSpacing: 12.h,
             ),
             itemCount: docs.length,
             itemBuilder: (context, index) {
@@ -142,15 +142,17 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
+          borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.04),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
         ),
         child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.r),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -158,8 +160,12 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                 CachedNetworkImage(
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) =>
-                      Container(color: Colors.grey[100]),
+                  placeholder: (context, url) => Center(
+                    child: LoadingAnimationWidget.fourRotatingDots(
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 16.h,
+                    ),
+                  ),
                   errorWidget: (context, url, error) =>
                       const Icon(Icons.broken_image),
                 ),
@@ -173,7 +179,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withOpacity(0.6),
                       ],
                       stops: const [0.6, 1.0],
                     ),
@@ -186,7 +192,9 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                 top: 10.w,
                 right: 10.w,
                 child: Container(
-                  padding: EdgeInsets.all(0.w),
+                  height: 32.w,
+                  width: 32.w,
+                  alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
@@ -200,7 +208,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                   child: Text(
                     score.toString(),
                     style: TextStyle(
-                      fontSize: crossAxisCount >= 3 ? 10.sp : 14.sp,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w900,
                       color: _getScoreColor(score),
                     ),
@@ -210,7 +218,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
 
               // Date & Info
               Positioned(
-                bottom: 12.w,
+                bottom: 12.h,
                 left: 12.w,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,8 +226,8 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                     Text(
                       formattedDate,
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: crossAxisCount >= 3 ? 10.sp : 12.sp,
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -227,7 +235,7 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
                       AppLocalizations.of(context).aiAnalysis,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: crossAxisCount >= 3 ? 12.sp : 14.sp,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

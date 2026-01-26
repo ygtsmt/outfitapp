@@ -118,9 +118,12 @@ class _WardrobeTabContentState extends State<WardrobeTabContent>
                 getIt<ClosetBloc>().add(const RefreshClosetItemsEvent());
               },
               child: GridView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: _crossAxisCount,
-                  childAspectRatio: 1,
+                  childAspectRatio: 0.85,
+                  crossAxisSpacing: 12.w,
+                  mainAxisSpacing: 12.h,
                 ),
                 itemCount: items.length + 1, // +1 for add button
                 itemBuilder: (context, index) {
@@ -163,57 +166,98 @@ class _ClosetItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Image
-        Positioned.fill(
-          child: CachedNetworkImage(
-            imageUrl: item.imageUrl,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Center(
-              child: LoadingAnimationWidget.fourRotatingDots(
-                color: Theme.of(context).colorScheme.primary,
-                size: 12.h,
-              ),
-            ),
-            errorWidget: (_, __, ___) => Center(
-              child: Icon(
-                Icons.broken_image,
-                color: Colors.grey[400],
-                size: 48.sp,
-              ),
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
-        // Category badge
-        if (item.category != null)
-          Positioned(
-            top: 8.h,
-            left: 8.w,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: crossAxisCount == 4 ? 4.w : 8.w,
-                vertical: crossAxisCount == 4 ? 2.h : 4.h,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Text(
-                item.category!,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: crossAxisCount == 4
-                      ? 8.sp
-                      : crossAxisCount == 3
-                          ? 9.sp
-                          : 10.sp,
-                  fontWeight: FontWeight.w500,
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.r),
+        child: Stack(
+          children: [
+            // Image
+            Positioned.fill(
+              child: CachedNetworkImage(
+                imageUrl: item.imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Center(
+                  child: LoadingAnimationWidget.fourRotatingDots(
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 12.h,
+                  ),
+                ),
+                errorWidget: (_, __, ___) => Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: Colors.grey[400],
+                    size: 32.sp,
+                  ),
                 ),
               ),
             ),
-          ),
-      ],
+            // Gradient overlay for better text contrast
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.2),
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.2),
+                    ],
+                    stops: const [0, 0.4, 0.7, 1],
+                  ),
+                ),
+              ),
+            ),
+            // Category badge
+            if (item.category != null)
+              Positioned(
+                top: 8.h,
+                left: 8.w,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 8.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(8.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    item.subcategory!,
+                    style: TextStyle(
+                      color: Colors.black87,
+                      fontSize: crossAxisCount == 4
+                          ? 8.sp
+                          : crossAxisCount == 3
+                              ? 9.sp
+                              : 10.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -233,71 +277,52 @@ class _AddWardrobeItemButton extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        // Diğer butonunla aynı border yapısı
-        border: Border.symmetric(
-          horizontal: BorderSide(color: context.gray3),
+        color: primaryColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: primaryColor.withOpacity(0.1),
+          width: 2,
         ),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24.r),
-        child: AspectRatio(
-          aspectRatio: 0.75, // Model butonuyla tam uyumlu oran
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // İkon Alanı - Beyaz yuvarlak ve hafif gölge (Model butonuyla aynı)
-              Container(
-                height: crossAxisCount == 4
-                    ? 36.w
-                    : crossAxisCount == 3
-                        ? 48.w
-                        : 56.w,
-                width: crossAxisCount == 4
-                    ? 36.w
-                    : crossAxisCount == 3
-                        ? 48.w
-                        : 56.w,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.checkroom_outlined, // Gardırop için modern askı ikonu
-                  size: crossAxisCount == 4
-                      ? 18.sp
-                      : crossAxisCount == 3
-                          ? 24.sp
-                          : 28.sp,
-                  color: primaryColor,
-                ),
+        borderRadius: BorderRadius.circular(20.r),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icon with soft glow
+            Container(
+              height: crossAxisCount == 4 ? 40.w : 52.w,
+              width: crossAxisCount == 4 ? 40.w : 52.w,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withOpacity(0.15),
+                    blurRadius: 15,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-              SizedBox(height: 8.h),
-              // Yazı Alanı
-              Text(
-                AppLocalizations.of(context).addNew,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: crossAxisCount == 4
-                      ? 9.sp
-                      : crossAxisCount == 3
-                          ? 10.sp
-                          : 12.sp,
-                  fontWeight: FontWeight.bold,
-                  color: primaryColor.withOpacity(0.9),
-                  letterSpacing: -0.2,
-                ),
+              child: Icon(
+                Icons.add_rounded,
+                size: crossAxisCount == 4 ? 24.sp : 32.sp,
+                color: primaryColor,
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              AppLocalizations.of(context).addNew,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: crossAxisCount == 4 ? 10.sp : 12.sp,
+                fontWeight: FontWeight.w800,
+                color: primaryColor,
+                letterSpacing: -0.2,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -235,6 +235,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancelButton": MessageLookupByLibrary.simpleMessage("İptal"),
         "capsuleClosetScore":
             MessageLookupByLibrary.simpleMessage("Capsule Closet Score"),
+        "capsuleLabel": MessageLookupByLibrary.simpleMessage("Capsule"),
         "capsuleStatusBeginner": MessageLookupByLibrary.simpleMessage(
             "You\'re just at the beginning, simplify your closet."),
         "capsuleStatusGood": MessageLookupByLibrary.simpleMessage(
@@ -251,6 +252,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Capture Yourself"),
         "categoriesEffects":
             MessageLookupByLibrary.simpleMessage("Categories Effects"),
+        "category": MessageLookupByLibrary.simpleMessage("Category"),
         "categoryLabel": MessageLookupByLibrary.simpleMessage("Category"),
         "centerTheClothes":
             MessageLookupByLibrary.simpleMessage("Center the clothes"),
@@ -291,6 +293,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "closet_welcome_messages": MessageLookupByLibrary.simpleMessage(
             "Wow! Your pieces are amazing ✨|Your closet looks great 👗|What will you wear today? 🤔|Your style speaks 🗣️|Time to make an outfit! 🎨|Show your style! 💃|You picked great pieces 👌|You look very stylish today 😎|Your closet is full of stars ⭐|Your outfits are inspiring 💡|Unique pieces! 💎|You are the style icon 👑"),
         "clothes": MessageLookupByLibrary.simpleMessage("Clothes"),
+        "color": MessageLookupByLibrary.simpleMessage("Color"),
         "colorLabel": MessageLookupByLibrary.simpleMessage("Color"),
         "colorMatch": MessageLookupByLibrary.simpleMessage("Color Match"),
         "colorOptional":
@@ -545,6 +548,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Filter by Category"),
         "filterByCategoryTooltip":
             MessageLookupByLibrary.simpleMessage("Filter by Category"),
+        "filterOptions": MessageLookupByLibrary.simpleMessage("Filter Options"),
         "filterTitle": MessageLookupByLibrary.simpleMessage("Filter"),
         "finish": MessageLookupByLibrary.simpleMessage("Finish"),
         "firstPerson": MessageLookupByLibrary.simpleMessage("First Person"),
@@ -1069,6 +1073,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "scrollToEnlarge":
             MessageLookupByLibrary.simpleMessage("Scroll to enlarge image"),
         "searchingForInfo": m34,
+        "season": MessageLookupByLibrary.simpleMessage("Season"),
         "seasonLabel": MessageLookupByLibrary.simpleMessage("Season"),
         "seasonOptional":
             MessageLookupByLibrary.simpleMessage("Season (Optional)"),
@@ -1327,6 +1332,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "wardrobe": MessageLookupByLibrary.simpleMessage("Wardrobe"),
         "wardrobeEmpty": MessageLookupByLibrary.simpleMessage(
             "Your wardrobe is empty! Add items."),
+        "wardrobeLabel": MessageLookupByLibrary.simpleMessage("Wardrobe"),
         "wardrobeSubtitle":
             MessageLookupByLibrary.simpleMessage("Pick items to mix & match"),
         "warning": MessageLookupByLibrary.simpleMessage("Warning"),

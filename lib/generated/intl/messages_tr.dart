@@ -235,6 +235,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancelButton": MessageLookupByLibrary.simpleMessage("İptal"),
         "capsuleClosetScore":
             MessageLookupByLibrary.simpleMessage("Kapsül Dolap Skoru"),
+        "capsuleLabel": MessageLookupByLibrary.simpleMessage("Kapsül"),
         "capsuleStatusBeginner": MessageLookupByLibrary.simpleMessage(
             "Henüz yolun başındasın, dolabını sadeleştir."),
         "capsuleStatusGood": MessageLookupByLibrary.simpleMessage(
@@ -249,6 +250,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "captureYourself": MessageLookupByLibrary.simpleMessage("Kendini Çek"),
         "categoriesEffects":
             MessageLookupByLibrary.simpleMessage("Kategori Efektleri"),
+        "category": MessageLookupByLibrary.simpleMessage("Kategori"),
         "categoryLabel": MessageLookupByLibrary.simpleMessage("Kategori"),
         "centerTheClothes":
             MessageLookupByLibrary.simpleMessage("Kıyafeti ortala"),
@@ -287,6 +289,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "closet_welcome_messages": MessageLookupByLibrary.simpleMessage(
             "Vay canına! Parçaların harika ✨|Gardırobun harika görünüyor 👗|Bugün ne giyeceksin? 🤔|Tarzın kendini belli ediyor 🗣️|Kombin yapma vakti! 🎨|Tarzını göster! 💃|Harika parçalar seçmişsin 👌|Bugün çok şık görünüyorsun 😎|Gardırobun yıldızlarla dolu ⭐|Kombinlerin ilham verici 💡|Benzersiz parçalar! 💎|Sen bir stil ikonusun 👑"),
         "clothes": MessageLookupByLibrary.simpleMessage("Kıyafetler"),
+        "color": MessageLookupByLibrary.simpleMessage("Renk"),
         "colorLabel": MessageLookupByLibrary.simpleMessage("Renk"),
         "colorMatch": MessageLookupByLibrary.simpleMessage("Renk Uyumu"),
         "colorOptional":
@@ -541,6 +544,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Kategoriye Göre Filtrele"),
         "filterByCategoryTooltip":
             MessageLookupByLibrary.simpleMessage("Kategoriye Göre Filtrele"),
+        "filterOptions":
+            MessageLookupByLibrary.simpleMessage("Filtre Seçenekleri"),
         "filterTitle": MessageLookupByLibrary.simpleMessage("Filtrele"),
         "finish": MessageLookupByLibrary.simpleMessage("Bitir"),
         "firstPerson": MessageLookupByLibrary.simpleMessage("İlk Görsel"),
@@ -1060,6 +1065,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "scrollToEnlarge":
             MessageLookupByLibrary.simpleMessage("Kaydırarak görseli büyüt"),
         "searchingForInfo": m34,
+        "season": MessageLookupByLibrary.simpleMessage("Sezon"),
         "seasonLabel": MessageLookupByLibrary.simpleMessage("Mevsim"),
         "seasonOptional":
             MessageLookupByLibrary.simpleMessage("Mevsim (Opsiyonel)"),
@@ -1323,6 +1329,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "wardrobe": MessageLookupByLibrary.simpleMessage("Wardrobe"),
         "wardrobeEmpty": MessageLookupByLibrary.simpleMessage(
             "Henüz dolabın boş! Ürün ekle."),
+        "wardrobeLabel": MessageLookupByLibrary.simpleMessage("Gardırop"),
         "wardrobeSubtitle": MessageLookupByLibrary.simpleMessage(
             "Kombinlemek için ürünler seçin"),
         "warning": MessageLookupByLibrary.simpleMessage("Uyarı"),

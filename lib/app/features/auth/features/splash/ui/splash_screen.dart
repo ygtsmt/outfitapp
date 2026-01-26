@@ -199,7 +199,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Text(
                 _getLoadingText(),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[500],
+                      color: context.baseColor,
                       fontSize: 12.sp,
                     ),
               ),

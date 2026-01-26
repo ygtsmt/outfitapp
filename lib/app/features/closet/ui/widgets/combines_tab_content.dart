@@ -90,6 +90,7 @@ class _CombinesTabContentState extends State<CombinesTabContent>
                   onTap: () {
                     context.router.navigate(const TryOnTabRouter());
                   },
+                  crossAxisCount: _crossAxisCount, // Pass crossAxisCount
                 ),
                 SizedBox(height: 24.h),
                 Text(
@@ -133,10 +134,12 @@ class _CombinesTabContentState extends State<CombinesTabContent>
               setState(() {});
             },
             child: GridView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: _crossAxisCount,
-
                 childAspectRatio: 0.75, // Keeps poster ratio
+                crossAxisSpacing: 12.w,
+                mainAxisSpacing: 12.h,
               ),
               itemCount: geminiImages.length + 1,
               itemBuilder: (context, index) {
@@ -145,6 +148,7 @@ class _CombinesTabContentState extends State<CombinesTabContent>
                     onTap: () {
                       context.router.navigate(const TryOnTabRouter());
                     },
+                    crossAxisCount: _crossAxisCount,
                   );
                 }
                 final image = geminiImages[index - 1] as Map<String, dynamic>;
@@ -176,101 +180,115 @@ class _CombineImageCard extends StatelessWidget {
     final imageUrl =
         output != null && output.isNotEmpty ? output[0] as String? : null;
 
-    return ClipRRect(
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Image (Full Bleed)
-          if (status == 'succeeded' && imageUrl != null)
-            Hero(
-              tag: 'combine_${imageData['id'] ?? imageUrl}',
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Center(
-                  child: LoadingAnimationWidget.fourRotatingDots(
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 12.h,
-                  ),
-                ),
-                errorWidget: (_, __, ___) => Center(
-                  child: Icon(
-                    Icons.broken_image,
-                    color: Colors.grey[400],
-                    size: 32.sp,
-                  ),
-                ),
-              ),
-            )
-          else
-            Container(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              child: Center(
-                child: status == 'processing'
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          LoadingAnimationWidget.fourRotatingDots(
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 20.h,
-                          ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            AppLocalizations.of(context).preparing,
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.6),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.error_outline,
-                            color: Theme.of(context).colorScheme.error,
-                            size: 24.sp,
-                          ),
-                          SizedBox(height: 4.h),
-                          Text(
-                            AppLocalizations.of(context).failed,
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              color: Theme.of(context).colorScheme.error,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-              ),
-            ),
-
-          // Gradient Overlay (Bottom)
-          if (status == 'succeeded')
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 60.h,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.6),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.r),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Image (Full Bleed)
+            if (status == 'succeeded' && imageUrl != null)
+              Hero(
+                tag: 'combine_${imageData['id'] ?? imageUrl}',
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Center(
+                    child: LoadingAnimationWidget.fourRotatingDots(
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 16.h,
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) => Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      color: Colors.grey[400],
+                      size: 32.sp,
+                    ),
+                  ),
+                ),
+              )
+            else
+              Container(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: Center(
+                  child: status == 'processing'
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            LoadingAnimationWidget.fourRotatingDots(
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 20.h,
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              AppLocalizations.of(context).preparing,
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withOpacity(0.6),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: Theme.of(context).colorScheme.error,
+                              size: 24.sp,
+                            ),
+                            SizedBox(height: 4.h),
+                            Text(
+                              AppLocalizations.of(context).failed,
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                color: Theme.of(context).colorScheme.error,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+
+            // Gradient Overlay (Bottom)
+            if (status == 'succeeded')
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 60.h,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.5),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -278,8 +296,12 @@ class _CombineImageCard extends StatelessWidget {
 
 class AddCombineItemButton extends StatelessWidget {
   final VoidCallback onTap;
+  final int crossAxisCount;
 
-  const AddCombineItemButton({required this.onTap});
+  const AddCombineItemButton({
+    required this.onTap,
+    required this.crossAxisCount,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -287,55 +309,52 @@ class AddCombineItemButton extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.symmetric(
-          horizontal: BorderSide(color: context.gray3),
+        color: primaryColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: primaryColor.withOpacity(0.1),
+          width: 2,
         ),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24.r),
-        child: AspectRatio(
-          aspectRatio: 0.75, // Tasarım bütünlüğü için sabit oran
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // İkon Alanı - Beyaz yuvarlak ve soft gölge
-              Container(
-                height: 56.w,
-                width: 56.w,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons
-                      .auto_awesome_outlined, // Kombin oluşturma için "yaratıcı" ikon
-                  size: 28.sp,
-                  color: primaryColor,
-                ),
+        borderRadius: BorderRadius.circular(20.r),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Icon Area
+            Container(
+              height: crossAxisCount == 4 ? 40.w : 52.w,
+              width: crossAxisCount == 4 ? 40.w : 52.w,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withOpacity(0.15),
+                    blurRadius: 15,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-              SizedBox(height: 8.h),
-              // Yazı Alanı
-              Text(
-                AppLocalizations.of(context).createCombine,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                  color: primaryColor.withOpacity(0.9),
-                  letterSpacing: -0.2,
-                ),
+              child: Icon(
+                Icons.auto_awesome_rounded,
+                size: crossAxisCount == 4 ? 24.sp : 32.sp,
+                color: primaryColor,
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 12.h),
+            Text(
+              AppLocalizations.of(context).createCombine,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: crossAxisCount == 4 ? 10.sp : 12.sp,
+                fontWeight: FontWeight.w800,
+                color: primaryColor,
+                letterSpacing: -0.2,
+              ),
+            ),
+          ],
         ),
       ),
     );

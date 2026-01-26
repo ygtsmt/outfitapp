@@ -117,12 +117,15 @@ class FitCheckStatsDashboard extends StatelessWidget {
             children: [
               Icon(Icons.tips_and_updates, size: 16.sp, color: motivationColor),
               SizedBox(width: 8.w),
-              Text(
-                motivationText,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: motivationColor,
-                  fontWeight: FontWeight.w600,
+              Flexible(
+                child: Text(
+                  motivationText,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: motivationColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ],
