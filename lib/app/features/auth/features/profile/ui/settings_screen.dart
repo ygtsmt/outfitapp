@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:comby/app/core/services/revenue_cat_service.dart';
 import 'package:comby/app/features/auth/features/profile/data/profile_usecase.dart';
+import 'package:comby/app/bloc/app_bloc.dart';
+import 'package:comby/app/ui/widgets/language_dropdown.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/data_sources/local_data_source/secure_data_storage.dart';
 import 'package:comby/generated/l10n.dart';
@@ -19,6 +21,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:comby/core/routes/app_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -195,30 +200,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             SizedBox(height: 32.h),
 
             // Satın Alma Section (iOS Only)
-            if (Platform.isIOS) ...[
-              _buildSectionHeader(
-                  context, AppLocalizations.of(context).purchases),
-              SizedBox(height: 12.h),
-              _buildMenuTile(
-                context,
-                icon: Icons.restore,
-                title: AppLocalizations.of(context).restorePurchases,
-                trailing: _isRestoring
-                    ? SizedBox(
-                        width: 16.w,
-                        height: 16.h,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(context.baseColor),
-                        ),
-                      )
-                    : Icon(Icons.arrow_forward_ios,
-                        size: 14.sp, color: Colors.grey[300]),
-                onTap: _isRestoring ? null : _restorePurchases,
-              ),
-              SizedBox(height: 32.h),
-            ],
 
             // Yasal & Bilgi Section
             _buildSectionHeader(
@@ -284,13 +265,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             SizedBox(height: 12.h),
+            BlocBuilder<AppBloc, AppState>(
+              builder: (context, state) {
+                return _buildMenuTile(
+                  context,
+                  icon: Icons.language,
+                  title: AppLocalizations.of(context).changeLanguage,
+                  subtitle: AppLocalizations.of(context).currentLanguageName,
+                  onTap: () {
+                    _showLanguageBottomSheet(
+                        context, state.languageLocale?.languageCode ?? 'en');
+                  },
+                );
+              },
+            ),
+            SizedBox(height: 12.h),
             _buildMenuTile(
               context,
-              icon: Icons.language,
-              title: AppLocalizations.of(context).languageAndRegion,
-              subtitle: AppLocalizations.of(context).currentLanguageName,
+              icon: Icons.feedback_outlined,
+              title: AppLocalizations.of(context).feedback,
               onTap: () {
-                // Future impl
+                context.router.push(const FeedbackScreenRoute());
               },
             ),
 
@@ -310,8 +305,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => _showDeleteAccountDialog(context),
             ),
 
-            SizedBox(height: 48.h),
-
+            SizedBox(height: 24.h),
+            if (Platform.isIOS) ...[
+              _buildSectionHeader(
+                  context, AppLocalizations.of(context).purchases),
+              SizedBox(height: 12.h),
+              _buildMenuTile(
+                context,
+                icon: Icons.restore,
+                title: AppLocalizations.of(context).restorePurchases,
+                trailing: _isRestoring
+                    ? SizedBox(
+                        width: 16.w,
+                        height: 16.h,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(context.baseColor),
+                        ),
+                      )
+                    : Icon(Icons.arrow_forward_ios,
+                        size: 14.sp, color: Colors.grey[300]),
+                onTap: _isRestoring ? null : _restorePurchases,
+              ),
+              SizedBox(height: 32.h),
+            ],
             // Logout Button
             CustomGradientButton(
               title: AppLocalizations.of(context).logout,
@@ -325,12 +343,62 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
 
             SizedBox(height: 24.h),
-            Text(
-              AppLocalizations.of(context).versionInfo("1.0.0"),
-              style: TextStyle(
-                color: Colors.grey[400],
-                fontSize: 12.sp,
-              ),
+            FutureBuilder<PackageInfo>(
+              future: PackageInfo.fromPlatform(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                    spacing: 4,
+                    children: [
+                      Text(
+                        'Version ${snapshot.data!.version}-${snapshot.data!.buildNumber}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 9.sp,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          final Uri url =
+                              Uri.parse('https://www.linkedin.com/in/ygtsmt/');
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url,
+                                mode: LaunchMode.externalApplication);
+                          }
+                        },
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Made by ',
+                                style: TextStyle(
+                                  fontSize: 9.sp,
+                                  color: context.baseColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'Ginowl',
+                                style: TextStyle(
+                                  fontSize: 9.sp,
+                                  color: context.baseColor,
+                                  fontWeight: FontWeight.bold,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: context.baseColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              },
             ),
             SizedBox(height: 32.h),
           ],
@@ -415,6 +483,93 @@ class _SettingsScreenState extends State<SettingsScreen> {
         trailing: trailing ??
             Icon(Icons.arrow_forward_ios, size: 14.sp, color: Colors.grey[300]),
       ),
+    );
+  }
+
+  void _showLanguageBottomSheet(BuildContext context, String selectedLanguage) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.7,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle bar
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Title
+              Text(
+                AppLocalizations.of(context).selectLanguage,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Language list with scroll
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: languages.map((LanguageItem lang) {
+                      final isSelected = lang.code == selectedLanguage;
+                      return ListTile(
+                        leading: Image.asset(
+                          lang.flagAsset,
+                          width: 32,
+                          height: 32,
+                        ),
+                        title: Text(
+                          lang.name,
+                          style: TextStyle(
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? Theme.of(context).primaryColor
+                                : null,
+                          ),
+                        ),
+                        trailing: isSelected
+                            ? Icon(
+                                Icons.check_circle,
+                                color: Theme.of(context).primaryColor,
+                              )
+                            : null,
+                        onTap: () async {
+                          setState(() {
+                            selectedLanguage = lang.code;
+                          });
+                          // Dil ayarını kalıcı olarak sakla
+                          await getIt<SecureDataStorage>()
+                              .setAppLanguage(Locale(lang.code));
+                          getIt<AppBloc>()
+                              .add(SetLanguageEvent(Locale(lang.code)));
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

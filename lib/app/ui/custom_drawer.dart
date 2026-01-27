@@ -83,22 +83,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
               LayoutConstants.tinyEmptyHeight,
 
-              // Feedback
-              ListTile(
-                leading: const Icon(
-                  Icons.feedback_outlined,
-                ),
-                title: Text(
-                  AppLocalizations.of(context).feedback,
-                  style: TextStyle(
-                    fontSize: 8.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                onTap: () {
-                  context.router.push(const FeedbackScreenRoute());
-                },
-              ),
               // Rate App - Sadece review yapmamış kullanıcılara göster
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (context, profileState) {

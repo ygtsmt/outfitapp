@@ -169,9 +169,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 actions: [
-                                  CombyLogoSmall(
-                                    themeMode: state.themeMode,
-                                    haveText: false,
+                                  GestureDetector(
+                                    onTap: () {
+                                      context.router
+                                          .push(const SettingsScreenRoute());
+                                    },
+                                    child: Icon(
+                                      Icons.settings,
+                                      color: context.baseColor,
+                                    ),
                                   ),
                                 ],
                               ),
