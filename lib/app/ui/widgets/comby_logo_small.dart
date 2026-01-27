@@ -24,7 +24,7 @@ class CombyLogoSmall extends StatelessWidget {
             return Center(
               child: Image.asset(
                 'assets/png/launcher_icon_ios.png',
-                height: haveText ? 25.h : 40.h,
+                height: haveText ? 25.h : 30.h,
               ),
             );
           },

@@ -20,6 +20,7 @@ import "package:comby/core/core.dart";
 
 import "package:comby/core/services/paywall_manager.dart";
 import "package:comby/generated/l10n.dart";
+import "package:google_fonts/google_fonts.dart";
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -160,15 +161,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 leadingWidth: 64.w,
-                                centerTitle: true,
-                                title: CombyLogoSmall(
-                                  themeMode: state.themeMode,
-                                  haveText: false,
-                                ),
                                 actionsPadding: EdgeInsets.only(right: 12.w),
+                                title: Text(
+                                  'Comby',
+                                  style: GoogleFonts.balooBhai2(
+                                      fontSize: 24.sp,
+                                      fontWeight: FontWeight.w700),
+                                ),
                                 actions: [
-                                  TotalCreditWidget(
-                                    navigateAvailable: true,
+                                  CombyLogoSmall(
+                                    themeMode: state.themeMode,
+                                    haveText: false,
                                   ),
                                 ],
                               ),

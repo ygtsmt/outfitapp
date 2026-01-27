@@ -343,66 +343,199 @@ class _ClosetScreenState extends State<ClosetScreen>
   }
 
   void _showFilterBottomSheet() {
+    final tabIndex = _tabController.index;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         ),
-        padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 20.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2.r),
+        padding: EdgeInsets.only(
+          left: 20.w,
+          right: 20.w,
+          top: 24.h,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 24.h,
+        ),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.75,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 24.h),
-            SizedBox(height: 24.h),
-            Text(
-              AppLocalizations.of(context).filterOptions,
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
+              SizedBox(height: 16.h),
+              Text(
+                AppLocalizations.of(context).filterOptions,
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: 16.h),
-            // Example Filter Options
-            _buildFilterOption(AppLocalizations.of(context).category),
-            _buildFilterOption(AppLocalizations.of(context).color),
-            _buildFilterOption(AppLocalizations.of(context).season),
-            SizedBox(height: 24.h),
-          ],
+              SizedBox(height: 16.h),
+              // Tab-specific filter options
+              ..._buildTabSpecificFilters(tabIndex),
+              SizedBox(height: 24.h),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildFilterOption(String title) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Icon(Icons.chevron_right, color: Colors.grey),
-        ],
+  List<Widget> _buildTabSpecificFilters(int tabIndex) {
+    switch (tabIndex) {
+      case 0: // Wardrobe
+        return _buildWardrobeFilters();
+      case 1: // Models
+        return _buildModelsFilters();
+      case 2: // Combines
+        return _buildCombinesFilters();
+      case 3: // Critiques
+        return _buildCritiquesFilters();
+      case 4: // FitChecks
+        return _buildFitChecksFilters();
+      default:
+        return [];
+    }
+  }
+
+  List<Widget> _buildWardrobeFilters() {
+    return [
+      _buildFilterChipSection(
+        AppLocalizations.of(context).category,
+        ['All', 'Upper Body', 'Lower Body', 'Feet', 'Accessories'],
       ),
+      SizedBox(height: 16.h),
+      _buildFilterChipSection(
+        AppLocalizations.of(context).color,
+        ['All', 'Black', 'White', 'Blue', 'Red', 'Green'],
+      ),
+      SizedBox(height: 16.h),
+      _buildFilterChipSection(
+        AppLocalizations.of(context).season,
+        ['All', 'Summer', 'Winter', 'Spring', 'Autumn'],
+      ),
+    ];
+  }
+
+  List<Widget> _buildModelsFilters() {
+    return [
+      _buildFilterChipSection(
+        'Body Type',
+        ['All', 'Full Body', 'Upper Body', 'Face Only'],
+      ),
+      SizedBox(height: 16.h),
+      _buildFilterChipSection(
+        'Pose',
+        ['All', 'Standing', 'Sitting', 'Other'],
+      ),
+      SizedBox(height: 16.h),
+      _buildFilterChipSection(
+        AppLocalizations.of(context).dateTitle,
+        ['All', 'Today', 'This Week', 'This Month'],
+      ),
+    ];
+  }
+
+  List<Widget> _buildCombinesFilters() {
+    return [
+      _buildFilterChipSection(
+        'Style',
+        ['All', 'Casual', 'Formal', 'Sport', 'Street'],
+      ),
+      SizedBox(height: 16.h),
+      _buildFilterChipSection(
+        AppLocalizations.of(context).dateTitle,
+        ['All', 'Today', 'This Week', 'This Month'],
+      ),
+    ];
+  }
+
+  List<Widget> _buildCritiquesFilters() {
+    return [
+      _buildFilterChipSection(
+        'Score Range',
+        ['All', '90-100', '70-89', '50-69', 'Below 50'],
+      ),
+      SizedBox(height: 16.h),
+      _buildFilterChipSection(
+        AppLocalizations.of(context).dateTitle,
+        ['All', 'Today', 'This Week', 'This Month'],
+      ),
+    ];
+  }
+
+  List<Widget> _buildFitChecksFilters() {
+    return [
+      _buildFilterChipSection(
+        AppLocalizations.of(context).dateTitle,
+        ['All', 'Today', 'Yesterday', 'Last 7 Days'],
+      ),
+      SizedBox(height: 16.h),
+      _buildFilterChipSection(
+        'Style',
+        ['All', 'Casual', 'Formal', 'Sport'],
+      ),
+      SizedBox(height: 16.h),
+      _buildFilterChipSection(
+        AppLocalizations.of(context).color,
+        ['All', 'Black', 'White', 'Blue', 'Red'],
+      ),
+    ];
+  }
+
+  Widget _buildFilterChipSection(String title, List<String> options) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+          ),
+        ),
+        SizedBox(height: 8.h),
+        Wrap(
+          spacing: 8.w,
+          runSpacing: 8.h,
+          children: options.map((option) {
+            final isSelected = option == 'All'; // Default to 'All' for now
+            return ChoiceChip(
+              label: Text(option),
+              selected: isSelected,
+              onSelected: (selected) {
+                // TODO: Implement actual filter logic in each tab
+                if (selected) {
+                  Navigator.pop(context);
+                }
+              },
+              selectedColor: context.baseColor.withOpacity(0.2),
+              labelStyle: TextStyle(
+                color: isSelected ? context.baseColor : Colors.grey[700],
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                fontSize: 13.sp,
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 

@@ -102,6 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                 return ListView.builder(
                   controller: _scrollController,
+                  padding: EdgeInsets.all(8.h),
                   itemCount: state.messages.length +
                       (state.status == ChatStatus.loading ? 1 : 0),
                   itemBuilder: (context, index) {

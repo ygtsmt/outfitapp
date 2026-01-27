@@ -121,7 +121,9 @@ class _FitChecksTabContentState extends State<FitChecksTabContent> {
               ),
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 16.w,
+                ),
                 itemCount: groupedLogs.length,
                 itemBuilder: (context, index) {
                   final entry = groupedLogs.entries.elementAt(index);

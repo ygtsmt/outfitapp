@@ -60,9 +60,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
               Column(
                 children: [
                   Image.asset(
-                    PngPaths.logo,
-                    height: 100,
+                    'assets/png/launcher_icon_android.png',
+                    height: 150.h,
                   ),
+                  SizedBox(height: 16.h),
                   Text(AppLocalizations.of(context).appName,
                       textAlign: TextAlign.center,
                       style: Theme.of(context)
@@ -122,29 +123,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     onTap: () {
                       _requestInAppReview(context);
                     },
-                  );
-                },
-              ),
-
-              // Privacy Policy
-              ListTile(
-                leading: Icon(
-                  Icons.privacy_tip_outlined,
-                  color: context.baseColor,
-                ),
-                title: Text(
-                  AppLocalizations.of(context).privacyPolicy,
-                  style: TextStyle(
-                    fontSize: 8.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                onTap: () {
-                  context.router.push(
-                    DocumentsWebViewScreenRoute(
-                      pdfUrl: 'https://www.comby.ai/#/privacy',
-                      title: AppLocalizations.of(context).privacyPolicy,
-                    ),
                   );
                 },
               ),
