@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () => Navigator.of(context).pop(),
             ),
             title: Text(
-              AppLocalizations.of(context).homeChat,
+              'Comby AI Agent',
               style: GoogleFonts.balooBhai2(
                   fontSize: 20.sp, fontWeight: FontWeight.w700),
             ),

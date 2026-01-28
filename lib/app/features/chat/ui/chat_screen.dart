@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:comby/app/features/chat/widgets/chat_empty_state.dart';
 import 'package:comby/app/features/chat/widgets/chat_suggestion_chips.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -89,10 +90,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (state.messages.isEmpty &&
                       state.status == ChatStatus.initial) {
                     return Center(
-                      child: Text(
-                        'Start Chatting',
-                        style: TextStyle(color: Colors.grey),
-                      ),
+                      child: ChatEmptyState(),
                     );
                   }
 
