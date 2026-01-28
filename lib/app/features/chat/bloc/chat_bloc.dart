@@ -79,30 +79,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           ],
         ));
         return;
+      } else if (result is ChatTextResult) {
+        final aiMessage = ChatMessage(
+          text: result.text,
+          isUser: false,
+          visualRequestId: result.visualRequestId,
+          imageUrls: result.imageUrl != null ? [result.imageUrl!] : null,
+          agentSteps: result.agentSteps,
+        );
+        emit(state.copyWith(
+          status: ChatStatus.success,
+          messages: [...messages, aiMessage],
+        ));
       }
-
-      /// NORMAL TEXT
-      final responseText = (result as ChatTextResult).text;
-      final agentSteps = result.agentSteps; // 🤖 Agent adımları
-      final imageUrl = result.imageUrl;
-
-      // ✅ URL'leri çıkar ve metni temizle
-      final parsed = parseImageUrls(responseText);
-
-      emit(state.copyWith(
-        status: ChatStatus.success,
-        messages: [
-          ...messages,
-          ChatMessage(
-            text: parsed.cleanedText,
-            isUser: false,
-            imageUrls: parsed.imageUrls.isNotEmpty
-                ? parsed.imageUrls
-                : (imageUrl != null ? [imageUrl] : null),
-            agentSteps: agentSteps, // 🤖 Agent adımlarını ekle
-          ),
-        ],
-      ));
     } catch (e) {
       emit(state.copyWith(
         status: ChatStatus.failure,

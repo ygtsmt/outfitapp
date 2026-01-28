@@ -109,14 +109,25 @@ class AgentService {
             // Text cevabı var mı?
             final textParts =
                 content.parts.whereType<GeminiTextPart>().toList();
-            final finalText = textParts.isNotEmpty
+            final String finalText = textParts.isNotEmpty
                 ? textParts.map((e) => e.text).join(' ')
                 : 'İşlem tamamlandı.';
+
+            // Visual Request ID var mı diye bak
+            String? visualRequestId;
+            final visualStep = steps
+                .where((s) => s.toolName == 'generate_outfit_visual')
+                .lastOrNull;
+            if (visualStep != null &&
+                visualStep.result.containsKey('request_id')) {
+              visualRequestId = visualStep.result['request_id'] as String?;
+            }
 
             log('✅ Agent tamamlandı');
             return AgentResponse(
               finalAnswer: finalText,
               steps: steps,
+              visualRequestId: visualRequestId,
               success: true,
             );
           }
@@ -339,15 +350,51 @@ class AgentService {
       Map<String, dynamic> args) async {
     final itemIds = (args['item_ids'] as List).cast<String>();
 
+    // Gardırop parçalarını çek
     final allItems = await _closetUseCase.getUserClosetItems();
     final selectedItems =
         allItems.where((item) => itemIds.contains(item.id)).toList();
 
+    // Model seçimi yap
+    final userModels = await _closetUseCase.getUserModelItems();
+    String? modelImageUrl;
+    String? modelAiPrompt;
+
+    if (userModels.isNotEmpty) {
+      // Logic: Eğer ayakkabı varsa "Full Body" olan modellere öncelik ver
+      final hasShoes = selectedItems.any((i) =>
+          i.category?.toLowerCase() == 'shoes' ||
+          i.subcategory?.toLowerCase() == 'shoes');
+      final fullBodyModels = userModels
+          .where((m) => m.bodyPart?.toLowerCase() == 'full_body')
+          .toList();
+
+      if (hasShoes && fullBodyModels.isNotEmpty) {
+        // Rastgele bir full body model seç
+        final selectedModel = (fullBodyModels..shuffle()).first;
+        modelImageUrl = selectedModel.imageUrl;
+        modelAiPrompt = selectedModel.aiPrompt;
+        log('📸 Kullanıcı Modeli Seçildi (Full Body): ${selectedModel.name}');
+      } else {
+        // Rastgele herhangi bir model seç
+        final selectedModel = (userModels..shuffle()).first;
+        modelImageUrl = selectedModel.imageUrl;
+        modelAiPrompt = selectedModel.aiPrompt;
+        log('📸 Kullanıcı Modeli Seçildi (Rastgele): ${selectedModel.name}');
+      }
+    } else {
+      log('⚠️ Kullanıcı modeli bulunamadı, varsayılan AI model kullanılacak.');
+      // Eğer kullanıcı modeli yoksa, User Profile'dan cinsiyet çekip modelAiPrompt oluşturabiliriz
+      // Şimdilik null bırakıyoruz, FalAiUsecase içinde prompt'ta "A model wearing..." diyecek
+    }
+
     final result = await _falAiUsecase.generateGeminiImageEdit(
       imageUrls: selectedItems.map((e) => e.imageUrl).toList(),
-      prompt: 'Outfit oluştur',
+      prompt: 'Fashion outfit combination, high quality, realistic',
       sourceId: 2,
       usedClosetItems: selectedItems,
+      modelImageUrl: modelImageUrl,
+      modelAiPrompt: modelAiPrompt,
     );
 
     if (result == null) {

@@ -109,7 +109,7 @@ class ToolRegistry {
             'action': {
               'type': 'STRING',
               'description':
-                  'İşlem türü: "add_favorite" (sevdiği renk/parça ekle), "add_dislked" (sevmediği ekle), "set_style" (tarz anahtar kelimesi ekle), "set_note" (genel not ekle).'
+                  'İşlem türü: "add_favorite" (sevdiği renk/parça ekle), "add_disliked" (sevmediği ekle), "set_style" (tarz anahtar kelimesi ekle), "set_note" (genel not ekle).'
             },
             'value': {
               'type': 'STRING',
@@ -252,7 +252,7 @@ KURALLAR:
 2. GARDIROP: Hava durumuna uygun kategorileri (örn: yağmurluysa bot/mont) belirle ve `search_wardrobe` ile gardıropta ara. Asla gardıropta olmayan bir parça önerme.
 3. RENK UYUMU: Seçtiğin parçaların uyumunu `check_color_harmony` ile test et.
 4. GÖRSEL: En son, seçtiğin parçalarla `generate_outfit_visual` kullanarak bir kombin görseli oluştur ve kullanıcıya sun.
-5. HAFIZA (ÖNEMLİ): Kullanıcı sana tarzı, sevdiği/sevmediği renkler veya özel istekleri hakkında bir şey söylerse (örn: "Siyah severim", "Dar paça giymem"), MUTLAKA `update_user_preference` tool'unu kullanarak bunu kaydet. Kullanıcının "bunu kaydet" demesini bekleme, sen proaktif ol.
+5. HAFIZA (ÖNEMLİ): Kullanıcı sana tarzı, sevdiği/sevmediği renkler veya özel istekleri hakkında bir şey söylerse (örn: "X rengini severim", "Y tarzını giymem"), MUTLAKA `update_user_preference` tool'unu kullanarak bunu kaydet. Kullanıcının "bunu kaydet" demesini bekleme, sen proaktif ol.
 6. CEVAP FORMATI: Son cevabını verirken samimi ol, neden bu parçaları seçtiğini anlat. Tool çıktılarını (hava durumu, bulunan parçalar) yorumlayarak sun.
 
 Eğer kullanıcı sadece "merhaba" derse, kendini tanıt ve ona nasıl yardımcı olabileceğini (hava durumu ve gardırobuna göre kombin yapabileceğini) ve tarzını öğrenmek istediğini söyle.

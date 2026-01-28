@@ -96,12 +96,13 @@ class FalAiUsecase {
   /// Gemini 2.5 Flash Image Edit
   /// Generates edited images based on prompt and input images
   Future<Map<String, dynamic>?> generateGeminiImageEdit({
-    required List<String> imageUrls,
+    required List<String> imageUrls, // Clothes images
     required String prompt,
-    required int
-        sourceId, // 1: TryOn, 2: QuickTryOn, 3: Weather, 4: Weather Regen
-    String? modelAiPrompt, // AI-generated description of the model
-    List<WardrobeItem>? usedClosetItems, // Items used in the outfit
+    required int sourceId,
+    String?
+        modelAiPrompt, // Description of the model (e.g., "A young adult male...")
+    String? modelImageUrl, // URL of the user's model image
+    List<WardrobeItem>? usedClosetItems,
   }) async {
     try {
       final userId = auth.currentUser!.uid;
@@ -113,20 +114,39 @@ class FalAiUsecase {
 
       var apiKey = await getFalAiApiKey();
 
-      // Validate API Key format (simple check for colon)
+      // Validate API Key format
       if (!apiKey.contains(':')) {
-        // Firebase key is wrong format, use fallback
-        // Force fallback to hardcoded key from app_constants if simple check fails
         if (falAiApiKey.contains(':')) {
           apiKey = falAiApiKey;
-          // Using fallback key
         } else {
           log('❌ Hardcoded key also appears invalid.');
         }
-      } else {
-        final keyId = apiKey.split(':')[0];
-        log('🔑 Using Fal AI API Key with ID: ${keyId.substring(0, keyId.length < 8 ? keyId.length : 8)}...');
       }
+
+      // --- PROMPT ENGINEERING ---
+      // If we have a model image, we prepend it to image_urls
+      // and update the prompt to refer to it.
+
+      final finalImageUrls = List<String>.from(imageUrls);
+      String finalPrompt = prompt;
+
+      if (modelImageUrl != null && modelImageUrl.isNotEmpty) {
+        // Add model image as the FIRST image (reference)
+        finalImageUrls.insert(0, modelImageUrl);
+
+        // Enhance prompt to use the model
+        // "A photo of [model_desc] wearing [clothes]..."
+        final modelDesc = modelAiPrompt ?? "the person in the first image";
+        finalPrompt =
+            "Using the first image as the model ($modelDesc), generate a realistic photo of them wearing the following items: $prompt. Ensure the clothes fit naturally.";
+      } else {
+        // No model image, use description if available
+        if (modelAiPrompt != null) {
+          finalPrompt =
+              "A realistic full-body photo of $modelAiPrompt wearing: $prompt";
+        }
+      }
+
       // Hackathon için retry mekanizması ekledik
       final response = await ApiRetryHelper.withRetry(
         () => http.post(
@@ -136,14 +156,14 @@ class FalAiUsecase {
             "Content-Type": "application/json",
           },
           body: jsonEncode({
-            "prompt": prompt,
-            "image_urls": imageUrls,
+            "prompt": finalPrompt,
+            "image_urls": finalImageUrls,
             "num_images": 1,
             "aspect_ratio": "auto",
             "output_format": "png",
           }),
         ),
-        maxRetries: 2, // 2 retry yeterli hackathon için
+        maxRetries: 2,
       );
 
       log('Gemini Image Edit Response Status: ${response.statusCode}');

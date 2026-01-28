@@ -9,6 +9,7 @@ class ChatMessage extends Equatable {
   final List<String>?
       localMediaPaths; // ✅ Kullanıcının gönderdiği medya dosyaları
   final List<AgentStep>? agentSteps; // 🤖 Agent adımları
+  final String? visualRequestId; // ⏳ Bekleyen görsel isteği
 
   const ChatMessage({
     required this.text,
@@ -16,11 +17,12 @@ class ChatMessage extends Equatable {
     this.imageUrls,
     this.localMediaPaths,
     this.agentSteps,
+    this.visualRequestId,
   });
 
   @override
   List<Object?> get props =>
-      [text, isUser, imageUrls, localMediaPaths, agentSteps];
+      [text, isUser, imageUrls, localMediaPaths, agentSteps, visualRequestId];
 }
 
 class ChatState extends Equatable {

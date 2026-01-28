@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/features/chat/bloc/chat_bloc.dart';
 import 'package:comby/app/features/chat/widgets/markdown_text.dart';
 import 'package:comby/app/features/chat/widgets/media_preview_widget.dart';
+import 'package:comby/app/features/chat/widgets/fal_image_widget.dart';
 import 'package:comby/core/ui/widgets/reusable_gallery_picker.dart';
 import 'package:comby/generated/l10n.dart';
 
@@ -320,6 +321,7 @@ class _MessageBubble extends StatelessWidget {
                 ),
                 SizedBox(height: 12.h),
               ],
+
               // ✅ Metin ALTA (açıklama) - Bold desteğiyle
               MarkdownText(
                 message.text,
@@ -328,6 +330,12 @@ class _MessageBubble extends StatelessWidget {
                   fontSize: 12.sp,
                 ),
               ),
+
+              // ✅ Real-time Image Generation Status
+              if (message.visualRequestId != null) ...[
+                SizedBox(height: 12.h),
+                FalImageWidget(requestId: message.visualRequestId!),
+              ],
             ],
           ),
         ),

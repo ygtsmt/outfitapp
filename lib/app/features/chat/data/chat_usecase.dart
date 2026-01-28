@@ -15,11 +15,13 @@ class ChatTextResult extends ChatResult {
   final String text;
   final List<AgentStep>? agentSteps;
   final String? imageUrl;
+  final String? visualRequestId;
 
   ChatTextResult(
     this.text, {
     this.agentSteps,
     this.imageUrl,
+    this.visualRequestId,
   });
 }
 
@@ -120,6 +122,7 @@ ${jsonEncode(itemsJson)}
           agentResponse.finalAnswer,
           agentSteps: agentResponse.steps,
           imageUrl: agentResponse.imageUrl, // Image handled inside agent
+          visualRequestId: agentResponse.visualRequestId,
         );
       } catch (e) {
         log('❌ Agent hatası: $e');
