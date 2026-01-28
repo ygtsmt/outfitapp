@@ -101,36 +101,41 @@ ${jsonEncode(itemsJson)}
     // 🤖 Outfit önerisi mi? Agent'a yönlendir
     // 🤖 Text mesajı ise direkt Agent'a yönlendir (Hafıza ve Tool yetenekleri için)
     // Medya varsa (şimdilik) normal akıştan devam edebilir veya ilerde Agent'a medya desteği eklenebilir.
-    if (mediaPaths == null || mediaPaths.isEmpty) {
-      log('🤖 Agent\'a yönlendiriliyor (REST): $message');
+    // 🤖 Agent her zaman devreye girsin (Text veya Görsel)
+    // Medya varsa da Agent'a gönderiyoruz (Vision yeteneği)
 
-      try {
-        final agentResponse = await _agentService.executeAgentTask(
-          userMessage: message,
-          geminiService: _geminiService,
-          history: _chatHistory, // Mevcut history'yi ver
-          model: _model,
-        );
+    // if (mediaPaths == null || mediaPaths.isEmpty) { // ESKİ KONTROL KALDIRILDI
+    log('🤖 Agent\'a yönlendiriliyor (REST): $message');
 
-        // Agent sonucunu history'ye ekle (basitleştirilmiş)
-        _chatHistory
-            .add(GeminiContent(role: 'user', parts: [GeminiTextPart(message)]));
-        _chatHistory.add(GeminiContent(
-            role: 'model', parts: [GeminiTextPart(agentResponse.finalAnswer)]));
+    try {
+      final agentResponse = await _agentService.executeAgentTask(
+        userMessage: message,
+        geminiService: _geminiService,
+        history: _chatHistory,
+        model: _model,
+        imagePaths: mediaPaths, // GÖRSEL DESTEĞİ EKLENDİ
+      );
 
-        return ChatTextResult(
-          agentResponse.finalAnswer,
-          agentSteps: agentResponse.steps,
-          imageUrl: agentResponse.imageUrl, // Image handled inside agent
-          visualRequestId: agentResponse.visualRequestId,
-        );
-      } catch (e) {
-        log('❌ Agent hatası: $e');
-        return ChatTextResult(
-          'Üzgünüm, kombin önerisi oluştururken bir hata oluştu: $e',
-        );
-      }
+      // Agent sonucunu history'ye ekle
+      _chatHistory.add(GeminiContent(role: 'user', parts: [
+        GeminiTextPart(message)
+      ])); // TODO: Görselleri de history'ye eklemek gerekebilir ama şimdilik sadece text
+      _chatHistory.add(GeminiContent(
+          role: 'model', parts: [GeminiTextPart(agentResponse.finalAnswer)]));
+
+      return ChatTextResult(
+        agentResponse.finalAnswer,
+        agentSteps: agentResponse.steps,
+        imageUrl: agentResponse.imageUrl,
+        visualRequestId: agentResponse.visualRequestId,
+      );
+    } catch (e) {
+      log('❌ Agent hatası: $e');
+      return ChatTextResult(
+        'Üzgünüm, işlem sırasında bir hata oluştu: $e',
+      );
     }
+    // } // ESKİ KONTROL BLOĞU SONU
 
     // Normal chat akışı
     String finalMessage;

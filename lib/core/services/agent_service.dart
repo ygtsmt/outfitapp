@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:injectable/injectable.dart';
 import 'package:comby/core/services/weather_service.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
@@ -35,15 +37,15 @@ class AgentService {
     required GeminiRestService geminiService,
     required List<GeminiContent> history,
     required String model,
+    List<String>? imagePaths, // NEW: Image Support
   }) async {
     final steps = <AgentStep>[];
 
-    // Geçici history kopyası - sadece bu task için
-    // Ana history'ye dışarıda ekleme yapılacak, burada sadece execution sırasındaki context önemli
+    // Geçici history kopyası
     final taskHistory = List<GeminiContent>.from(history);
 
     try {
-      log('🤖 Agent başlatıldı (REST): $userMessage');
+      log('🤖 Agent başlatıldı (REST): $userMessage${imagePaths != null ? ' + ${imagePaths.length} images' : ''}');
 
       // 🔥 MEMORY LOAD: Kullanıcı profilini çek
       final userProfile = await _userPreferenceService.getSystemPromptProfile();
@@ -52,14 +54,43 @@ class AgentService {
       final fullSystemInstruction =
           '${ToolRegistry.agentSystemInstruction}\n$userProfile';
 
+      // Vision Context Ekle
+      String contextualMessage = userMessage;
+      if (imagePaths != null && imagePaths.isNotEmpty) {
+        contextualMessage =
+            '$userMessage\n\n[GÖRSEL ANALİZİ: Kullanıcı bir fotoğraf gönderdi. Vision yeteneğini kullanarak bu fotoğraftaki kıyafetleri, renkleri ve tarzı analiz et. Sonra bu tarza uygun parçaları `search_wardrobe` ile kullanıcının gardırobunda ara.]';
+      }
+
       // AI'a tool kullanmasını hatırlat
       final enhancedMessage =
-          '$userMessage\n\n[Hava durumu, gardırop, renk uyumu ve görsel tool\'larını kullan]';
+          '$contextualMessage\n\n[Hava durumu, gardırop, renk uyumu ve görsel tool\'larını kullan]';
+
+      // Kullanıcı mesajını oluştur (Text + Images)
+      final List<GeminiPart> messageParts = [GeminiTextPart(enhancedMessage)];
+
+      if (imagePaths != null && imagePaths.isNotEmpty) {
+        for (final path in imagePaths) {
+          try {
+            final file = File(path);
+            final bytes = await file.readAsBytes();
+            final base64Data = base64Encode(bytes);
+            // Verify mime type logic (simple check)
+            final mimeType = path.toLowerCase().endsWith('.png')
+                ? 'image/png'
+                : 'image/jpeg';
+
+            messageParts.add(GeminiInlineDataPart(mimeType, base64Data));
+            log('📸 Resim eklendi: $path ($mimeType)');
+          } catch (e) {
+            log('❌ Resim okuma hatası: $e');
+          }
+        }
+      }
 
       // Kullanıcı mesajını history'ye ekle
       final userContent = GeminiContent(
         role: 'user',
-        parts: [GeminiTextPart(enhancedMessage)],
+        parts: messageParts,
       );
       taskHistory.add(userContent);
 

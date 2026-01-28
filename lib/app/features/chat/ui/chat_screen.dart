@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:comby/app/features/chat/widgets/chat_suggestion_chips.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -71,7 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: BlocConsumer<ChatBloc, ChatState>(
+            child: BlocListener<ChatBloc, ChatState>(
               listener: (context, state) {
                 if (state.status == ChatStatus.success) {
                   _scrollToBottom();
@@ -83,41 +84,37 @@ class _ChatScreenState extends State<ChatScreen> {
                   );
                 }
               },
-              builder: (context, state) {
-                if (state.messages.isEmpty &&
-                    state.status == ChatStatus.initial) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.chat_bubble_outline,
-                            size: 60.sp, color: Colors.grey),
-                        SizedBox(height: 16.h),
-                        Text(AppLocalizations.of(context).askSomethingToAi,
-                            style:
-                                TextStyle(color: Colors.grey, fontSize: 16.sp)),
-                      ],
-                    ),
-                  );
-                }
+              child: BlocBuilder<ChatBloc, ChatState>(
+                builder: (context, state) {
+                  if (state.messages.isEmpty &&
+                      state.status == ChatStatus.initial) {
+                    return Center(
+                      child: Text(
+                        'Start Chatting',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    );
+                  }
 
-                return ListView.builder(
-                  controller: _scrollController,
-                  padding: EdgeInsets.all(8.h),
-                  itemCount: state.messages.length +
-                      (state.status == ChatStatus.loading ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == state.messages.length) {
-                      return const _LoadingBubble();
-                    }
-                    final message = state.messages[index];
-                    return _MessageBubble(message: message);
-                  },
-                );
-              },
+                  return ListView.builder(
+                    controller: _scrollController,
+                    padding: EdgeInsets.all(8.h),
+                    itemCount: state.messages.length +
+                        (state.status == ChatStatus.loading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == state.messages.length) {
+                        return const _LoadingBubble();
+                      }
+                      final message = state.messages[index];
+                      return _MessageBubble(message: message);
+                    },
+                  );
+                },
+              ),
             ),
           ),
-          // ✅ Media preview above input
+
+          // Media preview above input
           BlocBuilder<ChatBloc, ChatState>(
             builder: (context, state) {
               return MediaPreviewWidget(
@@ -128,6 +125,25 @@ class _ChatScreenState extends State<ChatScreen> {
               );
             },
           ),
+          // Suggestion Chips (Only show if not loading)
+          BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              if (state.status == ChatStatus.loading) {
+                return const SizedBox.shrink();
+              }
+
+              return Padding(
+                padding: EdgeInsets.only(bottom: 8.h),
+                child: ChatSuggestionChips(
+                  hasMedia: state.selectedMedia.isNotEmpty,
+                  onChipSelected: (text) {
+                    context.read<ChatBloc>().add(SendMessageEvent(text));
+                  },
+                ),
+              );
+            },
+          ),
+
           _buildInputArea(context),
         ],
       ),
