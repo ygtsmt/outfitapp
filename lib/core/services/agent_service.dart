@@ -7,7 +7,6 @@ import 'package:comby/app/features/chat/models/agent_models.dart';
 import 'package:comby/core/services/gemini_rest_service.dart';
 import 'package:comby/core/services/gemini_models.dart';
 import 'package:comby/core/services/tool_registry.dart';
-import 'package:uuid/uuid.dart';
 
 @injectable
 class AgentService {
@@ -83,41 +82,19 @@ class AgentService {
           final content = candidate.content;
 
           // Model cevabını history'ye ekle
-          // 🔥 PATCH START: thought_signature kontrolü ve patchleme
-          final originalParts = content.parts;
-          final patchedParts = <GeminiPart>[];
-          final functionCalls = <GeminiFunctionCallPart>[];
+          taskHistory.add(content);
 
-          for (final part in originalParts) {
-            if (part is GeminiFunctionCallPart) {
-              // Eğer thought_signature yoksa fake üret
-              String? signature = part.thoughtSignature;
-              if (signature == null || signature.isEmpty) {
-                signature = const Uuid().v4();
-                log('⚠️ Generated fake thought_signature for history: $signature');
-              }
+          // Function calls var mı?
+          final functionCalls =
+              content.parts.whereType<GeminiFunctionCallPart>().toList();
 
-              final patchedPart = GeminiFunctionCallPart(
-                name: part.name,
-                args: part.args,
-                thoughtSignature: signature,
-              );
-              patchedParts.add(patchedPart);
-              functionCalls.add(patchedPart);
-            } else {
-              patchedParts.add(part);
+          if (functionCalls.isNotEmpty) {
+            log('🔍 Function Calls found: ${functionCalls.length}');
+            for (var fc in functionCalls) {
+              log('  - Call: ${fc.name}');
+              log('  - Signature: ${fc.thoughtSignature ?? "MISSING"}');
             }
-          }
-
-          // Patched content'i history'ye ekle
-          final patchedContent = GeminiContent(
-            role: content.role,
-            parts: patchedParts,
-          );
-          taskHistory.add(patchedContent);
-          // 🔥 PATCH END
-
-          if (functionCalls.isEmpty) {
+          } else {
             // Text cevabı var mı?
             final textParts =
                 content.parts.whereType<GeminiTextPart>().toList();
@@ -159,15 +136,13 @@ class AgentService {
             }
 
             // Function Response oluştur
-            // NOT: FunctionResponsePart içinde thought_signature göndermiyoruz (GeminiModels'de kapattık)
-            // Ama call objesi artık thoughtSignature'a sahip (yukarıdaki patch sayesinde)
             final functionResponse = GeminiContent(
               role: 'function',
               parts: [
                 GeminiFunctionResponsePart(
                   name: call.name,
                   response: result,
-                  thoughtSignature: call.thoughtSignature,
+                  thoughtSignature: null,
                 ),
               ],
             );
