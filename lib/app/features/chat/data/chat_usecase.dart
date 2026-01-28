@@ -1,15 +1,26 @@
 import 'dart:io';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'dart:developer';
 import 'package:injectable/injectable.dart';
-import 'package:comby/core/constants/app_constants.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
+import 'package:comby/core/services/agent_service.dart';
+import 'package:comby/app/features/chat/models/agent_models.dart';
+import 'package:comby/core/services/gemini_rest_service.dart';
+import 'package:comby/core/services/gemini_models.dart';
 import 'dart:convert';
+import 'package:comby/core/services/tool_registry.dart';
 
 sealed class ChatResult {}
 
 class ChatTextResult extends ChatResult {
   final String text;
-  ChatTextResult(this.text);
+  final List<AgentStep>? agentSteps;
+  final String? imageUrl;
+
+  ChatTextResult(
+    this.text, {
+    this.agentSteps,
+    this.imageUrl,
+  });
 }
 
 class ChatSearchResult extends ChatResult {
@@ -19,18 +30,30 @@ class ChatSearchResult extends ChatResult {
 
 @injectable
 class ChatUseCase {
-  late final GenerativeModel _model;
-  late final ChatSession _chatSession;
   final ClosetUseCase _closetUseCase;
+  final AgentService _agentService;
+  final GeminiRestService _geminiService;
 
-  bool _wardrobeSent = false; // Gardırop gönderildi mi?
+  // Manuel history tracking
+  final List<GeminiContent> _chatHistory = [];
 
-  ChatUseCase(this._closetUseCase) {
-    _model = GenerativeModel(
-      model: 'gemini-3-flash-preview',
-      apiKey: geminiApiKey,
-    );
-    _chatSession = _model.startChat();
+  // Model
+  final String _model =
+      'gemini-3-pro-preview'; // REST API ile Gemini 3: gemini-3-flash-preview de kullanabiliriz
+
+  bool _wardrobeSent = false;
+
+  ChatUseCase(
+    this._closetUseCase,
+    this._agentService,
+    this._geminiService,
+  ) {
+    // Warm-up greeting
+    _initializeChat();
+  }
+
+  Future<void> _initializeChat() async {
+    // Başlangıçta boş history ile hazır
   }
 
   /// Kullanıcının gardırobunu JSON formatında al
@@ -73,12 +96,59 @@ ${jsonEncode(itemsJson)}
 
   Future<ChatResult> sendMessage(String message,
       {List<String>? mediaPaths}) async {
+    // 🤖 Outfit önerisi mi? Agent'a yönlendir
+    if (_isOutfitRequest(message) &&
+        (mediaPaths == null || mediaPaths.isEmpty)) {
+      log('🤖 Agent\'a yönlendiriliyor (REST): $message');
+
+      try {
+        final agentResponse = await _agentService.executeAgentTask(
+          userMessage: message,
+          geminiService: _geminiService,
+          history: _chatHistory, // Mevcut history'yi ver
+          model: _model,
+        );
+
+        // Agent sonucunu history'ye ekle (basitleştirilmiş)
+        _chatHistory
+            .add(GeminiContent(role: 'user', parts: [GeminiTextPart(message)]));
+        _chatHistory.add(GeminiContent(
+            role: 'model', parts: [GeminiTextPart(agentResponse.finalAnswer)]));
+
+        return ChatTextResult(
+          agentResponse.finalAnswer,
+          agentSteps: agentResponse.steps,
+          imageUrl: agentResponse.imageUrl, // Image handled inside agent
+        );
+      } catch (e) {
+        log('❌ Agent hatası: $e');
+        return ChatTextResult(
+          'Üzgünüm, kombin önerisi oluştururken bir hata oluştu: $e',
+        );
+      }
+    }
+
+    // Normal chat akışı
     String finalMessage;
+
+    // User message content
+    final userParts = <GeminiPart>[];
 
     // ✅ Media varsa gardırop context'ini GÖNDERME
     if (mediaPaths != null && mediaPaths.isNotEmpty) {
-      // Kullanıcı fotoğraf/video gönderiyorsa, kullanıcının yazdığı mesajı kullan
       finalMessage = message;
+
+      // Media dosyalarını ekle
+      for (final path in mediaPaths) {
+        final file = File(path);
+        if (!await file.exists()) continue;
+
+        final bytes = await file.readAsBytes();
+        final mimeType = _getMimeType(path);
+        final base64Data = base64Encode(bytes);
+
+        userParts.add(GeminiInlineDataPart(mimeType, base64Data));
+      }
     } else {
       // Media yoksa normal gardırop akışı
       if (!_wardrobeSent) {
@@ -86,71 +156,66 @@ ${jsonEncode(itemsJson)}
         finalMessage = '$wardrobeContext\n\nKullanıcı: $message';
         _wardrobeSent = true;
       } else {
-        // Sonraki mesajlarda sadece kullanıcı mesajını gönder
-        // Gemini zaten gardırobu ve önceki konuşmayı hatırlıyor
         finalMessage = message;
       }
     }
 
-    // ✅ Media varsa multi-part content oluştur
-    if (mediaPaths != null && mediaPaths.isNotEmpty) {
-      final parts = <Part>[];
+    // Text'i ekle
+    userParts.add(GeminiTextPart(finalMessage));
 
-      // Text ekle
-      parts.add(TextPart(finalMessage));
+    // History'ye ekle
+    final userContent = GeminiContent(role: 'user', parts: userParts);
+    _chatHistory.add(userContent);
 
-      // Her media dosyasını ekle
-      for (final path in mediaPaths) {
-        final file = File(path);
-        if (!await file.exists()) continue;
-
-        final bytes = await file.readAsBytes();
-        final mimeType = _getMimeType(path);
-
-        parts.add(DataPart(mimeType, bytes));
-      }
-
-      final response = await _chatSession.sendMessage(
-        Content.multi(parts),
+    // İsteği gönder
+    try {
+      final response = await _geminiService.generateContent(
+        model: _model,
+        request: GeminiRequest(
+          contents: _chatHistory,
+        ),
       );
 
-      final candidate = response.candidates.first;
-      final responseParts = candidate.content.parts;
+      if (response.candidates != null && response.candidates!.isNotEmpty) {
+        final content = response.candidates!.first.content;
 
-      for (final part in responseParts) {
-        if (part is FunctionCall) {
-          if (part.name == 'google_search') {
-            final query = part.args['query'] ?? part.args['action_input'] ?? '';
-            return ChatSearchResult(query.toString());
-          }
-        }
+        // Cevabı history'ye ekle
+        _chatHistory.add(content);
+
+        // Text part bul
+        final textPart = content.parts.whereType<GeminiTextPart>().firstOrNull;
+        final responseText = textPart?.text ?? 'Cevap metni bulunamadı.';
+
+        // Function call (google_search) kontrolü? (Şimdilik yok)
+
+        return ChatTextResult(responseText);
+      } else {
+        return ChatTextResult('Cevap alınamadı.');
       }
-
-      return ChatTextResult(
-        response.text ?? 'Cevap oluşturulamadı.',
-      );
+    } catch (e) {
+      log('Chat error: $e');
+      return ChatTextResult('Hata: $e');
     }
+  }
 
-    // ✅ Media yoksa normal text-only mesaj gönder
-    final response = await _chatSession.sendMessage(
-      Content.text(finalMessage),
-    );
+  /// Outfit önerisi isteği mi kontrol et
+  bool _isOutfitRequest(String message) {
+    final keywords = [
+      'ne giysem',
+      'kombin öner',
+      'outfit',
+      'kıyafet öner',
+      'yarın için',
+      'bugün için',
+      'ne giydim',
+      'hava durumu',
+      'hava nasıl',
+      'what should i wear',
+      'outfit suggestion',
+    ];
 
-    final candidate = response.candidates.first;
-    final parts = candidate.content.parts;
-
-    for (final part in parts) {
-      if (part is FunctionCall) {
-        if (part.name == 'google_search') {
-          final query = part.args['query'] ?? part.args['action_input'] ?? '';
-          return ChatSearchResult(query.toString());
-        }
-      }
-    }
-
-    return ChatTextResult(
-      response.text ?? 'Cevap oluşturulamadı.',
-    );
+    final lowerMessage = message.toLowerCase();
+    return keywords.any((k) => lowerMessage.contains(k));
   }
 
   /// Dosya uzantısından MIME type belirle

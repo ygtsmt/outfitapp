@@ -115,11 +115,11 @@ class FalAiUsecase {
 
       // Validate API Key format (simple check for colon)
       if (!apiKey.contains(':')) {
-        log('❌ WARNING: Fal AI API Key format appears invalid (missing colon). Checking fallback...');
+        // Firebase key is wrong format, use fallback
         // Force fallback to hardcoded key from app_constants if simple check fails
         if (falAiApiKey.contains(':')) {
           apiKey = falAiApiKey;
-          log('✅ Switched to hardcoded fallback key which appears valid.');
+          // Using fallback key
         } else {
           log('❌ Hardcoded key also appears invalid.');
         }

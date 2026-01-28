@@ -8,16 +8,19 @@ class ChatMessage extends Equatable {
   final List<String>? imageUrls; // ✅ Görsel URL'leri (AI'dan gelen)
   final List<String>?
       localMediaPaths; // ✅ Kullanıcının gönderdiği medya dosyaları
+  final List<AgentStep>? agentSteps; // 🤖 Agent adımları
 
   const ChatMessage({
     required this.text,
     required this.isUser,
     this.imageUrls,
     this.localMediaPaths,
+    this.agentSteps,
   });
 
   @override
-  List<Object?> get props => [text, isUser, imageUrls, localMediaPaths];
+  List<Object?> get props =>
+      [text, isUser, imageUrls, localMediaPaths, agentSteps];
 }
 
 class ChatState extends Equatable {

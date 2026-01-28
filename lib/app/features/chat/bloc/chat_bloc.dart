@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 import 'package:comby/app/features/chat/data/chat_usecase.dart';
 import 'package:comby/app/features/chat/utils/parse_image_urls.dart';
+import 'package:comby/app/features/chat/models/agent_models.dart';
 import 'package:comby/generated/l10n.dart';
 
 part 'chat_event.dart';
@@ -82,6 +83,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       /// NORMAL TEXT
       final responseText = (result as ChatTextResult).text;
+      final agentSteps = result.agentSteps; // 🤖 Agent adımları
+      final imageUrl = result.imageUrl;
 
       // ✅ URL'leri çıkar ve metni temizle
       final parsed = parseImageUrls(responseText);
@@ -91,12 +94,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         messages: [
           ...messages,
           ChatMessage(
-            text: parsed
-                .cleanedText, // ✅ Temizlenmiş metin (imageUrl: ... olmadan)
+            text: parsed.cleanedText,
             isUser: false,
             imageUrls: parsed.imageUrls.isNotEmpty
                 ? parsed.imageUrls
-                : null, // ✅ Çıkarılan URL'ler
+                : (imageUrl != null ? [imageUrl] : null),
+            agentSteps: agentSteps, // 🤖 Agent adımlarını ekle
           ),
         ],
       ));

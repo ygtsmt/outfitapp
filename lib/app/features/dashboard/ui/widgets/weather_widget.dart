@@ -24,7 +24,7 @@ class WeatherWidget extends StatefulWidget {
 
 class _WeatherWidgetState extends State<WeatherWidget> {
   final LocationService _locationService = LocationService();
-  final WeatherService _weatherService = WeatherService();
+  final WeatherService _weatherService = GetIt.I<WeatherService>();
   final OutfitSuggestionService _outfitService = OutfitSuggestionService();
 
   WeatherModel? _weather;

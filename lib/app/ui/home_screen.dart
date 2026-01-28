@@ -146,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         // Update indices: Closet is now 1, Try-On is now 2 (in router)
                         appBar: (tabsRouter.activeIndex == 3 || // TryOn
                                 tabsRouter.activeIndex == 1 || // Closet
-                                tabsRouter.activeIndex == 0 || // Dashboard
+                                // Dashboard
                                 tabsRouter.activeIndex == 2) // Chat
                             ? null
                             : AppBar(

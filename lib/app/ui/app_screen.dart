@@ -110,7 +110,7 @@ class _AppScreenState extends State<AppScreen> {
                     extensions: const [AppColorsExtension.dark],
                   ),
                   locale: state.languageLocale ?? const Locale('en'),
-                  themeMode: ThemeMode.light,
+                  themeMode: state.themeMode,
                   routerDelegate: _appRouter.delegate(),
                   routeInformationParser: _appRouter.defaultRouteParser(),
                 ),
