@@ -31,11 +31,41 @@ class MarkdownText extends StatelessWidget {
   /// Markdown'ı parse edip TextSpan listesi döner
   List<TextSpan> _parseMarkdown(String text, TextStyle baseStyle) {
     final List<TextSpan> spans = [];
+    final lines = text.split('\n');
+
+    for (var i = 0; i < lines.length; i++) {
+      final line = lines[i];
+      final isLastLine = i == lines.length - 1;
+
+      if (line.trim().startsWith('### ')) {
+        // --- HEADER (###) ---
+        final headerText = line.trim().substring(4); // "### " sil
+        spans.add(TextSpan(
+          text: headerText + (isLastLine ? '' : '\n'),
+          style: baseStyle.copyWith(
+            fontWeight: FontWeight.w800,
+            fontSize: (baseStyle.fontSize ?? 14) * 1.3, // Biraz büyüt
+            height: 1.5, // Satır arası boşluk
+          ),
+        ));
+      } else {
+        // --- NORMAL SATIR (Bold kontrolü yap) ---
+        spans.addAll(_parseBold(line, baseStyle));
+        if (!isLastLine) {
+          spans.add(TextSpan(text: '\n'));
+        }
+      }
+    }
+    return spans;
+  }
+
+  /// Satır içindeki bold (**text**) ifadeleri parseler
+  List<TextSpan> _parseBold(String text, TextStyle baseStyle) {
+    final List<TextSpan> spans = [];
     final regex = RegExp(r'\*\*(.*?)\*\*');
     int lastMatchEnd = 0;
 
     for (final match in regex.allMatches(text)) {
-      // Bold öncesi normal metin
       if (match.start > lastMatchEnd) {
         spans.add(TextSpan(
           text: text.substring(lastMatchEnd, match.start),
@@ -43,7 +73,6 @@ class MarkdownText extends StatelessWidget {
         ));
       }
 
-      // Bold metin
       spans.add(TextSpan(
         text: match.group(1),
         style: baseStyle.copyWith(fontWeight: FontWeight.bold),
@@ -52,14 +81,12 @@ class MarkdownText extends StatelessWidget {
       lastMatchEnd = match.end;
     }
 
-    // Kalan normal metin
     if (lastMatchEnd < text.length) {
       spans.add(TextSpan(
         text: text.substring(lastMatchEnd),
         style: baseStyle,
       ));
     }
-
     return spans;
   }
 }

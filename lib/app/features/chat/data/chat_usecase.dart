@@ -39,7 +39,7 @@ class ChatUseCase {
 
   // Model
   final String _model =
-      'gemini-3-pro-preview'; // REST API ile Gemini 3: gemini-3-flash-preview de kullanabiliriz
+      'gemini-3-flash-preview'; // REST API ile Gemini 3: gemini-3-flash-preview de kullanabiliriz
 
   bool _wardrobeSent = false;
 
@@ -97,8 +97,9 @@ ${jsonEncode(itemsJson)}
   Future<ChatResult> sendMessage(String message,
       {List<String>? mediaPaths}) async {
     // 🤖 Outfit önerisi mi? Agent'a yönlendir
-    if (_isOutfitRequest(message) &&
-        (mediaPaths == null || mediaPaths.isEmpty)) {
+    // 🤖 Text mesajı ise direkt Agent'a yönlendir (Hafıza ve Tool yetenekleri için)
+    // Medya varsa (şimdilik) normal akıştan devam edebilir veya ilerde Agent'a medya desteği eklenebilir.
+    if (mediaPaths == null || mediaPaths.isEmpty) {
       log('🤖 Agent\'a yönlendiriliyor (REST): $message');
 
       try {

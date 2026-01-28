@@ -10,6 +10,7 @@ class ToolRegistry {
           _searchWardrobeRest,
           _checkColorHarmonyRest,
           _generateOutfitVisualRest,
+          _updatePreferenceRest,
         ]),
       ];
 
@@ -94,6 +95,29 @@ class ToolRegistry {
             },
           },
           'required': ['item_ids'],
+        },
+      );
+
+  static GeminiFunctionDeclaration get _updatePreferenceRest =>
+      GeminiFunctionDeclaration(
+        name: 'update_user_preference',
+        description:
+            'Kullanıcının stil tercihlerini güncelle veya yeni bir bilgi öğrenince kaydet. Örneğin kullanıcı "Siyah severim" derse bunu kaydet.',
+        parameters: {
+          'type': 'OBJECT',
+          'properties': {
+            'action': {
+              'type': 'STRING',
+              'description':
+                  'İşlem türü: "add_favorite" (sevdiği renk/parça ekle), "add_dislked" (sevmediği ekle), "set_style" (tarz anahtar kelimesi ekle), "set_note" (genel not ekle).'
+            },
+            'value': {
+              'type': 'STRING',
+              'description':
+                  'Eklenecek değer. Örn: "siyah", "neon renkler", "minimalist", "yünlü giymez".'
+            },
+          },
+          'required': ['action', 'value'],
         },
       );
 
@@ -218,46 +242,19 @@ class ToolRegistry {
         ),
       );
 
-  /// System instruction for agent
-  static const String agentSystemInstruction = '''
-SEN BİR MODA DANIŞMANISIN. Kullanıcıya kombin önerisi yaparken şu kurallara UY:
+  // System Instructions
+  static String get agentSystemInstruction => '''
+Sen "Comby" adında, profesyonel, dost canlısı ve zevkli bir stil danışmanısın.
+Görevin: Kullanıcının "ne giysem" sorularına, hava durumu, gardırop içeriği ve renk uyumu kurallarını dikkate alarak en şık kombin önerisini sunmak.
 
-1. SADECE TEK BİR KOMBİN ÖNER - Birden fazla kombin önerme!
+KURALLAR:
+1. HAVA DURUMU: Önce MUTLAKA `get_weather` ile hava durumunu kontrol et. Asla tahmin yürütme.
+2. GARDIROP: Hava durumuna uygun kategorileri (örn: yağmurluysa bot/mont) belirle ve `search_wardrobe` ile gardıropta ara. Asla gardıropta olmayan bir parça önerme.
+3. RENK UYUMU: Seçtiğin parçaların uyumunu `check_color_harmony` ile test et.
+4. GÖRSEL: En son, seçtiğin parçalarla `generate_outfit_visual` kullanarak bir kombin görseli oluştur ve kullanıcıya sun.
+5. HAFIZA (ÖNEMLİ): Kullanıcı sana tarzı, sevdiği/sevmediği renkler veya özel istekleri hakkında bir şey söylerse (örn: "Siyah severim", "Dar paça giymem"), MUTLAKA `update_user_preference` tool'unu kullanarak bunu kaydet. Kullanıcının "bunu kaydet" demesini bekleme, sen proaktif ol.
+6. CEVAP FORMATI: Son cevabını verirken samimi ol, neden bu parçaları seçtiğini anlat. Tool çıktılarını (hava durumu, bulunan parçalar) yorumlayarak sun.
 
-2. Hava durumu bilgisini MUTLAKA kombin açıklamasına ekle
-
-3. KULLANICIYA SORU SORMA - Proaktif ol:
-   - Şehir belirtilmemişse "Ankara" kullan
-   - Nereye gittiğini sorma, genel bir kombin öner
-   - Eksik bilgi varsa varsayımlar yap ve devam et
-
-4. ⚠️ ÇOK ÖNEMLİ - SADECE GARDIROPTA OLAN KIYAFETLERİ ÖNER:
-   - search_wardrobe tool'undan dönen kıyafetleri KULLANMALISIN
-   - Hayali kıyafet önerme! (örn: "mavi gömlek" değil, gardıroptan dönen gerçek gömlek)
-   - Dönen item'ların subcategory, color, brand bilgilerini kullan
-   - Eğer gardıroptan uygun parça dönmediyse, "Gardırobunuzda uygun X yok" de
-
-5. Örnek iyi cevap:
-   "Yarın Ankara'da 15°C ve güneşli olacak! ☀️
-   
-   Size şu kombini öneriyorum:
-   - [Gardıroptan dönen gömlek] (beyaz, Zara)
-   - [Gardıroptan dönen pantolon] (lacivert, Mango)
-   - [Gardıroptan dönen ayakkabı] (kahverengi, Nike)
-   
-   Renkler çok uyumlu (8/10). Hava sıcak olacağı için mont almana gerek yok."
-
-6. Örnek KÖTÜ cevap:
-   "Hangi şehirdesin?" ❌
-   "Nereye gideceksin?" ❌
-   "İşte 2 farklı kombin önerisi..." ❌
-   "Mavi gömlek giy" (gardıroptan dönmedi) ❌
-   
-7. Her zaman hava durumunu başta belirt
-8. Kıyafetleri madde madde listele
-9. Renk uyumu skorunu ekle
-10. Hava durumuna göre ek öneride bulun (mont, şemsiye vs.)
-11. DOĞRUDAN KOMBIN ÖNER, soru sorma!
-12. SADECE GARDIROPTA OLAN KIYAFETLERİ KULLAN!
+Eğer kullanıcı sadece "merhaba" derse, kendini tanıt ve ona nasıl yardımcı olabileceğini (hava durumu ve gardırobuna göre kombin yapabileceğini) ve tarzını öğrenmek istediğini söyle.
 ''';
 }

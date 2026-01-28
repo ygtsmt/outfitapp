@@ -42,7 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     final message = _textController.text.trim();
     if (message.isNotEmpty) {
-      context.read<ChatBloc>().add(SendMessageEvent('Yarın ne giysem'));
+      context.read<ChatBloc>().add(SendMessageEvent(message));
       _textController.clear();
       _scrollToBottom();
     }
