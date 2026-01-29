@@ -101,7 +101,9 @@ class _ChatScreenState extends State<ChatScreen> {
                         (state.status == ChatStatus.loading ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == state.messages.length) {
-                        return const _LoadingBubble();
+                        return _LoadingBubble(
+                          message: state.agentThinkingText,
+                        );
                       }
                       final message = state.messages[index];
                       return _MessageBubble(message: message);
@@ -359,7 +361,8 @@ class _MessageBubble extends StatelessWidget {
 }
 
 class _LoadingBubble extends StatelessWidget {
-  const _LoadingBubble();
+  final String? message;
+  const _LoadingBubble({this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -376,15 +379,29 @@ class _LoadingBubble extends StatelessWidget {
             bottomRight: Radius.circular(12.r),
           ),
         ),
-        child: SizedBox(
-          width: 40.w,
-          height: 20.h,
-          child: Center(
-              child: SizedBox(
-                  width: 16.w,
-                  height: 16.w,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Theme.of(context).primaryColor))),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 16.w,
+              height: 16.w,
+              child: CircularProgressIndicator(
+                  strokeWidth: 2, color: Theme.of(context).primaryColor),
+            ),
+            if (message != null) ...[
+              SizedBox(width: 8.w),
+              Flexible(
+                child: Text(
+                  message!,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Colors.grey[600],
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

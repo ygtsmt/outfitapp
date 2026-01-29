@@ -28,3 +28,11 @@ class SelectMediaEvent extends ChatEvent {
 class ClearMediaEvent extends ChatEvent {
   const ClearMediaEvent();
 }
+
+class AgentStepUpdated extends ChatEvent {
+  final String stepDescription;
+  const AgentStepUpdated(this.stepDescription);
+
+  @override
+  List<Object> get props => [stepDescription];
+}

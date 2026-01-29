@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import "package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
@@ -9,8 +11,10 @@ import "package:comby/core/extensions.dart";
 
 import 'package:comby/app/features/dashboard/ui/widgets/ai_fashion_critique_widget.dart';
 
-import 'dart:math';
 import 'package:comby/generated/l10n.dart';
+import 'package:comby/app/features/dashboard/ui/widgets/daily_outfit_card.dart';
+import 'package:comby/app/features/chat/ui/chat_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -63,6 +67,11 @@ class DashboardScreen extends StatelessWidget {
 
           // Weather Widget
           const WeatherWidget(),
+
+          // Proactive Agent Card
+          DailyOutfitCard(
+            onTap: () {},
+          ),
 
           // AI Fashion Critique Widget
           const AIFashionCritiqueWidget(),

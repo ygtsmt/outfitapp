@@ -38,6 +38,7 @@ class AgentService {
     required List<GeminiContent> history,
     required String model,
     List<String>? imagePaths, // NEW: Image Support
+    void Function(String)? onStep, // NEW: Step Callback
   }) async {
     final steps = <AgentStep>[];
 
@@ -167,6 +168,26 @@ class AgentService {
           for (final call in functionCalls) {
             log('⚙️ Tool çalıştırılıyor: ${call.name}');
 
+            // 🔥 UI Bilgilendirme
+            String stepMessage = 'İşleniyor...';
+            switch (call.name) {
+              case 'get_weather_context':
+                stepMessage = 'Hava durumu kontrol ediliyor... 🌤️';
+                break;
+              case 'search_wardrobe':
+                stepMessage = 'Gardırobun taranıyor... 👗';
+                break;
+              case 'check_color_harmony':
+                stepMessage = 'Renk uyumuna bakılıyor... 🎨';
+                break;
+              case 'generate_outfit_visual':
+                stepMessage = 'Kombin görseli oluşturuluyor... ✨';
+                break;
+              default:
+                stepMessage = '${call.name} aracı çalışıyor...';
+            }
+            onStep?.call(stepMessage);
+
             Map<String, dynamic> result;
             try {
               result = await _executeFunction(call);
@@ -178,12 +199,19 @@ class AgentService {
               ));
             } catch (e) {
               log('❌ Tool hatası: ${call.name} - $e');
-              result = {'error': e.toString()};
+
+              // Hata durumunda modelin pes etmemesi için yönlendirici mesaj dönüyoruz
+              result = {
+                'status': 'error',
+                'message': 'Tool execution failed: ${e.toString()}',
+                'instruction':
+                    'Do not give up. Try a different parameter, use a default value (e.g. for weather), or try a similar tool. Decide the best next step for the user.'
+              };
 
               steps.add(AgentStep(
                 toolName: call.name,
                 arguments: call.args,
-                result: {},
+                result: result, // result artık hata detayını içeriyor
                 error: e.toString(),
               ));
             }
@@ -247,6 +275,7 @@ class AgentService {
     switch (call.name) {
       case 'get_weather':
         return _getWeather(call.args);
+      // throw Exception('Forced API Failure: Weather Service is down!');
       case 'search_wardrobe':
         return _searchWardrobe(call.args);
       case 'check_color_harmony':

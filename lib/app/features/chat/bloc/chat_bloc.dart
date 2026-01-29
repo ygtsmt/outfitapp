@@ -17,17 +17,25 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<SendMessageEvent>(_onSendMessage);
     on<SelectMediaEvent>(_onSelectMedia);
     on<ClearMediaEvent>(_onClearMedia);
+    on<AgentStepUpdated>(_onAgentStepUpdated);
+  }
+
+  void _onAgentStepUpdated(
+    AgentStepUpdated event,
+    Emitter<ChatState> emit,
+  ) {
+    emit(state.copyWith(agentThinkingText: event.stepDescription));
   }
 
   Future<void> _onSendMessage(
     SendMessageEvent event,
     Emitter<ChatState> emit,
   ) async {
-    // ✅ Media'yı temizlemeden önce kaydet
+    // Media'yı temizlemeden önce kaydet
     final mediaToSend =
         state.selectedMedia.isNotEmpty ? state.selectedMedia : null;
 
-    // ✅ Kullanıcı mesajını oluştur (media varsa ekle)
+    // Kullanıcı mesajını oluştur (media varsa ekle)
     final userMessage = ChatMessage(
       text: event.message,
       isUser: true,
@@ -38,14 +46,18 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(state.copyWith(
       status: ChatStatus.loading,
       messages: messages,
-      selectedMedia: [], // ✅ Gönderildikten sonra temizle
+      selectedMedia: [], // Gönderildikten sonra temizle
+      agentThinkingText: 'Düşünüyor...', // Başlangıç metni
     ));
 
     try {
-      // ✅ Kaydedilmiş media'yı gönder (state'ten değil!)
+      // Kaydedilmiş media'yı gönder (state'ten değil!)
       final result = await _chatUseCase.sendMessage(
         event.message,
         mediaPaths: mediaToSend,
+        onAgentStep: (stepText) {
+          add(AgentStepUpdated(stepText));
+        },
       );
 
       /// 🔥 TOOL İSTEDİ
@@ -57,6 +69,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
         emit(state.copyWith(
           messages: [...messages, searchingBubble],
+          agentThinkingText: null, // Bitti
         ));
 
         /// ⚠️ burada NORMALDE API çağırırsın
@@ -90,12 +103,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         emit(state.copyWith(
           status: ChatStatus.success,
           messages: [...messages, aiMessage],
+          agentThinkingText: null, // Bitti
         ));
       }
     } catch (e) {
       emit(state.copyWith(
         status: ChatStatus.failure,
         errorMessage: e.toString(),
+        agentThinkingText: null, // Hata durumunda sil
       ));
     }
   }

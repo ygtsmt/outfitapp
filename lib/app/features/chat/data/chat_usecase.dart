@@ -96,8 +96,11 @@ ${jsonEncode(itemsJson)}
     }
   }
 
-  Future<ChatResult> sendMessage(String message,
-      {List<String>? mediaPaths}) async {
+  Future<ChatResult> sendMessage(
+    String message, {
+    List<String>? mediaPaths,
+    void Function(String)? onAgentStep, // NEW: Step Callback
+  }) async {
     // 🤖 Outfit önerisi mi? Agent'a yönlendir
     // 🤖 Text mesajı ise direkt Agent'a yönlendir (Hafıza ve Tool yetenekleri için)
     // Medya varsa (şimdilik) normal akıştan devam edebilir veya ilerde Agent'a medya desteği eklenebilir.
@@ -114,6 +117,7 @@ ${jsonEncode(itemsJson)}
         history: _chatHistory,
         model: _model,
         imagePaths: mediaPaths, // GÖRSEL DESTEĞİ EKLENDİ
+        onStep: onAgentStep, // NEW: Step Callback Passed
       );
 
       // Agent sonucunu history'ye ekle
