@@ -1,4 +1,4 @@
-# Ginly AI - Hackathon Project Story
+# COMBY - Hackathon Project Story
 
 ## Inspiration 
 

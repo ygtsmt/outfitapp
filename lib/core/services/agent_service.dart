@@ -10,6 +10,9 @@ import 'package:comby/core/services/gemini_rest_service.dart';
 import 'package:comby/core/services/gemini_models.dart';
 import 'package:comby/core/services/tool_registry.dart';
 import 'package:comby/core/services/user_preference_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:googleapis/calendar/v3.dart' as calendar;
+import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 
 @injectable
 class AgentService {
@@ -183,6 +186,9 @@ class AgentService {
               case 'generate_outfit_visual':
                 stepMessage = 'Kombin görseli oluşturuluyor... ✨';
                 break;
+              case 'get_calendar_events':
+                stepMessage = 'Takviminiz kontrol ediliyor... 📅';
+                break;
               default:
                 stepMessage = '${call.name} aracı çalışıyor...';
             }
@@ -284,6 +290,8 @@ class AgentService {
         return _generateOutfitVisual(call.args);
       case 'update_user_preference':
         return _updateUserPreference(call.args);
+      case 'get_calendar_events':
+        return _getCalendarEvents(call.args);
       default:
         throw Exception('Bilinmeyen tool: ${call.name}');
     }
@@ -465,5 +473,109 @@ class AgentService {
       'request_id': result['id'],
       'status': 'processing',
     };
+  }
+
+  Future<Map<String, dynamic>> _getCalendarEvents(
+      Map<String, dynamic> args) async {
+    final date = args['date'] as String;
+    log('📅 Takvim kontrol ediliyor: $date');
+
+    // --- MOCK vs REAL SWITCH ---
+    const bool useMockData = false; // DEMO MODE: Set to false for REAL data
+    // ---------------------------
+
+    if (useMockData) {
+      log('⚠️ MOCK DATA MODE ACTIVED for Calendar');
+      return {
+        'events': [
+          {
+            'time': '14:00',
+            'title': 'Yatırımcı Sunumu',
+            'type': 'business_formal',
+            'location': 'Maslak Plaza'
+          },
+          {
+            'time': '20:00',
+            'title': 'Arkadaşın Düğünü',
+            'type': 'formal_event',
+            'location': 'Boğaz Oteli'
+          },
+        ],
+        'message':
+            'Takviminde bugün için 2 önemli etkinlik var: 14:00 Yatırımcı Sunumu (Business) ve 20:00 Düğün (Formal). Buna göre şık bir şeyler seçmeliyiz.',
+      };
+    } else {
+      // --- REAL GOOGLE CALENDAR IMPLEMENTATION ---
+      log('🌍 REAL GOOGLE CALENDAR MODE ACTIVATED');
+      final googleSignIn = GoogleSignIn(
+        scopes: [calendar.CalendarApi.calendarEventsReadonlyScope],
+      );
+
+      try {
+        // Zaten LoginUseCase'de giriş yapıldığı için sessizce erişmeye çalışıyoruz
+        var account = await googleSignIn.signInSilently();
+
+        if (account == null) {
+          log('⚠️ Silent Sign-In Failed, attempting interative sign-in');
+          // Eğer sessiz erişim olmazsa (örn: scope değiştiği için), tekrar soralım
+          account = await googleSignIn.signIn();
+        }
+
+        if (account == null) {
+          log('❌ Google Sign-In Canceled');
+          return {'message': 'Google giriş işlemi iptal edildi.'};
+        }
+
+        final authClient = await googleSignIn.authenticatedClient();
+        if (authClient == null) {
+          return {'message': 'Kimlik doğrulama başarısız.'};
+        }
+
+        final calendarApi = calendar.CalendarApi(authClient);
+
+        // Tarih aralığı (Tüm gün)
+        final DateTime targetDate = DateTime.parse(date);
+        final DateTime startOfDay =
+            DateTime(targetDate.year, targetDate.month, targetDate.day);
+        final DateTime endOfDay =
+            DateTime(targetDate.year, targetDate.month, targetDate.day, 23, 59);
+
+        final events = await calendarApi.events.list(
+          "primary",
+          timeMin: startOfDay.toUtc(),
+          timeMax: endOfDay.toUtc(),
+          singleEvents: true,
+        );
+
+        if (events.items == null || events.items!.isEmpty) {
+          return {
+            'events': [],
+            'message': 'Takviminde bu tarihte kayıtlı bir etkinlik görünmüyor.',
+          };
+        }
+
+        // Veriyi formatla
+        final formattedEvents = events.items!.map((e) {
+          return {
+            'summary': e.summary,
+            'description': e.description,
+            'start': e.start?.dateTime?.toString() ?? e.start?.date?.toString(),
+            'location': e.location,
+          };
+        }).toList();
+
+        return {
+          'events': formattedEvents,
+          'message':
+              'Takviminden ${formattedEvents.length} etkinlik çektim. Etkinliklerin: ${formattedEvents.map((e) => e['summary']).join(", ")}.',
+        };
+      } catch (e) {
+        log('❌ Google Calendar API Error: $e');
+        return {
+          'status': 'error',
+          'message': 'Google Takvim verisi çekilemedi: $e'
+        };
+      }
+    }
   }
 }

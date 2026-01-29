@@ -11,6 +11,7 @@ class ToolRegistry {
           _checkColorHarmonyRest,
           _generateOutfitVisualRest,
           _updatePreferenceRest,
+          _getCalendarEventsRest,
         ]),
       ];
 
@@ -145,6 +146,24 @@ class ToolRegistry {
         },
       );
 
+  static GeminiFunctionDeclaration get _getCalendarEventsRest =>
+      GeminiFunctionDeclaration(
+        name: 'get_calendar_events',
+        description:
+            'Kullanıcının takvimindeki etkinlikleri kontrol et. "Bugün" veya "Yarın" için planları çek.',
+        parameters: {
+          'type': 'OBJECT',
+          'properties': {
+            'date': {
+              'type': 'STRING',
+              'description':
+                  'Kontrol edilecek tarih (YYYY-MM-DD). Örn: 2026-01-29. Kullanıcı "bugün" derse bugünün tarihini hesapla.'
+            },
+          },
+          'required': ['date'],
+        },
+      );
+
   /// 1. Hava Durumu Tool
   static FunctionDeclaration get getWeatherDeclaration => FunctionDeclaration(
         'get_weather',
@@ -248,10 +267,11 @@ Sen "Comby" adında, profesyonel, dost canlısı ve zevkli bir stil danışmanı
 Görevin: Kullanıcının "ne giysem" sorularına, hava durumu, gardırop içeriği ve renk uyumu kurallarını dikkate alarak en şık kombin önerisini sunmak.
 
 KURALLAR:
-1. HAVA DURUMU: Önce MUTLAKA `get_weather` ile hava durumunu kontrol et. Asla tahmin yürütme.
-2. GARDIROP: Hava durumuna uygun kategorileri (örn: yağmurluysa bot/mont) belirle ve `search_wardrobe` ile gardıropta ara. Asla gardıropta olmayan bir parça önerme.
-3. RENK UYUMU: Seçtiğin parçaların uyumunu `check_color_harmony` ile test et.
-4. GÖRSEL: En son, seçtiğin parçalarla `generate_outfit_visual` kullanarak bir kombin görseli oluştur ve kullanıcıya sun.
+1. HAVA DURUMU: Önce MUTLAKA `get_weather` ile hava durumunu kontrol et.
+2. TAKVİM (YENİ): Kullanıcı "bugün ne giysem" gibi bir şey sorarsa `get_calendar_events` ile planını kontrol et. Toplantı, düğün vb. varsa ona göre giydir.
+3. GARDIROP: Hava durumuna ve takvimdeki etkinliğe uygun kategorileri belirle ve `search_wardrobe` ile gardıropta ara.
+4. RENK UYUMU: Seçtiğin parçaların uyumunu `check_color_harmony` ile test et.
+5. GÖRSEL: En son, seçtiğin parçalarla `generate_outfit_visual` kullanarak bir kombin görseli oluştur.
 5. HAFIZA (ÖNEMLİ): Kullanıcı sana tarzı, sevdiği/sevmediği renkler veya özel istekleri hakkında bir şey söylerse (örn: "X rengini severim", "Y tarzını giymem"), MUTLAKA `update_user_preference` tool'unu kullanarak bunu kaydet. Kullanıcının "bunu kaydet" demesini bekleme, sen proaktif ol.
 6. VIBE MATCHER (FOTOĞRAF ANALİZİ): Eğer kullanıcı bir fotoğraf gönderip "bunu yap", "buna benzer" derse:
    a. Vision yeteneğinle fotoğraftaki kıyafetleri (tür, renk, tarz) analiz et.
