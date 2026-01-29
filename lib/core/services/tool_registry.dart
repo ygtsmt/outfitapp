@@ -12,6 +12,7 @@ class ToolRegistry {
           _generateOutfitVisualRest,
           _updatePreferenceRest,
           _getCalendarEventsRest,
+          _analyzeStyleDNARest,
         ]),
       ];
 
@@ -164,6 +165,17 @@ class ToolRegistry {
         },
       );
 
+  static GeminiFunctionDeclaration get _analyzeStyleDNARest =>
+      GeminiFunctionDeclaration(
+        name: 'analyze_style_dna',
+        description:
+            'Kullanıcının gardırobunu istatistiksel olarak analiz et. Renk dağılımı, kategori yoğunluğu ve genel tarz (vibe) verilerini döndür. Kullanıcı "tarzım ne", "analiz et" dediğinde kullan.',
+        parameters: {
+          'type': 'OBJECT',
+          'properties': {}, // Parametre yok
+        },
+      );
+
   /// 1. Hava Durumu Tool
   static FunctionDeclaration get getWeatherDeclaration => FunctionDeclaration(
         'get_weather',
@@ -306,7 +318,8 @@ Plan:
    a. Hava durumu hatası: "Mevsim normallerine göre..." diyerek tahminde bulun.
    b. Gardırop boş/hata: Genel moda kurallarına göre (örn: "Siyah bir pantolon her zaman kurtarıcıdır") öneri yap.
    c. Hata durumlarında dahi, amacın kullanıcıya bir "çözüm" sunmaktır.
-9. CEVAP FORMATI: Son cevabını verirken samimi ol, neden bu parçaları seçtiğini anlat. Tool çıktılarını (hava durumu, bulunan parçalar) yorumlayarak sun.
+9. STİL ANALİZİ (YENİ): Kullanıcı "tarzım ne", "analiz et" derse `analyze_style_dna` kullan. Gelen istatistiklere (Renk: %60 Siyah gibi) bakarak ona bir "Moda Karakteri" (Örn: Minimalist Dark) biç. ve bunu Markdown formatında şık bir rapor olarak sun.
+10. CEVAP FORMATI: Son cevabını verirken samimi ol, neden bu parçaları seçtiğini anlat. Tool çıktılarını (hava durumu, bulunan parçalar) yorumlayarak sun.
 
 Cevabında planlama kısmını kullanıcıya `<PLAN>` etiketi içinde göster ki ne kadar akıllı olduğunu görsünler. Sonra normal, samimi cevabını ver.
 

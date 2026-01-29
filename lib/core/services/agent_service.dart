@@ -292,6 +292,8 @@ class AgentService {
         return _updateUserPreference(call.args);
       case 'get_calendar_events':
         return _getCalendarEvents(call.args);
+      case 'analyze_style_dna':
+        return _analyzeStyleDNA(call.args);
       default:
         throw Exception('Bilinmeyen tool: ${call.name}');
     }
@@ -577,5 +579,68 @@ class AgentService {
         };
       }
     }
+  }
+
+  Future<Map<String, dynamic>> _analyzeStyleDNA(
+      Map<String, dynamic> args) async {
+    log('🧬 Stil DNA Analizi Başlatılıyor...');
+
+    // 1. Tüm dolabı çek
+    final items = await _closetUseCase.getUserClosetItems();
+
+    if (items.isEmpty) {
+      return {
+        'message':
+            'Dolabın henüz boş görünüyor. Stilini analiz edebilmem için önce birkaç parça eklemelisin.',
+      };
+    }
+
+    // 2. İstatistikleri Hesapla
+    int totalItems = items.length;
+    Map<String, int> colorCounts = {};
+    Map<String, int> categoryCounts = {};
+    // Map<String, int> brandCounts = {}; // Marka verisi şu an yok
+
+    for (var item in items) {
+      // Renk Sayımı
+      if (item.color != null && item.color!.isNotEmpty) {
+        colorCounts[item.color!] = (colorCounts[item.color!] ?? 0) + 1;
+      }
+      // Kategori Sayımı
+      if (item.category != null) {
+        categoryCounts[item.category!] =
+            (categoryCounts[item.category!] ?? 0) + 1;
+      }
+      // Marka Sayımı (Varsa)
+      // item.brand eksikse şimdilik geçiyoruz, eklenirse buraya konur.
+    }
+
+    // 3. Yüzdeleri ve Sıralamayı Bul
+    // Yardımcı Fonksiyon: Map'i sırala ve string formatına çevir
+    List<Map<String, dynamic>> getTopStats(Map<String, int> counts) {
+      var sorted = counts.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+
+      return sorted
+          .take(3)
+          .map((e) => {
+                'name': e.key,
+                'count': e.value,
+                'percentage':
+                    ((e.value / totalItems) * 100).toStringAsFixed(1) + '%'
+              })
+          .toList();
+    }
+
+    final topColors = getTopStats(colorCounts);
+    final topCategories = getTopStats(categoryCounts);
+
+    // 4. Sonuç Döndür
+    return {
+      'total_items': totalItems,
+      'top_colors': topColors,
+      'top_categories': topCategories,
+      'message': 'Dolap analizi tamamlandı. İstatistiklere göre yorum yap.',
+    };
   }
 }
