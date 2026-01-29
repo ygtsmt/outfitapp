@@ -20,7 +20,7 @@ class CombyLogo extends StatelessWidget {
     return Column(
       children: [
         if (haveText)
-          Text('Combsy',
+          Text('Comby',
               textAlign: TextAlign.center,
               style: GoogleFonts.balooBhai2(
                   fontSize: 56.sp,
