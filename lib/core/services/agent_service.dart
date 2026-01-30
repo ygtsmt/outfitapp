@@ -705,12 +705,12 @@ class AgentService {
   Future<Map<String, dynamic>> monitorActiveMission(
       GeminiRestService geminiService) async {
     // 1. Önce RAM'e veya Storage'a bak
-    if (_activeMission == null) {
-      _activeMission = await _userPreferenceService.getActiveMission();
-    }
+    // HER ZAMAN GÜNCEL VERİYİ ÇEK (Cache kullanma)
+    // Çünkü kullanıcı manuel düzenlemiş olabilir veya arka planda değişmiş olabilir.
+    _activeMission = await _userPreferenceService.getActiveMission();
 
     if (_activeMission == null) {
-      // Hala boşsa görev yok demektir
+      // Görev yok
       return {'status': 'no_mission'};
     }
 

@@ -20,3 +20,7 @@ exports.revenueCatWebhook = revenueCatWebhook;
 // Bonus Sistemi
 exports.claimFirstInstallBonus = claimFirstInstallBonus;
 exports.claimReviewCredit = claimReviewCredit;
+
+// Marathon Agent (Background)
+const { checkActiveMissions } = require('./marathonAgent');
+exports.checkActiveMissions = checkActiveMissions;

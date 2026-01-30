@@ -10,13 +10,13 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:cloud_firestore/cloud_firestore.dart' as _i8;
 import 'package:comby/app/bloc/app_bloc.dart' as _i37;
-import 'package:comby/app/data/app_usecase.dart' as _i28;
+import 'package:comby/app/data/app_usecase.dart' as _i27;
 import 'package:comby/app/features/auth/features/create_account/bloc/create_account_bloc.dart'
     as _i40;
 import 'package:comby/app/features/auth/features/create_account/data/create_account_usecase.dart'
-    as _i30;
+    as _i29;
 import 'package:comby/app/features/auth/features/login/bloc/login_bloc.dart'
-    as _i32;
+    as _i31;
 import 'package:comby/app/features/auth/features/login/data/login_usecase.dart'
     as _i15;
 import 'package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart'
@@ -26,27 +26,27 @@ import 'package:comby/app/features/auth/features/profile/data/profile_usecase.da
 import 'package:comby/app/features/auth/features/profile/services/activity_service.dart'
     as _i3;
 import 'package:comby/app/features/auth/features/profile/services/style_dna_service.dart'
-    as _i23;
-import 'package:comby/app/features/auth/features/splash/bloc/splash_bloc.dart'
-    as _i21;
-import 'package:comby/app/features/auth/features/splash/data/splash_usecase.dart'
     as _i22;
+import 'package:comby/app/features/auth/features/splash/bloc/splash_bloc.dart'
+    as _i20;
+import 'package:comby/app/features/auth/features/splash/data/splash_usecase.dart'
+    as _i21;
 import 'package:comby/app/features/chat/bloc/chat_bloc.dart' as _i42;
 import 'package:comby/app/features/chat/data/chat_usecase.dart' as _i38;
 import 'package:comby/app/features/closet/bloc/closet_bloc.dart' as _i39;
-import 'package:comby/app/features/closet/data/closet_usecase.dart' as _i29;
+import 'package:comby/app/features/closet/data/closet_usecase.dart' as _i28;
 import 'package:comby/app/features/closet/services/closet_analysis_service.dart'
-    as _i26;
-import 'package:comby/app/features/fal_ai/data/fal_ai_usecase.dart' as _i31;
+    as _i25;
+import 'package:comby/app/features/fal_ai/data/fal_ai_usecase.dart' as _i30;
 import 'package:comby/app/features/fit_check/services/fit_check_service.dart'
     as _i10;
 import 'package:comby/app/features/payment/bloc/payment_bloc.dart' as _i33;
-import 'package:comby/app/features/payment/data/payment_usecase.dart' as _i17;
+import 'package:comby/app/features/payment/data/payment_usecase.dart' as _i16;
 import 'package:comby/app/features/report/bloc/report_bloc.dart' as _i35;
-import 'package:comby/app/features/report/data/report_usecase.dart' as _i18;
+import 'package:comby/app/features/report/data/report_usecase.dart' as _i17;
 import 'package:comby/core/data_sources/firebase_module_firestore.dart' as _i44;
 import 'package:comby/core/data_sources/local_data_source/secure_data_storage.dart'
-    as _i19;
+    as _i18;
 import 'package:comby/core/injection/modules/dio_module.dart' as _i43;
 import 'package:comby/core/injection/modules/secure_storage_module.dart'
     as _i45;
@@ -55,11 +55,11 @@ import 'package:comby/core/services/agent_service.dart' as _i36;
 import 'package:comby/core/services/bottom_sheet_service.dart' as _i5;
 import 'package:comby/core/services/gemini_rest_service.dart' as _i12;
 import 'package:comby/core/services/language_service.dart' as _i14;
-import 'package:comby/core/services/notification_service.dart' as _i16;
-import 'package:comby/core/services/snackbar_service.dart' as _i20;
-import 'package:comby/core/services/theme_service.dart' as _i24;
-import 'package:comby/core/services/user_preference_service.dart' as _i25;
-import 'package:comby/core/services/weather_service.dart' as _i27;
+import 'package:comby/core/services/notification_service.dart' as _i32;
+import 'package:comby/core/services/snackbar_service.dart' as _i19;
+import 'package:comby/core/services/theme_service.dart' as _i23;
+import 'package:comby/core/services/user_preference_service.dart' as _i24;
+import 'package:comby/core/services/weather_service.dart' as _i26;
 import 'package:dio/dio.dart' as _i6;
 import 'package:firebase_auth/firebase_auth.dart' as _i7;
 import 'package:firebase_storage/firebase_storage.dart' as _i9;
@@ -106,82 +106,83 @@ extension GetItInjectableX on _i1.GetIt {
           auth: gh<_i7.FirebaseAuth>(),
           googleSignIn: gh<_i13.GoogleSignIn>(),
         ));
-    gh.singleton<_i16.NotificationService>(() => _i16.NotificationService());
-    gh.factory<_i17.PaymentUsecase>(() => _i17.PaymentUsecase(
+    gh.factory<_i16.PaymentUsecase>(() => _i16.PaymentUsecase(
           gh<_i7.FirebaseAuth>(),
           gh<_i9.FirebaseStorage>(),
           firestore: gh<_i8.FirebaseFirestore>(),
         ));
-    gh.factory<_i18.ReportUsecase>(() => _i18.ReportUsecase(
+    gh.factory<_i17.ReportUsecase>(() => _i17.ReportUsecase(
           gh<_i7.FirebaseAuth>(),
           firestore: gh<_i8.FirebaseFirestore>(),
         ));
-    gh.singleton<_i19.SecureDataStorage>(
-        () => _i19.SecureDataStorage(gh<_i11.FlutterSecureStorage>()));
-    gh.factory<_i20.SnackBarService>(() => _i20.SnackBarService());
-    gh.singleton<_i21.SplashBloc>(() => _i21.SplashBloc());
-    gh.factory<_i22.SplashUseCase>(() => const _i22.SplashUseCase());
-    gh.singleton<_i23.StyleDNAService>(() => _i23.StyleDNAService());
-    gh.factory<_i24.ThemeService>(() => _i24.ThemeService());
-    gh.factory<_i25.UserPreferenceService>(() => _i25.UserPreferenceService());
-    gh.singleton<_i26.WardrobeAnalysisService>(
-        () => _i26.WardrobeAnalysisService());
-    gh.factory<_i27.WeatherService>(
-        () => _i27.WeatherService(gh<_i8.FirebaseFirestore>()));
-    gh.factory<_i28.AppUseCase>(() => _i28.AppUseCase(
-          gh<_i19.SecureDataStorage>(),
+    gh.singleton<_i18.SecureDataStorage>(
+        () => _i18.SecureDataStorage(gh<_i11.FlutterSecureStorage>()));
+    gh.factory<_i19.SnackBarService>(() => _i19.SnackBarService());
+    gh.singleton<_i20.SplashBloc>(() => _i20.SplashBloc());
+    gh.factory<_i21.SplashUseCase>(() => const _i21.SplashUseCase());
+    gh.singleton<_i22.StyleDNAService>(() => _i22.StyleDNAService());
+    gh.factory<_i23.ThemeService>(() => _i23.ThemeService());
+    gh.factory<_i24.UserPreferenceService>(() => _i24.UserPreferenceService());
+    gh.singleton<_i25.WardrobeAnalysisService>(
+        () => _i25.WardrobeAnalysisService());
+    gh.factory<_i26.WeatherService>(
+        () => _i26.WeatherService(gh<_i8.FirebaseFirestore>()));
+    gh.factory<_i27.AppUseCase>(() => _i27.AppUseCase(
+          gh<_i18.SecureDataStorage>(),
           firestore: gh<_i8.FirebaseFirestore>(),
         ));
-    gh.factory<_i29.ClosetUseCase>(() => _i29.ClosetUseCase(
+    gh.factory<_i28.ClosetUseCase>(() => _i28.ClosetUseCase(
           firestore: gh<_i8.FirebaseFirestore>(),
           auth: gh<_i7.FirebaseAuth>(),
           storage: gh<_i9.FirebaseStorage>(),
         ));
-    gh.factory<_i30.CreateAccountUseCase>(() => _i30.CreateAccountUseCase(
+    gh.factory<_i29.CreateAccountUseCase>(() => _i29.CreateAccountUseCase(
           auth: gh<_i7.FirebaseAuth>(),
           googleSignIn: gh<_i13.GoogleSignIn>(),
           firestore: gh<_i8.FirebaseFirestore>(),
         ));
-    gh.factory<_i31.FalAiUsecase>(() => _i31.FalAiUsecase(
+    gh.factory<_i30.FalAiUsecase>(() => _i30.FalAiUsecase(
           firestore: gh<_i8.FirebaseFirestore>(),
           auth: gh<_i7.FirebaseAuth>(),
           storage: gh<_i9.FirebaseStorage>(),
         ));
-    gh.singleton<_i32.LoginBloc>(() => _i32.LoginBloc(
+    gh.singleton<_i31.LoginBloc>(() => _i31.LoginBloc(
           loginUseCase: gh<_i15.LoginUseCase>(),
-          createAccountUseCase: gh<_i30.CreateAccountUseCase>(),
+          createAccountUseCase: gh<_i29.CreateAccountUseCase>(),
         ));
+    gh.singleton<_i32.NotificationService>(
+        () => _i32.NotificationService(gh<_i24.UserPreferenceService>()));
     gh.singleton<_i33.PaymentBloc>(
-        () => _i33.PaymentBloc(generateUseCase: gh<_i17.PaymentUsecase>()));
+        () => _i33.PaymentBloc(generateUseCase: gh<_i16.PaymentUsecase>()));
     gh.factory<_i34.ProfileUseCase>(() => _i34.ProfileUseCase(
           auth: gh<_i7.FirebaseAuth>(),
           googleSignIn: gh<_i13.GoogleSignIn>(),
           firestore: gh<_i8.FirebaseFirestore>(),
-          secureDataStorage: gh<_i19.SecureDataStorage>(),
+          secureDataStorage: gh<_i18.SecureDataStorage>(),
         ));
     gh.singleton<_i35.ReportBloc>(
-        () => _i35.ReportBloc(reportUsecase: gh<_i18.ReportUsecase>()));
+        () => _i35.ReportBloc(reportUsecase: gh<_i17.ReportUsecase>()));
     gh.factory<_i36.AgentService>(() => _i36.AgentService(
-          weatherService: gh<_i27.WeatherService>(),
-          closetUseCase: gh<_i29.ClosetUseCase>(),
-          falAiUsecase: gh<_i31.FalAiUsecase>(),
-          userPreferenceService: gh<_i25.UserPreferenceService>(),
-          notificationService: gh<_i16.NotificationService>(),
+          weatherService: gh<_i26.WeatherService>(),
+          closetUseCase: gh<_i28.ClosetUseCase>(),
+          falAiUsecase: gh<_i30.FalAiUsecase>(),
+          userPreferenceService: gh<_i24.UserPreferenceService>(),
+          notificationService: gh<_i32.NotificationService>(),
         ));
     gh.singleton<_i37.AppBloc>(
-        () => _i37.AppBloc(appUsecase: gh<_i28.AppUseCase>()));
+        () => _i37.AppBloc(appUsecase: gh<_i27.AppUseCase>()));
     gh.factory<_i38.ChatUseCase>(() => _i38.ChatUseCase(
-          gh<_i29.ClosetUseCase>(),
+          gh<_i28.ClosetUseCase>(),
           gh<_i36.AgentService>(),
           gh<_i12.GeminiRestService>(),
         ));
     gh.singleton<_i39.ClosetBloc>(
-        () => _i39.ClosetBloc(closetUseCase: gh<_i29.ClosetUseCase>()));
+        () => _i39.ClosetBloc(closetUseCase: gh<_i28.ClosetUseCase>()));
     gh.singleton<_i40.CreateAccountBloc>(() => _i40.CreateAccountBloc(
-        createAccountUseCase: gh<_i30.CreateAccountUseCase>()));
+        createAccountUseCase: gh<_i29.CreateAccountUseCase>()));
     gh.singleton<_i41.ProfileBloc>(() => _i41.ProfileBloc(
           loginUseCase: gh<_i15.LoginUseCase>(),
-          createAccountUseCase: gh<_i30.CreateAccountUseCase>(),
+          createAccountUseCase: gh<_i29.CreateAccountUseCase>(),
           profileUseCase: gh<_i34.ProfileUseCase>(),
         ));
     gh.factory<_i42.ChatBloc>(() => _i42.ChatBloc(gh<_i38.ChatUseCase>()));

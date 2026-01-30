@@ -2,10 +2,15 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:comby/core/services/user_preference_service.dart';
 import 'package:injectable/injectable.dart';
 
 @singleton
 class NotificationService {
+  final UserPreferenceService _userPreferenceService;
+
+  NotificationService(this._userPreferenceService);
+
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
@@ -43,6 +48,10 @@ class NotificationService {
 
     String? token = await _fcm.getToken();
     log('🔑 FCM Token: $token');
+
+    if (token != null) {
+      await _userPreferenceService.saveFCMToken(token);
+    }
 
     // 3. Yerel bildirim ayarları
     const initializationSettingsAndroid =

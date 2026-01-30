@@ -119,7 +119,10 @@ class UserPreferenceService {
           .doc(_userId)
           .collection('preferences')
           .doc('active_mission')
-          .set(missionData);
+          .set({
+        ...missionData,
+        'mission_status': 'active', // Cloud Function için queryable field
+      });
 
       log('✅ Mission başarıyla kaydedildi.');
     } catch (e) {
@@ -148,6 +151,20 @@ class UserPreferenceService {
     } catch (e) {
       log('❌ Active mission getirme hatası: $e');
       return null;
+    }
+  }
+
+  /// FCM Token kaydet
+  Future<void> saveFCMToken(String token) async {
+    if (_userId == null) return;
+    try {
+      await _firestore.collection('users').doc(_userId).set({
+        'fcm_token': token,
+        'last_token_update': DateTime.now().toIso8601String(),
+      }, SetOptions(merge: true));
+      log('✅ FCM Token Firestore\'a kaydedildi.');
+    } catch (e) {
+      log('❌ FCM Token kaydetme hatası: $e');
     }
   }
 
