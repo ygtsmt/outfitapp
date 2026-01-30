@@ -150,4 +150,43 @@ class UserPreferenceService {
       return null;
     }
   }
+
+  /// Aktif görevi geçmişe taşı ve sil
+  Future<void> archiveActiveMission(Map<String, dynamic> missionData) async {
+    if (_userId == null) return;
+
+    log('📜 Mission Arşivleniyor: ${missionData['destination']}');
+
+    try {
+      final batch = _firestore.batch();
+
+      // 1. History'ye ekle
+      final historyRef = _firestore
+          .collection('users')
+          .doc(_userId)
+          .collection('mission_history')
+          .doc(); // Auto-ID
+
+      batch.set(historyRef, {
+        ...missionData,
+        'archived_at': DateTime.now().toIso8601String(),
+        'status': 'completed',
+      });
+
+      // 2. Active'den sil
+      final activeRef = _firestore
+          .collection('users')
+          .doc(_userId)
+          .collection('preferences')
+          .doc('active_mission');
+
+      batch.delete(activeRef);
+
+      await batch.commit();
+      log('✅ Mission başarıyla arşivlendi ve silindi.');
+    } catch (e) {
+      log('❌ Mission arşivleme hatası: $e');
+      rethrow;
+    }
+  }
 }

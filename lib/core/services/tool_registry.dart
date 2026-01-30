@@ -187,7 +187,7 @@ class ToolRegistry {
             'start_date': {
               'type': 'STRING',
               'description':
-                  'Seyahat tarihi (YYYY-MM-DD). Kullanıcı "gidiyorum" derse bugünün tarihini, "gideceğim" derse (ve yeni tarih vermezse) yarının tarihini kullan.'
+                  'Seyahat tarihi ve saati (ISO 8601: YYYY-MM-DDTHH:mm:ss). Örn: "2026-02-01T15:00:00". Kullanıcı saat belirtirse mutlaka ekle. Belirtmezse günün varsayılan saatini (örn: 09:00) veya sadece tarihi kullan.'
             },
             'purpose': {
               'type': 'STRING',

@@ -657,8 +657,11 @@ class AgentService {
       Map<String, dynamic> args) async {
     final destination = args['destination'] as String;
     final items = (args['packed_items'] as List).cast<String>();
-    final startDate = args['start_date'] as String? ??
-        DateTime.now().toString().split(' ')[0];
+
+    // ISO 8601 gelirse direkt al, gelmezse bugünü al
+    final startDate =
+        args['start_date'] as String? ?? DateTime.now().toIso8601String();
+
     final purpose = args['purpose'] as String? ?? 'General';
 
     log('🚀 Yeni Mission Başlatılıyor: $destination - $items');
@@ -710,6 +713,37 @@ class AgentService {
       // Hala boşsa görev yok demektir
       return {'status': 'no_mission'};
     }
+
+    // --- EXPIRED MISSION CHECK (AUTO-CLEANUP) ---
+    final startDateStr = _activeMission!['start_date'] as String? ?? '';
+    if (startDateStr.isNotEmpty) {
+      final startDate = DateTime.parse(startDateStr);
+      final today = DateTime.now();
+
+      // Sadece tarih karşılaştırması (Saat farkını yoksay)
+      final simpleStart =
+          DateTime(startDate.year, startDate.month, startDate.day);
+      final simpleToday = DateTime(today.year, today.month, today.day);
+
+      // Eğer başlangıç tarihi dünden önceyse (start < today)
+      // Kullanıcı "Yarın gidiyorum" dediyse start=Tomorrow. Yarın olduğunda start=Today.
+      // Seyahat bitti diyebilmek için start < today mantıklı (1 günlük seyahat varsayımıyla).
+      // Veya kullanıcı açıkça "dün gittim" dediyse.
+      // Kullanıcı isteği: "Ertesi gün bu datayı kaldırıyor muyuz" -> Evet.
+      if (simpleStart.isBefore(simpleToday)) {
+        log('🏁 Mission süresi doldu, arşivleniyor...');
+
+        await _userPreferenceService.archiveActiveMission(_activeMission!);
+        _activeMission = null; // Memory temizle
+
+        return {
+          'status': 'mission_completed',
+          'message':
+              'Umarım ${_activeMission?['destination'] ?? 'seyahatin'} güzel geçmiştir! Hoş geldin.'
+        };
+      }
+    }
+    // ----------------------------------------------
 
     log('🕵️‍♂️ MISSION MONITORING STARTED: ${_activeMission!['destination']}');
 
