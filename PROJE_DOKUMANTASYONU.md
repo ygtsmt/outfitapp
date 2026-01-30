@@ -26,9 +26,10 @@ Projede Google Gemini modelleri ve Fal AI API'ları entegre edilmiştir:
 *   **Kombin Değerlendirme:** Kullanıcı üzerindeki kombinin fotoğrafını yükler.
 *   **Skorlama ve Geri Bildirim:** AI, kombine 100 üzerinden bir puan verir ve Türkçe olarak yapıcı eleştirilerde bulunur (örn: "Renk uyumu harika ama bu ceketle daha ince bir kemer tercih edebilirsin").
 
-### C. Stil DNA (Style DNA)
-*   **Karakter Analizi:** Gardıroptaki parçaların genel tarzını (Casual, Streetwear, Elegant vb.) analiz ederek kullanıcının "Stil Kimliğini" oluşturur.
-*   **Kişiselleştirilmiş Başlıklar:** Kullanıcıya "Minimalist Öncü" veya "Sokak Modası Ustası" gibi stil başlıkları atar.
+### C. Stil DNA (Vibe Engineer) 🧬
+*   **Envanter Analizi:** Gardıroptaki tüm parçaların renk, kategori ve marka dağılımını istatistiksel olarak hesaplar.
+*   **Karakter Çıkarımı:** Gemini Reasoning yeteneği ile bu istatistikleri yorumlar ve kullanıcıya "Senin tarzın Minimalist Dark Streetwear" gibi detaylı bir kimlik raporu sunar.
+*   **Eksik Parça Analizi:** "Dolabın %80 siyah, stilini patlatmak için gümüş bir aksesuar eklemelisin" gibi stratejik alışveriş tavsiyeleri verir.
 
 ### D. Kombin Önerileri ve Hava Durumu Entegrasyonu
 *   **Şartlara Uygunluk:** Lokasyona bağlı hava durumu verilerini alarak (örn: yağmurlu, 15°C) dolaptaki uygun parçalardan kombinler önerir.
@@ -55,11 +56,18 @@ Kullanıcının moda ile ilgili her türlü sorusuna yanıt veren, görsel algı
 *   **Zaman Yönetimi:** Etkinlik saatine ne kadar kaldığını hesaplayarak "15 dakikan var, hızlıca şu kombini yap" şeklinde pratik öneriler sunar.
 *   **Çakışma Kontrolü:** Geçmiş etkinliklerde giyilen kıyafetleri hatırlayarak (Memory), aynı grupla yapılacak buluşmalarda "Bunu geçen sefer giymiştin, değiştirmek ister misin?" uyarısı yapar.
 
+### H. Marathon Agent (Otonom Seyahat Takipçisi) 🏃‍♂️
+*   **Sürekli Takip (Long-Running Task):** Kullanıcı bir seyahat planı yaptığında (örn: "Hafta sonu Londra'ya gidiyorum"), ajan bu görevi hafızasına kaydeder ve arka planda takip etmeye başlar.
+*   **Otonom Karar Verme (Reasoning):** Uygulama kapalıyken bile belirli aralıklarla (Cloud Functions & Workmanager) hedef lokasyondaki hava durumunu kontrol eder.
+*   **Proaktif Koruma (Self-Correction):** Eğer hava durumu değişirse (örn: Güneşli -> Karlı) ve kullanıcının bavulundaki parça buna uygun değilse (Beyaz Sneaker), ajan devreye girer.
+*   **Akıllı Bildirimler:** Kullanıcıya sadece uyarı vermez, çözüm de sunar: "Londra'da kar başladı! Bavulundaki sneaker yerine dolabındaki Siyah Botları almanı öneririm." uyarısını Push Notification olarak gönderir.
+
 ## 4. Teknik Altyapı
 *   **Framework:** Flutter (Mobile)
 *   **Backend:** Firebase (Auth, Firestore, Storage, Cloud Functions)
 *   **AI & ML:** Google Gemini Models, Fal AI (Image Generation)
 *   **Hava Durumu:** OpenWeatherMap API
+*   **Bildirim Sistemi:** Firebase Cloud Messaging (FCM) & Flutter Local Notifications (Proaktif uyarılar için)
 *   **Ödeme Sistemi:** RevenueCat (Abonelik ve Kredi Modelini yönetir)
 *   **Bağımlılık Yönetimi:** Injectable & GetIt (Dependency Injection)
 

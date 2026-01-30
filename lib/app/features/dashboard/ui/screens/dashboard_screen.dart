@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import "package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart";
@@ -15,9 +16,99 @@ import 'package:comby/generated/l10n.dart';
 import 'package:comby/app/features/dashboard/ui/widgets/daily_outfit_card.dart';
 import 'package:comby/app/features/chat/ui/chat_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:comby/core/injection/injection.dart';
+import 'package:comby/core/services/agent_service.dart';
+import 'package:comby/core/services/gemini_rest_service.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 🕵️‍♂️ MARATHON AGENT: Görev Kontrolü
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkActiveMission();
+    });
+  }
+
+  Future<void> _checkActiveMission() async {
+    try {
+      final agentService = getIt<AgentService>();
+      final geminiService = getIt<GeminiRestService>();
+
+      final result = await agentService.monitorActiveMission(geminiService);
+
+      if (result['status'] == 'active' && mounted) {
+        final analysis = result['raw_analysis'];
+        // Basit JSON parsing (Eğer result string ise)
+        Map<String, dynamic> alertData = {};
+        try {
+          alertData = jsonDecode(analysis);
+        } catch (e) {
+          alertData = {
+            'title': 'Travel Alert',
+            'message': analysis,
+            'alert_type': 'info'
+          };
+        }
+
+        // 🔔 ALERT DIALOG
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Row(
+              children: [
+                Icon(
+                  alertData['alert_type'] == 'danger'
+                      ? Icons.warning_amber_rounded
+                      : Icons.info_outline,
+                  color: alertData['alert_type'] == 'danger'
+                      ? Colors.red
+                      : Colors.blue,
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                    child: Text(alertData['title'] ?? 'Comby Advisor',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold))),
+              ],
+            ),
+            content: Text(alertData['message'] ?? '',
+                style: TextStyle(fontSize: 16)),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Tamam, Teşekkürler'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  // Chate git
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatScreen(),
+                      ));
+                },
+                child: Text('Detayları Konuş'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Mission Check Fail: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

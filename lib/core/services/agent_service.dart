@@ -13,6 +13,7 @@ import 'package:comby/core/services/user_preference_service.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/calendar/v3.dart' as calendar;
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
+import 'package:comby/core/services/notification_service.dart';
 
 @injectable
 class AgentService {
@@ -20,6 +21,15 @@ class AgentService {
   final ClosetUseCase _closetUseCase;
   final FalAiUsecase _falAiUsecase;
   final UserPreferenceService _userPreferenceService;
+  final NotificationService _notificationService;
+
+  // MARATHON AGENT: Aktif Görev (Mock DB)
+  Map<String, dynamic>? _activeMission = {
+    'mission_id': 'london_001',
+    'destination': 'Sivas',
+    'items': ['White Sneakers', 'Trench Coat', 'Blue Jeans'],
+    'initial_weather_desc': 'Sunny',
+  };
 
   // ignore: unused_field
   final ToolRegistry _toolRegistry = ToolRegistry(); // Helper access if needed
@@ -29,10 +39,12 @@ class AgentService {
     required ClosetUseCase closetUseCase,
     required FalAiUsecase falAiUsecase,
     required UserPreferenceService userPreferenceService,
+    required NotificationService notificationService,
   })  : _weatherService = weatherService,
         _closetUseCase = closetUseCase,
         _falAiUsecase = falAiUsecase,
-        _userPreferenceService = userPreferenceService;
+        _userPreferenceService = userPreferenceService,
+        _notificationService = notificationService;
 
   /// 🤖 Agent task'i execute et (REST API)
   Future<AgentResponse> executeAgentTask({
@@ -642,5 +654,113 @@ class AgentService {
       'top_categories': topCategories,
       'message': 'Dolap analizi tamamlandı. İstatistiklere göre yorum yap.',
     };
+  }
+
+  /// MARATHON AGENT: Aktif görevi izle ve risk analizi yap
+  Future<Map<String, dynamic>> monitorActiveMission(
+      GeminiRestService geminiService) async {
+    if (_activeMission == null) {
+      return {'status': 'no_mission'};
+    }
+
+    log('🕵️‍♂️ MISSION MONITORING STARTED: ${_activeMission!['destination']}');
+
+    // 1. Güncel Havayı Çek (Gerçek veya Mock)
+    // Test için: Havayı "Karlı" (Snowy) olarak manipüle ediyoruz ki risk çıksın.
+    final currentWeather = {'description': 'Heavy Snow', 'temp': -2};
+
+    // 2. Dolaptaki Alternatifleri Çek
+    final allItems = await _closetUseCase.getUserClosetItems();
+    final wardrobeSummary = allItems
+        .map((e) => "${e.category} (${e.color}) - ${e.brand ?? ''}")
+        .take(20) // Token tasarrufu
+        .join(", ");
+
+    // 3. AGENT REASONING (Doğrudan modele sor)
+    final prompt = '''
+    ACT AS A TRAVEL GUARDIAN.
+    
+    MISSION CONTEXT:
+    Destination: ${_activeMission!['destination']}
+    Packed Items: ${_activeMission!['items']}
+    Old Weather: ${_activeMission!['initial_weather_desc']}
+    
+    NEW SITUATION:
+    New Weather: ${currentWeather['description']} (${currentWeather['temp']}°C)
+    User's Wardrobe (Alternatives): [$wardrobeSummary]
+    
+    TASK:
+    Analyze if the new weather poses a risk to the Packed Items.
+    If YES -> Suggest a SPECIFIC replacement from the Wardrobe.
+    If NO -> Confirm everything is fine.
+    
+    OUTPUT FORMAT (JSON ONLY):
+    {
+      "alert_type": "danger" | "warning" | "success",
+      "title": "Short Title",
+      "message": "Friendly advice explaining why and what to swap."
+    }
+    ''';
+
+    try {
+      // PROMPT & SYSTEM INSTRUCTION OLUŞTUR
+      final request = GeminiRequest(
+        contents: [
+          GeminiContent(
+            role: 'user',
+            parts: [GeminiTextPart(prompt)],
+          ),
+        ],
+        systemInstruction: GeminiContent(
+          role: 'system',
+          parts: [
+            GeminiTextPart('You are a JSON generator. Respond ONLY with JSON.')
+          ],
+        ),
+      );
+
+      // REST API ÇAĞRISI
+      final response = await geminiService.generateContent(
+        model: 'gemini-3-flash-preview',
+        request: request,
+      );
+
+      // RESPONSE PARSING
+      var responseText = '';
+      if (response.candidates != null &&
+          response.candidates!.isNotEmpty &&
+          response.candidates!.first.content.parts.isNotEmpty) {
+        final part = response.candidates!.first.content.parts.first;
+        if (part is GeminiTextPart) {
+          responseText = part.text;
+        }
+      }
+
+      // JSON TEMİZLEME
+      final cleanJson =
+          responseText.replaceAll('```json', '').replaceAll('```', '').trim();
+
+      if (cleanJson.isNotEmpty) {
+        log("🤖 Agent Decision: $cleanJson");
+
+        // 🔔 PUSH NOTIFICATION TETİKLE
+        try {
+          final alert = jsonDecode(cleanJson);
+          _notificationService.showLocalNotification(
+            title: alert['title'] ?? 'Comby Seyahat Uyarısı',
+            body: alert['message'] ?? '',
+            payload: 'mission_alert',
+          );
+        } catch (e) {
+          log("❌ Notification Error: $e");
+        }
+
+        return {'status': 'active', 'raw_analysis': cleanJson};
+      }
+    } catch (e) {
+      log("❌ Monitoring Error: $e");
+    }
+
+    return {'status': 'error'};
   }
 }

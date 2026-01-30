@@ -4,6 +4,8 @@ import "package:flutter_screenutil/flutter_screenutil.dart";
 import "package:firebase_core/firebase_core.dart";
 import "package:comby/app/ui/app_screen.dart";
 import "package:comby/core/core.dart";
+import "package:comby/core/injection/injection.dart";
+import "package:comby/core/services/notification_service.dart";
 
 import "package:comby/firebase_options.dart";
 import "package:url_strategy/url_strategy.dart";
@@ -32,6 +34,9 @@ Future<void> main() async {
 
   // Dependency injection
   configureDependencies();
+
+  // Notification init
+  await getIt<NotificationService>().initialize();
 
   // Web için temiz URL
   setPathUrlStrategy();
