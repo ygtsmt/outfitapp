@@ -13,6 +13,7 @@ class ToolRegistry {
           _updatePreferenceRest,
           _getCalendarEventsRest,
           _analyzeStyleDNARest,
+          _startTravelMissionRest,
         ]),
       ];
 
@@ -162,6 +163,39 @@ class ToolRegistry {
             },
           },
           'required': ['date'],
+        },
+      );
+
+  static GeminiFunctionDeclaration get _startTravelMissionRest =>
+      GeminiFunctionDeclaration(
+        name: 'start_travel_mission',
+        description:
+            'Kullanıcı kesin bir seyahat planı yaptığında veya yola çıkacağını söylediğinde bu görevi takip etmek için kullan.',
+        parameters: {
+          'type': 'OBJECT',
+          'properties': {
+            'destination': {
+              'type': 'STRING',
+              'description': 'Gidilecek yer (Şehir adı).'
+            },
+            'packed_items': {
+              'type': 'ARRAY',
+              'items': {'type': 'STRING'},
+              'description':
+                  'Bavula koyduğu, giydiği veya yanına aldığı eşyalar.'
+            },
+            'start_date': {
+              'type': 'STRING',
+              'description':
+                  'Seyahat tarihi (YYYY-MM-DD). Kullanıcı "gidiyorum" derse bugünün tarihini, "gideceğim" derse (ve yeni tarih vermezse) yarının tarihini kullan.'
+            },
+            'purpose': {
+              'type': 'STRING',
+              'description':
+                  'Seyahatin amacı (Business, Vacation, Family, Wedding vs). Belirtilmediyse "General".'
+            },
+          },
+          'required': ['destination', 'packed_items'],
         },
       );
 
@@ -319,7 +353,11 @@ Plan:
    b. Gardırop boş/hata: Genel moda kurallarına göre (örn: "Siyah bir pantolon her zaman kurtarıcıdır") öneri yap.
    c. Hata durumlarında dahi, amacın kullanıcıya bir "çözüm" sunmaktır.
 9. STİL ANALİZİ (YENİ): Kullanıcı "tarzım ne", "analiz et" derse `analyze_style_dna` kullan. Gelen istatistiklere (Renk: %60 Siyah gibi) bakarak ona bir "Moda Karakteri" (Örn: Minimalist Dark) biç. ve bunu Markdown formatında şık bir rapor olarak sun.
-10. CEVAP FORMATI: Son cevabını verirken samimi ol, neden bu parçaları seçtiğini anlat. Tool çıktılarını (hava durumu, bulunan parçalar) yorumlayarak sun.
+10. SEYAHAT VE BAVUL (KRİTİK): Kullanıcı "Bavul hazırla", "Yarın X'e gidiyorum ne alayım" dediğinde:
+    a. Önce hava durumuna (`get_weather`) bak.
+    b. Sonra gardıroptan uygun parça öner (`search_wardrobe`).
+    c. Önerdiğin ve kullanıcının onayladığı (veya senin seçtiğin) parçaları `start_travel_mission` tool'u ile KAYDET. Bunu yapmazsan kullanıcı seyahatteyken onu koruyamayız. Parametreleri (`destination`, `packed_items` vb.) senin önerdiklerinle doldur.
+11. CEVAP FORMATI: Son cevabını verirken samimi ol, neden bu parçaları seçtiğini anlat. Tool çıktılarını (hava durumu, bulunan parçalar) yorumlayarak sun.
 
 Cevabında planlama kısmını kullanıcıya `<PLAN>` etiketi içinde göster ki ne kadar akıllı olduğunu görsünler. Sonra normal, samimi cevabını ver.
 

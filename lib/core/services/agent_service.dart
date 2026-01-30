@@ -23,13 +23,8 @@ class AgentService {
   final UserPreferenceService _userPreferenceService;
   final NotificationService _notificationService;
 
-  // MARATHON AGENT: Aktif Görev (Mock DB)
-  Map<String, dynamic>? _activeMission = {
-    'mission_id': 'london_001',
-    'destination': 'Sivas',
-    'items': ['White Sneakers', 'Trench Coat', 'Blue Jeans'],
-    'initial_weather_desc': 'Sunny',
-  };
+  // MARATHON AGENT: Aktif Görev (Artık Storage'dan geliyor, burası boş kalabilir)
+  Map<String, dynamic>? _activeMission;
 
   // ignore: unused_field
   final ToolRegistry _toolRegistry = ToolRegistry(); // Helper access if needed
@@ -306,6 +301,8 @@ class AgentService {
         return _getCalendarEvents(call.args);
       case 'analyze_style_dna':
         return _analyzeStyleDNA(call.args);
+      case 'start_travel_mission':
+        return _startTravelMission(call.args);
       default:
         throw Exception('Bilinmeyen tool: ${call.name}');
     }
@@ -656,18 +653,87 @@ class AgentService {
     };
   }
 
+  Future<Map<String, dynamic>> _startTravelMission(
+      Map<String, dynamic> args) async {
+    final destination = args['destination'] as String;
+    final items = (args['packed_items'] as List).cast<String>();
+    final startDate = args['start_date'] as String? ??
+        DateTime.now().toString().split(' ')[0];
+    final purpose = args['purpose'] as String? ?? 'General';
+
+    log('🚀 Yeni Mission Başlatılıyor: $destination - $items');
+
+    // O anki hava durumunu çek (Initial Weather)
+    String initialWeather = 'Unknown';
+    try {
+      final weatherData = await _weatherService.getWeatherForAgent(
+        city: destination,
+        date: DateTime.parse(startDate),
+      );
+      initialWeather = weatherData.description;
+    } catch (e) {
+      log('⚠️ Initial weather fetch failed: $e');
+    }
+
+    // Görevi oluştur
+    final missionData = {
+      'destination': destination,
+      'items': items,
+      'start_date': startDate,
+      'purpose': purpose,
+      'initial_weather_desc': initialWeather,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+
+    // Kaydet
+    await _userPreferenceService.setActiveMission(missionData);
+
+    // RAM'dekini de güncelle (Anlık takip için)
+    _activeMission = missionData;
+
+    return {
+      'status': 'success',
+      'message':
+          '$destination seyahati için takip başlatıldı. Hava durumu ($initialWeather) ve eşyaların kaydedildi. Bir değişiklik olursa Dashboard\'da uyaracağım.',
+    };
+  }
+
   /// MARATHON AGENT: Aktif görevi izle ve risk analizi yap
   Future<Map<String, dynamic>> monitorActiveMission(
       GeminiRestService geminiService) async {
+    // 1. Önce RAM'e veya Storage'a bak
     if (_activeMission == null) {
+      _activeMission = await _userPreferenceService.getActiveMission();
+    }
+
+    if (_activeMission == null) {
+      // Hala boşsa görev yok demektir
       return {'status': 'no_mission'};
     }
 
     log('🕵️‍♂️ MISSION MONITORING STARTED: ${_activeMission!['destination']}');
 
-    // 1. Güncel Havayı Çek (Gerçek veya Mock)
-    // Test için: Havayı "Karlı" (Snowy) olarak manipüle ediyoruz ki risk çıksın.
-    final currentWeather = {'description': 'Heavy Snow', 'temp': -2};
+    // 1. Güncel Havayı Çek (Gerçek Veri)
+    Map<String, dynamic> currentWeather;
+    try {
+      final destination = _activeMission!['destination'] as String;
+      final weatherData = await _weatherService.getWeatherForAgent(
+        city: destination,
+        date: DateTime.now(),
+      );
+
+      currentWeather = {
+        'description': weatherData.description,
+        'temp': weatherData.temperature,
+        'condition': weatherData.condition
+      };
+
+      log('🌤️ Real Weather Fetched for $destination: ${weatherData.summary}');
+    } catch (e) {
+      log('⚠️ Weather Service Failed, using fallback: $e');
+      // Fallback to avoid crash, but indicates missing data
+      currentWeather = {'description': 'Unknown', 'temp': 20};
+    }
 
     // 2. Dolaptaki Alternatifleri Çek
     final allItems = await _closetUseCase.getUserClosetItems();
@@ -678,7 +744,7 @@ class AgentService {
 
     // 3. AGENT REASONING (Doğrudan modele sor)
     final prompt = '''
-    ACT AS A TRAVEL GUARDIAN.
+    ACT AS A TRAVEL GUARDIAN & LOCAL EXPERT.
     
     MISSION CONTEXT:
     Destination: ${_activeMission!['destination']}
@@ -690,15 +756,19 @@ class AgentService {
     User's Wardrobe (Alternatives): [$wardrobeSummary]
     
     TASK:
-    Analyze if the new weather poses a risk to the Packed Items.
-    If YES -> Suggest a SPECIFIC replacement from the Wardrobe.
-    If NO -> Confirm everything is fine.
+    1. Analyze if the new weather poses a risk to the Packed Items.
+       - If YES -> Suggest a SPECIFIC replacement from the Wardrobe.
+       - If NO -> Confirm everything is fine.
+    2. BE A LOCAL EXPERT: Suggest a specific activity or place in the Destination that fits the CURRENT weather (e.g., "It's raining in Paris, visit Passage des Panoramas").
+    3. VIBE MATCH: Suggest a song or music genre that fits the city/weather vibe.
+    4. PRACTICAL TIP: Remind about technical details specific to the country (e.g. power plugs in UK, tipping in USA).
     
     OUTPUT FORMAT (JSON ONLY):
     {
       "alert_type": "danger" | "warning" | "success",
-      "title": "Short Title",
-      "message": "Friendly advice explaining why and what to swap."
+      "title": "Short Title (e.g. London Calling!)",
+      "message": "Friendly advice combining risk analysis, the local suggestion, and the practical tip.",
+      "vibe_music": "Song - Artist"
     }
     ''';
 

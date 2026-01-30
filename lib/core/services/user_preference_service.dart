@@ -106,4 +106,48 @@ class UserPreferenceService {
       rethrow;
     }
   }
+
+  /// Aktif görevi kaydet (Marathon Agent için)
+  Future<void> setActiveMission(Map<String, dynamic> missionData) async {
+    if (_userId == null) return;
+
+    log('🔥 ACTIVE MISSION KAYDEDİLİYOR: $missionData');
+
+    try {
+      await _firestore
+          .collection('users')
+          .doc(_userId)
+          .collection('preferences')
+          .doc('active_mission')
+          .set(missionData);
+
+      log('✅ Mission başarıyla kaydedildi.');
+    } catch (e) {
+      log('❌ Mission kaydetme hatası: $e');
+      rethrow;
+    }
+  }
+
+  /// Aktif görevi getir
+  Future<Map<String, dynamic>?> getActiveMission() async {
+    if (_userId == null) return null;
+
+    try {
+      final doc = await _firestore
+          .collection('users')
+          .doc(_userId)
+          .collection('preferences')
+          .doc('active_mission')
+          .get();
+
+      if (doc.exists) {
+        log('✅ Aktif mission bulundu: ${doc.data()}');
+        return doc.data();
+      }
+      return null;
+    } catch (e) {
+      log('❌ Active mission getirme hatası: $e');
+      return null;
+    }
+  }
 }
