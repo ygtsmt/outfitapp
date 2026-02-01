@@ -249,12 +249,28 @@ class OutfitSuggestion {
   final ModelItem model;
   final List<WardrobeItem> closetItems;
   final String reasoning;
+  final String? generatedImageUrl;
 
   OutfitSuggestion({
     required this.model,
     required this.closetItems,
     required this.reasoning,
+    this.generatedImageUrl,
   });
+
+  OutfitSuggestion copyWith({
+    ModelItem? model,
+    List<WardrobeItem>? closetItems,
+    String? reasoning,
+    String? generatedImageUrl,
+  }) {
+    return OutfitSuggestion(
+      model: model ?? this.model,
+      closetItems: closetItems ?? this.closetItems,
+      reasoning: reasoning ?? this.reasoning,
+      generatedImageUrl: generatedImageUrl ?? this.generatedImageUrl,
+    );
+  }
 
   /// Get all image URLs for outfit generation
   /// First URL is model, rest are clothing items
@@ -270,6 +286,7 @@ class OutfitSuggestion {
           .map((c) => c.toJson())
           .toList(), // WardrobeItem toJson needed
       'reasoning': reasoning,
+      'generatedImageUrl': generatedImageUrl,
     };
   }
 
@@ -280,6 +297,7 @@ class OutfitSuggestion {
           .map((c) => WardrobeItem.fromJson(c)) // WardrobeItem.fromJson needed
           .toList(),
       reasoning: json['reasoning'],
+      generatedImageUrl: json['generatedImageUrl'],
     );
   }
 }

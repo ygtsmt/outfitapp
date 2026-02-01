@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -49,11 +51,14 @@ class _OutfitSuggestionResultScreenState
     super.initState();
     _selectedModel = widget.suggestion.model;
     _selectedClosetItems = List.from(widget.suggestion.closetItems);
+    _generatedImageUrl = widget.suggestion.generatedImageUrl;
 
-    // Auto-start generation
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startGeneration(sourceId: 3); // Source 3: Initial Weather Suggestion
-    });
+    // Only auto-start if no image is generated yet
+    if (_generatedImageUrl == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _startGeneration(sourceId: 3); // Source 3: Initial Weather Suggestion
+      });
+    }
   }
 
   @override
@@ -128,19 +133,17 @@ class _OutfitSuggestionResultScreenState
       final status = data['status'];
 
       if (rawOutput != null) {
-        print('Raw Output received: $rawOutput');
-
         // Check if output is a List (like in CombinesTabContent)
         if (rawOutput is List) {
           if (rawOutput.isNotEmpty && rawOutput[0] is String) {
             final url = rawOutput[0] as String;
-            print('Image URL found (List): $url');
             if (mounted) {
               setState(() {
                 _generatedImageUrl = url;
                 _isGenerating = false;
               });
               GetIt.I<ActivityService>().logActivity('outfit_generated');
+              _updateCacheWithImage(url);
               _firestoreSubscription?.cancel();
             }
             return;
@@ -155,32 +158,22 @@ class _OutfitSuggestionResultScreenState
               final firstImage = images[0] as Map<String, dynamic>;
               if (firstImage['url'] != null) {
                 final url = firstImage['url'] as String;
-                print('Image URL found (Map): $url');
                 if (mounted) {
                   setState(() {
                     _generatedImageUrl = url;
                     _isGenerating = false;
                   });
                   GetIt.I<ActivityService>().logActivity('outfit_generated');
+                  _updateCacheWithImage(url);
                   _firestoreSubscription?.cancel();
                 }
-              } else {
-                print('Image URL is null in first image: $firstImage');
               }
-            } else {
-              print('Images list is empty or first item is not a map: $images');
             }
-          } else {
-            print(
-                'images key is missing or not a list: ${rawOutput['images']}');
           }
         }
       } else if (status == 'failed' || status == 'error') {
-        print('Status failed or error: $status');
         _handleError(AppLocalizations.of(context).failed);
         _firestoreSubscription?.cancel();
-      } else {
-        print('Snapshot data: $data');
       }
     });
   }
@@ -492,5 +485,28 @@ class _OutfitSuggestionResultScreenState
         },
       ),
     );
+  }
+
+  Future<void> _updateCacheWithImage(String url) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      final key = 'daily_outfit_$today';
+
+      if (prefs.containsKey(key)) {
+        final jsonString = prefs.getString(key);
+        if (jsonString != null) {
+          final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+          final cachedSuggestion = OutfitSuggestion.fromJson(jsonMap);
+
+          final updatedSuggestion =
+              cachedSuggestion.copyWith(generatedImageUrl: url);
+
+          await prefs.setString(key, jsonEncode(updatedSuggestion.toJson()));
+        }
+      }
+    } catch (e) {
+      print("Error updating daily outfit cache: \$e");
+    }
   }
 }

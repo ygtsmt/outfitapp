@@ -130,9 +130,9 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         return;
       }
 
-      // Show bottom sheet with suggestion
+      // Save suggestion and update UI, but don't auto-show
       if (mounted) {
-        _showOutfitBottomSheet(suggestion);
+        _saveDailyOutfit(suggestion);
       }
     } catch (e) {
       _showErrorSnackbar(
@@ -178,14 +178,16 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     });
   }
 
-  void _showOutfitBottomSheet(OutfitSuggestion suggestion) {
-    _saveDailyOutfit(suggestion); // Save when generated
-    context.router.push(
+  Future<void> _showOutfitBottomSheet(OutfitSuggestion suggestion) async {
+    // _saveDailyOutfit(suggestion); // Already saved
+    await context.router.push(
       OutfitSuggestionResultScreenRoute(
         suggestion: suggestion,
         weather: _weather!,
       ),
     );
+    // Refresh to get the generated image from cache if available
+    _checkDailyOutfit();
   }
 
   @override
