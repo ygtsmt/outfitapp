@@ -19,14 +19,17 @@ class LiveStylistCard extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF6A11CB), Color(0xFF2575FC)], // Purple to Blue
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).primaryColor,
+              Theme.of(context).primaryColor.withOpacity(0.7),
+            ], // Updated to Daily Combine Theme
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.blue.withOpacity(0.3),
+              color: Theme.of(context).primaryColor.withOpacity(0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),

@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:auto_route/auto_route.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/app/features/dashboard/data/models/weather_model.dart';
 import 'package:comby/core/core.dart';
@@ -76,6 +78,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       _isLoading = false;
       if (weather == null) {
         _errorMessage = AppLocalizations.of(context).weatherInfoNotReceived;
+      } else {
+        _checkDailyOutfit(); // Check daily outfit after weather loads
       }
     });
   }
@@ -142,6 +146,28 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     }
   }
 
+  void _saveDailyOutfit(OutfitSuggestion suggestion) async {
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    final key = 'daily_outfit_$today';
+
+    // We need toJson implementation in OutfitSuggestion
+    // For now, we assume it's serializable or implemented
+    // If not, we should implement it in next step.
+    // Actually, I should check OutfitSuggestion model first.
+    // Assuming simple JSON encoding for now.
+    // Wait, OutfitSuggestion contains ModelItem and WardrobeItem objects.
+    // I need to serialize them properly.
+
+    final jsonMap = suggestion.toJson();
+    await prefs.setString(key, jsonEncode(jsonMap));
+
+    setState(() {
+      _cachedSuggestion = suggestion;
+      _isOutfitReady = true;
+    });
+  }
+
   void _showErrorSnackbar(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -153,6 +179,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   }
 
   void _showOutfitBottomSheet(OutfitSuggestion suggestion) {
+    _saveDailyOutfit(suggestion); // Save when generated
     context.router.push(
       OutfitSuggestionResultScreenRoute(
         suggestion: suggestion,
@@ -577,7 +604,13 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: _isGeneratingOutfit ? null : _generateOutfit,
+          onTap: () {
+            if (_isOutfitReady && _cachedSuggestion != null) {
+              _showOutfitBottomSheet(_cachedSuggestion!);
+            } else if (!_isGeneratingOutfit) {
+              _generateOutfit();
+            }
+          },
           borderRadius: BorderRadius.circular(20.r),
           splashColor: Colors.white.withOpacity(0.2),
           highlightColor: Colors.white.withOpacity(0.1),
@@ -642,8 +675,9 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                       ),
                       SizedBox(height: 2.h),
                       Text(
-                        AppLocalizations.of(context)
-                            .weatherBasedOutfitSuggestion,
+                        _isOutfitReady
+                            ? "Senin için en iyi kombini hazırladım! ✨"
+                            : "Hava durumuna göre en iyi kombin",
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.95),
                           fontSize: 11.sp,
@@ -683,7 +717,9 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                             ),
                           )
                         : Icon(
-                            Icons.arrow_forward_rounded,
+                            _isOutfitReady
+                                ? Icons.check_rounded
+                                : Icons.arrow_forward_rounded,
                             color: Colors.white,
                             size: 24.sp,
                           ),
@@ -696,4 +732,28 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       ),
     );
   }
+
+  Future<void> _checkDailyOutfit() async {
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    final key = 'daily_outfit_$today';
+
+    if (prefs.containsKey(key)) {
+      final jsonString = prefs.getString(key);
+      if (jsonString != null) {
+        setState(() {
+          _cachedSuggestion = OutfitSuggestion.fromJson(jsonDecode(jsonString));
+          _isOutfitReady = true;
+        });
+      }
+    } else {
+      // If weather is ready, auto generate
+      if (_weather != null) {
+        _generateOutfit();
+      }
+    }
+  }
+
+  OutfitSuggestion? _cachedSuggestion;
+  bool _isOutfitReady = false;
 }

@@ -87,6 +87,7 @@ dependencies:
   web_socket_channel: ^3.0.3
   sound_stream: ^0.4.2
   audio_session: ^0.2.2
+  shared_preferences: ^2.5.3
 flutter_intl:
   enabled: true
   class_name: AppLocalizations

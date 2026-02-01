@@ -103,4 +103,24 @@ class ModelItem {
       createdAt: createdAt ?? this.createdAt,
     );
   }
+
+  factory ModelItem.fromJson(Map<String, dynamic> json) {
+    return ModelItem.fromMap(json);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'imageUrl': imageUrl,
+      'name': name,
+      'personCount': personCount,
+      'bodyPart': bodyPart,
+      'gender': gender,
+      'bodyType': bodyType,
+      'pose': pose,
+      'skinTone': skinTone,
+      'aiPrompt': aiPrompt,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
 }

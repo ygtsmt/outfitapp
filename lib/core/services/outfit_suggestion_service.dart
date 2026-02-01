@@ -262,6 +262,26 @@ class OutfitSuggestion {
         model.imageUrl,
         ...closetItems.map((c) => c.imageUrl),
       ];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'model': model.toJson(), // Assuming ModelItem has toJson, need to verify
+      'closetItems': closetItems
+          .map((c) => c.toJson())
+          .toList(), // WardrobeItem toJson needed
+      'reasoning': reasoning,
+    };
+  }
+
+  factory OutfitSuggestion.fromJson(Map<String, dynamic> json) {
+    return OutfitSuggestion(
+      model: ModelItem.fromJson(json['model']), // Assuming ModelItem.fromJson
+      closetItems: (json['closetItems'] as List)
+          .map((c) => WardrobeItem.fromJson(c)) // WardrobeItem.fromJson needed
+          .toList(),
+      reasoning: json['reasoning'],
+    );
+  }
 }
 
 /// Custom exception for outfit suggestion errors

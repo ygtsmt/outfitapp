@@ -163,10 +163,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           // Live Stylist Entry
           const LiveStylistCard(),
 
-          // Proactive Agent Card
-          DailyOutfitCard(
-            onTap: () {},
-          ),
+          // Proactive Agent Card (Moved to Weather Widget)
+          // DailyOutfitCard(
+          //   onTap: () {},
+          // ),
 
           // AI Fashion Critique Widget
           const AIFashionCritiqueWidget(),
