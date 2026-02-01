@@ -19,7 +19,7 @@ class LiveAgentService {
   bool _isConnected = false;
   bool get isConnected => _isConnected;
 
-  Future<void> connect() async {
+  Future<void> connect({String? userName}) async {
     if (_isConnected) return;
 
     final uri = Uri.parse(
@@ -41,25 +41,29 @@ class LiveAgentService {
         onError: (error) {
           log('❌ WebSocket Error: $error');
           _disconnectCleanup();
-          _eventController.add({'error': error.toString()});
+          log('🔴 WebSocket Error: $error');
+          _eventController.add({"error": "WebSocket Error: $error"});
+          disconnect(); // Use disconnect as per snippet
         },
         onDone: () {
-          log('🔌 WebSocket Closed: ${_channel?.closeCode} - ${_channel?.closeReason}');
-          print(
-              '🔌 WebSocket Closed: ${_channel?.closeCode} - ${_channel?.closeReason}');
-          _disconnectCleanup();
-          _eventController.add({'status': 'disconnected'});
+          log('🔴 WebSocket Closed'); // Simplified log as per snippet
+          disconnect(); // Use disconnect as per snippet
         },
       );
 
-      // Send Setup Message immediately after connection
-      _sendSetupMessage();
+      _isConnected = true;
+      log('🟢 Connected to Gemini Live API'); // Updated log as per snippet
+      _eventController.add({
+        'status': 'connected'
+      }); // Added as per original logic, but after connection established
 
-      _eventController.add({'status': 'connected'});
-      log('✅ Connected to Gemini Live API');
+      // Send Setup Message immediately after connection
+      _sendSetupMessage(userName: userName); // Pass userName
     } catch (e) {
-      log('❌ Connection Failed: $e');
+      log('🔴 Connection Failed: $e'); // Updated log as per snippet
       _isConnected = false;
+      _eventController
+          .add({"error": "Connection Failed: $e"}); // Added as per snippet
       rethrow;
     }
   }
@@ -78,7 +82,10 @@ class LiveAgentService {
   }
 
   /// Initial Setup Message to configure the session
-  void _sendSetupMessage() {
+  void _sendSetupMessage({String? userName}) {
+    final systemInstruction =
+        "You are a helpful AI fashion stylist.${userName != null ? " The user's name is $userName. Address them by name occasionally." : ""} You can see the user's wardrobe. If the user speaks Turkish, you MUST reply in Turkish. \n\nCRITICAL: The wardrobe database uses ENGLISH tags (e.g., 'summer', 'winter', 'cotton', 'formal'). \nWhen the user describes a context (e.g., 'hava çok sıcak', 'düğüne gidiyorum'), DO NOT just translate directly. \nINSTEAD, INFER the relevant clothing attributes in English (e.g., 'hot' -> search for 'shorts', 'linen', 't-shirt'; 'wedding' -> search for 'suit', 'dress'). \nAlways search for these English attribute terms to find the best items.\n\nHALLUCINATION CHECK: \n1. If 'search_wardrobe' returns NO items (empty list), you MUST say 'I found no items matching...'. \n2. DO NOT make up items that are not in the tool result. \n3. Only suggest items that were explicitly returned by the tool.";
+
     final setupMsg = {
       "setup": {
         "model":
@@ -95,10 +102,7 @@ class LiveAgentService {
         },
         "system_instruction": {
           "parts": [
-            {
-              "text":
-                  "You are a helpful AI fashion stylist. You can see the user's wardrobe. If the user speaks Turkish, you MUST reply in Turkish. \n\nCRITICAL: The wardrobe database uses ENGLISH tags (e.g., 'summer', 'winter', 'cotton', 'formal'). \nWhen the user describes a context (e.g., 'hava çok sıcak', 'düğüne gidiyorum'), DO NOT just translate directly. \nINSTEAD, INFER the relevant clothing attributes in English (e.g., 'hot' -> search for 'shorts', 'linen', 't-shirt'; 'wedding' -> search for 'suit', 'dress'). \nAlways search for these English attribute terms to find the best items."
-            }
+            {"text": systemInstruction}
           ]
         },
         "tools": [
@@ -108,17 +112,29 @@ class LiveAgentService {
               {
                 "name": "search_wardrobe",
                 "description":
-                    "Search for items in the user's wardrobe based on category or query.",
+                    "Search for clothing items. CRITICAL: Provide a LIST of keywords and valid English synonyms (e.g. ['trousers', 'pants', 'jeans'] or ['red', 'scarlet']) to ensure matches.",
                 "parameters": {
                   "type": "OBJECT",
                   "properties": {
-                    "query": {
-                      "type": "STRING",
+                    "queries": {
+                      "type": "ARRAY",
+                      "items": {"type": "STRING"},
                       "description":
-                          "Description of the item to search related to"
+                          "List of English search terms and synonyms."
                     }
                   },
-                  "required": ["query"]
+                  "required": ["queries"]
+                }
+              },
+              {
+                "name": "get_weather",
+                "description":
+                    "Get the current weather at the user's location. logic: Use this tool when the user mentions weather-dependent contexts like 'hot', 'cold', 'raining', or explicitly asks for weather. Returns temperature and description.",
+                "parameters": {
+                  "type": "OBJECT",
+                  "properties": {
+                    // No parameters needed as we use device location
+                  }
                 }
               }
             ]

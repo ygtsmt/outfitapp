@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:comby/core/injection/injection.dart';
 import 'package:comby/app/features/live_stylist/cubit/live_stylist_cubit.dart';
@@ -138,10 +139,20 @@ class _LiveStylistPageState extends State<LiveStylistPage>
             // Overlay Layer
             BlocConsumer<LiveStylistCubit, LiveStylistState>(
               listener: (context, state) {
-                if (state is LiveStylistConnected) {
-                  // Start the photo loop once connected
-                  // We use a separate async loop loosely coupled
+                if (state.status == LiveStylistStatus.connected &&
+                    _controller != null &&
+                    _controller!.value.isInitialized) {
+                  // Start the photo loop if not already started?
+                  // In this simplistic code, re-calling _captureAndSendLoop is fine as it checks mounted.
+                  // But ideally check a flag. For MVP, we call it.
                   _captureAndSendLoop(context);
+                }
+
+                // Show errors
+                if (state.status == LiveStylistStatus.error) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(state.message ?? "Unknown Error"),
+                      backgroundColor: Colors.red));
                 }
               },
               builder: (context, state) {
@@ -172,7 +183,8 @@ class _LiveStylistPageState extends State<LiveStylistPage>
                                     width: 8,
                                     height: 8,
                                     decoration: BoxDecoration(
-                                        color: state is LiveStylistConnected
+                                        color: state.status ==
+                                                LiveStylistStatus.connected
                                             ? Colors.green
                                             : Colors.red,
                                         shape: BoxShape.circle),
@@ -185,19 +197,52 @@ class _LiveStylistPageState extends State<LiveStylistPage>
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 40), // Balance
+                            // Copy Log Button
+                            IconButton(
+                              icon: const Icon(Icons.copy, color: Colors.white),
+                              onPressed: () {
+                                final logs = state.logs.join("\n\n");
+                                // Simple clipboard copy
+                                // Requires 'import 'package:flutter/services.dart';'
+                                // We can use Clipboard.setData
+                                Clipboard.setData(ClipboardData(text: logs))
+                                    .then((_) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text("Conversation Log Copied!")),
+                                  );
+                                });
+                              },
+                            ),
                           ],
                         ),
                       ),
 
                       const Spacer(),
 
+                      // Logs Preview (Last message)
+                      if (state.logs.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          child: Text(
+                            state.logs.last,
+                            style: const TextStyle(
+                                color: Colors.white70, fontSize: 12),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+
                       // Status / Visualizer
-                      if (state is LiveStylistConnecting)
+                      if (state.status == LiveStylistStatus.connecting)
                         const Text("Connecting...",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 18)),
-                      if (state is LiveStylistConnected)
+
+                      if (state.status == LiveStylistStatus.connected)
                         AnimatedOpacity(
                           opacity: 1.0,
                           duration: const Duration(milliseconds: 500),

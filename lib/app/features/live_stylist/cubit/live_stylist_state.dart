@@ -1,33 +1,30 @@
 part of 'live_stylist_cubit.dart';
 
-abstract class LiveStylistState extends Equatable {
-  const LiveStylistState();
+enum LiveStylistStatus { initial, connecting, connected, error }
+
+class LiveStylistState extends Equatable {
+  final LiveStylistStatus status;
+  final String? message; // Status info or Error message
+  final List<String> logs; // Conversation history
+
+  const LiveStylistState({
+    this.status = LiveStylistStatus.initial,
+    this.message,
+    this.logs = const [],
+  });
+
+  LiveStylistState copyWith({
+    LiveStylistStatus? status,
+    String? message,
+    List<String>? logs,
+  }) {
+    return LiveStylistState(
+      status: status ?? this.status,
+      message: message ?? this.message,
+      logs: logs ?? this.logs,
+    );
+  }
+
   @override
-  List<Object?> get props => [];
-}
-
-class LiveStylistInitial extends LiveStylistState {}
-
-class LiveStylistConnecting extends LiveStylistState {}
-
-class LiveStylistConnected extends LiveStylistState {
-  final String statusMessage;
-  const LiveStylistConnected({this.statusMessage = 'Listening...'});
-
-  @override
-  List<Object?> get props => [statusMessage];
-}
-
-class LiveStylistAgentSpeaking extends LiveStylistState {
-  final String text; // Transcript of what agent is saying
-  const LiveStylistAgentSpeaking(this.text);
-  @override
-  List<Object?> get props => [text];
-}
-
-class LiveStylistError extends LiveStylistState {
-  final String message;
-  const LiveStylistError(this.message);
-  @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [status, message, logs];
 }

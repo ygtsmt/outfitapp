@@ -9,6 +9,11 @@ import 'package:injectable/injectable.dart';
 import 'package:sound_stream/sound_stream.dart';
 import 'package:comby/core/services/live_agent_service.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
+import 'package:comby/core/services/weather_service.dart';
+import 'package:comby/core/services/location_service.dart';
+import 'package:get_it/get_it.dart';
+import 'package:comby/app/features/auth/features/profile/data/profile_usecase.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 part 'live_stylist_state.dart';
 
@@ -16,6 +21,8 @@ part 'live_stylist_state.dart';
 class LiveStylistCubit extends Cubit<LiveStylistState> {
   final LiveAgentService _agentService;
   final ClosetUseCase _closetUseCase;
+  final ProfileUseCase _profileUseCase;
+  final FirebaseAuth _auth;
 
   StreamSubscription? _agentSubscription;
   final RecorderStream _recorder = RecorderStream();
@@ -23,23 +30,49 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
 
   StreamSubscription? _audioInputSubscription;
 
-  LiveStylistCubit(this._agentService, this._closetUseCase)
-      : super(LiveStylistInitial());
+  LiveStylistCubit(
+    this._agentService,
+    this._closetUseCase,
+    this._profileUseCase,
+    this._auth,
+  ) : super(const LiveStylistState());
 
   Future<void> startSession() async {
-    emit(LiveStylistConnecting());
+    emit(state.copyWith(status: LiveStylistStatus.connecting));
     try {
-      await _agentService.connect();
+      String? userName;
+      final user = _auth.currentUser;
+      if (user != null && !user.isAnonymous) {
+        // Try fetching full profile or use displayName directly
+        // Using displayName is faster for now
+        userName = user.displayName;
+
+        // Fallback to fetching profile if displayName is null but not anon
+        if (userName == null) {
+          final profile = await _profileUseCase.fetchUserProfile(user.uid);
+          userName = profile?.displayName;
+        }
+      }
+
+      await _agentService.connect(userName: userName);
       await _initializeAudio();
 
       _agentSubscription = _agentService.eventStream.listen((event) {
         _handleAgentEvent(event);
       });
 
-      emit(const LiveStylistConnected(statusMessage: "Connected. Say hello!"));
+      emit(state.copyWith(
+        status: LiveStylistStatus.connected,
+        message: "Connected. Say hello!",
+        logs: List.from(state.logs)..add("[System]: Connected to Gemini Live"),
+      ));
     } catch (e) {
       log('❌ Session Start Failed: $e');
-      emit(LiveStylistError("Connection failed: $e"));
+      emit(state.copyWith(
+        status: LiveStylistStatus.error,
+        message: "Connection failed: $e",
+        logs: List.from(state.logs)..add("[System Error]: $e"),
+      ));
     }
   }
 
@@ -69,6 +102,14 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
   }
 
   void _handleAgentEvent(Map<String, dynamic> event) {
+    // Log Agent Text
+    if (event.containsKey('text')) {
+      final text = event['text'];
+      final newLogs = List<String>.from(state.logs)..add("[Agent]: $text");
+
+      emit(state.copyWith(logs: newLogs));
+    }
+
     if (event.containsKey('audio')) {
       // Play audio chunk
       try {
@@ -80,16 +121,16 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
       }
     }
 
-    if (event.containsKey('text')) {
-      // Transcript could be handled here
-    }
-
     if (event.containsKey('toolCall')) {
       _handleToolCall(event['toolCall']);
     }
 
     if (event.containsKey('error')) {
-      emit(LiveStylistError(event['error']));
+      emit(state.copyWith(
+        status: LiveStylistStatus.error,
+        message: event['error'],
+        logs: List.from(state.logs)..add("[Error]: ${event['error']}"),
+      ));
     }
   }
 
@@ -104,27 +145,99 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
 
         log('🛠️ Handling Tool: $name');
 
+        // Add log for tool call
+        emit(state.copyWith(
+          logs: List.from(state.logs)..add("[Tool Call]: $name ($args)"),
+        ));
+
         Map<String, dynamic> result = {};
         if (name == 'search_wardrobe') {
-          final query = (args['query'] as String).toLowerCase();
-          final allItems = await _closetUseCase.getUserClosetItems();
-          final matched = allItems
-              .where((i) {
-                return (i.category?.toLowerCase().contains(query) ?? false) ||
-                    (i.subcategory?.toLowerCase().contains(query) ?? false) ||
-                    (i.color?.toLowerCase().contains(query) ?? false) ||
-                    (i.season?.toLowerCase().contains(query) ?? false) ||
-                    (i.material?.toLowerCase().contains(query) ?? false) ||
-                    (i.pattern?.toLowerCase().contains(query) ?? false);
-              })
-              .take(3)
+          // Agent provides list of terms/synonyms directly
+          final queryTerms = (args['queries'] as List)
+              .map((e) => e.toString().toLowerCase())
+              .where((t) => t.isNotEmpty)
               .toList();
+
+          final allItems = await _closetUseCase.getUserClosetItems();
+
+          // Calculate match score for each item
+          final scoredItems = allItems.map((item) {
+            int score = 0;
+            final itemText = [
+              item.category,
+              item.subcategory,
+              item.color,
+              item.season,
+              item.material,
+              item.pattern,
+              item.brand,
+            ].where((s) => s != null).join(' ').toLowerCase();
+
+            for (final term in queryTerms) {
+              if (itemText.contains(term)) {
+                score += 1;
+              }
+            }
+            return MapEntry(item, score);
+          }).toList();
+
+          // Filter by score > 0 and Sort by Score Descending
+          scoredItems.removeWhere((entry) => entry.value == 0);
+          scoredItems.sort((a, b) => b.value.compareTo(a.value));
+
+          final matched = scoredItems.take(5).map((e) => e.key).toList();
 
           result = {
             "content": matched.map((e) {
               return "${e.subcategory ?? e.category} (Color: ${e.color ?? 'N/A'}, Brand: ${e.brand ?? 'Unknown'}, Material: ${e.material ?? 'N/A'}, Season: ${e.season ?? 'Any'})";
             }).join("\n")
           };
+
+          emit(state.copyWith(
+            logs: List.from(state.logs)
+              ..add("[Tool Response]: Found ${matched.length} items."),
+          ));
+        }
+
+        if (name == 'get_weather') {
+          try {
+            // 1. Get Location
+            final locationService = LocationService();
+            final position = await locationService.getCurrentPosition();
+
+            if (position != null) {
+              // 2. Get Weather
+              // Assuming WeatherService is registered in GetIt as per WeatherWidget
+              final weatherService = GetIt.I<WeatherService>();
+              final weather = await weatherService.getWeatherByLocation(
+                  position.latitude, position.longitude);
+
+              if (weather != null) {
+                result = {
+                  "temperature": weather.temperatureString,
+                  "description": weather
+                      .description, // using description not capitalized for raw
+                  "city": weather.cityName,
+                };
+
+                emit(state.copyWith(
+                  logs: List.from(state.logs)
+                    ..add(
+                        "[Tool Response]: Weather is ${weather.temperatureString} in ${weather.cityName}"),
+                ));
+              } else {
+                result = {"error": "Weather service returned null"};
+              }
+            } else {
+              result = {"error": "Could not get location"};
+            }
+          } catch (e) {
+            result = {"error": "Weather fetch failed: $e"};
+            emit(state.copyWith(
+              logs: List.from(state.logs)
+                ..add("[Tool Error]: Weather failed $e"),
+            ));
+          }
         }
 
         final toolResponse = {
@@ -140,11 +253,18 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
       }
     } catch (e) {
       log('❌ Tool Handle Error: $e');
+      emit(state.copyWith(
+        logs: List.from(state.logs)..add("[Tool Error]: $e"),
+      ));
     }
   }
 
   void sendVideoFrame(Uint8List bytes) {
     _agentService.sendImageFrame(bytes);
+  }
+
+  void copyLogsToClipboard() {
+    // UI can access state.logs directly
   }
 
   @override
