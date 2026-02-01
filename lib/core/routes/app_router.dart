@@ -48,6 +48,7 @@ import "package:comby/app/features/dashboard/ui/screens/ai_fashion_critique_resu
 import "package:comby/app/features/dashboard/ui/screens/ai_critique_camera_screen.dart";
 import "package:comby/app/features/chat/ui/chat_screen.dart";
 import "package:comby/app/ui/home_screen.dart";
+import "package:comby/app/features/live_stylist/pages/live_stylist_page.dart";
 import "package:comby/core/core.dart";
 import "package:comby/core/services/outfit_suggestion_service.dart";
 import "package:flutter/material.dart";
@@ -311,6 +312,13 @@ part "app_router.gr.dart";
       page: FullScreenImageScreen,
       path: "/full-screen-image-screen",
       transitionsBuilder: TransitionsBuilders.zoomIn,
+    ),
+
+    // Live Agent
+    CustomRoute(
+      page: LiveStylistPage,
+      path: "/live-stylist-page",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
   ],
 )

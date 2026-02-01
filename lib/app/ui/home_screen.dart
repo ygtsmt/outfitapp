@@ -168,8 +168,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? CustomDrawer(state: state)
                               : null,
                       // Update indices: Closet is 1, Try-On is 2, Profile is 3
-                      appBar: (tabsRouter.activeIndex == 2 || // TryOn
-                              tabsRouter.activeIndex == 1) // Closet
+                      appBar: ( // Closet
+                              tabsRouter.activeIndex == 3) // Profile
                           ? null
                           : AppBar(
                               forceMaterialTransparency: true,

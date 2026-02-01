@@ -398,6 +398,15 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    LiveStylistPageRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const LiveStylistPage(),
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -743,6 +752,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           FullScreenImageScreenRoute.name,
           path: '/full-screen-image-screen',
+        ),
+        RouteConfig(
+          LiveStylistPageRoute.name,
+          path: '/live-stylist-page',
         ),
       ];
 }
@@ -1588,6 +1601,18 @@ class FullScreenImageScreenRouteArgs {
   String toString() {
     return 'FullScreenImageScreenRouteArgs{imageUrl: $imageUrl}';
   }
+}
+
+/// generated route for
+/// [LiveStylistPage]
+class LiveStylistPageRoute extends PageRouteInfo<void> {
+  const LiveStylistPageRoute()
+      : super(
+          LiveStylistPageRoute.name,
+          path: '/live-stylist-page',
+        );
+
+  static const String name = 'LiveStylistPageRoute';
 }
 
 /// generated route for

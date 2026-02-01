@@ -19,6 +19,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:comby/core/injection/injection.dart';
 import 'package:comby/core/services/agent_service.dart';
 import 'package:comby/core/services/gemini_rest_service.dart';
+import 'package:comby/app/features/dashboard/ui/widgets/live_stylist_card.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -158,6 +159,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
           // Weather Widget
           const WeatherWidget(),
+
+          // Live Stylist Entry
+          const LiveStylistCard(),
 
           // Proactive Agent Card
           DailyOutfitCard(
