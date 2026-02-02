@@ -127,6 +127,13 @@ class _HomeScreenState extends State<HomeScreen> {
               style: GoogleFonts.balooBhai2(
                   fontSize: 20.sp, fontWeight: FontWeight.w700),
             ),
+            actions: [
+              IconButton(
+                  icon: const Icon(Icons.video_call),
+                  onPressed: () {
+                    context.router.push(const LiveStylistPageRoute());
+                  })
+            ],
             centerTitle: true,
           ),
           body: const ChatScreen(),
@@ -169,7 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               : null,
                       // Update indices: Closet is 1, Try-On is 2, Profile is 3
                       appBar: ( // Closet
-                              tabsRouter.activeIndex == 3) // Profile
+                              tabsRouter.activeIndex == 1 ||
+                                  tabsRouter.activeIndex == 2) // Profile
                           ? null
                           : AppBar(
                               forceMaterialTransparency: true,

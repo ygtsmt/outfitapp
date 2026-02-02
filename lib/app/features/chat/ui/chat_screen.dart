@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:comby/app/features/chat/widgets/chat_empty_state.dart';
 import 'package:comby/app/features/chat/widgets/chat_suggestion_chips.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -89,8 +88,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 builder: (context, state) {
                   if (state.messages.isEmpty &&
                       state.status == ChatStatus.initial) {
-                    return Center(
-                      child: ChatEmptyState(),
+                    const welcomeMessage = ChatMessage(
+                      text:
+                          "Selam ben Comby! 👋\n\nHava durumuna göre harika bir kombin oluşturmaya ne dersin? Nereye gidiyorsun veya nasıl bir stile ihtiyacın var? Sana yardımcı olmaya hazırım! ✨",
+                      isUser: false,
+                    );
+                    return ListView(
+                      padding: EdgeInsets.all(8.h),
+                      children: [
+                        const _MessageBubble(message: welcomeMessage),
+                      ],
                     );
                   }
 

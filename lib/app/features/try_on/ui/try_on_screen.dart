@@ -51,7 +51,6 @@ class _TryOnScreenState extends State<TryOnScreen> {
                   VirtualCabinTabContent(
                     initialModel: widget.initialModel,
                     initialClothes: widget.initialClothes,
-                    alternativeModelUrl: widget.alternativeModelUrl,
                   ),
                   const QuickTryTabContent(),
                 ],

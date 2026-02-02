@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
@@ -9,6 +9,7 @@ import 'package:comby/app/features/fal_ai/data/fal_ai_usecase.dart';
 import 'package:comby/app/features/try_on/ui/widgets/user_selection_sheet.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/routes/app_router.dart';
+import 'package:comby/core/utils.dart';
 import 'package:comby/generated/l10n.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -27,13 +28,11 @@ class LocalColors {
 class VirtualCabinTabContent extends StatefulWidget {
   final ModelItem? initialModel;
   final List<WardrobeItem>? initialClothes;
-  final String? alternativeModelUrl; // Combine photo URL for toggle
 
   const VirtualCabinTabContent({
     super.key,
     this.initialModel,
     this.initialClothes,
-    this.alternativeModelUrl,
   });
 
   @override
@@ -47,11 +46,19 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
 
   ModelItem? _selectedModel; // Changed from String? _selectedModelUrl
   List<WardrobeItem> _selectedClothes = [];
-  bool _useAlternativePhoto = false; // Toggle state for photo switching
+  // _useAlternativePhoto removed
 
   bool _isLoading = false;
   String? _statusMessage;
   String? _requestId;
+
+  // Carousel State
+  List<ModelItem> _allModels = [];
+  late PageController _pageController;
+
+  // Cloth Carousel State
+  List<WardrobeItem> _allClothes = [];
+  late PageController _clothPageController;
 
   @override
   bool get wantKeepAlive => true;
@@ -62,62 +69,41 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
     _selectedModel = widget.initialModel;
     _selectedClothes =
         widget.initialClothes != null ? List.from(widget.initialClothes!) : [];
-  }
 
-  void _togglePhoto() {
-    setState(() {
-      _useAlternativePhoto = !_useAlternativePhoto;
+    // Default controller, will be re-initialized in _loadModels
+    _pageController = PageController(viewportFraction: 0.85);
+    _clothPageController =
+        PageController(viewportFraction: 0.4); // Smaller fraction for clothes
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadModels();
     });
   }
 
-  // Random Selection Implementation
-  Future<void> _selectRandomModel() async {
+  Future<void> _loadModels() async {
     try {
       final models = await _closetUseCase.getUserModelItems();
-      if (models.isNotEmpty) {
-        final random = Random();
-        setState(() {
-          _selectedModel = models[random.nextInt(models.length)];
-          _statusMessage = 'Random model selected!';
-        });
-      } else {
-        setState(() {
-          _statusMessage = 'No models found in gallery.';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _statusMessage = 'Error selecting random model: $e';
-      });
-    }
-  }
-
-  Future<void> _selectRandomCloth() async {
-    try {
       final clothes = await _closetUseCase.getUserClosetItems();
-      // Filter out already selected matches if needed
-      final availableClothes = clothes
-          .where(
-              (c) => !_selectedClothes.any((sc) => sc.imageUrl == c.imageUrl))
-          .toList();
+      if (mounted) {
+        setState(() {
+          _allModels = models;
+          _allClothes = clothes;
 
-      if (availableClothes.isNotEmpty) {
-        final random = Random();
-        final randomItem =
-            availableClothes[random.nextInt(availableClothes.length)];
-        setState(() {
-          _selectedClothes.add(randomItem);
-          _statusMessage = 'Random item added!';
-        });
-      } else {
-        setState(() {
-          _statusMessage = 'No items found in closet.';
+          if (_allModels.isNotEmpty) {
+            // Default Start: First Model (after Add Card)
+            _selectedModel = _allModels[0];
+            // Start at 1 because index 0 is "Add Model" card
+            _pageController =
+                PageController(viewportFraction: 0.85, initialPage: 1);
+          }
+
+          // Initialize Cloth Controller
+          _clothPageController = PageController(
+              viewportFraction: 0.3, initialPage: 0); // Tighter spacing
         });
       }
     } catch (e) {
-      setState(() {
-        _statusMessage = 'Error selecting random cloth: $e';
-      });
+      print("Error loading data: $e");
     }
   }
 
@@ -435,133 +421,137 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
     super.build(context); // Connection to keepalive
     final colorScheme = Theme.of(context).colorScheme;
 
-    return SafeArea(
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionTitle(
-                      context,
-                      AppLocalizations.of(context).model.toUpperCase(),
-                      AppLocalizations.of(context).modelSubtitle),
-                  const SizedBox(height: 16),
-                  _ModelSelector(
-                    imageUrl: _useAlternativePhoto &&
-                            widget.alternativeModelUrl != null
-                        ? widget.alternativeModelUrl
-                        : _selectedModel?.imageUrl,
-                    onTap: _showModelSelection,
-                    onRandomSelect: _selectRandomModel,
-                    alternativeUrl: widget.alternativeModelUrl,
-                    isShowingAlternative: _useAlternativePhoto,
-                    onTogglePhoto: _togglePhoto,
-                  ),
-                  const SizedBox(height: 32),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: _buildSectionTitle(
-                            context,
-                            AppLocalizations.of(context)
-                                .homeCloset
-                                .toUpperCase(),
-                            AppLocalizations.of(context).wardrobeSubtitle),
-                      ),
-                      if (_selectedClothes.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Text(
-                            AppLocalizations.of(context)
-                                .nSelected(_selectedClothes.length),
-                            style: TextStyle(
-                                color: colorScheme.onSurface.withOpacity(0.6),
-                                fontSize: 12),
-                          ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _ClothList(
-                    clothes: _selectedClothes,
-                    onAdd: _showClothSelection,
-                    onRandomSelect: _selectRandomCloth,
-                    onRemove: (index) {
-                      setState(() {
-                        _selectedClothes.removeAt(index);
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  if (_statusMessage != null) _buildStatusCard(context),
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainer ??
-                            colorScheme.surface, // Was 0xFF1E1E1E
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(24)),
-                      ),
-                      child: ElevatedButton(
-                        onPressed: _isLoading ||
-                                _selectedModel == null ||
-                                _selectedClothes.isEmpty
-                            ? null
-                            : _generateImage,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              colorScheme.primary, // Was 0xFFE94057
-                          foregroundColor: colorScheme.onPrimary,
-                          disabledBackgroundColor:
-                              colorScheme.onSurface.withOpacity(0.12),
-                          disabledForegroundColor:
-                              colorScheme.onSurface.withOpacity(0.38),
-                          padding: const EdgeInsets.symmetric(vertical: 18),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        child: _isLoading
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 20.w,
-                                    height: 20.h,
-                                    child: CircularProgressIndicator(
-                                        color: colorScheme.onPrimary,
-                                        strokeWidth: 2),
-                                  ),
-                                  SizedBox(width: 12.w),
-                                  const Text("Gemini 3 Processing..."),
-                                ],
-                              )
-                            : Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.h),
-                                child: Text(
-                                  AppLocalizations.of(context).tryOnMode,
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                              ),
-                      ),
-                    ),
-                  )
-                ],
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      floatingActionButton: FilledButton(
+        onPressed:
+            _isLoading || _selectedModel == null || _selectedClothes.isEmpty
+                ? () {
+                    if (_selectedModel == null) {
+                      Utils.showToastMessage(
+                        content: 'Lütfen bir model seçin',
+                        context: context,
+                      );
+                    }
+                    if (_selectedClothes.isEmpty) {
+                      Utils.showToastMessage(
+                        content: 'Lütfen bir kıyafet seçin',
+                        context: context,
+                      );
+                    }
+                  }
+                : _generateImage,
+        style: FilledButton.styleFrom(
+          backgroundColor:
+              (_isLoading || _selectedModel == null || _selectedClothes.isEmpty)
+                  ? context.white
+                  : colorScheme.primary,
+          foregroundColor:
+              (_isLoading || _selectedModel == null || _selectedClothes.isEmpty)
+                  ? colorScheme.primary
+                  : colorScheme.onPrimary,
+          elevation: 4,
+          shape: const StadiumBorder(), // yuvarlak-pill görünüm
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        ),
+        child: _isLoading
+            ? SizedBox(
+                width: 20.w,
+                height: 20.h,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: colorScheme.onPrimary,
+                ),
+              )
+            : Text(
+                'Oluştur',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+      ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 8.h),
+            _buildSectionTitle(
+                context,
+                AppLocalizations.of(context).model.toUpperCase(),
+                AppLocalizations.of(context).modelSubtitle),
+            const SizedBox(height: 8),
+            Expanded(
+              flex: 5,
+              child: _ModelSelector(
+                models: _allModels,
+                pageController: _pageController,
+                selectedModel: _selectedModel,
+                onPageChanged: (index) {
+                  setState(() {
+                    // Index 0 = Add Card
+                    // Index length + 1 = Add Card
+                    // Valid models are at 1..length
+                    if (index > 0 && index <= _allModels.length) {
+                      _selectedModel = _allModels[index - 1]; // Offset by 1
+                    }
+                  });
+                },
+                onTap: _showModelSelection,
+                onAddPressed: _showModelSelection,
               ),
             ),
-          ),
-        ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: _buildSectionTitle(
+                      context,
+                      AppLocalizations.of(context).homeCloset.toUpperCase(),
+                      AppLocalizations.of(context).wardrobeSubtitle),
+                ),
+                if (_selectedClothes.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4, right: 16),
+                    child: Text(
+                      AppLocalizations.of(context)
+                          .nSelected(_selectedClothes.length),
+                      style: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.6),
+                          fontSize: 12),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              flex: 1,
+              child: _ClothList(
+                allClothes: _allClothes,
+                selectedClothes: _selectedClothes,
+                pageController: _clothPageController,
+                onAdd: _showClothSelection,
+                onToggleSelection: (item) {
+                  setState(() {
+                    if (_selectedClothes
+                        .any((e) => e.imageUrl == item.imageUrl)) {
+                      _selectedClothes
+                          .removeWhere((e) => e.imageUrl == item.imageUrl);
+                    } else {
+                      _selectedClothes.add(item);
+                    }
+                  });
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (_statusMessage != null) _buildStatusCard(context),
+            // Replaced button with FAB, so we keep the column clean but might need spacing at bottom if FAB overlaps content too much.
+            // However, with Expanded flex, the layout fills screen.
+            // The FAB is bottom-right. It might overlap the ClothList or StatusCard.
+            // StatusCard is at valid bottom.
+          ],
+        ),
       ),
     );
   }
@@ -569,27 +559,31 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
   Widget _buildSectionTitle(
       BuildContext context, String title, String subtitle) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: colorScheme.primary, // Was 0xFFE94057
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: colorScheme.primary, // Was 0xFFE94057
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          subtitle,
-          style: TextStyle(
-            color: colorScheme.onSurface.withOpacity(0.7), // Was Colors.white70
-            fontSize: 14,
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: TextStyle(
+              color:
+                  colorScheme.onSurface.withOpacity(0.7), // Was Colors.white70
+              fontSize: 14,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -645,344 +639,363 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
   }
 }
 
+// Carousel Dimensions Configuration using ScreenUtil
+// Carousel Dimensions Configuration using ScreenUtil
+// All dimensions are now responsive using LayoutBuilder and Expanded.
+
 class _ModelSelector extends StatelessWidget {
-  final String? imageUrl;
+  final List<ModelItem> models;
+  final PageController? pageController;
+  final ModelItem? selectedModel;
+  final ValueChanged<int>? onPageChanged;
   final VoidCallback onTap;
-  final VoidCallback onRandomSelect;
-  final String? alternativeUrl;
-  final bool isShowingAlternative;
-  final VoidCallback? onTogglePhoto;
+  final VoidCallback? onAddPressed;
 
   const _ModelSelector({
-    required this.imageUrl,
+    required this.models,
+    this.pageController,
+    this.selectedModel,
+    this.onPageChanged,
     required this.onTap,
-    required this.onRandomSelect,
-    this.alternativeUrl,
-    this.isShowingAlternative = false,
-    this.onTogglePhoto,
+    this.onAddPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 380,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainer ??
-              colorScheme.surface, // Was 0xFF1E1E1E
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: imageUrl != null
-                ? colorScheme.primary
-                : colorScheme.outline.withOpacity(0.2), // Was Colors.grey[850]
-            width: imageUrl != null ? 2 : 1,
+
+    if (models.isEmpty) {
+      // Empty State -> Show "Add Model" button
+      return GestureDetector(
+        onTap: onAddPressed,
+        child: Container(
+          height: double.infinity,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainer ?? colorScheme.surface,
+            borderRadius: BorderRadius.circular(24.r),
+            border: Border.all(
+              color: colorScheme.outline.withOpacity(0.2),
+              width: 1,
+            ),
           ),
-          image: imageUrl != null
-              ? DecorationImage(
-                  image: CachedNetworkImageProvider(imageUrl!),
-                  fit: BoxFit.cover,
-                )
-              : null,
-          boxShadow: imageUrl != null
-              ? [
-                  BoxShadow(
-                    color: colorScheme.primary.withOpacity(0.2),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  )
-                ]
-              : [],
-        ),
-        child: imageUrl == null
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHigh ??
-                          colorScheme.surface
-                              .withOpacity(0.8), // Was Colors.grey[900]
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.person_add_rounded,
-                        color: colorScheme.onSurface.withOpacity(0.5),
-                        size: 40),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    AppLocalizations.of(context).selectModel,
-                    style: TextStyle(
-                      color: colorScheme.onSurface,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    AppLocalizations.of(context).tapToChooseFromLibrary,
-                    style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.5),
-                        fontSize: 12),
-                  ),
-                  const SizedBox(height: 24),
-                  // Random Selection Button
-                  TextButton.icon(
-                    onPressed: onRandomSelect,
-                    style: TextButton.styleFrom(
-                      backgroundColor: colorScheme.primary.withOpacity(0.1),
-                      foregroundColor: colorScheme.primary,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    icon: const Icon(Icons.shuffle_rounded, size: 20),
-                    label: Text(AppLocalizations.of(context).surpriseMe,
-                        style: TextStyle(fontWeight: FontWeight.w600)),
-                  ),
-                ],
-              )
-            : Stack(
-                children: [
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [
-                            Colors.black.withOpacity(
-                                0.8), // Keep black for image overlay contrast
-                            Colors.transparent,
-                          ],
-                        ),
-                        borderRadius: const BorderRadius.vertical(
-                            bottom: Radius.circular(22)),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Toggle button (only show if alternative exists)
-                          if (alternativeUrl != null && onTogglePhoto != null)
-                            GestureDetector(
-                              onTap: onTogglePhoto,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      isShowingAlternative
-                                          ? Icons.person_outline
-                                          : Icons.auto_awesome,
-                                      color: Colors.white,
-                                      size: 14,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      isShowingAlternative
-                                          ? AppLocalizations.of(context)
-                                              .useOriginalPhoto
-                                          : AppLocalizations.of(context)
-                                              .useAiPhoto,
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white
-                                  .withOpacity(0.2), // Keep white for overlay
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Row(
-                              children: [
-                                Icon(Icons.edit, color: Colors.white, size: 14),
-                                SizedBox(width: 4),
-                                Text(
-                                  "Change",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(20.w),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHigh ??
+                      colorScheme.surface.withOpacity(0.8),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.person_add_rounded,
+                    color: colorScheme.onSurface.withOpacity(0.5), size: 40.sp),
               ),
-      ),
+              SizedBox(height: 16.h),
+              Text(
+                AppLocalizations.of(context).selectModel,
+                style: TextStyle(
+                  color: colorScheme.onSurface,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    // Logic matching _ClothList:
+    // If empty -> 1 item (Add Card)
+    // If not empty -> length + 2 (Start Add + Models + End Add)
+    final int distinctItems = models.length;
+    final int totalCount = distinctItems == 0 ? 1 : distinctItems + 2;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return PageView.builder(
+          controller: pageController,
+          itemCount: totalCount,
+          onPageChanged: onPageChanged,
+          itemBuilder: (context, index) {
+            bool isAddCard = false;
+            if (models.isEmpty) {
+              isAddCard = true;
+            } else {
+              if (index == 0 || index == totalCount - 1) {
+                isAddCard = true;
+              }
+            }
+
+            Widget content;
+            if (isAddCard) {
+              content = GestureDetector(
+                onTap: onAddPressed,
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8.w),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainer ?? colorScheme.surface,
+                    borderRadius: BorderRadius.circular(24.r),
+                    border: Border.all(
+                      color: colorScheme.outline.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(20.w),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHigh ??
+                              colorScheme.surface.withOpacity(0.8),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.add_a_photo_rounded,
+                            color: colorScheme.primary, size: 40.sp),
+                      ),
+                      SizedBox(height: 16.h),
+                      Text(
+                        AppLocalizations.of(context).selectModel,
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              final model = models[index - 1];
+              content = GestureDetector(
+                onTap: () {
+                  onTap();
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24.r),
+                    border: Border.all(
+                      color: selectedModel?.id == model.id
+                          ? colorScheme.primary
+                          : Colors.transparent,
+                      width: 3,
+                    ),
+                    /*  boxShadow: [
+                      if (selectedModel?.id == model.id)
+                        BoxShadow(
+                          color: colorScheme.primary.withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                    ], */
+                    image: DecorationImage(
+                      image: CachedNetworkImageProvider(model.imageUrl),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            return AnimatedBuilder(
+              animation: pageController!,
+              builder: (context, child) {
+                double value = 1.0;
+                if (pageController!.position.haveDimensions) {
+                  value = pageController!.page! - index;
+                  value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
+                } else {
+                  value = (index == (pageController!.initialPage)) ? 1.0 : 0.7;
+                }
+
+                return Center(
+                  child: SizedBox(
+                    height:
+                        Curves.easeOut.transform(value) * constraints.maxHeight,
+                    width: Curves.easeOut.transform(value) *
+                        (constraints.maxHeight * 0.9), // Aspect ratio
+                    child: child,
+                  ),
+                );
+              },
+              child: content,
+            );
+          },
+        );
+      },
     );
   }
 }
 
 class _ClothList extends StatelessWidget {
-  final List<WardrobeItem> clothes;
+  final List<WardrobeItem> allClothes;
+  final List<WardrobeItem> selectedClothes;
+  final PageController? pageController;
   final VoidCallback onAdd;
-  final VoidCallback onRandomSelect;
-  final Function(int) onRemove;
+  final Function(WardrobeItem) onToggleSelection;
 
   const _ClothList({
-    required this.clothes,
+    required this.allClothes,
+    required this.selectedClothes,
+    this.pageController,
     required this.onAdd,
-    required this.onRandomSelect,
-    required this.onRemove,
+    required this.onToggleSelection,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return SizedBox(
-      height: 120,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        clipBehavior: Clip.none,
-        itemCount: clothes.length + 1 + (clothes.isEmpty ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return GestureDetector(
+    // Item count:
+    // 1 for Start "Add Card"
+    // allClothes.length for items
+    // 1 for End "Add Card"
+    // Total = allClothes.length + 2;
+    // If empty: 1 (Start Add) + 0 + 1 (End Add) => 2 Add cards might be weird.
+    // Let's stick to "Add" at start and end. If empty, you see two add cards or maybe just one?
+    // User asked for "Add item card at both ends". So even if empty, technicaly start/end is same.
+    // If empty, let's just show ONE add card.
+    final int distinctItems = allClothes.length;
+    final int totalCount = distinctItems == 0 ? 1 : distinctItems + 2;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return PageView.builder(
+          controller: pageController,
+          padEnds: false, // Align left nicely if needed, or keep centered
+          itemCount: totalCount,
+          itemBuilder: (context, index) {
+            // Identify if it is an Add Card
+            bool isAddCard = false;
+            if (distinctItems == 0) {
+              isAddCard = true;
+            } else {
+              if (index == 0 || index == totalCount - 1) {
+                isAddCard = true;
+              }
+            }
+
+            // If item, which one?
+            // Index 0 = Add
+            // Index 1 = Cloth[0]
+            // ...
+            // Index N = Add
+            // So clothIndex = index - 1
+            WardrobeItem? clothItem;
+            if (!isAddCard) {
+              clothItem = allClothes[index - 1];
+            }
+
+            Widget content;
+            if (isAddCard) {
+              content = GestureDetector(
                 onTap: onAdd,
                 child: Container(
-                  width: 90,
-                  margin: const EdgeInsets.only(right: 12),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainer ??
-                        colorScheme.surface, // Was 0xFF1E1E1E
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: colorScheme.outline
-                          .withOpacity(0.2), // Was Colors.grey[800]
-                      style: BorderStyle
-                          .none, // Changed to solid in real impl usually
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add_circle_outline,
-                          color: colorScheme.primary, size: 32),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Add Item",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: colorScheme.onSurface.withOpacity(0.7),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ));
-          }
-
-          final showRandomButton = clothes.isEmpty;
-          if (showRandomButton && index == 1) {
-            // Random Item Button
-            return GestureDetector(
-                onTap: onRandomSelect,
-                child: Container(
-                  width: 90,
-                  margin: const EdgeInsets.only(right: 12),
+                  margin: EdgeInsets.symmetric(horizontal: 6.w),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainer ?? colorScheme.surface,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
-                      color: colorScheme.primary.withOpacity(0.5),
-                      style: BorderStyle.solid,
-                      width: 1.5,
+                      color: colorScheme.outline.withOpacity(0.2),
+                      width: 1,
                     ),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.shuffle, color: colorScheme.primary, size: 30),
-                      const SizedBox(height: 8),
+                      Container(
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHigh ??
+                              colorScheme.surface.withOpacity(0.8),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.add_photo_alternate_rounded,
+                            color: colorScheme.primary, size: 28.sp),
+                      ),
+                      SizedBox(height: 8.h),
                       Text(
-                        "Random\nPick",
+                        "Add Cloth",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: colorScheme.primary,
-                            fontSize: 12,
-                            height: 1.2,
-                            fontWeight: FontWeight.w600),
+                          color: colorScheme.onSurface,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
-                ));
-          }
-
-          // Adjust index for random button possibility
-          final itemIndex = index - (showRandomButton ? 2 : 1);
-          if (itemIndex < 0 || itemIndex >= clothes.length)
-            return const SizedBox.shrink();
-
-          final item = clothes[itemIndex];
-          final url = item.imageUrl;
-          return Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Container(
-                width: 90,
-                margin: const EdgeInsets.only(right: 12),
-                decoration: BoxDecoration(
-                  color:
-                      colorScheme.surfaceContainerHigh ?? colorScheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  image: DecorationImage(
-                    image: CachedNetworkImageProvider(url),
-                    fit: BoxFit.cover,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+                ),
+              );
+            } else {
+              content = GestureDetector(
+                onTap: () => onToggleSelection(clothItem!),
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(
+                          color: selectedClothes
+                                  .any((e) => e.imageUrl == clothItem!.imageUrl)
+                              ? colorScheme.primary
+                              : Colors.transparent,
+                          width: 3,
+                        ),
+                        image: DecorationImage(
+                          image:
+                              CachedNetworkImageProvider(clothItem!.imageUrl),
+                          fit: BoxFit.cover,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Checkbox Overlay
+                    Positioned(
+                      top: 8.h,
+                      right: 12.w,
+                      child: Container(
+                        padding: EdgeInsets.all(4.w),
+                        decoration: BoxDecoration(
+                          color: selectedClothes
+                                  .any((e) => e.imageUrl == clothItem!.imageUrl)
+                              ? colorScheme.primary
+                              : Colors.black.withOpacity(0.4),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
+                        child: Icon(
+                          Icons.check,
+                          size: 14.sp,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ],
                 ),
+              );
+            }
+
+            return Center(
+              child: SizedBox(
+                height: constraints.maxHeight,
+                width: constraints.maxHeight, // Wider for cloth
+                child: content,
               ),
-              Positioned(
-                top: -6,
-                right: 4,
-                child: GestureDetector(
-                  onTap: () => onRemove(itemIndex),
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: colorScheme.error,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: colorScheme.onError, width: 2),
-                    ),
-                    child:
-                        Icon(Icons.close, color: colorScheme.onError, size: 12),
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
+            );
+          },
+        );
+      },
     );
   }
 }
