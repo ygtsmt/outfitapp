@@ -85,8 +85,6 @@ dependencies:
   googleapis: ^15.0.0
   extension_google_sign_in_as_googleapis_auth: ^2.0.13
   web_socket_channel: ^3.0.3
-  sound_stream: ^0.4.2
-  audio_session: ^0.2.2
   shared_preferences: ^2.5.3
 flutter_intl:
   enabled: true

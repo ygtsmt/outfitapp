@@ -65,14 +65,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
-  audio_session:
-    dependency: "direct main"
-    description:
-      name: audio_session
-      sha256: "8f96a7fecbb718cb093070f868b4cdcb8a9b1053dce342ff8ab2fde10eb9afb7"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.2"
   auto_route:
     dependency: "direct main"
     description:
@@ -1770,14 +1762,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.0"
-  sound_stream:
-    dependency: "direct main"
-    description:
-      name: sound_stream
-      sha256: "534abce3531eaba52f04ea4c0808ec60da1b9db8a5f644042f14fa784343b540"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.2"
   source_gen:
     dependency: transitive
     description:

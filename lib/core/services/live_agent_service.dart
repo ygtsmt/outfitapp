@@ -91,14 +91,7 @@ class LiveAgentService {
         "model":
             "models/gemini-2.5-flash-native-audio-latest", // Updated to supported model
         "generation_config": {
-          "response_modalities": ["AUDIO"], // We want Audio back
-          "speech_config": {
-            "voice_config": {
-              "prebuilt_voice_config": {
-                "voice_name": "Kore" // Example voice
-              }
-            }
-          }
+          "response_modalities": ["TEXT"], // Changed from AUDIO to TEXT
         },
         "system_instruction": {
           "parts": [
@@ -175,13 +168,8 @@ class LiveAgentService {
                 if (part['text'] != null) {
                   _eventController.add({'text': part['text']});
                 }
-                if (part['inlineData'] != null) {
-                  // Audio data
-                  final mimeType = part['inlineData']['mimeType'];
-                  if (mimeType.startsWith('audio/')) {
-                    log('🔊 Audio Chunk Received');
-                    _eventController.add({'audio': part['inlineData']['data']});
-                  }
+                if (part['text'] != null) {
+                  _eventController.add({'text': part['text']});
                 }
               }
             }
@@ -207,23 +195,6 @@ class LiveAgentService {
         print('📤 Sending Setup: $jsonString'); // Explicit print for setup
       _channel!.sink.add(jsonString);
     }
-  }
-
-  /// Stream Audio Data (PCM) to the model
-  void sendAudioChunk(Uint8List pcmData) {
-    if (!_isConnected) return;
-
-    final msg = {
-      "realtime_input": {
-        "media_chunks": [
-          {
-            "mime_type": "audio/pcm;rate=16000", // Ensure recorder matches this
-            "data": base64Encode(pcmData)
-          }
-        ]
-      }
-    };
-    _sendJson(msg);
   }
 
   /// Stream Image Data (JPEG) to the model

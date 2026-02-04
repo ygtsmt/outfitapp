@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "dart:developer";
 import "package:flutter/services.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
 import "package:firebase_core/firebase_core.dart";
@@ -17,6 +18,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  log('🔥 Firebase initialized successfully');
 
   // Ekran yönünü sadece dikey kilitle
   await SystemChrome.setPreferredOrientations([

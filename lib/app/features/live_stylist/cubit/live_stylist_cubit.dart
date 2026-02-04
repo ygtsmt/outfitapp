@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
-import 'package:audio_session/audio_session.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
-import 'package:sound_stream/sound_stream.dart';
 import 'package:comby/core/services/live_agent_service.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/core/services/weather_service.dart';
@@ -25,10 +22,6 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
   final FirebaseAuth _auth;
 
   StreamSubscription? _agentSubscription;
-  final RecorderStream _recorder = RecorderStream();
-  final PlayerStream _player = PlayerStream();
-
-  StreamSubscription? _audioInputSubscription;
 
   LiveStylistCubit(
     this._agentService,
@@ -55,7 +48,6 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
       }
 
       await _agentService.connect(userName: userName);
-      await _initializeAudio();
 
       _agentSubscription = _agentService.eventStream.listen((event) {
         _handleAgentEvent(event);
@@ -76,31 +68,6 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
     }
   }
 
-  Future<void> _initializeAudio() async {
-    // Initialize Recorder
-    // Note: sound_stream defaults to 16000Hz PCM 16-bit Mono on most platforms or auto-detects.
-    // Explicit sampleRate setting is recommended if supported by the package version.
-    // Based on pub.dev, initialize() takes optional 'sampleRate' (int).
-    // Configure Audio Session
-    final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.speech());
-
-    // Initialize Recorder (Gemini prefers 16kHz for input)
-    await _recorder.initialize(sampleRate: 16000);
-
-    // Initialize Player (Gemini Live output is 24kHz)
-    await _player.initialize(sampleRate: 24000);
-    await _player.start();
-
-    // Start Recording and streaming to Agent
-    _audioInputSubscription = _recorder.audioStream.listen((data) {
-      // data is Uint8List (PCM)
-      _agentService.sendAudioChunk(data);
-    });
-
-    await _recorder.start();
-  }
-
   void _handleAgentEvent(Map<String, dynamic> event) {
     // Log Agent Text
     if (event.containsKey('text')) {
@@ -108,17 +75,6 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
       final newLogs = List<String>.from(state.logs)..add("[Agent]: $text");
 
       emit(state.copyWith(logs: newLogs));
-    }
-
-    if (event.containsKey('audio')) {
-      // Play audio chunk
-      try {
-        String base64Audio = event['audio'];
-        Uint8List audioBytes = base64Decode(base64Audio);
-        _player.writeChunk(audioBytes);
-      } catch (e) {
-        log('⚠️ Audio playback error: $e');
-      }
     }
 
     if (event.containsKey('toolCall')) {
@@ -270,9 +226,6 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
   @override
   Future<void> close() async {
     _agentSubscription?.cancel();
-    _audioInputSubscription?.cancel();
-    await _recorder.stop();
-    await _player.stop();
     await _agentService.disconnect();
     return super.close();
   }

@@ -251,7 +251,7 @@ class _LiveStylistPageState extends State<LiveStylistPage>
                             decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.5),
                                 borderRadius: BorderRadius.circular(30)),
-                            child: const Icon(Icons.mic,
+                            child: const Icon(Icons.videocam,
                                 color: Colors.white, size: 40),
                           ),
                         ),
