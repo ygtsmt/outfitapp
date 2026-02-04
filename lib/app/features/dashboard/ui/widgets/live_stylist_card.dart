@@ -50,29 +50,32 @@ class LiveStylistCard extends StatelessWidget {
               ),
             ),
             SizedBox(width: 16.w),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Canlı Stilist",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Canlı Stilist",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  "Kıyafetlerini göster, anında yorumla!",
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 12.sp,
+                  SizedBox(height: 4.h),
+                  Text(
+                    "Kıyafetlerini göster, anında yorumla!",
+                    softWrap: true,
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 12.sp,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const Spacer(),
+            SizedBox(width: 8.w),
             Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16.sp),
           ],
         ),
