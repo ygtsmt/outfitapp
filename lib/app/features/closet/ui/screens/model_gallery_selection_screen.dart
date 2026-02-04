@@ -25,7 +25,7 @@ class _ModelGallerySelectionScreenState
   Future<void> _openGalleryPicker() async {
     final result = await ReusableGalleryPicker.show(
       context: context,
-      title: 'Model Fotoğrafı Seç',
+      title: 'Select Model Photo',
       mode: GallerySelectionMode.multi,
       maxSelection: 50,
       enableCrop: false,

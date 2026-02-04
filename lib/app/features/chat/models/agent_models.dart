@@ -63,21 +63,21 @@ class AgentStep extends Equatable {
       case 'get_weather':
         final temp = result['temperature'];
         final desc = result['description'];
-        return '✅ Hava durumu: $temp°C, $desc';
+        return '✅ Weather: $temp°C, $desc';
 
       case 'search_wardrobe':
         final count = (result['items'] as List?)?.length ?? 0;
-        return '✅ Gardırop: $count parça bulundu';
+        return '✅ Wardrobe: $count items found';
 
       case 'check_color_harmony':
         final score = result['harmony_score'];
-        return '✅ Renk uyumu: $score/10';
+        return '✅ Color harmony: $score/10';
 
       case 'generate_outfit_visual':
-        return '✅ Görsel oluşturuldu';
+        return '✅ Visual created';
 
       default:
-        return '✅ $toolName tamamlandı';
+        return '✅ $toolName completed';
     }
   }
 }

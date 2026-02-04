@@ -16,17 +16,17 @@ class ChatSuggestionChips extends StatelessWidget {
     // Media durumuna göre önerileri belirle
     final suggestions = hasMedia
         ? [
-            'Bunu benim dolapla yap',
-            'Bu stili analiz et',
-            'Benzer kombin öner',
-            'Bu hangi tarz?',
+            'Do this with my wardrobe',
+            'Analyze this style',
+            'Suggest similar outfit',
+            'What style is this?',
           ]
         : [
-            'Yarın ne giysem?',
-            'Haftasonu için rahat kombin',
-            'İş görüşmesi için resmi kombin',
-            'Siyah ağırlıklı bir şeyler öner',
-            'Bugün hava nasıl?',
+            'What should I wear tomorrow?',
+            'Casual outfit for weekend',
+            'Formal outfit for job interview',
+            'Suggest something mostly black',
+            'How\'s the weather today?',
           ];
 
     return SizedBox(

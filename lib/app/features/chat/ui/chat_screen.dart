@@ -90,7 +90,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       state.status == ChatStatus.initial) {
                     const welcomeMessage = ChatMessage(
                       text:
-                          "Selam ben Comby! 👋\n\nHava durumuna göre harika bir kombin oluşturmaya ne dersin? Nereye gidiyorsun veya nasıl bir stile ihtiyacın var? Sana yardımcı olmaya hazırım! ✨",
+                          "Hi, I'm Comby! 👋\n\nHow about creating a great outfit based on the weather? Where are you going or what style do you need? I'm ready to help! ✨",
                       isUser: false,
                     );
                     return ListView(

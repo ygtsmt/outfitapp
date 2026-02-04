@@ -109,7 +109,7 @@ class _AppScreenState extends State<AppScreen> {
                     fontFamily: 'Futura',
                     extensions: const [AppColorsExtension.dark],
                   ),
-                  locale: state.languageLocale ?? const Locale('en'),
+                  locale: const Locale('en'),
                   themeMode: state.themeMode,
                   routerDelegate: _appRouter.delegate(),
                   routeInformationParser: _appRouter.defaultRouteParser(),

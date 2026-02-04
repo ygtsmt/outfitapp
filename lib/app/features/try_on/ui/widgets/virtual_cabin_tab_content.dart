@@ -429,13 +429,13 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
                 ? () {
                     if (_selectedModel == null) {
                       Utils.showToastMessage(
-                        content: 'Lütfen bir model seçin',
+                        content: 'Please select a model',
                         context: context,
                       );
                     }
                     if (_selectedClothes.isEmpty) {
                       Utils.showToastMessage(
-                        content: 'Lütfen bir kıyafet seçin',
+                        content: 'Please select a clothing item',
                         context: context,
                       );
                     }
@@ -464,7 +464,7 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
                 ),
               )
             : Text(
-                'Oluştur',
+                'Generate',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),

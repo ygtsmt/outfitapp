@@ -54,7 +54,7 @@ class DailyOutfitCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Günün Kombini Hazır! ✨',
+                    'Your Daily Outfit is Ready! ✨',
                     style: GoogleFonts.balooBhai2(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
@@ -63,7 +63,7 @@ class DailyOutfitCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    'Hava durumu ve dolabına göre senin için harika bir seçim yaptım. Görmek için tıkla!',
+                    "I've prepared the best outfit for you! ✨",
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: Colors.white.withOpacity(0.9),

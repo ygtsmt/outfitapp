@@ -31,19 +31,19 @@ class ToolRegistry {
   static GeminiFunctionDeclaration get _getWeatherRest =>
       GeminiFunctionDeclaration(
         name: 'get_weather',
-        description: 'Belirtilen şehir ve tarih için hava durumu bilgisi al.',
+        description: 'Get weather information for specified city and date.',
         parameters: {
           'type': 'OBJECT',
           'properties': {
             'city': {
               'type': 'STRING',
               'description':
-                  'Şehir adı (örn: Ankara, Istanbul). Kullanıcı belirtmediyse "Ankara" kullan.'
+                  'City name (e.g., Ankara, Istanbul). Use "Ankara" if user doesn\'t specify.'
             },
             'date': {
               'type': 'STRING',
               'description':
-                  'Tarih MUTLAKA YYYY-MM-DD formatında olmalı. Bugün ${DateTime.now().toString().split(' ')[0]}. "Yarın" ise bugünden +1 gün hesapla. Örnek: 2026-01-29'
+                  'Date MUST be in YYYY-MM-DD format. Today is ${DateTime.now().toString().split(' ')[0]}. If "tomorrow", calculate +1 day from today. Example: 2026-01-29'
             },
           },
           'required': ['city', 'date'],
@@ -54,29 +54,29 @@ class ToolRegistry {
       GeminiFunctionDeclaration(
         name: 'search_wardrobe',
         description:
-            'Kullanıcının gardırobundan TEK BİR kombin için uygun kıyafetleri bul. Tool MUTLAKA "descriptions" alanındaki kıyafetleri kullanmalısın - hayali kıyafet önerme!',
+            'Find suitable clothing items from user\'s wardrobe for ONE outfit. Tool MUST use items from "descriptions" field - don\'t suggest imaginary items!',
         parameters: {
           'type': 'OBJECT',
           'properties': {
             'category': {
               'type': 'STRING',
               'description':
-                  'Kategori: "top" (üst), "bottom" (alt), "outerwear" (dış giyim), "shoes" (ayakkabı), "accessories" (aksesuar). Boş bırakılırsa tüm kategoriler.'
+                  'Category: "top", "bottom", "outerwear", "shoes", "accessories". Leave empty for all categories.'
             },
             'season': {
               'type': 'STRING',
               'description':
-                  'Mevsim filtresi: "winter" (kış), "summer" (yaz), "spring_fall" (ilkbahar/sonbahar), "all" (tüm mevsimler). Hava durumuna göre seç.'
+                  'Season filter: "winter", "summer", "spring_fall", "all". Choose based on weather.'
             },
             'weather_condition': {
               'type': 'STRING',
               'description':
-                  'Hava durumu: "rainy" (yağmurlu), "sunny" (güneşli), "cold" (soğuk), "hot" (sıcak). Hava durumu API\'sinden gelen bilgiye göre.'
+                  'Weather condition: "rainy", "sunny", "cold", "hot". Based on weather API data.'
             },
             'limit': {
               'type': 'INTEGER',
               'description':
-                  'Maksimum kaç parça döndürülsün (varsayılan: 5, tek kombin için yeterli)'
+                  'Maximum number of items to return (default: 5, sufficient for one outfit)'
             },
           },
         },
@@ -86,7 +86,7 @@ class ToolRegistry {
       GeminiFunctionDeclaration(
         name: 'check_color_harmony',
         description:
-            'Seçilen kıyafetlerin renk uyumunu kontrol et ve uyum skoru ver (0-10 arası).',
+            'Check color harmony of selected clothing items and provide harmony score (0-10 scale).',
         parameters: {
           'type': 'OBJECT',
           'properties': {
@@ -94,7 +94,7 @@ class ToolRegistry {
               'type': 'ARRAY',
               'items': {'type': 'STRING'},
               'description':
-                  'Kontrol edilecek kıyafet ID\'leri (search_wardrobe\'dan dönen ID\'ler)'
+                  'Clothing item IDs to check (IDs returned from search_wardrobe)'
             },
           },
           'required': ['item_ids'],
@@ -105,19 +105,19 @@ class ToolRegistry {
       GeminiFunctionDeclaration(
         name: 'update_user_preference',
         description:
-            'Kullanıcının stil tercihlerini güncelle veya yeni bir bilgi öğrenince kaydet. Örneğin kullanıcı "Siyah severim" derse bunu kaydet.',
+            'Update user\'s style preferences or save new information when learned. For example, if user says "I love black", save it.',
         parameters: {
           'type': 'OBJECT',
           'properties': {
             'action': {
               'type': 'STRING',
               'description':
-                  'İşlem türü: "add_favorite" (sevdiği renk/parça ekle), "add_disliked" (sevmediği ekle), "set_style" (tarz anahtar kelimesi ekle), "set_note" (genel not ekle).'
+                  'Action type: "add_favorite" (add liked color/item), "add_disliked" (add disliked), "set_style" (add style keyword), "set_note" (add general note).'
             },
             'value': {
               'type': 'STRING',
               'description':
-                  'Eklenecek değer. Örn: "siyah", "neon renkler", "minimalist", "yünlü giymez".'
+                  'Value to add. E.g.: "black", "neon colors", "minimalist", "doesn\'t wear wool".'
             },
           },
           'required': ['action', 'value'],
@@ -128,7 +128,7 @@ class ToolRegistry {
       GeminiFunctionDeclaration(
         name: 'generate_outfit_visual',
         description:
-            'Seçilen kıyafetlerden AI ile kombin görseli oluştur. Fal AI kullanarak gerçekçi görsel üret.',
+            'Create outfit visual from selected clothing items using AI. Generate realistic visual using Fal AI.',
         parameters: {
           'type': 'OBJECT',
           'properties': {
@@ -136,12 +136,12 @@ class ToolRegistry {
               'type': 'ARRAY',
               'items': {'type': 'STRING'},
               'description':
-                  'Kombin oluşturulacak kıyafet ID\'leri (en az 2, en fazla 5 parça)'
+                  'Clothing item IDs for outfit creation (minimum 2, maximum 5 items)'
             },
             'weather_context': {
               'type': 'STRING',
               'description':
-                  'Hava durumu bilgisi (örn: "15°C, güneşli"). Görsel oluştururken kullanılır.'
+                  'Weather information (e.g., "15°C, sunny"). Used when creating visual.'
             },
           },
           'required': ['item_ids'],
@@ -152,14 +152,14 @@ class ToolRegistry {
       GeminiFunctionDeclaration(
         name: 'get_calendar_events',
         description:
-            'Kullanıcının takvimindeki etkinlikleri kontrol et. "Bugün" veya "Yarın" için planları çek.',
+            'Check events in user\'s calendar. Fetch plans for "Today" or "Tomorrow".',
         parameters: {
           'type': 'OBJECT',
           'properties': {
             'date': {
               'type': 'STRING',
               'description':
-                  'Kontrol edilecek tarih (YYYY-MM-DD). Örn: 2026-01-29. Kullanıcı "bugün" derse bugünün tarihini hesapla.'
+                  'Date to check (YYYY-MM-DD). E.g.: 2026-01-29. If user says "today", calculate today\'s date.'
             },
           },
           'required': ['date'],
@@ -170,29 +170,28 @@ class ToolRegistry {
       GeminiFunctionDeclaration(
         name: 'start_travel_mission',
         description:
-            'Kullanıcı kesin bir seyahat planı yaptığında veya yola çıkacağını söylediğinde bu görevi takip etmek için kullan.',
+            'Use this to track the mission when user makes a definite travel plan or says they\'re leaving.',
         parameters: {
           'type': 'OBJECT',
           'properties': {
             'destination': {
               'type': 'STRING',
-              'description': 'Gidilecek yer (Şehir adı).'
+              'description': 'Destination (City name).'
             },
             'packed_items': {
               'type': 'ARRAY',
               'items': {'type': 'STRING'},
-              'description':
-                  'Bavula koyduğu, giydiği veya yanına aldığı eşyalar.'
+              'description': 'Items packed, worn, or taken along.'
             },
             'start_date': {
               'type': 'STRING',
               'description':
-                  'Seyahat tarihi ve saati (ISO 8601: YYYY-MM-DDTHH:mm:ss). Örn: "2026-02-01T15:00:00". Kullanıcı saat belirtirse mutlaka ekle. Belirtmezse günün varsayılan saatini (örn: 09:00) veya sadece tarihi kullan.'
+                  'Travel date and time (ISO 8601: YYYY-MM-DDTHH:mm:ss). E.g.: "2026-02-01T15:00:00". If user specifies time, include it. Otherwise use default time (e.g., 09:00) or just date.'
             },
             'purpose': {
               'type': 'STRING',
               'description':
-                  'Seyahatin amacı (Business, Vacation, Family, Wedding vs). Belirtilmediyse "General".'
+                  'Purpose of travel (Business, Vacation, Family, Wedding, etc.). Use "General" if not specified.'
             },
           },
           'required': ['destination', 'packed_items'],
@@ -203,10 +202,10 @@ class ToolRegistry {
       GeminiFunctionDeclaration(
         name: 'analyze_style_dna',
         description:
-            'Kullanıcının gardırobunu istatistiksel olarak analiz et. Renk dağılımı, kategori yoğunluğu ve genel tarz (vibe) verilerini döndür. Kullanıcı "tarzım ne", "analiz et" dediğinde kullan.',
+            'Statistically analyze user\'s wardrobe. Return color distribution, category density, and general style (vibe) data. Use when user says "what\'s my style", "analyze me".',
         parameters: {
           'type': 'OBJECT',
-          'properties': {}, // Parametre yok
+          'properties': {}, // No parameters
         },
       );
 
@@ -309,58 +308,58 @@ class ToolRegistry {
 
   // System Instructions
   static String get agentSystemInstruction => '''
-Sen "Comby" adında, profesyonel, dost canlısı ve zevkli bir stil danışmanısın.
-Görevin: Kullanıcının "ne giysem" sorularına, hava durumu, gardırop içeriği ve renk uyumu kurallarını dikkate alarak en şık kombin önerisini sunmak.
+You are "Comby", a professional, friendly, and stylish fashion consultant.
+Your mission: Answer users' "what should I wear" questions by considering weather, wardrobe content, and color harmony rules to provide the most elegant outfit recommendations.
 
-### ÖNEMLİ: ZİNCİRLEME DÜŞÜNME (CHAIN OF THOUGHT)
-Karmaşık bir istek geldiğinde (ör: "Seyahate gidiyorum", "Haftalık plan yap"), hemen cevap verme. Önce bir `<PLAN>` oluştur.
-Adımlarını "Düşün > Planla > Uygula > Kontrol Et" döngüsüyle yönet.
+### IMPORTANT: CHAIN OF THOUGHT
+When a complex request comes (e.g., "I'm traveling", "Plan my week"), don't answer immediately. First create a `<PLAN>`.
+Manage your steps with the "Think > Plan > Execute > Verify" cycle.
 
-Örnek Düşünce Süreci:
-Kullanıcı: "Yarın Londra'ya iş için gidiyorum."
+Example Thought Process:
+User: "I'm going to London tomorrow for business."
 Agent:
 <THOUGHT>
-Kullanıcı seyahate gidiyor. Lokasyon: Londra. Amaç: İş.
-Riskler: Londra yağmurlu olabilir. İş olduğu için formal giyinmeli.
+User is traveling. Location: London. Purpose: Business.
+Risks: London might be rainy. Should dress formally for business.
 Plan:
-1. `get_weather` ile Londra havasına bak.
-2. `get_calendar_events` ile kendi takviminde çakışma var mı bak.
-3. `search_wardrobe` ile "business" ve "rainy" etiketli kıyafetleri ara.
-4. Uygun parçaları bulursan `generate_outfit_visual` ile göster.
+1. Check London weather with `get_weather`.
+2. Check calendar for conflicts with `get_calendar_events`.
+3. Search wardrobe for "business" and "rainy" tagged items with `search_wardrobe`.
+4. If suitable items found, show with `generate_outfit_visual`.
 </THOUGHT>
 
 <PLAN>
-1. Londra hava durumunu kontrol et.
-2. Takvimi kontrol et.
-3. Gardıroptan uygun kıyafetleri seç.
-4. Görsel oluştur.
+1. Check London weather.
+2. Check calendar.
+3. Select appropriate items from wardrobe.
+4. Generate visual.
 </PLAN>
 
-### KURALLAR:
-1. HAVA DURUMU: Önce MUTLAKA `get_weather` ile hava durumunu kontrol et. Asla tahmin yürütme.
-2. TAKVİM: Kullanıcı "bugün ne giysem" gibi bir şey sorarsa `get_calendar_events` ile planını kontrol et. Toplantı, düğün vb. varsa ona göre giydir.
-3. GARDIROP: Hava durumuna ve takvimdeki etkinliğe uygun kategorileri belirle ve `search_wardrobe` ile gardıropta ara.
-4. RENK UYUMU: Seçtiğin parçaların uyumunu `check_color_harmony` ile test et.
-5. GÖRSEL: En son, seçtiğin parçalarla `generate_outfit_visual` kullanarak bir kombin görseli oluştur.
-6. HAFIZA (ÖNEMLİ): Kullanıcı sana tarzı, sevdiği/sevmediği renkler veya özel istekleri hakkında bir şey söylerse (örn: "X rengini severim", "Y tarzını giymem"), MUTLAKA `update_user_preference` tool'unu kullanarak bunu kaydet. Kullanıcının "bunu kaydet" demesini bekleme, sen proaktif ol.
-7. VIBE MATCHER (FOTOĞRAF ANALİZİ): Eğer kullanıcı bir fotoğraf gönderip "bunu yap", "buna benzer" derse:
-   a. Vision yeteneğinle fotoğraftaki kıyafetleri (tür, renk, tarz) analiz et.
-   b. `search_wardrobe` kullanarak kullanıcının dolabında bu parçalara EN YAKIN olanları ara. Birebir aynısı yoksa alternatif (örn: deri ceket yoksa kot ceket) bul.
-   c. Bulduğun parçalarla `generate_outfit_visual` yap.
-   d. Cevabında "Fotoğraftaki X yerine senin Y parçanı seçtim çünkü..." şeklinde açıklama yap.
-8. SELF-CORRECTION (HATA TOLERANSI): Eğer bir tool hata verirse veya boş sonuç dönerse ASLA pes etme ve kullanıcıya "hata oldu" deme.
-   a. Hava durumu hatası: "Mevsim normallerine göre..." diyerek tahminde bulun.
-   b. Gardırop boş/hata: Genel moda kurallarına göre (örn: "Siyah bir pantolon her zaman kurtarıcıdır") öneri yap.
-   c. Hata durumlarında dahi, amacın kullanıcıya bir "çözüm" sunmaktır.
-9. STİL ANALİZİ (YENİ): Kullanıcı "tarzım ne", "analiz et" derse `analyze_style_dna` kullan. Gelen istatistiklere (Renk: %60 Siyah gibi) bakarak ona bir "Moda Karakteri" (Örn: Minimalist Dark) biç. ve bunu Markdown formatında şık bir rapor olarak sun.
-10. SEYAHAT VE BAVUL (KRİTİK): Kullanıcı "Bavul hazırla", "Yarın X'e gidiyorum ne alayım" dediğinde:
-    a. Önce hava durumuna (`get_weather`) bak.
-    b. Sonra gardıroptan uygun parça öner (`search_wardrobe`).
-    c. Önerdiğin ve kullanıcının onayladığı (veya senin seçtiğin) parçaları `start_travel_mission` tool'u ile KAYDET. Bunu yapmazsan kullanıcı seyahatteyken onu koruyamayız. Parametreleri (`destination`, `packed_items` vb.) senin önerdiklerinle doldur.
-11. CEVAP FORMATI: Son cevabını verirken samimi ol, neden bu parçaları seçtiğini anlat. Tool çıktılarını (hava durumu, bulunan parçalar) yorumlayarak sun.
+### RULES:
+1. WEATHER: ALWAYS check weather with `get_weather` first. Never guess.
+2. CALENDAR: If user asks "what should I wear today", check their schedule with `get_calendar_events`. If there's a meeting, wedding, etc., dress accordingly.
+3. WARDROBE: Determine appropriate categories based on weather and calendar events, then search wardrobe with `search_wardrobe`.
+4. COLOR HARMONY: Test harmony of selected items with `check_color_harmony`.
+5. VISUAL: Finally, create an outfit visual with `generate_outfit_visual` using selected items.
+6. MEMORY (IMPORTANT): If user tells you about their style, favorite/disliked colors, or special preferences (e.g., "I love X color", "I never wear Y style"), ALWAYS save it using `update_user_preference` tool. Be proactive, don't wait for them to say "save this".
+7. VIBE MATCHER (PHOTO ANALYSIS): If user sends a photo and says "do this", "similar to this":
+   a. Analyze clothing in photo (type, color, style) with your Vision capability.
+   b. Use `search_wardrobe` to find CLOSEST items in user's wardrobe. If exact match doesn't exist, find alternatives (e.g., denim jacket if no leather jacket).
+   c. Create `generate_outfit_visual` with found items.
+   d. In your response, explain "I chose your Y item instead of X in the photo because..."
+8. SELF-CORRECTION (ERROR TOLERANCE): If a tool fails or returns empty results, NEVER give up or tell user "error occurred".
+   a. Weather error: Make an estimate based on "seasonal norms..."
+   b. Empty/error wardrobe: Suggest based on general fashion rules (e.g., "A black pair of pants is always a lifesaver").
+   c. Even in error situations, your goal is to provide a "solution" to the user.
+9. STYLE ANALYSIS (NEW): If user says "what's my style", "analyze me", use `analyze_style_dna`. Based on statistics (e.g., Color: 60% Black), create a "Fashion Character" (e.g., Minimalist Dark) and present it as an elegant Markdown report.
+10. TRAVEL AND PACKING (CRITICAL): When user says "Pack my bag", "I'm going to X tomorrow, what should I take":
+    a. First check weather (`get_weather`).
+    b. Then suggest appropriate items from wardrobe (`search_wardrobe`).
+    c. SAVE the items you suggested and user approved (or you selected) with `start_travel_mission` tool. Without this, we can't protect user during travel. Fill parameters (`destination`, `packed_items`, etc.) with your suggestions.
+11. RESPONSE FORMAT: Be friendly in your final answer, explain why you chose these items. Present tool outputs (weather, found items) with interpretation.
 
-Cevabında planlama kısmını kullanıcıya `<PLAN>` etiketi içinde göster ki ne kadar akıllı olduğunu görsünler. Sonra normal, samimi cevabını ver.
+Show your planning part to user in `<PLAN>` tags so they see how smart you are. Then give your normal, friendly answer.
 
-Eğer kullanıcı sadece "merhaba" derse, kendini tanıt ve ona nasıl yardımcı olabileceğini (hava durumu ve gardırobuna göre kombin yapabileceğini) ve tarzını öğrenmek istediğini söyle.
+If user just says "hello", introduce yourself and tell them how you can help (outfit suggestions based on weather and wardrobe) and that you want to learn their style.
 ''';
 }

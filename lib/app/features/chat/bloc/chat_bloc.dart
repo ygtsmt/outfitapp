@@ -79,8 +79,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(state.copyWith(
       status: ChatStatus.loading,
       messages: messages,
-      selectedMedia: [], // Gönderildikten sonra temizle
-      agentThinkingText: 'Düşünüyor...', // Başlangıç metni
+      selectedMedia: [],
+      agentThinkingText: 'Thinking...',
     ));
 
     try {
@@ -108,12 +108,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
         _saveSession(finalMessages);
 
-        /// ⚠️ burada NORMALDE API çağırırsın
-        /// örnek dummy data
-        final weatherData = 'Ankara bugün 11°C, parçalı bulutlu, rüzgar hafif.';
+        /// ⚠️ You would normally call an API here
+        /// example dummy data
+        final wardrobeData = '✅ Wardrobe: 5 items found';
 
         final finalAiResult = await _chatUseCase.sendMessage(
-          'Bu hava durumu verisini kullanıcıya doğal dilde anlat: $weatherData',
+          'Explain this wardrobe data to the user in natural language: $wardrobeData',
         );
 
         final aiMessage = ChatMessage(
@@ -146,7 +146,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         emit(state.copyWith(
           status: ChatStatus.success,
           messages: updatedMessages,
-          agentThinkingText: null, // Bitti
+          agentThinkingText: null, // Finished
         ));
         _saveSession(updatedMessages);
       }
@@ -154,7 +154,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       emit(state.copyWith(
         status: ChatStatus.failure,
         errorMessage: e.toString(),
-        agentThinkingText: null, // Hata durumunda sil
+        agentThinkingText: null, // Clear in case of error
       ));
     }
   }

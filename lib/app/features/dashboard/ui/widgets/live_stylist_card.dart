@@ -56,7 +56,7 @@ class LiveStylistCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Canlı Stilist",
+                    "Live Stylist",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18.sp,
@@ -65,7 +65,7 @@ class LiveStylistCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    "Kıyafetlerini göster, anında yorumla!",
+                    "Show your outfits, get instant feedback!",
                     softWrap: true,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.9),

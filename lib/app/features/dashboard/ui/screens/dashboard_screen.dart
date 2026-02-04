@@ -88,7 +88,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('Tamam, Teşekkürler'),
+                child: Text('OK, Thanks'),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -100,7 +100,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         builder: (context) => ChatScreen(),
                       ));
                 },
-                child: Text('Detayları Konuş'),
+                child: Text('Discuss Details'),
               ),
             ],
           ),

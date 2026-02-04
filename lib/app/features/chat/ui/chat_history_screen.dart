@@ -49,12 +49,12 @@ class _ChatHistoryScreenState extends State<ChatHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Geçmiş Sohbetler'),
+        title: const Text('Chat History'),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _sessions.isEmpty
-              ? const Center(child: Text("Henüz geçmiş sohbet yok."))
+              ? const Center(child: Text("No chat history yet."))
               : ListView.builder(
                   padding: EdgeInsets.all(16.h),
                   itemCount: _sessions.length,

@@ -46,7 +46,7 @@
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This application requires optional access to your location to select and use images for AI content creation..</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Bulunduğunuz konuma göre hava durumu bilgisi göstermek için konum erişimi gereklidir.</string>
+	<string>This app needs access to your location to provide weather information based on your current location.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs access to your microphone for video recording features.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

@@ -64,7 +64,7 @@ class ChatUseCase {
       final items = await _closetUseCase.getUserClosetItems();
 
       if (items.isEmpty) {
-        return 'Kullanıcının gardırobu boş.';
+        return 'User\'s wardrobe is empty.';
       }
 
       final itemsJson = items
@@ -82,17 +82,17 @@ class ChatUseCase {
           .toList();
 
       return '''
-KULLANICININ GARDIROBU (${items.length} parça):
+USER'S WARDROBE (${items.length} items):
 ${jsonEncode(itemsJson)}
 
-ÖNEMLİ TALİMATLAR:
-1. Kullanıcıya DOĞAL DİLDE cevap ver, JSON gösterme!
-2. Kıyafetleri açıklarken sadece imageUrl'leri kullan, JSON formatında gösterme.
-3. Örnek iyi cevap: "Gardırobunuzda 1 beyaz kazak var. imageUrl: https://..."
-4. Örnek kötü cevap: [{"id":"123", "imageUrl":"https://..."...}]
+IMPORTANT INSTRUCTIONS:
+1. Respond to the user in NATURAL LANGUAGE, don't show JSON!
+2. When describing clothing, only use imageUrls, don't show in JSON format.
+3. Example good response: "You have 1 white sweater in your wardrobe. imageUrl: https://..."
+4. Example bad response: [{"id":"123", "imageUrl":"https://..."...}]
 ''';
     } catch (e) {
-      return 'Gardırop bilgisi alınamadı: $e';
+      return 'Failed to get wardrobe info: $e';
     }
   }
 
@@ -136,122 +136,8 @@ ${jsonEncode(itemsJson)}
     } catch (e) {
       log('❌ Agent hatası: $e');
       return ChatTextResult(
-        'Üzgünüm, işlem sırasında bir hata oluştu: $e',
+        'Sorry, an error occurred during the process: $e',
       );
-    }
-    // } // ESKİ KONTROL BLOĞU SONU
-
-    // Normal chat akışı
-    String finalMessage;
-
-    // User message content
-    final userParts = <GeminiPart>[];
-
-    // ✅ Media varsa gardırop context'ini GÖNDERME
-    if (mediaPaths != null && mediaPaths.isNotEmpty) {
-      finalMessage = message;
-
-      // Media dosyalarını ekle
-      for (final path in mediaPaths) {
-        final file = File(path);
-        if (!await file.exists()) continue;
-
-        final bytes = await file.readAsBytes();
-        final mimeType = _getMimeType(path);
-        final base64Data = base64Encode(bytes);
-
-        userParts.add(GeminiInlineDataPart(mimeType, base64Data));
-      }
-    } else {
-      // Media yoksa normal gardırop akışı
-      if (!_wardrobeSent) {
-        final wardrobeContext = await _getWardrobeContext();
-        finalMessage = '$wardrobeContext\n\nKullanıcı: $message';
-        _wardrobeSent = true;
-      } else {
-        finalMessage = message;
-      }
-    }
-
-    // Text'i ekle
-    userParts.add(GeminiTextPart(finalMessage));
-
-    // History'ye ekle
-    final userContent = GeminiContent(role: 'user', parts: userParts);
-    _chatHistory.add(userContent);
-
-    // İsteği gönder
-    try {
-      final response = await _geminiService.generateContent(
-        model: _model,
-        request: GeminiRequest(
-          contents: _chatHistory,
-        ),
-      );
-
-      if (response.candidates != null && response.candidates!.isNotEmpty) {
-        final content = response.candidates!.first.content;
-
-        // Cevabı history'ye ekle
-        _chatHistory.add(content);
-
-        // Text part bul
-        final textPart = content.parts.whereType<GeminiTextPart>().firstOrNull;
-        final responseText = textPart?.text ?? 'Cevap metni bulunamadı.';
-
-        // Function call (google_search) kontrolü? (Şimdilik yok)
-
-        return ChatTextResult(responseText);
-      } else {
-        return ChatTextResult('Cevap alınamadı.');
-      }
-    } catch (e) {
-      log('Chat error: $e');
-      return ChatTextResult('Hata: $e');
-    }
-  }
-
-  /// Outfit önerisi isteği mi kontrol et
-  bool _isOutfitRequest(String message) {
-    final keywords = [
-      'ne giysem',
-      'kombin öner',
-      'outfit',
-      'kıyafet öner',
-      'yarın için',
-      'bugün için',
-      'ne giydim',
-      'hava durumu',
-      'hava nasıl',
-      'what should i wear',
-      'outfit suggestion',
-    ];
-
-    final lowerMessage = message.toLowerCase();
-    return keywords.any((k) => lowerMessage.contains(k));
-  }
-
-  /// Dosya uzantısından MIME type belirle
-  String _getMimeType(String path) {
-    final extension = path.split('.').last.toLowerCase();
-    switch (extension) {
-      case 'jpg':
-      case 'jpeg':
-        return 'image/jpeg';
-      case 'png':
-        return 'image/png';
-      case 'gif':
-        return 'image/gif';
-      case 'webp':
-        return 'image/webp';
-      case 'mp4':
-        return 'video/mp4';
-      case 'mov':
-        return 'video/quicktime';
-      case 'avi':
-        return 'video/x-msvideo';
-      default:
-        return 'application/octet-stream';
     }
   }
 }

@@ -988,8 +988,8 @@ class _ClosetItemFormScreenState extends State<ClosetItemFormScreen> {
           SnackBar(
             content: Text(
               finalImageUrl.contains('.png')
-                  ? 'Closet item başarıyla eklendi (transparent ✓)'
-                  : 'Closet item başarıyla eklendi',
+                  ? 'Closet item added successfully (transparent ✓)'
+                  : 'Closet item added successfully',
             ),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),

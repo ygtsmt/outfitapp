@@ -69,12 +69,12 @@ class AgentService {
       String contextualMessage = userMessage;
       if (imagePaths != null && imagePaths.isNotEmpty) {
         contextualMessage =
-            '$userMessage\n\n[GÖRSEL ANALİZİ: Kullanıcı bir fotoğraf gönderdi. Vision yeteneğini kullanarak bu fotoğraftaki kıyafetleri, renkleri ve tarzı analiz et. Sonra bu tarza uygun parçaları `search_wardrobe` ile kullanıcının gardırobunda ara.]';
+            '$userMessage\n\n[IMAGE ANALYSIS: User sent a photo. Use your Vision capability to analyze the clothing, colors, and style in this photo. Then search for matching items in the user\'s wardrobe using `search_wardrobe`.]';
       }
 
       // AI'a tool kullanmasını hatırlat
       final enhancedMessage =
-          '$contextualMessage\n\n[Hava durumu, gardırop, renk uyumu ve görsel tool\'larını kullan]';
+          '$contextualMessage\n\n[Use weather, wardrobe, color harmony, and visual tools]';
 
       // Kullanıcı mesajını oluştur (Text + Images)
       final List<GeminiPart> messageParts = [GeminiTextPart(enhancedMessage)];
@@ -179,25 +179,27 @@ class AgentService {
             log('⚙️ Tool çalıştırılıyor: ${call.name}');
 
             // 🔥 UI Bilgilendirme
-            String stepMessage = 'İşleniyor...';
+            String stepMessage = 'Processing...';
+
+            // User-friendly step messages
             switch (call.name) {
               case 'get_weather_context':
-                stepMessage = 'Hava durumu kontrol ediliyor... 🌤️';
+                stepMessage = 'Checking weather conditions... 🌤️';
                 break;
               case 'search_wardrobe':
-                stepMessage = 'Gardırobun taranıyor... 👗';
+                stepMessage = 'Scanning your wardrobe... 👗';
                 break;
               case 'check_color_harmony':
-                stepMessage = 'Renk uyumuna bakılıyor... 🎨';
+                stepMessage = 'Checking color harmony... 🎨';
                 break;
               case 'generate_outfit_visual':
-                stepMessage = 'Kombin görseli oluşturuluyor... ✨';
+                stepMessage = 'Creating outfit visual... ✨';
                 break;
               case 'get_calendar_events':
-                stepMessage = 'Takviminiz kontrol ediliyor... 📅';
+                stepMessage = 'Checking your calendar... 📅';
                 break;
               default:
-                stepMessage = '${call.name} aracı çalışıyor...';
+                stepMessage = 'Running ${call.name} tool...';
             }
             onStep?.call(stepMessage);
 
@@ -262,20 +264,20 @@ class AgentService {
             ),
           );
         } else {
-          throw Exception('Model boş cevap döndü');
+          throw Exception('Model returned empty response');
         }
       }
 
-      log('⚠️ Max iteration aşıldı');
+      log('⚠️ Max iteration exceeded');
       return AgentResponse(
-        finalAnswer: 'İşlem tamamlanamadı (zaman aşımı).',
+        finalAnswer: 'Operation could not be completed (timeout).',
         steps: steps,
         success: false,
       );
     } catch (e) {
-      log('❌ Agent hatası: $e');
+      log('❌ Agent error: $e');
       return AgentResponse(
-        finalAnswer: 'Üzgünüm, bir hata oluştu: $e',
+        finalAnswer: 'Sorry, an error occurred: $e',
         steps: steps,
         success: false,
       );
@@ -304,7 +306,7 @@ class AgentService {
       case 'start_travel_mission':
         return _startTravelMission(call.args);
       default:
-        throw Exception('Bilinmeyen tool: ${call.name}');
+        throw Exception('Unknown tool: ${call.name}');
     }
   }
 
@@ -357,7 +359,7 @@ class AgentService {
 
     return {
       'status': 'success',
-      'message': 'Tercih kaydedildi: $action -> $value',
+      'message': 'Preference saved: $action -> $value',
     };
   }
 
@@ -402,8 +404,8 @@ class AgentService {
       'count': filteredItems.length,
       'descriptions': itemDescriptions,
       'message': filteredItems.isEmpty
-          ? 'Gardıroptan uygun parça bulunamadı'
-          : 'Gardıroptan ${filteredItems.length} parça bulundu: ${itemDescriptions.join(", ")}',
+          ? 'No suitable items found in wardrobe'
+          : 'Found ${filteredItems.length} items from wardrobe: ${itemDescriptions.join(", ")}',
     };
   }
 
@@ -416,12 +418,12 @@ class AgentService {
         allItems.where((item) => itemIds.contains(item.id)).toList();
 
     if (selectedItems.isEmpty) {
-      return {'harmony_score': 0, 'message': 'Kıyafet bulunamadı'};
+      return {'harmony_score': 0, 'message': 'Clothing items not found'};
     }
 
     return {
       'harmony_score': 7,
-      'message': 'Renkler uyumlu',
+      'message': 'Colors are harmonious',
     };
   }
 
@@ -477,7 +479,7 @@ class AgentService {
     );
 
     if (result == null) {
-      throw Exception('Görsel oluşturulamadı');
+      throw Exception('Failed to generate visual');
     }
 
     return {
@@ -534,12 +536,12 @@ class AgentService {
 
         if (account == null) {
           log('❌ Google Sign-In Canceled');
-          return {'message': 'Google giriş işlemi iptal edildi.'};
+          return {'message': 'Google sign-in was cancelled.'};
         }
 
         final authClient = await googleSignIn.authenticatedClient();
         if (authClient == null) {
-          return {'message': 'Kimlik doğrulama başarısız.'};
+          return {'message': 'Authentication failed.'};
         }
 
         final calendarApi = calendar.CalendarApi(authClient);
@@ -561,7 +563,7 @@ class AgentService {
         if (events.items == null || events.items!.isEmpty) {
           return {
             'events': [],
-            'message': 'Takviminde bu tarihte kayıtlı bir etkinlik görünmüyor.',
+            'message': 'No events found in your calendar for this date.',
           };
         }
 
@@ -584,7 +586,7 @@ class AgentService {
         log('❌ Google Calendar API Error: $e');
         return {
           'status': 'error',
-          'message': 'Google Takvim verisi çekilemedi: $e'
+          'message': 'Failed to fetch Google Calendar data: $e'
         };
       }
     }
@@ -600,7 +602,7 @@ class AgentService {
     if (items.isEmpty) {
       return {
         'message':
-            'Dolabın henüz boş görünüyor. Stilini analiz edebilmem için önce birkaç parça eklemelisin.',
+            'Your wardrobe appears to be empty. Please add a few items first so I can analyze your style.',
       };
     }
 
@@ -649,7 +651,8 @@ class AgentService {
       'total_items': totalItems,
       'top_colors': topColors,
       'top_categories': topCategories,
-      'message': 'Dolap analizi tamamlandı. İstatistiklere göre yorum yap.',
+      'message':
+          'Wardrobe analysis completed. Provide insights based on statistics.',
     };
   }
 
@@ -697,7 +700,7 @@ class AgentService {
     return {
       'status': 'success',
       'message':
-          '$destination seyahati için takip başlatıldı. Hava durumu ($initialWeather) ve eşyaların kaydedildi. Bir değişiklik olursa Dashboard\'da uyaracağım.',
+          'Tracking started for $destination trip. Weather ($initialWeather) and your items have been saved. I\'ll alert you on the Dashboard if anything changes.',
     };
   }
 
@@ -739,7 +742,7 @@ class AgentService {
         return {
           'status': 'mission_completed',
           'message':
-              'Umarım ${_activeMission?['destination'] ?? 'seyahatin'} güzel geçmiştir! Hoş geldin.'
+              'I hope your trip to ${_activeMission?['destination'] ?? 'your destination'} went well! Welcome back.'
         };
       }
     }

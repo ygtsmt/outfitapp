@@ -678,8 +678,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                       SizedBox(height: 2.h),
                       Text(
                         _isOutfitReady
-                            ? "Senin için en iyi kombini hazırladım! ✨"
-                            : "Hava durumuna göre en iyi kombin",
+                            ? "I've prepared the best outfit for you! ✨"
+                            : "Best outfit for the weather",
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.95),
                           fontSize: 11.sp,

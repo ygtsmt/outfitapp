@@ -19,7 +19,7 @@ class ChatEmptyState extends StatelessWidget {
 
             // Title
             Text(
-              'Comby AI Agent Hazır!',
+              'Comby AI Agent Ready!',
               textAlign: TextAlign.center,
               style: GoogleFonts.balooBhai2(
                 fontSize: 24.sp,
@@ -31,7 +31,7 @@ class ChatEmptyState extends StatelessWidget {
 
             // Description
             Text(
-              'Ben Comby. Senin için neler yapabilirim?',
+              'I\'m Comby. What can I do for you?',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16.sp,
@@ -44,21 +44,21 @@ class ChatEmptyState extends StatelessWidget {
             _buildCapabilityItem(
               context,
               icon: Icons.wb_sunny_rounded,
-              title: 'Hava Durumu Kontrolü',
-              description: 'Havaya göre giyinmeni sağlarım.',
+              title: 'Weather Check',
+              description: 'I help you dress according to the weather.',
             ),
             _buildCapabilityItem(
               context,
               icon: Icons.checkroom_rounded,
-              title: 'Gardırop Analizi',
-              description: 'Sadece sende olan parçaları öneririm.',
+              title: 'Wardrobe Analysis',
+              description: 'I only recommend items you own.',
             ),
             _buildCapabilityItem(
               context,
               icon: Icons.remove_red_eye_rounded,
-              title: 'Görsel Analiz (Vision)',
+              title: 'Visual Analysis (Vision)',
               description:
-                  'Bir fotoğraf yükle, tarzını analiz edip sana uyarlayayım.',
+                  'Upload a photo, I\'ll analyze your style and adapt it for you.',
             ),
 
             SizedBox(height: 24.h),
@@ -78,7 +78,7 @@ class ChatEmptyState extends StatelessWidget {
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Text(
-                      'İpucu: Aşağıdaki butonları kullanarak hızlıca başlayabilirsin.',
+                      'Tip: You can use the buttons below to get started quickly.',
                       style:
                           TextStyle(fontSize: 12.sp, color: Colors.orange[800]),
                     ),

@@ -25,13 +25,13 @@ class FalImageWidget extends StatelessWidget {
           return Container(
             padding: EdgeInsets.all(8.w),
             color: Colors.red.withOpacity(0.1),
-            child: Text('Görsel yüklenirken hata oluştu',
+            child: Text('Error loading image',
                 style: TextStyle(fontSize: 12.sp, color: Colors.red)),
           );
         }
 
         if (!snapshot.hasData || !snapshot.data!.exists) {
-          return _buildLoading(context, 'İstek oluşturuluyor...');
+          return _buildLoading(context, 'Creating request...');
         }
 
         final data = snapshot.data!.data() as Map<String, dynamic>;
@@ -85,7 +85,7 @@ class FalImageWidget extends StatelessWidget {
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
-                  return _buildLoading(context, 'Görsel indiriliyor...');
+                  return _buildLoading(context, 'Downloading image...');
                 },
               ),
             );
@@ -103,7 +103,7 @@ class FalImageWidget extends StatelessWidget {
                   Icon(Icons.broken_image_outlined,
                       color: Colors.orange, size: 24.sp),
                   SizedBox(width: 8.w),
-                  const Expanded(child: Text('Görsel formatı anlaşılamadı.')),
+                  const Expanded(child: Text('Image format not recognized.')),
                 ],
               ),
             );
@@ -122,14 +122,13 @@ class FalImageWidget extends StatelessWidget {
               children: [
                 Icon(Icons.error_outline, color: Colors.red, size: 24.sp),
                 SizedBox(width: 8.w),
-                const Expanded(child: Text('Görsel oluşturulamadı.')),
+                const Expanded(child: Text('Failed to generate image.')),
               ],
             ),
           );
         }
 
-        return _buildLoading(
-            context, 'Görsel oluşturuluyor... (Status: $status)');
+        return _buildLoading(context, 'Generating image... (Status: $status)');
       },
     );
   }

@@ -67,8 +67,8 @@ class StyleDNAService {
             'Minimal': 50,
           },
           'analysis':
-              "Henüz yeterli veri yok. Dolabına daha fazla parça ekleyerek stil analizini güçlendirebilirsin.",
-          'title': "Stil Kaşifi"
+              "Not enough data yet. You can strengthen your style analysis by adding more items to your wardrobe.",
+          'title': "Style Explorer"
         };
       }
 
@@ -99,8 +99,8 @@ Return ONLY a valid JSON object with the following structure:
     "Category4": [0-100],
     "Category5": [0-100]
   },
-  "analysis": "Describe the user's overall style persona in 2-3 sentences using a friendly, sincere, and engaging Turkish tone. Do NOT mention specific brands or product names (e.g. Caterpillar, Nike). Focus on the 'vibe', color palette, and general aesthetic (e.g. 'Dolabındaki toprak tonları ve rahat kesimler, doğallıktan yana olduğunu gösteriyor.').",
-  "title": "A cool, 1-2 word style title in Turkish (e.g. 'Minimalist Öncü', 'Sokak Modası', 'Vintage Ruh', 'Sportif Şık')."
+  "analysis": "Describe the user's overall style persona in 2-3 sentences using a friendly, sincere, and engaging tone. Do NOT mention specific brands or product names (e.g. Caterpillar, Nike). Focus on the 'vibe', color palette, and general aesthetic (e.g. 'The earthy tones and relaxed cuts in your wardrobe show you lean towards natural style.').",
+  "title": "A cool, 1-2 word style title in English (e.g. 'Minimalist Vanguard', 'Street Fashion', 'Vintage Soul', 'Sporty Chic')."
 }
 ''';
 
@@ -171,7 +171,7 @@ Return ONLY a valid JSON object with the following structure:
           'Vintage': 50,
           'Minimal': 50,
         },
-        'analysis': "Veri işlenirken hata oluştu.",
+        'analysis': "Error occurred while processing data.",
         'title': "Stil Kaşifi"
       };
     }

@@ -187,6 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? null
                           : AppBar(
                               forceMaterialTransparency: true,
+                              backgroundColor: Colors.red,
                               leading: GestureDetector(
                                 onTap: () {
                                   _scaffoldKey.currentState?.openDrawer();
