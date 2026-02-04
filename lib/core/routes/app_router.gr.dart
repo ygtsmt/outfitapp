@@ -407,6 +407,15 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    ChatHistoryScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const ChatHistoryScreen(),
+        transitionsBuilder: TransitionsBuilders.slideLeft,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -756,6 +765,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           LiveStylistPageRoute.name,
           path: '/live-stylist-page',
+        ),
+        RouteConfig(
+          ChatHistoryScreenRoute.name,
+          path: '/chat-history-screen',
         ),
       ];
 }
@@ -1613,6 +1626,18 @@ class LiveStylistPageRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'LiveStylistPageRoute';
+}
+
+/// generated route for
+/// [ChatHistoryScreen]
+class ChatHistoryScreenRoute extends PageRouteInfo<void> {
+  const ChatHistoryScreenRoute()
+      : super(
+          ChatHistoryScreenRoute.name,
+          path: '/chat-history-screen',
+        );
+
+  static const String name = 'ChatHistoryScreenRoute';
 }
 
 /// generated route for

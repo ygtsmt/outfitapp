@@ -49,6 +49,7 @@ import "package:comby/app/features/dashboard/ui/screens/ai_critique_camera_scree
 import "package:comby/app/features/chat/ui/chat_screen.dart";
 import "package:comby/app/ui/home_screen.dart";
 import "package:comby/app/features/live_stylist/pages/live_stylist_page.dart";
+import "package:comby/app/features/chat/ui/chat_history_screen.dart";
 import "package:comby/core/core.dart";
 import "package:comby/core/services/outfit_suggestion_service.dart";
 import "package:flutter/material.dart";
@@ -319,6 +320,11 @@ part "app_router.gr.dart";
       page: LiveStylistPage,
       path: "/live-stylist-page",
       transitionsBuilder: TransitionsBuilders.fadeIn,
+    ),
+    CustomRoute(
+      page: ChatHistoryScreen,
+      path: "/chat-history-screen",
+      transitionsBuilder: TransitionsBuilders.slideLeft,
     ),
   ],
 )

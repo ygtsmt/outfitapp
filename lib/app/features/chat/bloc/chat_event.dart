@@ -29,6 +29,17 @@ class ClearMediaEvent extends ChatEvent {
   const ClearMediaEvent();
 }
 
+class LoadSessionEvent extends ChatEvent {
+  final ChatSession session;
+  const LoadSessionEvent(this.session);
+  @override
+  List<Object> get props => [session];
+}
+
+class NewSessionEvent extends ChatEvent {
+  const NewSessionEvent();
+}
+
 class AgentStepUpdated extends ChatEvent {
   final String stepDescription;
   const AgentStepUpdated(this.stepDescription);

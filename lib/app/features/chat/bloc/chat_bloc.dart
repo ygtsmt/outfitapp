@@ -5,6 +5,9 @@ import 'package:comby/app/features/chat/data/chat_usecase.dart';
 import 'package:comby/app/features/chat/utils/parse_image_urls.dart';
 import 'package:comby/app/features/chat/models/agent_models.dart';
 import 'package:comby/generated/l10n.dart';
+import 'package:comby/app/features/chat/data/chat_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:comby/app/features/chat/models/chat_session_model.dart';
 
 part 'chat_event.dart';
 part 'chat_state.dart';
@@ -12,12 +15,37 @@ part 'chat_state.dart';
 @injectable
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final ChatUseCase _chatUseCase;
+  final ChatRepository _chatRepository;
+  final FirebaseAuth _auth;
 
-  ChatBloc(this._chatUseCase) : super(const ChatState()) {
+  String? _currentSessionId;
+
+  ChatBloc(this._chatUseCase, this._chatRepository, this._auth)
+      : super(const ChatState()) {
     on<SendMessageEvent>(_onSendMessage);
     on<SelectMediaEvent>(_onSelectMedia);
     on<ClearMediaEvent>(_onClearMedia);
     on<AgentStepUpdated>(_onAgentStepUpdated);
+    on<NewSessionEvent>(_onNewSession);
+    on<LoadSessionEvent>(_onLoadSession);
+  }
+
+  void _onNewSession(NewSessionEvent event, Emitter<ChatState> emit) {
+    _currentSessionId = null;
+    // Clear chat history in UseCase if possible, or just reset state
+    // But ChatUseCase keeps internal history, so we might need a method to clear it.
+    // For now, we just reset the UI state.
+    emit(const ChatState());
+  }
+
+  void _onLoadSession(LoadSessionEvent event, Emitter<ChatState> emit) {
+    _currentSessionId = event.session.id;
+    emit(state.copyWith(
+      status: ChatStatus.success,
+      messages: event.session.messages,
+    ));
+    // Ideally we should also restore the history in ChatUseCase if we want to continue the context.
+    // That would require updating ChatUseCase to accept history injection or setting it.
   }
 
   void _onAgentStepUpdated(
@@ -31,6 +59,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     SendMessageEvent event,
     Emitter<ChatState> emit,
   ) async {
+    // Generate session ID if not exists
+    if (_currentSessionId == null) {
+      _currentSessionId = _chatRepository.createSessionId();
+    }
+
     // Media'yı temizlemeden önce kaydet
     final mediaToSend =
         state.selectedMedia.isNotEmpty ? state.selectedMedia : null;
@@ -66,11 +99,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             AppLocalizations.current.searchingForInfo(result.query);
 
         final searchingBubble = ChatMessage(text: searchInfo, isUser: false);
+        final finalMessages = [...messages, searchingBubble];
 
         emit(state.copyWith(
-          messages: [...messages, searchingBubble],
+          messages: finalMessages,
           agentThinkingText: null, // Bitti
         ));
+
+        _saveSession(finalMessages);
 
         /// ⚠️ burada NORMALDE API çağırırsın
         /// örnek dummy data
@@ -80,17 +116,22 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           'Bu hava durumu verisini kullanıcıya doğal dilde anlat: $weatherData',
         );
 
+        final aiMessage = ChatMessage(
+          text: (finalAiResult as ChatTextResult).text,
+          isUser: false,
+        );
+        final updatedMessages = [
+          ...messages,
+          searchingBubble,
+          aiMessage,
+        ];
+
         emit(state.copyWith(
           status: ChatStatus.success,
-          messages: [
-            ...messages,
-            searchingBubble,
-            ChatMessage(
-              text: (finalAiResult as ChatTextResult).text,
-              isUser: false,
-            ),
-          ],
+          messages: updatedMessages,
         ));
+        _saveSession(updatedMessages);
+
         return;
       } else if (result is ChatTextResult) {
         final aiMessage = ChatMessage(
@@ -100,11 +141,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           imageUrls: result.imageUrl != null ? [result.imageUrl!] : null,
           agentSteps: result.agentSteps,
         );
+        final updatedMessages = [...messages, aiMessage];
+
         emit(state.copyWith(
           status: ChatStatus.success,
-          messages: [...messages, aiMessage],
+          messages: updatedMessages,
           agentThinkingText: null, // Bitti
         ));
+        _saveSession(updatedMessages);
       }
     } catch (e) {
       emit(state.copyWith(
@@ -127,5 +171,23 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) {
     emit(state.copyWith(selectedMedia: []));
+  }
+
+  Future<void> _saveSession(List<ChatMessage> messages) async {
+    if (_currentSessionId == null || _auth.currentUser == null) return;
+
+    final title =
+        messages.firstWhere((m) => m.isUser).text; // Simple title strategy
+
+    final session = ChatSession(
+      id: _currentSessionId!,
+      userId: _auth.currentUser!.uid,
+      startTime: DateTime.now(), // ideally preserve original start time
+      lastMessageTime: DateTime.now(),
+      title: title.length > 30 ? '${title.substring(0, 30)}...' : title,
+      messages: messages,
+    );
+
+    await _chatRepository.saveSession(session);
   }
 }

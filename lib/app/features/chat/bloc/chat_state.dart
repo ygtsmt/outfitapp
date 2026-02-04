@@ -20,6 +20,35 @@ class ChatMessage extends Equatable {
     this.visualRequestId,
   });
 
+  Map<String, dynamic> toMap() {
+    return {
+      'text': text,
+      'isUser': isUser,
+      'imageUrls': imageUrls,
+      'localMediaPaths': localMediaPaths,
+      'agentSteps': agentSteps?.map((x) => x.toMap()).toList(),
+      'visualRequestId': visualRequestId,
+    };
+  }
+
+  factory ChatMessage.fromMap(Map<String, dynamic> map) {
+    return ChatMessage(
+      text: map['text'] as String,
+      isUser: map['isUser'] as bool,
+      imageUrls: (map['imageUrls'] as List<dynamic>?)?.cast<String>(),
+      localMediaPaths:
+          (map['localMediaPaths'] as List<dynamic>?)?.cast<String>(),
+      agentSteps: map['agentSteps'] != null
+          ? List<AgentStep>.from(
+              (map['agentSteps'] as List<dynamic>).map<AgentStep?>(
+                (x) => AgentStep.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
+      visualRequestId: map['visualRequestId'] as String?,
+    );
+  }
+
   @override
   List<Object?> get props =>
       [text, isUser, imageUrls, localMediaPaths, agentSteps, visualRequestId];

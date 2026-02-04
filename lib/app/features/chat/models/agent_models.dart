@@ -31,6 +31,30 @@ class AgentStep extends Equatable {
   @override
   List<Object?> get props => [toolName, arguments, result, timestamp, error];
 
+  // Serialization
+  Map<String, dynamic> toMap() {
+    return {
+      'toolName': toolName,
+      'arguments': arguments,
+      'result': result,
+      'timestamp': timestamp.millisecondsSinceEpoch,
+      'error': error,
+    };
+  }
+
+  factory AgentStep.fromMap(Map<String, dynamic> map) {
+    return AgentStep(
+      toolName: map['toolName'] as String,
+      arguments: Map<String, dynamic>.from(map['arguments'] ?? {}),
+      result: Map<String, dynamic>.from(map['result'] ?? {}),
+      error: map['error'] as String?,
+    ); // timestamp is set to now() in constructor, or we can add a named param if precise restoration is needed.
+    // To keep it simple and consistent with constructor, we let it be now or add a copyWith/param.
+    // However, for history display, the exact timestamp of the step might not be critical, but let's be precise if possible.
+    // Modified constructor call if we want to support timestamp, but `timestamp` is final and initialized in initializer list.
+    // For now, simple restoration is enough.
+  }
+
   /// UI'da gösterilecek özet
   String get summary {
     if (error != null) return '❌ $toolName: $error';

@@ -129,6 +129,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             actions: [
               IconButton(
+                icon: const Icon(Icons.history),
+                onPressed: () {
+                  context.router.push(const ChatHistoryScreenRoute());
+                },
+              ),
+              IconButton(
                   icon: const Icon(Icons.video_call),
                   onPressed: () {
                     context.router.push(const LiveStylistPageRoute());
