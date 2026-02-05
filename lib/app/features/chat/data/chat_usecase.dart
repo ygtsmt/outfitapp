@@ -41,7 +41,7 @@ class ChatUseCase {
 
   // Model
   final String _model =
-      'gemini-3-flash-preview'; // REST API ile Gemini 3: gemini-3-flash-preview de kullanabiliriz
+      'gemini-3-flash-preview'; // Faster than Pro, same thought signature support
 
   bool _wardrobeSent = false;
 

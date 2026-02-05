@@ -146,14 +146,94 @@ class AgentService {
             for (var fc in functionCalls) {
               log('  - Call: ${fc.name}');
               log('  - Signature: ${fc.thoughtSignature ?? "MISSING"}');
+
+              // 🆕 Send thought signature to UI
+              if (fc.thoughtSignature != null &&
+                  fc.thoughtSignature!.isNotEmpty) {
+                // Try to decode base64 thought signature
+                String decodedSignature = fc.thoughtSignature!;
+                bool isReadable = false;
+
+                try {
+                  // Check if it looks like base64 (no spaces, alphanumeric + / =)
+                  if (RegExp(r'^[A-Za-z0-9+/=]+$')
+                      .hasMatch(fc.thoughtSignature!)) {
+                    final decoded =
+                        utf8.decode(base64Decode(fc.thoughtSignature!));
+                    // Check if decoded text is readable (printable ASCII)
+                    if (decoded.isNotEmpty &&
+                        decoded.length < 500 &&
+                        RegExp(r'^[\x20-\x7E\s]+$').hasMatch(decoded)) {
+                      decodedSignature = decoded;
+                      isReadable = true;
+                      log('🔓 DECODED thought signature from base64');
+                    }
+                  }
+                } catch (e) {
+                  log('⚠️ Could not decode thought signature: $e');
+                }
+
+                // If not readable, generate human-friendly thought signature
+                if (!isReadable) {
+                  decodedSignature =
+                      _generateThoughtSignature(fc.name, fc.args);
+                  log('🤖 GENERATED readable thought signature');
+                }
+
+                log('✅ THOUGHT SIGNATURE - Sending to UI:');
+                log('   "$decodedSignature"');
+                onStep?.call('💭 $decodedSignature');
+              } else {
+                // No thought signature, generate one
+                final generatedSignature =
+                    _generateThoughtSignature(fc.name, fc.args);
+                log('🤖 GENERATED thought signature for: ${fc.name}');
+                log('   "$generatedSignature"');
+                onStep?.call('💭 $generatedSignature');
+              }
             }
           } else {
             // Text cevabı var mı?
             final textParts =
                 content.parts.whereType<GeminiTextPart>().toList();
-            final String finalText = textParts.isNotEmpty
+            String finalText = textParts.isNotEmpty
                 ? textParts.map((e) => e.text).join(' ')
                 : 'İşlem tamamlandı.';
+
+            log('📝 RAW RESPONSE TEXT:');
+            log('   "${finalText.substring(0, finalText.length > 200 ? 200 : finalText.length)}..."');
+
+            // 🆕 Filter out raw JSON, PLAN tags, and code blocks
+            final originalText = finalText;
+
+            // Remove ```json ... ``` blocks
+            finalText = finalText.replaceAll(RegExp(r'```json[\s\S]*?```'), '');
+            // Remove ```...``` blocks
+            finalText = finalText.replaceAll(RegExp(r'```[\s\S]*?```'), '');
+            // Remove <PLAN>...</PLAN> blocks
+            finalText =
+                finalText.replaceAll(RegExp(r'<PLAN>[\s\S]*?</PLAN>'), '');
+            // Remove <THOUGHT>...</THOUGHT> blocks
+            finalText = finalText.replaceAll(
+                RegExp(r'<THOUGHT>[\s\S]*?</THOUGHT>'), '');
+            // Remove standalone JSON objects
+            finalText = finalText.replaceAll(
+                RegExp(r'\{[\s\S]*?"thoughtSignature"[\s\S]*?\}'), '');
+            // Trim whitespace
+            finalText = finalText.trim();
+
+            if (originalText != finalText) {
+              log('🧹 FILTERED OUT: JSON/PLAN/THOUGHT tags removed');
+            }
+
+            // If nothing left after filtering, use default message
+            if (finalText.isEmpty) {
+              finalText = 'İşlem tamamlandı.';
+              log('⚠️ EMPTY AFTER FILTERING - Using default message');
+            }
+
+            log('✅ FINAL TEXT TO USER:');
+            log('   "${finalText.substring(0, finalText.length > 200 ? 200 : finalText.length)}..."');
 
             // Visual Request ID var mı diye bak
             String? visualRequestId;
@@ -869,5 +949,41 @@ class AgentService {
     }
 
     return {'status': 'error'};
+  }
+
+  /// Generate human-readable thought signature from tool name and args
+  String _generateThoughtSignature(String toolName, Map<String, dynamic> args) {
+    switch (toolName) {
+      case 'get_weather':
+        final city = args['city'] ?? 'Ankara';
+        final date = args['date'] ?? 'tomorrow';
+        return 'Checking weather forecast for $city on $date to recommend appropriate clothing';
+
+      case 'get_calendar_events':
+        final date = args['date'] ?? 'tomorrow';
+        return 'Checking your calendar for $date to see if you have any special events';
+
+      case 'search_wardrobe':
+        final queries = args['queries'] as List?;
+        if (queries != null && queries.isNotEmpty) {
+          return 'Searching your wardrobe for ${queries.join(', ')}';
+        }
+        return 'Searching your wardrobe for matching items';
+
+      case 'check_color_harmony':
+        return 'Verifying that the color combinations look harmonious together';
+
+      case 'generate_outfit_visual':
+        return 'Creating a visual preview of your outfit';
+
+      case 'update_user_preference':
+        return 'Saving your style preferences for future recommendations';
+
+      case 'analyze_photo_style':
+        return 'Analyzing the style and colors in the photo you shared';
+
+      default:
+        return 'Processing your request with $toolName';
+    }
   }
 }

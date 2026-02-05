@@ -373,37 +373,52 @@ class _LoadingBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Check if message is a thought signature (starts with 💭)
+    final isThought = message?.startsWith('💭') ?? false;
+
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
         margin: EdgeInsets.only(bottom: 8.h, right: 50.w),
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
+          color: isThought ? Colors.blue[50] : Theme.of(context).cardColor,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(12.r),
             topRight: Radius.circular(12.r),
             bottomRight: Radius.circular(12.r),
           ),
+          border:
+              isThought ? Border.all(color: Colors.blue[200]!, width: 1) : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              width: 16.w,
-              height: 16.w,
-              child: CircularProgressIndicator(
-                  strokeWidth: 2, color: Theme.of(context).primaryColor),
-            ),
+            if (isThought) ...[
+              // Thought signature indicator
+              Text(
+                '🧠',
+                style: TextStyle(fontSize: 20.sp),
+              ),
+            ] else ...[
+              // Loading spinner
+              SizedBox(
+                width: 16.w,
+                height: 16.w,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: Theme.of(context).primaryColor),
+              ),
+            ],
             if (message != null) ...[
               SizedBox(width: 8.w),
               Flexible(
                 child: Text(
-                  message!,
+                  isThought ? message!.substring(2).trim() : message!,
                   style: TextStyle(
                     fontSize: 12.sp,
-                    color: Colors.grey[600],
+                    color: isThought ? Colors.blue[900] : Colors.grey[600],
                     fontStyle: FontStyle.italic,
+                    fontWeight: isThought ? FontWeight.w500 : FontWeight.normal,
                   ),
                 ),
               ),

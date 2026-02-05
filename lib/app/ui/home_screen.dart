@@ -186,6 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   tabsRouter.activeIndex == 2) // Profile
                           ? null
                           : AppBar(
+                              centerTitle: true,
                               forceMaterialTransparency: true,
                               backgroundColor: Colors.red,
                               leading: GestureDetector(

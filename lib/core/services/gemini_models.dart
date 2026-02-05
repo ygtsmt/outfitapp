@@ -224,21 +224,25 @@ class GeminiCandidate {
                 String? signature;
                 if (e.containsKey('thoughtSignature')) {
                   signature = e['thoughtSignature'];
+                  print(
+                      '✅ PARSING: Found thoughtSignature (camelCase): "$signature"');
                 } else if (e.containsKey('thought_signature')) {
                   signature = e['thought_signature'];
+                  print(
+                      '✅ PARSING: Found thought_signature (snake_case): "$signature"');
                 }
 
                 // Debug log
                 if (signature != null) {
-                  print('✅ Found thought_signature (sibling): $signature');
+                  print('✅ PARSING SUCCESS: Thought signature extracted');
                 } else {
-                  print(
-                      '❌ thought_signature MISSING (sibling check)! Part keys: ${e.keys.toList()}');
+                  print('❌ PARSING: thought_signature MISSING!');
+                  print('   Part keys: ${e.keys.toList()}');
                   // Fallback: belki functionCall içindedir (bazı versiyonlarda)
                   if (fc is Map && fc.containsKey('thought_signature')) {
                     signature = fc['thought_signature'];
                     print(
-                        '⚠️ Found inside functionCall (unexpected): $signature');
+                        '⚠️ PARSING: Found inside functionCall (unexpected): "$signature"');
                   }
                 }
 

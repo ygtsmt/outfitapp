@@ -86,6 +86,8 @@ dependencies:
   extension_google_sign_in_as_googleapis_auth: ^2.0.13
   web_socket_channel: ^3.0.3
   shared_preferences: ^2.5.3
+  audio_session: ^0.2.2
+#  sound_stream: ^0.4.2
 flutter_intl:
   enabled: true
   class_name: AppLocalizations
