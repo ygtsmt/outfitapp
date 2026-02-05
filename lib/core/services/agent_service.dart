@@ -66,9 +66,9 @@ class AgentService {
       // 🔥 MEMORY LOAD: Kullanıcı profilini çek
       final userProfile = await _userPreferenceService.getSystemPromptProfile();
 
-      // System Instruction'ı zenginleştir
+      // System Instruction enrichment with location/weather context
       final hasLocationPermission = await _locationService.hasPermission();
-      String locationContext = '[LOCATION_PERMISSION: DENIED]';
+      String locationContext = '[Location: Permission denied]';
 
       if (hasLocationPermission) {
         try {
@@ -80,22 +80,19 @@ class AgentService {
             );
             if (weather != null) {
               locationContext =
-                  '[LOCATION_PERMISSION: GRANTED, CURRENT_CITY: ${weather.cityName}]';
+                  '[Location: ${weather.cityName}, Weather data available]';
             } else {
               locationContext =
-                  '[LOCATION_PERMISSION: GRANTED, BUT WEATHER FETCH FAILED. DO NOT GUESS TEMPERATURE OR CONDITIONS.]';
+                  '[Location: Coordinates available, Weather fetch failed]';
             }
           } else {
             locationContext =
-                '[LOCATION_PERMISSION: GRANTED, BUT POSITION NOT FOUND. DO NOT GUESS LOCATION OR WEATHER.]';
+                '[Location: Permission granted, Position unavailable]';
           }
         } catch (e) {
           locationContext =
-              '[LOCATION_PERMISSION: GRANTED, BUT ERROR FETCHING DATA. DO NOT GUESS.]';
+              '[Location: Permission granted, Error fetching data]';
         }
-      } else {
-        locationContext =
-            '[LOCATION_PERMISSION: DENIED, CRITICAL: LOCATION IS UNKNOWN. DO NOT GUESS OR NAME ANY CITY (e.g., London, Istanbul). DO NOT GUESS TEMPERATURE OR WEATHER (e.g., 8°C, sunny). PROVIDE GENERIC SUGGESTIONS ONLY.]';
       }
 
       final fullSystemInstruction =

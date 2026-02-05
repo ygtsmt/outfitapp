@@ -43,7 +43,7 @@ class ToolRegistry {
             'date': {
               'type': 'STRING',
               'description':
-                  'Date MUST be in YYYY-MM-DD format. Today is ${DateTime.now().toString().split(' ')[0]}. If "tomorrow", calculate +1 day from today. Example: 2026-01-29'
+                  'Date format: YYYY-MM-DD. Today is ${DateTime.now().toString().split(' ')[0]}. For "tomorrow", add 1 day to today. Example: 2026-01-29'
             },
           },
           'required': ['city', 'date'],
@@ -54,7 +54,7 @@ class ToolRegistry {
       GeminiFunctionDeclaration(
         name: 'search_wardrobe',
         description:
-            'Find suitable clothing items from user\'s wardrobe for ONE outfit. Tool MUST use items from "descriptions" field - don\'t suggest imaginary items!',
+            'Find suitable clothing items from user\'s wardrobe for one outfit. Returns items from the wardrobe database with descriptions.',
         parameters: {
           'type': 'OBJECT',
           'properties': {
@@ -235,7 +235,7 @@ class ToolRegistry {
   static FunctionDeclaration get searchWardrobeDeclaration =>
       FunctionDeclaration(
         'search_wardrobe',
-        'Find suitable clothing items from the user\'s wardrobe for a SINGLE outfit. You MUST use items in the "descriptions" field - do not suggest imaginary clothes!',
+        'Find suitable clothing items from the user\'s wardrobe for a single outfit. Returns actual items from the wardrobe database with descriptions.',
         Schema(
           SchemaType.object,
           properties: {

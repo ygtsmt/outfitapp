@@ -43,7 +43,7 @@ class UserPreferenceService {
       if (data.containsKey('disliked_colors') &&
           (data['disliked_colors'] as List).isNotEmpty) {
         buffer.writeln(
-            '- NEVER Suggest (Disliked Colors): ${(data['disliked_colors'] as List).join(", ")}');
+            '- Color Preferences: User typically avoids ${(data['disliked_colors'] as List).join(", ")}');
       }
 
       if (data.containsKey('style_keywords') &&
