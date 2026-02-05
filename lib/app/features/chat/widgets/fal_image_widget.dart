@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class FalImageWidget extends StatelessWidget {
   final String requestId;
@@ -136,27 +138,85 @@ class FalImageWidget extends StatelessWidget {
   Widget _buildLoading(BuildContext context, String message) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+      height: 360.h,
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 24.w,
-            height: 24.w,
-            child: const CircularProgressIndicator(strokeWidth: 2),
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          SizedBox(height: 12.h),
-          Text(message,
-              style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Colors.grey,
-                  fontStyle: FontStyle.italic)),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.r),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Shimmer Background
+            Shimmer.fromColors(
+              baseColor: Colors.grey.withOpacity(0.05),
+              highlightColor: Colors.white.withOpacity(0.6),
+              period: const Duration(milliseconds: 1500),
+              child: Container(
+                color: Colors.white,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+
+            // Content
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Animated Icon or subtle indicator could go here
+                Container(
+                  width: 50.w,
+                  height: 50.w,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF452D54).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: SizedBox(
+                      width: 24.w,
+                      height: 24.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Color(0xFF452D54)),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                // Premium Animated Text
+                SizedBox(
+                  height: 24.h,
+                  child: DefaultTextStyle(
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF452D54).withOpacity(0.7),
+                      letterSpacing: 0.5,
+                    ),
+                    child: AnimatedTextKit(
+                      animatedTexts: [
+                        FadeAnimatedText('Designing your unique style...'),
+                        FadeAnimatedText('Analyzing fiber and fit...'),
+                        FadeAnimatedText('Curating the perfect look...'),
+                        FadeAnimatedText('Rendering visual preview...'),
+                      ],
+                      repeatForever: true,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

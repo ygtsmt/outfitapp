@@ -14,6 +14,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/calendar/v3.dart' as calendar;
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 import 'package:comby/core/services/notification_service.dart';
+import 'package:comby/core/services/location_service.dart';
 
 @injectable
 class AgentService {
@@ -22,6 +23,7 @@ class AgentService {
   final FalAiUsecase _falAiUsecase;
   final UserPreferenceService _userPreferenceService;
   final NotificationService _notificationService;
+  final LocationService _locationService;
 
   // MARATHON AGENT: Aktif Görev (Artık Storage'dan geliyor, burası boş kalabilir)
   Map<String, dynamic>? _activeMission;
@@ -35,11 +37,13 @@ class AgentService {
     required FalAiUsecase falAiUsecase,
     required UserPreferenceService userPreferenceService,
     required NotificationService notificationService,
+    required LocationService locationService,
   })  : _weatherService = weatherService,
         _closetUseCase = closetUseCase,
         _falAiUsecase = falAiUsecase,
         _userPreferenceService = userPreferenceService,
-        _notificationService = notificationService;
+        _notificationService = notificationService,
+        _locationService = locationService;
 
   /// 🤖 Agent task'i execute et (REST API)
   Future<AgentResponse> executeAgentTask({
@@ -49,6 +53,7 @@ class AgentService {
     required String model,
     List<String>? imagePaths, // NEW: Image Support
     void Function(String)? onStep, // NEW: Step Callback
+    bool useDeepThink = false, // NEW: Deep Think Mode
   }) async {
     final steps = <AgentStep>[];
 
@@ -62,8 +67,39 @@ class AgentService {
       final userProfile = await _userPreferenceService.getSystemPromptProfile();
 
       // System Instruction'ı zenginleştir
+      final hasLocationPermission = await _locationService.hasPermission();
+      String locationContext = '[LOCATION_PERMISSION: DENIED]';
+
+      if (hasLocationPermission) {
+        try {
+          final position = await _locationService.getCurrentPosition();
+          if (position != null) {
+            final weather = await _weatherService.getWeatherByLocation(
+              position.latitude,
+              position.longitude,
+            );
+            if (weather != null) {
+              locationContext =
+                  '[LOCATION_PERMISSION: GRANTED, CURRENT_CITY: ${weather.cityName}]';
+            } else {
+              locationContext =
+                  '[LOCATION_PERMISSION: GRANTED, BUT WEATHER FETCH FAILED. DO NOT GUESS TEMPERATURE OR CONDITIONS.]';
+            }
+          } else {
+            locationContext =
+                '[LOCATION_PERMISSION: GRANTED, BUT POSITION NOT FOUND. DO NOT GUESS LOCATION OR WEATHER.]';
+          }
+        } catch (e) {
+          locationContext =
+              '[LOCATION_PERMISSION: GRANTED, BUT ERROR FETCHING DATA. DO NOT GUESS.]';
+        }
+      } else {
+        locationContext =
+            '[LOCATION_PERMISSION: DENIED, CRITICAL: LOCATION IS UNKNOWN. DO NOT GUESS OR NAME ANY CITY (e.g., London, Istanbul). DO NOT GUESS TEMPERATURE OR WEATHER (e.g., 8°C, sunny). PROVIDE GENERIC SUGGESTIONS ONLY.]';
+      }
+
       final fullSystemInstruction =
-          '${ToolRegistry.agentSystemInstruction}\n$userProfile';
+          '${ToolRegistry.agentSystemInstruction}\n$userProfile\n$locationContext';
 
       // Vision Context Ekle
       String contextualMessage = userMessage;
@@ -120,6 +156,12 @@ class AgentService {
             role: 'system',
             parts: [GeminiTextPart(fullSystemInstruction)],
           ),
+          thinkingConfig: useDeepThink
+              ? GeminiThinkingConfig(
+                  mode: 'DEEP_THINK',
+                  maxThinkingTime: 30,
+                )
+              : null,
         ),
       );
 
@@ -235,6 +277,14 @@ class AgentService {
             log('✅ FINAL TEXT TO USER:');
             log('   "${finalText.substring(0, finalText.length > 200 ? 200 : finalText.length)}..."');
 
+            bool requestsLocation = false;
+            if (finalText.contains('[SYSTEM_ACTION: REQUEST_LOCATION]')) {
+              requestsLocation = true;
+              finalText = finalText
+                  .replaceAll('[SYSTEM_ACTION: REQUEST_LOCATION]', '')
+                  .trim();
+            }
+
             // Visual Request ID var mı diye bak
             String? visualRequestId;
             final visualStep = steps
@@ -251,6 +301,7 @@ class AgentService {
               steps: steps,
               visualRequestId: visualRequestId,
               success: true,
+              requestsLocation: requestsLocation,
             );
           }
 
@@ -444,7 +495,13 @@ class AgentService {
   }
 
   Future<Map<String, dynamic>> _getWeather(Map<String, dynamic> args) async {
-    final city = args['city'] as String? ?? 'Ankara';
+    final city = args['city'] as String?;
+    if (city == null || city.isEmpty) {
+      return {
+        'error':
+            'Location unknown. Please provide a city name or grant location permission.'
+      };
+    }
     final date = DateTime.parse(args['date']);
 
     final weather = await _weatherService.getWeatherForAgent(
@@ -876,14 +933,14 @@ class AgentService {
     1. Analyze if the new weather poses a risk to the Packed Items.
        - If YES -> Suggest a SPECIFIC replacement from the Wardrobe.
        - If NO -> Confirm everything is fine.
-    2. BE A LOCAL EXPERT: Suggest a specific activity or place in the Destination that fits the CURRENT weather (e.g., "It's raining in Paris, visit Passage des Panoramas").
+    2. BE A LOCAL EXPERT: Suggest a specific activity or place in the Destination that fits the CURRENT weather (e.g., "Visit the local museums or parks").
     3. VIBE MATCH: Suggest a song or music genre that fits the city/weather vibe.
-    4. PRACTICAL TIP: Remind about technical details specific to the country (e.g. power plugs in UK, tipping in USA).
+    4. PRACTICAL TIP: Remind about technical details specific to the country (e.g. power plugs, local currency).
     
     OUTPUT FORMAT (JSON ONLY):
     {
       "alert_type": "danger" | "warning" | "success",
-      "title": "Short Title (e.g. London Calling!)",
+      "title": "Short Title (e.g. Weather Alert!)",
       "message": "Friendly advice combining risk analysis, the local suggestion, and the practical tip.",
       "vibe_music": "Song - Artist"
     }
@@ -955,7 +1012,7 @@ class AgentService {
   String _generateThoughtSignature(String toolName, Map<String, dynamic> args) {
     switch (toolName) {
       case 'get_weather':
-        final city = args['city'] ?? 'Ankara';
+        final city = args['city'] ?? 'your location';
         final date = args['date'] ?? 'tomorrow';
         return 'Checking weather forecast for $city on $date to recommend appropriate clothing';
 

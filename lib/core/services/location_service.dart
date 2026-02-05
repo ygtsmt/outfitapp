@@ -1,6 +1,8 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:injectable/injectable.dart';
 
 /// Service for handling location permissions and getting user location
+@injectable
 class LocationService {
   /// Check if location services are enabled
   Future<bool> isLocationServiceEnabled() async {

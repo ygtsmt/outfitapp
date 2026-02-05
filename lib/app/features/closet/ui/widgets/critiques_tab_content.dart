@@ -19,7 +19,7 @@ class CritiquesTabContent extends StatefulWidget {
 class _CritiquesTabContentState extends State<CritiquesTabContent>
     with AutomaticKeepAliveClientMixin {
   Stream<QuerySnapshot>? _critiquesStream;
-  int _crossAxisCount = 2;
+  int _crossAxisCount = 3;
   double _baseScaleFactor = 1.0;
 
   @override

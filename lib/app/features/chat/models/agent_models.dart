@@ -89,6 +89,7 @@ class AgentResponse extends Equatable {
   final String? imageUrl;
   final String? visualRequestId; // NEW: Pending visual request ID
   final bool success;
+  final bool requestsLocation; // 📍 Konum izni talebi
 
   const AgentResponse({
     required this.finalAnswer,
@@ -96,11 +97,18 @@ class AgentResponse extends Equatable {
     this.imageUrl,
     this.visualRequestId,
     this.success = true,
+    this.requestsLocation = false,
   });
 
   @override
-  List<Object?> get props =>
-      [finalAnswer, steps, imageUrl, visualRequestId, success];
+  List<Object?> get props => [
+        finalAnswer,
+        steps,
+        imageUrl,
+        visualRequestId,
+        success,
+        requestsLocation
+      ];
 
   /// Toplam süre
   Duration get totalDuration {

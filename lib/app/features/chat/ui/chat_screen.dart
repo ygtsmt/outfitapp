@@ -9,6 +9,9 @@ import 'package:comby/app/features/chat/widgets/markdown_text.dart';
 import 'package:comby/app/features/chat/widgets/media_preview_widget.dart';
 import 'package:comby/app/features/chat/widgets/fal_image_widget.dart';
 import 'package:comby/core/ui/widgets/reusable_gallery_picker.dart';
+import 'package:comby/core/services/location_service.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:get_it/get_it.dart';
 import 'package:comby/generated/l10n.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -21,6 +24,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  bool _useDeepThink = false; // Deep Think Mode Toggle
 
   @override
   void dispose() {
@@ -44,7 +48,9 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     final message = _textController.text.trim();
     if (message.isNotEmpty) {
-      context.read<ChatBloc>().add(SendMessageEvent(message));
+      context.read<ChatBloc>().add(
+            SendMessageEvent(message, useDeepThink: _useDeepThink),
+          );
       _textController.clear();
       _scrollToBottom();
     }
@@ -144,7 +150,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: ChatSuggestionChips(
                   hasMedia: state.selectedMedia.isNotEmpty,
                   onChipSelected: (text) {
-                    context.read<ChatBloc>().add(SendMessageEvent(text));
+                    context.read<ChatBloc>().add(
+                          SendMessageEvent(text, useDeepThink: _useDeepThink),
+                        );
                   },
                 ),
               );
@@ -158,6 +166,18 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildInputArea(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Deep Think Toggle
+
+        // Original Input Area
+        _buildOriginalInputArea(context),
+      ],
+    );
+  }
+
+  Widget _buildOriginalInputArea(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -359,10 +379,92 @@ class _MessageBubble extends StatelessWidget {
                 SizedBox(height: 12.h),
                 FalImageWidget(requestId: message.visualRequestId!),
               ],
+
+              // 📍 Location Permission Request Button
+              if (message.requestsLocation) ...[
+                SizedBox(height: 12.h),
+                _LocationPermissionButton(
+                  onPermissionGranted: () {
+                    context.read<ChatBloc>().add(
+                          const SendMessageEvent(
+                            "Location permission granted! Please optimize my outfit for the real-time weather in my current city.",
+                          ),
+                        );
+                  },
+                ),
+              ],
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _LocationPermissionButton extends StatefulWidget {
+  final VoidCallback? onPermissionGranted;
+
+  const _LocationPermissionButton({this.onPermissionGranted});
+
+  @override
+  State<_LocationPermissionButton> createState() =>
+      _LocationPermissionButtonState();
+}
+
+class _LocationPermissionButtonState extends State<_LocationPermissionButton> {
+  bool _isProcessing = false;
+
+  Future<void> _handlePermission() async {
+    setState(() => _isProcessing = true);
+    try {
+      final locationService = GetIt.I<LocationService>();
+      final permission = await locationService.requestPermission();
+
+      if (permission == LocationPermission.deniedForever) {
+        await locationService.openAppSettings();
+      }
+
+      if (mounted) {
+        final granted = permission == LocationPermission.whileInUse ||
+            permission == LocationPermission.always;
+
+        if (granted) {
+          widget.onPermissionGranted?.call();
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(granted
+                ? "Location permission granted! ✨"
+                : "Location permission denied."),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: _isProcessing ? null : _handlePermission,
+      icon: _isProcessing
+          ? SizedBox(
+              width: 16.w,
+              height: 16.w,
+              child: const CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(Icons.location_on_rounded),
+      label: const Text("Grant Location Permission"),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.blue[700],
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+      ),
     );
   }
 }

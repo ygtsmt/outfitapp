@@ -18,7 +18,7 @@ class ModelsTabContent extends StatefulWidget {
 
 class _ModelsTabContentState extends State<ModelsTabContent>
     with AutomaticKeepAliveClientMixin {
-  int _crossAxisCount = 2;
+  int _crossAxisCount = 3;
   double _baseScaleFactor = 1.0;
 
   @override

@@ -44,7 +44,7 @@ Asistanımız sadece sohbet etmez; dış dünya ile bağlantı kuran bir **Ajan 
 > **Kullanıcı**: "Haftaya Salı Londra'ya gidiyorum, ne giymeliyim?"
 >
 > **AI (Arka Plandaki Akıl Yürütme)**: 
-> 1. `get_weather(London, Tuesday)` çağırdı → Hava yağmurlu, 10°C.
+> 1. `get_weather(YourCity, Tuesday)` çağırdı → Hava yağmurlu, 10°C.
 > 2. `get_calendar_events()` çağırdı → Salı akşamı şık bir akşam yemeği var.
 > 3. `search_wardrobe()` çağırdı → Su geçirmeyen trençkotu ve siyah elbiseyi buldu.
 >

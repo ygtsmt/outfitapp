@@ -6,12 +6,14 @@ class GeminiRequest {
   final List<GeminiTool>? tools;
   final GeminiContent? systemInstruction;
   final GeminiToolConfig? toolConfig;
+  final GeminiThinkingConfig? thinkingConfig;
 
   GeminiRequest({
     required this.contents,
     this.tools,
     this.systemInstruction,
     this.toolConfig,
+    this.thinkingConfig,
   });
 
   Map<String, dynamic> toJson() {
@@ -30,6 +32,12 @@ class GeminiRequest {
     if (toolConfig != null) {
       json['toolConfig'] = toolConfig!.toJson();
     }
+
+    // TODO: thinkingConfig not yet supported by Gemini API
+    // Keeping code for future use when API supports it
+    // if (thinkingConfig != null) {
+    //   json['thinkingConfig'] = thinkingConfig!.toJson();
+    // }
 
     return json;
   }
@@ -266,4 +274,25 @@ class GeminiCandidate {
 class GeminiPromptFeedback {
   // Add fields if needed
   GeminiPromptFeedback.fromJson(Map<String, dynamic> json);
+}
+
+/// Gemini Thinking Configuration for Deep Think mode
+class GeminiThinkingConfig {
+  final String mode; // 'MINIMAL', 'MEDIUM', 'DEEP_THINK'
+  final int? maxThinkingTime; // seconds
+
+  GeminiThinkingConfig({
+    required this.mode,
+    this.maxThinkingTime,
+  });
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{
+      'mode': mode,
+    };
+    if (maxThinkingTime != null) {
+      json['maxThinkingTime'] = maxThinkingTime;
+    }
+    return json;
+  }
 }

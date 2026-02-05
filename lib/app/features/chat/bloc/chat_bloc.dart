@@ -88,9 +88,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       final result = await _chatUseCase.sendMessage(
         event.message,
         mediaPaths: mediaToSend,
-        onAgentStep: (stepText) {
-          add(AgentStepUpdated(stepText));
-        },
+        onAgentStep: (step) => add(AgentStepUpdated(step)),
+        useDeepThink: event.useDeepThink, // Pass Deep Think mode
       );
 
       /// 🔥 TOOL İSTEDİ
@@ -140,6 +139,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           visualRequestId: result.visualRequestId,
           imageUrls: result.imageUrl != null ? [result.imageUrl!] : null,
           agentSteps: result.agentSteps,
+          requestsLocation: result.requestsLocation,
         );
         final updatedMessages = [...messages, aiMessage];
 

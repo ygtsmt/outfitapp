@@ -10,6 +10,7 @@ class ChatMessage extends Equatable {
       localMediaPaths; // ✅ Kullanıcının gönderdiği medya dosyaları
   final List<AgentStep>? agentSteps; // 🤖 Agent adımları
   final String? visualRequestId; // ⏳ Bekleyen görsel isteği
+  final bool requestsLocation; // 📍 Konum izni talebi
 
   const ChatMessage({
     required this.text,
@@ -18,6 +19,7 @@ class ChatMessage extends Equatable {
     this.localMediaPaths,
     this.agentSteps,
     this.visualRequestId,
+    this.requestsLocation = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -28,6 +30,7 @@ class ChatMessage extends Equatable {
       'localMediaPaths': localMediaPaths,
       'agentSteps': agentSteps?.map((x) => x.toMap()).toList(),
       'visualRequestId': visualRequestId,
+      'requestsLocation': requestsLocation,
     };
   }
 
@@ -46,12 +49,20 @@ class ChatMessage extends Equatable {
             )
           : null,
       visualRequestId: map['visualRequestId'] as String?,
+      requestsLocation: map['requestsLocation'] as bool? ?? false,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [text, isUser, imageUrls, localMediaPaths, agentSteps, visualRequestId];
+  List<Object?> get props => [
+        text,
+        isUser,
+        imageUrls,
+        localMediaPaths,
+        agentSteps,
+        visualRequestId,
+        requestsLocation
+      ];
 }
 
 class ChatState extends Equatable {

@@ -9,11 +9,12 @@ abstract class ChatEvent extends Equatable {
 
 class SendMessageEvent extends ChatEvent {
   final String message;
+  final bool useDeepThink;
 
-  const SendMessageEvent(this.message);
+  const SendMessageEvent(this.message, {this.useDeepThink = false});
 
   @override
-  List<Object> get props => [message];
+  List<Object> get props => [message, useDeepThink];
 }
 
 class SelectMediaEvent extends ChatEvent {

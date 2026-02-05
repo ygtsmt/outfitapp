@@ -312,9 +312,11 @@ class _HomeScreenState extends State<HomeScreen> {
   int _getBottomNavIndex(int routerIndex) {
     if (routerIndex == 0) return 0; // Dashboard
     if (routerIndex == 1) return 1; // Closet
-    if (routerIndex == 2) return 2; // Chat
-    if (routerIndex == 3) return 3; // Try-On
-    if (routerIndex == 4) return 4; // Profile
+    // Index 2 is empty/FAB placeholder in bottom nav
+    if (routerIndex == 2)
+      return 3; // Try-On (router index 2 → bottom nav index 3)
+    if (routerIndex == 3)
+      return 4; // Profile (router index 3 → bottom nav index 4)
     return 0;
   }
 }

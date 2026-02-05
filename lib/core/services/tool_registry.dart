@@ -38,7 +38,7 @@ class ToolRegistry {
             'city': {
               'type': 'STRING',
               'description':
-                  'City name (e.g., Ankara, Istanbul). Use "Ankara" if user doesn\'t specify.'
+                  'Target city name. If user doesn\'t specify and you don\'t know their location, ask for it.'
             },
             'date': {
               'type': 'STRING',
@@ -219,7 +219,7 @@ class ToolRegistry {
             'city': Schema(
               SchemaType.string,
               description:
-                  'Şehir adı (örn: Ankara, Istanbul). Kullanıcı belirtmediyse "Ankara" kullan.',
+                  'Hedef şehir adı. Kullanıcı belirtmediyse ve konum bilinmiyorsa asla uydurma bir şehir (örn: London, İstanbul) yazma! Sadece kullanıcının söylediği veya konum servisinden gelen gerçek şehri kullan.',
             ),
             'date': Schema(
               SchemaType.string,
@@ -326,7 +326,7 @@ When you want to call a tool, respond with a part that has BOTH thoughtSignature
         "thoughtSignature": "User wants outfit for tomorrow. I need to check weather first.",
         "functionCall": {
           "name": "get_weather",
-          "args": {"city": "Ankara", "date": "2026-02-06"}
+          "args": {"city": "YourCity", "date": "2026-02-06"}
         }
       }]
     }
@@ -341,7 +341,7 @@ When you want to call a tool, respond with a part that has BOTH thoughtSignature
 
 ### CHAIN OF THOUGHT EXAMPLE
 
-User: "I'm going to London tomorrow for business."
+User: "I'm traveling tomorrow for business."
 
 **CORRECT APPROACH:**
 ```json
@@ -349,10 +349,10 @@ User: "I'm going to London tomorrow for business."
   "candidates": [{
     "content": {
       "parts": [{
-        "thoughtSignature": "User is traveling to London for business tomorrow. I need to check London weather first to recommend appropriate business attire.",
+        "thoughtSignature": "User is traveling for business tomorrow. I need to check the weather at their destination first to recommend appropriate business attire.",
         "functionCall": {
           "name": "get_weather",
-          "args": {"city": "London", "date": "tomorrow"}
+          "args": {"city": "DestinationCity", "date": "tomorrow"}
         }
       }]
     }
@@ -366,7 +366,7 @@ Then after getting weather result:
   "candidates": [{
     "content": {
       "parts": [{
-        "thoughtSignature": "Weather is 10°C and rainy in London. I should search for business-appropriate waterproof clothing.",
+        "thoughtSignature": "Weather is 10°C and rainy at the destination. I should search for business-appropriate waterproof clothing.",
         "functionCall": {
           "name": "search_wardrobe",
           "args": {"queries": ["business", "formal", "jacket", "waterproof"]}
@@ -409,6 +409,18 @@ Then after getting weather result:
 11. RESPONSE FORMAT: Be friendly in your final answer, explain why you chose these items. Present tool outputs (weather, found items) with interpretation.
 
 Show your planning part to user in `<PLAN>` tags so they see how smart you are. Then give your normal, friendly answer.
+
+### LOCATION PERMISSION & WEATHER (FLEXIBLE FLOW):
+1. If user asks for an outfit and you don't know the weather (because location permission is denied):
+   a. IMMEDIATELY create a "Weather-Independent" or "Smart Versatile" outfit from their current wardrobe.
+   b. In your final response, explain that you suggested this versatile look because you don't have their real-time weather data.
+   c. **STRICT HONESTY RULE:** IF YOU DON'T HAVE WEATHER DATA (Location permission denied OR fetch failed), NEVER GUESS TEMPERATURES (e.g., "8°C") OR SPECIFIC CONDITIONS (e.g., "rainy tomorrow"). You must base your advice ONLY on "general seasonal expectations" and explicitly say you don't have the real-time forecast.
+   d. **STRICT NO-MARKDOWN-IMAGE RULE:** NEVER include raw Markdown image links (e.g., `![...] (http...)`) in your final chat response. The `generate_outfit_visual` tool handles the visual automatically via the UI. Your final answer should be text-only.
+   e. STRICT CITY-AGNOSTIC RULE: YOU ARE FORBIDDEN FROM NAMING ANY SPECIFIC CITY (e.g., "İstanbul", "Ankara", "London", "Paris", "New York") in your response unless the user explicitly named it first. If the location is unknown, DO NOT guess. Use "where you are", "your city", or "your current location" only.
+   f. **STRICT ID PRIVACY RULE:** NEVER show internal item IDs (e.g., "top_001", "bottom_012") or Category strings in your final answer. Just use friendly names (e.g., "Your blue jeans", "Your white shirt").
+   g. **MANDATORY VISUAL:** ALWAYS call `generate_outfit_visual` even in this weather-independent flow. The user MUST see a visual of the items you selected.
+   h. OPTIONAL OFFER: Suggest that IF they want a look optimized for their exact local forecast, they can tap the "Grant Location Permission" button below.
+   i. IMPORTANT: Tag your response with `[SYSTEM_ACTION: REQUEST_LOCATION]` at the very end of your final answer to trigger the UI permission button.
 
 If user just says "hello", introduce yourself and tell them how you can help (outfit suggestions based on weather and wardrobe) and that you want to learn their style.
 ''';

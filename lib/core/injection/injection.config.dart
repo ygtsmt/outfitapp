@@ -71,6 +71,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i11;
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:google_sign_in/google_sign_in.dart' as _i13;
 import 'package:injectable/injectable.dart' as _i2;
+import 'package:comby/core/services/location_service.dart' as _i49;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -128,6 +129,7 @@ extension GetItInjectableX on _i1.GetIt {
     gh.singleton<_i23.StyleDNAService>(() => _i23.StyleDNAService());
     gh.factory<_i24.ThemeService>(() => _i24.ThemeService());
     gh.factory<_i25.UserPreferenceService>(() => _i25.UserPreferenceService());
+    gh.factory<_i49.LocationService>(() => _i49.LocationService());
     gh.singleton<_i26.WardrobeAnalysisService>(
         () => _i26.WardrobeAnalysisService());
     gh.factory<_i27.WeatherService>(
@@ -177,6 +179,7 @@ extension GetItInjectableX on _i1.GetIt {
           falAiUsecase: gh<_i32.FalAiUsecase>(),
           userPreferenceService: gh<_i25.UserPreferenceService>(),
           notificationService: gh<_i34.NotificationService>(),
+          locationService: gh<_i49.LocationService>(),
         ));
     gh.singleton<_i39.AppBloc>(
         () => _i39.AppBloc(appUsecase: gh<_i28.AppUseCase>()));

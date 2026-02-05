@@ -196,7 +196,7 @@ Expected: AI responds in English with tool calling
 
 ### 2. Agent Test (İngilizce):
 ```
-User: "I'm going to London tomorrow for a meeting"
+User: "I'm going to a meeting tomorrow at my destination"
 Expected: AI uses get_weather, search_wardrobe, generate_outfit_visual
 ```
 

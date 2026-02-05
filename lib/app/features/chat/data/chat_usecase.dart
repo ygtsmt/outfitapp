@@ -16,12 +16,14 @@ class ChatTextResult extends ChatResult {
   final List<AgentStep>? agentSteps;
   final String? imageUrl;
   final String? visualRequestId;
+  final bool requestsLocation;
 
   ChatTextResult(
     this.text, {
     this.agentSteps,
     this.imageUrl,
     this.visualRequestId,
+    this.requestsLocation = false,
   });
 }
 
@@ -100,6 +102,7 @@ IMPORTANT INSTRUCTIONS:
     String message, {
     List<String>? mediaPaths,
     void Function(String)? onAgentStep, // NEW: Step Callback
+    bool useDeepThink = false, // NEW: Deep Think Mode
   }) async {
     // 🤖 Outfit önerisi mi? Agent'a yönlendir
     // 🤖 Text mesajı ise direkt Agent'a yönlendir (Hafıza ve Tool yetenekleri için)
@@ -118,6 +121,7 @@ IMPORTANT INSTRUCTIONS:
         model: _model,
         imagePaths: mediaPaths, // GÖRSEL DESTEĞİ EKLENDİ
         onStep: onAgentStep, // NEW: Step Callback Passed
+        useDeepThink: useDeepThink, // NEW: Deep Think Mode
       );
 
       // Agent sonucunu history'ye ekle
@@ -132,6 +136,7 @@ IMPORTANT INSTRUCTIONS:
         agentSteps: agentResponse.steps,
         imageUrl: agentResponse.imageUrl,
         visualRequestId: agentResponse.visualRequestId,
+        requestsLocation: agentResponse.requestsLocation,
       );
     } catch (e) {
       log('❌ Agent hatası: $e');
