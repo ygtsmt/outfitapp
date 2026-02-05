@@ -14,8 +14,6 @@ import "package:comby/app/features/chat/ui/chat_screen.dart";
 import "package:comby/app/features/payment/ui/payment_screen.dart";
 import "package:comby/app/ui/custom_drawer.dart";
 
-import "package:comby/app/ui/widgets/comby_logo_small.dart";
-import "package:comby/app/ui/widgets/total_credit_widget.dart";
 import "package:comby/core/core.dart";
 
 import "package:comby/core/services/paywall_manager.dart";
@@ -38,50 +36,49 @@ class _HomeScreenState extends State<HomeScreen> {
     getIt<ProfileBloc>()
         .add(FetchProfileInfoEvent(auth.currentUser?.uid ?? ''));
 
-    // App dilini initialize et
+    // Initialize app language
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getIt<AppBloc>().add(InitializeLanguageEvent());
 
-      // 🎯 PAYWALL KONTROLÜ - Session başına 1 kez
+      // 🎯 PAYWALL CONTROL - 1 time per session
       //  _checkAndShowPaywall();
     });
 
     super.initState();
   }
 
-  /// Paywall gösterilmeli mi kontrol et ve göster
+  /// Check and show paywall if required
   Future<void> _checkAndShowPaywall() async {
-    // Biraz bekle (UX için - ekran tam yüklendikten sonra)
+    // Wait a bit (for UX - after screen is fully loaded)
     await Future.delayed(const Duration(milliseconds: 1500));
 
-    // PaywallManager'dan kontrol et
+    // Check from PaywallManager
     final shouldShow = await PaywallManager().shouldShowPaywall();
 
     if (shouldShow && mounted) {
-      // Bottom sheet olarak göster
+      // Show as bottom sheet
       _showPaywallBottomSheet();
 
-      // İşaretle ki bu session'da bir daha gösterilmesin
+      // Mark as shown for this session
       PaywallManager().markAsShown();
     }
   }
 
-  /// Payment screen'i bottom sheet olarak göster
+  /// Show payment screen as bottom sheet
   void _showPaywallBottomSheet() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // Full height
-      backgroundColor:
-          Colors.transparent, // Transparan yap ki backdrop görünsün
-      barrierColor: Colors.black.withOpacity(0.5), // Backdrop (sabit kalır!)
-      isDismissible: true, // Dışarı tıklayarak kapatılabilir
-      enableDrag: true, // Aşağı çekip kapatılabilir
+      backgroundColor: Colors.transparent, // Make transparent for backdrop
+      barrierColor: Colors.black.withOpacity(0.5), // Backdrop (fixed!)
+      isDismissible: true, // Can be closed by clicking outside
+      enableDrag: true, // Can be closed by dragging down
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9, // Ekranın %90'ı
-        minChildSize: 0.5, // Minimum %50
-        maxChildSize: 0.95, // Maximum %95
-        snap: true, // Snap özelliği (kapatırken otomatik kapanır)
-        snapSizes: const [0.9], // Snap noktası
+        initialChildSize: 0.9, // 90% of screen
+        minChildSize: 0.5, // Minimum 50%
+        maxChildSize: 0.95, // Maximum 95%
+        snap: true, // Snap feature (auto closes when closing)
+        snapSizes: const [0.9], // Snap point
         builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
@@ -112,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Chat screen'i tam ekran modal (yeni sayfa) olarak göster
+  /// Show chat screen as full screen modal
   void _showChatModal() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -144,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: const ChatScreen(),
         ),
-        fullscreenDialog: true, // Aşağıdan yukarı kayarak açılmasını sağlar
+        fullscreenDialog: true, // Sliding up from bottom
       ),
     );
   }
@@ -264,9 +261,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               label: AppLocalizations.of(context).homeCloset,
                             ),
                             // Chat Item Removed - Replaced by FAB space
-                            const BottomNavigationBarItem(
-                              icon: SizedBox(), // Görünmez placeholder
-                              label: '', // Boş label
+                            BottomNavigationBarItem(
+                              icon: SizedBox(), // Invisible placeholder
+                              label: '', // Empty label
                             ),
                             BottomNavigationBarItem(
                               icon: tabsRouter.activeIndex == 2

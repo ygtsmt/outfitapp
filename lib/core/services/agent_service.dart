@@ -240,7 +240,7 @@ class AgentService {
                 content.parts.whereType<GeminiTextPart>().toList();
             String finalText = textParts.isNotEmpty
                 ? textParts.map((e) => e.text).join(' ')
-                : 'İşlem tamamlandı.';
+                : ''; // Initialize empty, handle fallback below
 
             log('📝 RAW RESPONSE TEXT:');
             log('   "${finalText.substring(0, finalText.length > 200 ? 200 : finalText.length)}..."');
@@ -268,10 +268,11 @@ class AgentService {
               log('🧹 FILTERED OUT: JSON/PLAN/THOUGHT tags removed');
             }
 
-            // If nothing left after filtering, use default message
+            // If nothing left after filtering, use a proactive agentic fallback
             if (finalText.isEmpty) {
-              finalText = 'İşlem tamamlandı.';
-              log('⚠️ EMPTY AFTER FILTERING - Using default message');
+              finalText =
+                  "I'm here to help! What's on your mind regarding your style or wardrobe? ✨";
+              log('⚠️ EMPTY AFTER FILTERING - Using proactive English default message');
             }
 
             log('✅ FINAL TEXT TO USER:');
@@ -390,7 +391,7 @@ class AgentService {
               ),
               systemInstruction: GeminiContent(
                 role: 'system',
-                parts: [GeminiTextPart(ToolRegistry.agentSystemInstruction)],
+                parts: [GeminiTextPart(fullSystemInstruction)],
               ),
             ),
           );
@@ -579,7 +580,7 @@ class AgentService {
     String? modelAiPrompt;
 
     if (userModels.isNotEmpty) {
-      // Logic: Eğer ayakkabı varsa "Full Body" olan modellere öncelik ver
+      // Logic: If there are shoes, prioritize "Full Body" models
       final hasShoes = selectedItems.any((i) =>
           i.category?.toLowerCase() == 'shoes' ||
           i.subcategory?.toLowerCase() == 'shoes');
@@ -588,22 +589,22 @@ class AgentService {
           .toList();
 
       if (hasShoes && fullBodyModels.isNotEmpty) {
-        // Rastgele bir full body model seç
+        // Select a random full body model
         final selectedModel = (fullBodyModels..shuffle()).first;
         modelImageUrl = selectedModel.imageUrl;
         modelAiPrompt = selectedModel.aiPrompt;
-        log('📸 Kullanıcı Modeli Seçildi (Full Body): ${selectedModel.name}');
+        log('📸 User Model Selected (Full Body): ${selectedModel.name}');
       } else {
-        // Rastgele herhangi bir model seç
+        // Select a random model
         final selectedModel = (userModels..shuffle()).first;
         modelImageUrl = selectedModel.imageUrl;
         modelAiPrompt = selectedModel.aiPrompt;
-        log('📸 Kullanıcı Modeli Seçildi (Rastgele): ${selectedModel.name}');
+        log('📸 User Model Selected (Random): ${selectedModel.name}');
       }
     } else {
-      log('⚠️ Kullanıcı modeli bulunamadı, varsayılan AI model kullanılacak.');
-      // Eğer kullanıcı modeli yoksa, User Profile'dan cinsiyet çekip modelAiPrompt oluşturabiliriz
-      // Şimdilik null bırakıyoruz, FalAiUsecase içinde prompt'ta "A model wearing..." diyecek
+      log('⚠️ User model not found, using default AI model.');
+      // If no user model, we could pull gender from User Profile and generate modelAiPrompt
+      // Leaving null for now; FalAiUsecase will use "A model wearing..." in prompt
     }
 
     final result = await _falAiUsecase.generateGeminiImageEdit(
@@ -628,31 +629,31 @@ class AgentService {
   Future<Map<String, dynamic>> _getCalendarEvents(
       Map<String, dynamic> args) async {
     final date = args['date'] as String;
-    log('📅 Takvim kontrol ediliyor: $date');
+    log('📅 Checking calendar for: $date');
 
     // --- MOCK vs REAL SWITCH ---
     const bool useMockData = false; // DEMO MODE: Set to false for REAL data
     // ---------------------------
 
     if (useMockData) {
-      log('⚠️ MOCK DATA MODE ACTIVED for Calendar');
+      log('⚠️ MOCK DATA MODE ACTIVATED for Calendar');
       return {
         'events': [
           {
             'time': '14:00',
-            'title': 'Yatırımcı Sunumu',
+            'title': 'Investor Presentation',
             'type': 'business_formal',
             'location': 'Maslak Plaza'
           },
           {
             'time': '20:00',
-            'title': 'Arkadaşın Düğünü',
+            'title': "Friend's Wedding",
             'type': 'formal_event',
-            'location': 'Boğaz Oteli'
+            'location': 'Bosphorus Hotel'
           },
         ],
         'message':
-            'Takviminde bugün için 2 önemli etkinlik var: 14:00 Yatırımcı Sunumu (Business) ve 20:00 Düğün (Formal). Buna göre şık bir şeyler seçmeliyiz.',
+            'You have 2 important events in your calendar for today: 14:00 Investor Presentation (Business) and 20:00 Wedding (Formal). We should choose something elegant.',
       };
     } else {
       // --- REAL GOOGLE CALENDAR IMPLEMENTATION ---
@@ -662,12 +663,12 @@ class AgentService {
       );
 
       try {
-        // Zaten LoginUseCase'de giriş yapıldığı için sessizce erişmeye çalışıyoruz
+        // Silent sign-in check
         var account = await googleSignIn.signInSilently();
 
         if (account == null) {
-          log('⚠️ Silent Sign-In Failed, attempting interative sign-in');
-          // Eğer sessiz erişim olmazsa (örn: scope değiştiği için), tekrar soralım
+          log('⚠️ Silent Sign-In Failed, attempting interactive sign-in');
+          // If silent access fails, ask again
           account = await googleSignIn.signIn();
         }
 
@@ -704,7 +705,7 @@ class AgentService {
           };
         }
 
-        // Veriyi formatla
+        // Format data
         final formattedEvents = events.items!.map((e) {
           return {
             'summary': e.summary,
@@ -717,7 +718,7 @@ class AgentService {
         return {
           'events': formattedEvents,
           'message':
-              'Takviminden ${formattedEvents.length} etkinlik çektim. Etkinliklerin: ${formattedEvents.map((e) => e['summary']).join(", ")}.',
+              'I found ${formattedEvents.length} events from your calendar. Your events: ${formattedEvents.map((e) => e['summary']).join(", ")}.',
         };
       } catch (e) {
         log('❌ Google Calendar API Error: $e');
@@ -731,9 +732,9 @@ class AgentService {
 
   Future<Map<String, dynamic>> _analyzeStyleDNA(
       Map<String, dynamic> args) async {
-    log('🧬 Stil DNA Analizi Başlatılıyor...');
+    log('🧬 Starting Style DNA Analysis...');
 
-    // 1. Tüm dolabı çek
+    // 1. Fetch entire wardrobe
     final items = await _closetUseCase.getUserClosetItems();
 
     if (items.isEmpty) {
@@ -743,24 +744,24 @@ class AgentService {
       };
     }
 
-    // 2. İstatistikleri Hesapla
+    // 2. Calculate Statistics
     int totalItems = items.length;
     Map<String, int> colorCounts = {};
     Map<String, int> categoryCounts = {};
-    // Map<String, int> brandCounts = {}; // Marka verisi şu an yok
+    // Map<String, int> brandCounts = {}; // Brand data not available yet
 
     for (var item in items) {
-      // Renk Sayımı
+      // Color count
       if (item.color != null && item.color!.isNotEmpty) {
         colorCounts[item.color!] = (colorCounts[item.color!] ?? 0) + 1;
       }
-      // Kategori Sayımı
+      // Category count
       if (item.category != null) {
         categoryCounts[item.category!] =
             (categoryCounts[item.category!] ?? 0) + 1;
       }
-      // Marka Sayımı (Varsa)
-      // item.brand eksikse şimdilik geçiyoruz, eklenirse buraya konur.
+      // Brand count (if available)
+      // If item.brand is missing for now, we skip.
     }
 
     // 3. Yüzdeleri ve Sıralamayı Bul
@@ -783,7 +784,7 @@ class AgentService {
     final topColors = getTopStats(colorCounts);
     final topCategories = getTopStats(categoryCounts);
 
-    // 4. Sonuç Döndür
+    // 4. Return Results
     return {
       'total_items': totalItems,
       'top_colors': topColors,
@@ -804,7 +805,7 @@ class AgentService {
 
     final purpose = args['purpose'] as String? ?? 'General';
 
-    log('🚀 Yeni Mission Başlatılıyor: $destination - $items');
+    log('🚀 Starting New Mission: $destination - $items');
 
     // O anki hava durumunu çek (Initial Weather)
     String initialWeather = 'Unknown';
@@ -818,7 +819,7 @@ class AgentService {
       log('⚠️ Initial weather fetch failed: $e');
     }
 
-    // Görevi oluştur
+    // Create mission
     final missionData = {
       'destination': destination,
       'items': items,
@@ -828,10 +829,10 @@ class AgentService {
       'created_at': DateTime.now().toIso8601String(),
     };
 
-    // Kaydet
+    // Save
     await _userPreferenceService.setActiveMission(missionData);
 
-    // RAM'dekini de güncelle (Anlık takip için)
+    // Update RAM for real-time tracking
     _activeMission = missionData;
 
     return {
@@ -841,12 +842,12 @@ class AgentService {
     };
   }
 
-  /// MARATHON AGENT: Aktif görevi izle ve risk analizi yap
+  /// MARATHON AGENT: Monitor active mission and perform risk analysis
   Future<Map<String, dynamic>> monitorActiveMission(
       GeminiRestService geminiService) async {
-    // 1. Önce RAM'e veya Storage'a bak
-    // HER ZAMAN GÜNCEL VERİYİ ÇEK (Cache kullanma)
-    // Çünkü kullanıcı manuel düzenlemiş olabilir veya arka planda değişmiş olabilir.
+    // 1. Check RAM or Storage
+    // ALWAYS FETCH CURRENT DATA (no cache)
+    // Because user might have edited manually or it changed in the background.
     _activeMission = await _userPreferenceService.getActiveMission();
 
     if (_activeMission == null) {

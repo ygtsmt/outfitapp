@@ -36,11 +36,18 @@ class _ChatScreenState extends State<ChatScreen> {
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+        // Only auto-scroll if the user is already at or near the bottom
+        // (Prevents sudden jumps while the user is reading earlier messages)
+        final pos = _scrollController.position;
+        final isNearBottom = pos.pixels >= pos.maxScrollExtent - 200;
+
+        if (isNearBottom) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
       }
     });
   }
@@ -289,7 +296,7 @@ class _MessageBubble extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ✅ Kullanıcının gönderdiği local media (user messages)
+              // ✅ Local media sent by the user (user messages)
               if (message.localMediaPaths != null &&
                   message.localMediaPaths!.isNotEmpty) ...[
                 Wrap(
@@ -317,7 +324,7 @@ class _MessageBubble extends StatelessWidget {
                 ),
                 SizedBox(height: 12.h),
               ],
-              // ✅ AI'dan gelen görseller (imageUrls)
+              // ✅ Visuals from AI (imageUrls)
               if (message.imageUrls != null &&
                   message.imageUrls!.isNotEmpty) ...[
                 SizedBox(height: 12.h),
@@ -365,7 +372,7 @@ class _MessageBubble extends StatelessWidget {
                 SizedBox(height: 12.h),
               ],
 
-              // ✅ Metin ALTA (açıklama) - Bold desteğiyle
+              // ✅ Text BELOW (description) - with bold support
               MarkdownText(
                 message.text,
                 style: TextStyle(

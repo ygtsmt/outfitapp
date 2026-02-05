@@ -30,7 +30,7 @@ class FalAiUsecase {
   /// Firebase path: keys/fal_ai/falAiApiKey
   Future<String> getFalAiApiKey() async {
     try {
-      // Cache kontrolü - 5 dakika geçerli
+      // Cache check - valid for 5 minutes
       final now = DateTime.now();
       if (_cachedFalAiApiKey != null &&
           _keyLastFetched != null &&
@@ -55,12 +55,12 @@ class FalAiUsecase {
         }
       }
 
-      // Fallback: Firebase'de yoksa hardcoded key kullan
+      // Fallback: if not in Firebase, use hardcoded key
       log('⚠️ Firebase key not found, using fallback hardcoded key');
       return falAiApiKey;
     } catch (e) {
       log('❌ Error fetching Fal AI API key from Firebase: $e');
-      // Error durumunda fallback key kullan
+      // In case of error, use fallback key
       return falAiApiKey;
     }
   }
@@ -147,7 +147,7 @@ class FalAiUsecase {
         }
       }
 
-      // Hackathon için retry mekanizması ekledik
+      // Added retry mechanism for reliability
       final response = await ApiRetryHelper.withRetry(
         () => http.post(
           uri,

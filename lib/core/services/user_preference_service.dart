@@ -10,7 +10,7 @@ class UserPreferenceService {
 
   String? get _userId => _auth.currentUser?.uid;
 
-  /// Kullanıcının stil tercihlerini getir (System Prompt olarak formatlanmış)
+  /// Get user style preferences (formatted as System Prompt)
   Future<String> getSystemPromptProfile() async {
     try {
       if (_userId == null) return '';
@@ -23,50 +23,50 @@ class UserPreferenceService {
           .get();
 
       if (!doc.exists || doc.data() == null) {
-        log('ℹ️ Kullanıcı profili bulunamadı (İlk kullanım olabilir).');
+        log('ℹ️ User profile not found (might be first use).');
         return '';
       }
 
       final data = doc.data()!;
       final buffer = StringBuffer();
 
-      buffer.writeln('\n\n--- KULLANICI PROFİLİ VE TERCİHLERİ ---');
+      buffer.writeln('\n\n--- USER PROFILE AND PREFERENCES ---');
       buffer.writeln(
-          'Aşağıdaki bilgiler, bu kullanıcı (Yigit) hakkında bilinen gerçeklerdir. Lütfen önerilerini buna göre kişiselleştir:');
+          'The following facts are known about this user (Yigit). Please personalize your suggestions based on these:');
 
       if (data.containsKey('favorite_colors') &&
           (data['favorite_colors'] as List).isNotEmpty) {
         buffer.writeln(
-            '- Sevdiği Renkler: ${(data['favorite_colors'] as List).join(", ")}');
+            '- Favorite Colors: ${(data['favorite_colors'] as List).join(", ")}');
       }
 
       if (data.containsKey('disliked_colors') &&
           (data['disliked_colors'] as List).isNotEmpty) {
         buffer.writeln(
-            '- ASLA Önerme (Sevmediği Renkler): ${(data['disliked_colors'] as List).join(", ")}');
+            '- NEVER Suggest (Disliked Colors): ${(data['disliked_colors'] as List).join(", ")}');
       }
 
       if (data.containsKey('style_keywords') &&
           (data['style_keywords'] as List).isNotEmpty) {
         buffer.writeln(
-            '- Giyim Tarzı: ${(data['style_keywords'] as List).join(", ")}');
+            '- Clothing Style: ${(data['style_keywords'] as List).join(", ")}');
       }
 
       if (data.containsKey('notes')) {
-        buffer.writeln('- Özel Notlar: ${data['notes']}');
+        buffer.writeln('- Special Notes: ${data['notes']}');
       }
 
       buffer.writeln('---------------------------------------');
 
-      log('✅ Kullanıcı profili yüklendi: ${buffer.length} karakter');
+      log('✅ User profile loaded: ${buffer.length} characters');
       return buffer.toString();
     } catch (e) {
-      log('❌ Profil yükleme hatası: $e');
-      return ''; // Hata durumunda boş dön, akışı bozma
+      log('❌ Profile loading error: $e');
+      return ''; // Return empty on error, don't break flow
     }
   }
 
-  /// Tercih güncelle (Admin veya UI kullanımı için)
+  /// Update preferences (for Admin or UI use)
   Future<void> updateStyleProfile({
     List<String>? favoriteColors,
     List<String>? dislikedColors,
@@ -107,11 +107,11 @@ class UserPreferenceService {
     }
   }
 
-  /// Aktif görevi kaydet (Marathon Agent için)
+  /// Save active mission (for Marathon Agent)
   Future<void> setActiveMission(Map<String, dynamic> missionData) async {
     if (_userId == null) return;
 
-    log('🔥 ACTIVE MISSION KAYDEDİLİYOR: $missionData');
+    log('🔥 SAVING ACTIVE MISSION: $missionData');
 
     try {
       await _firestore
@@ -121,17 +121,17 @@ class UserPreferenceService {
           .doc('active_mission')
           .set({
         ...missionData,
-        'mission_status': 'active', // Cloud Function için queryable field
+        'mission_status': 'active', // Queryable field for Cloud Function
       });
 
-      log('✅ Mission başarıyla kaydedildi.');
+      log('✅ Mission successfully saved.');
     } catch (e) {
-      log('❌ Mission kaydetme hatası: $e');
+      log('❌ Mission saving error: $e');
       rethrow;
     }
   }
 
-  /// Aktif görevi getir
+  /// Get active mission
   Future<Map<String, dynamic>?> getActiveMission() async {
     if (_userId == null) return null;
 
@@ -144,12 +144,12 @@ class UserPreferenceService {
           .get();
 
       if (doc.exists) {
-        log('✅ Aktif mission bulundu: ${doc.data()}');
+        log('✅ Active mission found: ${doc.data()}');
         return doc.data();
       }
       return null;
     } catch (e) {
-      log('❌ Active mission getirme hatası: $e');
+      log('❌ Active mission fetch error: $e');
       return null;
     }
   }
@@ -162,22 +162,22 @@ class UserPreferenceService {
         'fcm_token': token,
         'last_token_update': DateTime.now().toIso8601String(),
       }, SetOptions(merge: true));
-      log('✅ FCM Token Firestore\'a kaydedildi.');
+      log('✅ FCM Token saved to Firestore.');
     } catch (e) {
-      log('❌ FCM Token kaydetme hatası: $e');
+      log('❌ Error saving FCM Token: $e');
     }
   }
 
-  /// Aktif görevi geçmişe taşı ve sil
+  /// Move active mission to history and delete
   Future<void> archiveActiveMission(Map<String, dynamic> missionData) async {
     if (_userId == null) return;
 
-    log('📜 Mission Arşivleniyor: ${missionData['destination']}');
+    log('📜 Archiving Mission: ${missionData['destination']}');
 
     try {
       final batch = _firestore.batch();
 
-      // 1. History'ye ekle
+      // 1. Add to History
       final historyRef = _firestore
           .collection('users')
           .doc(_userId)
@@ -190,7 +190,7 @@ class UserPreferenceService {
         'status': 'completed',
       });
 
-      // 2. Active'den sil
+      // 2. Delete from Active
       final activeRef = _firestore
           .collection('users')
           .doc(_userId)
@@ -200,9 +200,9 @@ class UserPreferenceService {
       batch.delete(activeRef);
 
       await batch.commit();
-      log('✅ Mission başarıyla arşivlendi ve silindi.');
+      log('✅ Mission successfully archived and deleted.');
     } catch (e) {
-      log('❌ Mission arşivleme hatası: $e');
+      log('❌ Mission archiving error: $e');
       rethrow;
     }
   }

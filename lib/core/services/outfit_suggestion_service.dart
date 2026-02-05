@@ -149,7 +149,7 @@ JSON:''';
       print('OutfitSuggestionService Error: $e');
       // Throw a user-friendly message
       throw OutfitSuggestionException(
-          'Kombin önerisi oluşturulurken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.');
+          'A problem occurred while creating the outfit suggestion. Please try again later.');
     }
   }
 
@@ -239,7 +239,7 @@ JSON:''';
     } catch (e) {
       print('OutfitSuggestionService Parse Error: $e');
       throw OutfitSuggestionException(
-          'Gelen yanıt işlenirken bir sorun oluştu. Lütfen tekrar deneyin.');
+          'A problem occurred while processing the response. Please try again.');
     }
   }
 }

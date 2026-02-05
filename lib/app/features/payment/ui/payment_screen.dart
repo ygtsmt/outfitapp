@@ -48,7 +48,7 @@ class _PaymentsScreenState extends State<PaymentsScreen>
         _hasActiveSubscription = hasSubscription;
         _isLoadingSubscription = false;
         _tabController = TabController(
-          length: hasSubscription ? 2 : 1, // Abonelik varsa 2 tab, yoksa 1 tab
+          length: hasSubscription ? 2 : 1, // 2 tabs if subscribed, else 1
           vsync: this,
         );
         _tabController!.addListener(() {
@@ -61,8 +61,8 @@ class _PaymentsScreenState extends State<PaymentsScreen>
       setState(() {
         _hasActiveSubscription = false;
         _isLoadingSubscription = false;
-        _tabController = TabController(
-            length: 1, vsync: this); // Hata durumunda sadece plans
+        _tabController =
+            TabController(length: 1, vsync: this); // Only plans on error
         _tabController!.addListener(() {
           if (_tabController!.indexIsChanging) {
             setState(() {});
@@ -106,7 +106,7 @@ class _PaymentsScreenState extends State<PaymentsScreen>
                     if (_isLoadingSubscription || _tabController == null)
                       const Center(child: CircularProgressIndicator())
 
-                    // TabBar - SADECE aboneliği olanlara göster (2 tab varsa)
+                    // TabBar - ONLY show to subscribed users (if 2 tabs exist)
                     else if (_hasActiveSubscription)
                       Column(
                         children: [
@@ -195,7 +195,7 @@ class _PaymentsScreenState extends State<PaymentsScreen>
                         ],
                       )
 
-                    // Aboneliği yok - Direkt Plans göster (TabBar yok!)
+                    // No subscription - Show Plans directly (No TabBar!)
                     else
                       PaymentPlansWidget(
                         onPlanSelected: (index) {
@@ -203,7 +203,7 @@ class _PaymentsScreenState extends State<PaymentsScreen>
                               ?.updateSelectedPlan(index);
                         },
                       ),
-                    // Legal links - her sekme için ayrı ayrı göster
+                    // Legal links - show separately for each tab
                   ],
                 ),
               );

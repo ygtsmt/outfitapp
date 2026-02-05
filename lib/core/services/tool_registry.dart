@@ -1,9 +1,9 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:comby/core/services/gemini_models.dart';
 
-/// Gemini Function Calling için tool tanımları
+/// Tool definitions for Gemini Function Calling
 class ToolRegistry {
-  /// REST API uyumlu toollar
+  /// REST API compatible tools
   static List<GeminiTool> get allGeminiTools => [
         GeminiTool(functionDeclarations: [
           _getWeatherRest,
@@ -17,7 +17,7 @@ class ToolRegistry {
         ]),
       ];
 
-  /// Paketi kullanan legacy tool'lar (diğer özellikler için)
+  /// Legacy tools using the package (for other features)
   static List<Tool> get allTools => [
         Tool(functionDeclarations: [
           getWeatherDeclaration,
@@ -209,7 +209,7 @@ class ToolRegistry {
         },
       );
 
-  /// 1. Hava Durumu Tool
+  /// 1. Weather Tool
   static FunctionDeclaration get getWeatherDeclaration => FunctionDeclaration(
         'get_weather',
         'Belirtilen şehir ve tarih için hava durumu bilgisi al. Kullanıcı "yarın", "bugün" gibi ifadeler kullanırsa tarihi hesapla.',
@@ -219,55 +219,55 @@ class ToolRegistry {
             'city': Schema(
               SchemaType.string,
               description:
-                  'Hedef şehir adı. Kullanıcı belirtmediyse ve konum bilinmiyorsa asla uydurma bir şehir (örn: London, İstanbul) yazma! Sadece kullanıcının söylediği veya konum servisinden gelen gerçek şehri kullan.',
+                  'Target city name. If the user didn\'t specify and location is unknown, never guess a city (e.g. London, Istanbul)! Only use the real city named by the user or from the location service.',
             ),
             'date': Schema(
               SchemaType.string,
               description:
-                  'Tarih (YYYY-MM-DD formatında). "yarın" ise bugünden +1 gün, "bugün" ise bugünün tarihi.',
+                  'Date (in YYYY-MM-DD format). If "tomorrow," +1 day from today; if "today," today\'s date.',
             ),
           },
           requiredProperties: ['city', 'date'],
         ),
       );
 
-  /// 2. Gardırop Arama Tool
+  /// 2. Wardrobe Search Tool
   static FunctionDeclaration get searchWardrobeDeclaration =>
       FunctionDeclaration(
         'search_wardrobe',
-        'Kullanıcının gardırobundan TEK BİR kombin için uygun kıyafetleri bul. Tool MUTLAKA "descriptions" alanındaki kıyafetleri kullanmalısın - hayali kıyafet önerme!',
+        'Find suitable clothing items from the user\'s wardrobe for a SINGLE outfit. You MUST use items in the "descriptions" field - do not suggest imaginary clothes!',
         Schema(
           SchemaType.object,
           properties: {
             'category': Schema(
               SchemaType.string,
               description:
-                  'Kategori: "top" (üst), "bottom" (alt), "outerwear" (dış giyım), "shoes" (ayakkabı), "accessories" (aksesuar). Boş bırakılırsa tüm kategoriler.',
+                  'Category: "top", "bottom", "outerwear", "shoes", "accessories". If left empty, all categories.',
             ),
             'season': Schema(
               SchemaType.string,
               description:
-                  'Mevsim filtresi: "winter" (kış), "summer" (yaz), "spring_fall" (ilkbahar/sonbahar), "all" (tüm mevsimler). Hava durumuna göre seç.',
+                  'Season filter: "winter", "summer", "spring_fall", "all" (all seasons). Select based on weather.',
             ),
             'weather_condition': Schema(
               SchemaType.string,
               description:
-                  'Hava durumu: "rainy" (yağmurlu), "sunny" (güneşli), "cold" (soğuk), "hot" (sıcak). Hava durumu API\'sinden gelen bilgiye göre.',
+                  'Weather: "rainy," "sunny," "cold," "hot." Based on information from the weather API.',
             ),
             'limit': Schema(
               SchemaType.integer,
               description:
-                  'Maksimum kaç parça döndürülsün (varsayılan: 5, tek kombin için yeterli)',
+                  'Maximum number of items to return (default: 5, sufficient for a single outfit)',
             ),
           },
         ),
       );
 
-  /// 3. Renk Uyumu Kontrolü Tool
+  /// 3. Color Harmony Check Tool
   static FunctionDeclaration get checkColorHarmonyDeclaration =>
       FunctionDeclaration(
         'check_color_harmony',
-        'Seçilen kıyafetlerin renk uyumunu kontrol et ve uyum skoru ver (0-10 arası).',
+        'Check the color harmony of selected clothing items and provide a harmony score (between 0-10).',
         Schema(
           SchemaType.object,
           properties: {
@@ -275,18 +275,18 @@ class ToolRegistry {
               SchemaType.array,
               items: Schema(SchemaType.string),
               description:
-                  'Kontrol edilecek kıyafet ID\'leri (search_wardrobe\'dan dönen ID\'ler)',
+                  'Clothing IDs to check (IDs returned from search_wardrobe)',
             ),
           },
           requiredProperties: ['item_ids'],
         ),
       );
 
-  /// 4. Görsel Oluşturma Tool
+  /// 4. Visual Generation Tool
   static FunctionDeclaration get generateOutfitVisualDeclaration =>
       FunctionDeclaration(
         'generate_outfit_visual',
-        'Seçilen kıyafetlerden AI ile kombin görseli oluştur. Fal AI kullanarak gerçekçi görsel üret.',
+        'Create an outfit visual from selected clothing items with AI. Produce a realistic visual using Fal AI.',
         Schema(
           SchemaType.object,
           properties: {
@@ -294,12 +294,12 @@ class ToolRegistry {
               SchemaType.array,
               items: Schema(SchemaType.string),
               description:
-                  'Kombin oluşturulacak kıyafet ID\'leri (en az 2, en fazla 5 parça)',
+                  'Clothing IDs to create an outfit (at least 2, maximum 5 items)',
             ),
             'weather_context': Schema(
               SchemaType.string,
               description:
-                  'Hava durumu bilgisi (örn: "15°C, güneşli"). Görsel oluştururken kullanılır.',
+                  'Weather information (e.g. "15°C, sunny"). Used when generating a visual.',
             ),
           },
           requiredProperties: ['item_ids'],
@@ -384,6 +384,14 @@ Then after getting weather result:
 
 **CRITICAL:** Don't just plan - EXECUTE IMMEDIATELY! Call tools one by one with thoughtSignature explaining each step.
 
+**CRITICAL SUPREME RULES (ABOVE ALL OTHERS):**
+1. **NO WEATHER GUESSING:** If you don't have real-time location/weather data, NEVER guess temperatures (e.g. "8°C") or conditions. Say "I don't have your local weather data" and use "seasonal norms".
+2. **NO RAW IMAGE LINKS:** NEVER include `![...] (http...)` Markdown image links in your response. The UI handles the visual automatically via the `generate_outfit_visual` tool.
+3. **NO TECHNICAL IDS:** NEVER show item IDs (e.g. `top_001`) to the user. Use friendly names.
+4. **NO HALLUCINATED CITIES:** Never name a city unless the user explicitly told you where they are.
+5. **STRICT ENGLISH ONLY:** YOU MUST RESPOND ONLY IN ENGLISH. Never use Turkish, even if the user speaks Turkish or if context (like city names or weather descriptions) is in Turkish. Translate everything to English in your final response.
+6. **PROACTIVE AGENTIC BEHAVIOR:** You are an autonomous agent. Don't wait for permission; if you need information (like wardrobe details), call the appropriate tool. If you encounter an error, find a creative fallback rather than giving up.
+
 ### RULES:
 1. **WEATHER:** ALWAYS check weather with `get_weather` first. Never guess.
 2. **WARDROBE SEARCH IS MANDATORY:** You MUST use `search_wardrobe` to find items from user's closet. NEVER recommend items that aren't in their wardrobe!
@@ -422,6 +430,6 @@ Show your planning part to user in `<PLAN>` tags so they see how smart you are. 
    h. OPTIONAL OFFER: Suggest that IF they want a look optimized for their exact local forecast, they can tap the "Grant Location Permission" button below.
    i. IMPORTANT: Tag your response with `[SYSTEM_ACTION: REQUEST_LOCATION]` at the very end of your final answer to trigger the UI permission button.
 
-If user just says "hello", introduce yourself and tell them how you can help (outfit suggestions based on weather and wardrobe) and that you want to learn their style.
+If user just says "hello" or "hi", introduce yourself warmly, tell them how you can help (outfit suggestions based on weather and wardrobe, travel packing, style analysis) and that you want to learn their style. NEVER respond with empty text or just a technical plan.
 ''';
 }

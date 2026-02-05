@@ -74,7 +74,7 @@ class _RatingDialogState extends State<RatingDialog> {
                     setState(() {
                       _selectedRating = index + 1;
                     });
-                    // Yıldız seçilir seçilmez işlemi başlat
+                    // Start process immediately after star selection
                     _handleRating(index + 1);
                   },
                   child: Icon(

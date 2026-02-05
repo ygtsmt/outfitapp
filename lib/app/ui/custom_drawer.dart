@@ -25,7 +25,7 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class _CustomDrawerState extends State<CustomDrawer> {
-  /// Dil'e göre document URL'ini çözümle
+  /// Resolve document URL based on locale
   String resolveDocumentByLocale(
     String currentLocale,
     String enUrl,
@@ -83,10 +83,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
               ),
               LayoutConstants.tinyEmptyHeight,
 
-              // Rate App - Sadece review yapmamış kullanıcılara göster
+              // Rate App - Only show to users who haven't reviewed yet
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (context, profileState) {
-                  // Review yapmışsa butonu gösterme
+                  // Don't show button if already reviewed
                   if (profileState.profileInfo?.hasReceivedReviewCredit ==
                       true) {
                     return const SizedBox.shrink();
@@ -190,7 +190,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
         await inAppReview.requestReview();
         debugPrint('✅ In-app review request completed');
 
-        // Review işlemi tamamlandıktan sonra toast mesajı göster
+        // Show toast after review completed
         _showReviewCompletedToast(context);
       } else {
         debugPrint('📱 Opening store listing as fallback...');
@@ -200,7 +200,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
           microsoftStoreId: '', // Not needed for mobile
         );
 
-        // Store açıldıktan sonra da toast mesajı göster
+        // Show toast after store opened
         _showReviewCompletedToast(context);
       }
     } catch (e) {
@@ -239,7 +239,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Uygulamamızı değerlendirdiğiniz için teşekkürler! 🌟',
+                    'Thank you for rating our app! 🌟',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // SystemChrome için
+import 'package:flutter/services.dart'; // For SystemChrome
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/bloc/app_bloc.dart';
@@ -37,7 +37,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       );
 
       if (image != null) {
-        // SAFE AREA DÜZELTMESİ: Crop işleminden önce system UI'ı ayarla
+        // SAFE AREA FIX: Set system UI before Crop operation
         SystemChrome.setSystemUIOverlayStyle(
           const SystemUiOverlayStyle(
             statusBarColor: Color(0xFF452D54),
@@ -48,7 +48,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           ),
         );
 
-        // CROP işlemi
+        // CROP operation
         final croppedFile = await ImageCropper().cropImage(
           sourcePath: image.path,
           compressFormat: ImageCompressFormat.jpg, // JPEG formatı
@@ -57,7 +57,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           uiSettings: cropperUiSettings,
         );
 
-        // SAFE AREA DÜZELTMESİ: Crop işleminden sonra system UI'ı geri yükle
+        // SAFE AREA FIX: Reset system UI after Crop operation
         SystemChrome.setSystemUIOverlayStyle(
           const SystemUiOverlayStyle(
             statusBarColor: Colors.white,

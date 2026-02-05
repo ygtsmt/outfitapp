@@ -14,19 +14,19 @@ import "package:url_strategy/url_strategy.dart";
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase init (zorunlu)
+  // Firebase init (mandatory)
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   log('🔥 Firebase initialized successfully');
 
-  // Ekran yönünü sadece dikey kilitle
+  // Lock screen orientation to portrait only
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // Status bar rengi
+  // Status bar color
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.white,
@@ -40,10 +40,10 @@ Future<void> main() async {
   // Notification init
   await getIt<NotificationService>().initialize();
 
-  // Web için temiz URL
+  // Clean URL for Web
   setPathUrlStrategy();
 
-  // Uygulama başlat
+  // Start app
   runApp(
     const ScreenUtilInit(
       child: AppScreen(),

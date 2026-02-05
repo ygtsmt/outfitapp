@@ -9,9 +9,9 @@ import 'package:comby/app/features/dashboard/data/models/weather_model.dart';
 class WeatherData {
   final double temperature; // Celsius
   final String condition; // "Clear", "Rain", "Clouds", "Snow"
-  final double precipitation; // Yağış olasılığı %
-  final int humidity; // Nem %
-  final String description; // "Parçalı bulutlu", "Hafif yağmur"
+  final double precipitation; // Precipitation probability %
+  final int humidity; // Humidity %
+  final String description; // "Partly cloudy", "Light rain"
   final String icon; // OpenWeatherMap icon code
   final DateTime date;
 
@@ -54,7 +54,7 @@ class WeatherData {
         'date': date.toIso8601String(),
       };
 
-  /// Hava durumuna göre kıyafet kategorisi
+  /// Clothing category based on weather
   String get clothingCategory {
     if (temperature < 10) return 'winter';
     if (temperature < 20) return 'spring_fall';
@@ -73,7 +73,7 @@ class WeatherData {
 class WeatherService {
   final FirebaseFirestore _firestore;
 
-  // Cache mekanizması
+  // Cache mechanism
   final Map<String, WeatherData> _cache = {};
   final Map<String, DateTime> _cacheTimestamps = {};
   static const _cacheDuration = Duration(hours: 1);
@@ -87,7 +87,7 @@ class WeatherService {
 
   WeatherService(this._firestore);
 
-  /// 🔑 OpenWeatherMap API Key'i Firebase'den al (5 dakika cache)
+  /// 🔑 Get OpenWeatherMap API Key from Firebase (5 minute cache)
   Future<String> _getApiKey() async {
     try {
       final now = DateTime.now();
@@ -121,7 +121,7 @@ class WeatherService {
     }
   }
 
-  /// 🌤️ Agent için hava durumu (cache-first, forecast destekli)
+  /// 🌤️ Weather for Agent (cache-first, forecast support)
   Future<WeatherData> getWeatherForAgent({
     required String city,
     required DateTime date,
@@ -164,7 +164,7 @@ class WeatherService {
 
   Future<WeatherData> _getCurrentWeather(String city, String apiKey) async {
     final url = Uri.parse(
-      '$_baseUrl/weather?q=$city&appid=$apiKey&units=metric&lang=tr',
+      '$_baseUrl/weather?q=$city&appid=$apiKey&units=metric&lang=en',
     );
 
     log('🌤️ Fetching current weather for $city...');
@@ -185,7 +185,7 @@ class WeatherService {
     String apiKey,
   ) async {
     final url = Uri.parse(
-      '$_baseUrl/forecast?q=$city&appid=$apiKey&units=metric&lang=tr',
+      '$_baseUrl/forecast?q=$city&appid=$apiKey&units=metric&lang=en',
     );
 
     log('🌤️ Fetching forecast for $city...');
@@ -219,7 +219,7 @@ class WeatherService {
     }
   }
 
-  // ===== Mevcut metodlar (backward compatibility) =====
+  // ===== Existing methods (backward compatibility) =====
 
   Future<WeatherModel?> getWeatherByLocation(
     double latitude,
@@ -244,7 +244,7 @@ class WeatherService {
       } catch (_) {}
 
       final url = Uri.parse(
-        '$_baseUrl/weather?lat=$latitude&lon=$longitude&appid=$apiKey&units=metric&lang=tr',
+        '$_baseUrl/weather?lat=$latitude&lon=$longitude&appid=$apiKey&units=metric&lang=en',
       );
 
       final response = await http.get(url);
@@ -264,7 +264,7 @@ class WeatherService {
     try {
       final apiKey = await _getApiKey();
       final url = Uri.parse(
-        '$_baseUrl/weather?q=$cityName&appid=$apiKey&units=metric&lang=tr',
+        '$_baseUrl/weather?q=$cityName&appid=$apiKey&units=metric&lang=en',
       );
 
       final response = await http.get(url);
