@@ -23,33 +23,12 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
   bool _useDeepThink = false; // Deep Think Mode Toggle
 
   @override
   void dispose() {
     _textController.dispose();
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        // Only auto-scroll if the user is already at or near the bottom
-        // (Prevents sudden jumps while the user is reading earlier messages)
-        final pos = _scrollController.position;
-        final isNearBottom = pos.pixels >= pos.maxScrollExtent - 200;
-
-        if (isNearBottom) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      }
-    });
   }
 
   void _sendMessage() {
@@ -59,7 +38,6 @@ class _ChatScreenState extends State<ChatScreen> {
             SendMessageEvent(message, useDeepThink: _useDeepThink),
           );
       _textController.clear();
-      _scrollToBottom();
     }
   }
 
@@ -88,7 +66,6 @@ class _ChatScreenState extends State<ChatScreen> {
             child: BlocListener<ChatBloc, ChatState>(
               listener: (context, state) {
                 if (state.status == ChatStatus.success) {
-                  _scrollToBottom();
                 } else if (state.status == ChatStatus.failure) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -115,7 +92,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   }
 
                   return ListView.builder(
-                    controller: _scrollController,
                     padding: EdgeInsets.all(8.h),
                     itemCount: state.messages.length +
                         (state.status == ChatStatus.loading ? 1 : 0),
@@ -126,7 +102,11 @@ class _ChatScreenState extends State<ChatScreen> {
                         );
                       }
                       final message = state.messages[index];
-                      return _MessageBubble(message: message);
+                      return _MessageBubble(
+                        key: ValueKey(Object.hashAll(
+                            [message.text, message.isUser, index])),
+                        message: message,
+                      );
                     },
                   );
                 },
@@ -257,7 +237,7 @@ class _ChatScreenState extends State<ChatScreen> {
 class _MessageBubble extends StatelessWidget {
   final ChatMessage message;
 
-  const _MessageBubble({required this.message});
+  const _MessageBubble({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {

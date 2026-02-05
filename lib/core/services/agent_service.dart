@@ -101,16 +101,8 @@ class AgentService {
       final fullSystemInstruction =
           '${ToolRegistry.agentSystemInstruction}\n$userProfile\n$locationContext';
 
-      // Vision Context Ekle
-      String contextualMessage = userMessage;
-      if (imagePaths != null && imagePaths.isNotEmpty) {
-        contextualMessage =
-            '$userMessage\n\n[IMAGE ANALYSIS: User sent a photo. Use your Vision capability to analyze the clothing, colors, and style in this photo. Then search for matching items in the user\'s wardrobe using `search_wardrobe`.]';
-      }
-
-      // AI'a tool kullanmasını hatırlat
-      final enhancedMessage =
-          '$contextualMessage\n\n[Use weather, wardrobe, color harmony, and visual tools]';
+      // Use user message directly - AI will autonomously decide how to handle images
+      final enhancedMessage = userMessage;
 
       // Kullanıcı mesajını oluştur (Text + Images)
       final List<GeminiPart> messageParts = [GeminiTextPart(enhancedMessage)];
