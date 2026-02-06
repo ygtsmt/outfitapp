@@ -43,11 +43,15 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
     final createdAtStr = widget.imageData['createdAt'] as String?;
     final usedClosetItems =
         widget.imageData['usedClosetItems'] as List<dynamic>?;
+    final sourceId = widget.imageData['sourceId'] as int?;
 
     DateTime? createdAt;
     if (createdAtStr != null) {
       createdAt = DateTime.tryParse(createdAtStr);
     }
+
+    // For AI Agent combines (sourceId 5), don't show before/after (no before image exists)
+    final effectiveBeforeImageUrl = sourceId == 5 ? null : beforeImageUrl;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -81,7 +85,8 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
                   borderRadius: BorderRadius.circular(24.r),
                   child: Stack(
                     children: [
-                      _buildBeforeAfterSlider(beforeImageUrl, imageUrl),
+                      _buildBeforeAfterSlider(
+                          effectiveBeforeImageUrl, imageUrl),
                       if (imageUrl != null)
                         Positioned(
                           top: 12.h,
@@ -298,6 +303,9 @@ class _CombineDetailScreenState extends State<CombineDetailScreen> {
           break;
         case 4:
           subtitle = AppLocalizations.of(context).weatherRenewed;
+          break;
+        case 5:
+          subtitle = 'Comby AI Agent';
           break;
       }
     }

@@ -340,8 +340,8 @@ class AgentService {
               result = {
                 'status': 'error',
                 'message': 'Tool execution failed: ${e.toString()}',
-                'instruction':
-                    'Do not give up. Try a different parameter, use a default value (e.g. for weather), or try a similar tool. Decide the best next step for the user.'
+                'suggestion':
+                    'Error encountered. Possible recovery strategies include: trying different parameters, using default values, or selecting alternative tools.'
               };
 
               steps.add(AgentStep(
@@ -599,7 +599,7 @@ class AgentService {
     final result = await _falAiUsecase.generateGeminiImageEdit(
       imageUrls: selectedItems.map((e) => e.imageUrl).toList(),
       prompt: 'Fashion outfit combination, high quality, realistic',
-      sourceId: 2,
+      sourceId: 5, // Comby AI Agent (chat-based combines)
       usedClosetItems: selectedItems,
       modelImageUrl: modelImageUrl,
       modelAiPrompt: modelAiPrompt,

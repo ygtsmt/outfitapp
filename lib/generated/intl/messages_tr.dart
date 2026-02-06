@@ -302,6 +302,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Kombin Detayları"),
         "combineResult": MessageLookupByLibrary.simpleMessage("Kombin Sonucu"),
         "combines": MessageLookupByLibrary.simpleMessage("Combines"),
+        "combyAiAgent": MessageLookupByLibrary.simpleMessage(
+            "Comby AI Agent ile Oluşturuldu"),
         "combyAiPlusPlan":
             MessageLookupByLibrary.simpleMessage("Comby AI Plus Planı"),
         "combyAiProPlan":

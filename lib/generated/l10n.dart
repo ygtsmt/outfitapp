@@ -5160,6 +5160,16 @@ class AppLocalizations {
     );
   }
 
+  /// `Created with Comby AI Agent`
+  String get combyAiAgent {
+    return Intl.message(
+      'Created with Comby AI Agent',
+      name: 'combyAiAgent',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Used Items`
   String get usedItems {
     return Intl.message(
