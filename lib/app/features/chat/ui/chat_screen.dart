@@ -1,21 +1,25 @@
 import 'dart:io';
 
-import 'package:comby/app/features/chat/widgets/chat_suggestion_chips.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:comby/app/features/chat/widgets/fal_image_widget.dart';
+import 'package:comby/core/routes/app_router.dart';
+import 'package:comby/core/services/location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:comby/app/features/chat/bloc/chat_bloc.dart';
-import 'package:comby/app/features/chat/widgets/markdown_text.dart';
+import 'package:comby/app/features/chat/widgets/chat_suggestion_chips.dart';
 import 'package:comby/app/features/chat/widgets/media_preview_widget.dart';
-import 'package:comby/app/features/chat/widgets/fal_image_widget.dart';
+import 'package:comby/app/features/chat/widgets/markdown_text.dart';
 import 'package:comby/core/ui/widgets/reusable_gallery_picker.dart';
-import 'package:comby/core/services/location_service.dart';
+import 'package:comby/generated/l10n.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
-import 'package:comby/generated/l10n.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  final bool fromHistory;
+  const ChatScreen({super.key, this.fromHistory = false});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -23,22 +27,39 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _textController = TextEditingController();
-  bool _useDeepThink = false; // Deep Think Mode Toggle
+  final ScrollController _scrollController = ScrollController();
+
+  bool _useDeepThink = false;
 
   @override
   void dispose() {
     _textController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   void _sendMessage() {
     final message = _textController.text.trim();
-    if (message.isNotEmpty) {
-      context.read<ChatBloc>().add(
-            SendMessageEvent(message, useDeepThink: _useDeepThink),
-          );
-      _textController.clear();
-    }
+    if (message.isEmpty) return;
+
+    context.read<ChatBloc>().add(
+          SendMessageEvent(message, useDeepThink: _useDeepThink),
+        );
+
+    _textController.clear();
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent + 80,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   Future<void> _pickMedia(BuildContext context) async {
@@ -51,184 +72,223 @@ class _ChatScreenState extends State<ChatScreen> {
       showCameraButton: true,
     );
 
-    if (result != null && result.selectedFiles.isNotEmpty && mounted) {
+    if (!mounted) return;
+
+    if (result != null && result.selectedFiles.isNotEmpty) {
       final paths = result.selectedFiles.map((f) => f.path).toList();
       context.read<ChatBloc>().add(SelectMediaEvent(paths));
+      _scrollToBottom();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: BlocListener<ChatBloc, ChatState>(
-              listener: (context, state) {
-                if (state.status == ChatStatus.success) {
-                } else if (state.status == ChatStatus.failure) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(state.errorMessage ??
-                            AppLocalizations.of(context).errorOccurredChat)),
-                  );
-                }
-              },
-              child: BlocBuilder<ChatBloc, ChatState>(
-                builder: (context, state) {
-                  if (state.messages.isEmpty &&
-                      state.status == ChatStatus.initial) {
-                    const welcomeMessage = ChatMessage(
-                      text:
-                          "Hi, I'm Comby! 👋\n\nHow about creating a great outfit based on the weather? Where are you going or what style do you need? I'm ready to help! ✨",
-                      isUser: false,
-                    );
-                    return ListView(
-                      padding: EdgeInsets.all(8.h),
-                      children: [
-                        const _MessageBubble(message: welcomeMessage),
-                      ],
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        forceMaterialTransparency: true,
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Comby AI Agent',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 18.sp,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              context.router.push(const ChatHistoryScreenRoute());
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.video_call),
+            onPressed: () {
+              context.router.push(const LiveStylistPageRoute());
+            },
+          ),
+        ],
+      ),
+      body: SafeArea(
+        bottom: true,
+        child: Column(
+          children: [
+            /// MESSAGES
+            Expanded(
+              child: BlocListener<ChatBloc, ChatState>(
+                listener: (context, state) {
+                  if (state.status == ChatStatus.failure) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          state.errorMessage ??
+                              AppLocalizations.of(context).errorOccurredChat,
+                        ),
+                      ),
                     );
                   }
-
-                  return ListView.builder(
-                    padding: EdgeInsets.all(8.h),
-                    itemCount: state.messages.length +
-                        (state.status == ChatStatus.loading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == state.messages.length) {
-                        return _LoadingBubble(
-                          message: state.agentThinkingText,
-                        );
-                      }
-                      final message = state.messages[index];
-                      return _MessageBubble(
-                        key: ValueKey(Object.hashAll(
-                            [message.text, message.isUser, index])),
-                        message: message,
+                  _scrollToBottom();
+                },
+                child: BlocBuilder<ChatBloc, ChatState>(
+                  builder: (context, state) {
+                    if (state.messages.isEmpty &&
+                        state.status == ChatStatus.initial) {
+                      const welcomeMessage = ChatMessage(
+                        text:
+                            "Hi, I'm Comby! 👋\n\nHow about creating a great outfit based on the weather?",
+                        isUser: false,
                       );
-                    },
-                  );
-                },
-              ),
-            ),
-          ),
 
-          // Media preview above input
-          BlocBuilder<ChatBloc, ChatState>(
-            builder: (context, state) {
-              return MediaPreviewWidget(
-                mediaPaths: state.selectedMedia,
-                onClear: () {
-                  context.read<ChatBloc>().add(const ClearMediaEvent());
-                },
-              );
-            },
-          ),
-          // Suggestion Chips (Only show if not loading)
-          BlocBuilder<ChatBloc, ChatState>(
-            builder: (context, state) {
-              if (state.status == ChatStatus.loading) {
-                return const SizedBox.shrink();
-              }
+                      return ListView(
+                        controller: _scrollController,
+                        padding: EdgeInsets.all(12.h),
+                        children: [
+                          _MessageBubble(
+                            message: welcomeMessage,
+                            fromHistory: widget.fromHistory,
+                          ),
+                        ],
+                      );
+                    }
 
-              return Padding(
-                padding: EdgeInsets.only(bottom: 8.h),
-                child: ChatSuggestionChips(
-                  hasMedia: state.selectedMedia.isNotEmpty,
-                  onChipSelected: (text) {
-                    context.read<ChatBloc>().add(
-                          SendMessageEvent(text, useDeepThink: _useDeepThink),
+                    return ListView.builder(
+                      controller: _scrollController,
+                      padding: EdgeInsets.all(12.h),
+                      itemCount: state.messages.length +
+                          (state.status == ChatStatus.loading ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == state.messages.length) {
+                          return _LoadingBubble(
+                            message: state.agentThinkingText,
+                          );
+                        }
+
+                        final message = state.messages[index];
+                        return _MessageBubble(
+                          key: ValueKey('$index-${message.text}'),
+                          message: message,
+                          fromHistory: widget.fromHistory,
                         );
+                      },
+                    );
                   },
                 ),
-              );
-            },
-          ),
+              ),
+            ),
 
-          _buildInputArea(context),
-        ],
+            /// MEDIA PREVIEW
+            BlocBuilder<ChatBloc, ChatState>(
+              builder: (context, state) {
+                return MediaPreviewWidget(
+                  mediaPaths: state.selectedMedia,
+                  onClear: () {
+                    context.read<ChatBloc>().add(const ClearMediaEvent());
+                  },
+                );
+              },
+            ),
+
+            /// SUGGESTIONS
+            BlocBuilder<ChatBloc, ChatState>(
+              builder: (context, state) {
+                if (state.status == ChatStatus.loading) {
+                  return const SizedBox.shrink();
+                }
+
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 6.h),
+                  child: ChatSuggestionChips(
+                    hasMedia: state.selectedMedia.isNotEmpty,
+                    onChipSelected: (text) {
+                      context.read<ChatBloc>().add(
+                            SendMessageEvent(
+                              text,
+                              useDeepThink: _useDeepThink,
+                            ),
+                          );
+                      _scrollToBottom();
+                    },
+                  ),
+                );
+              },
+            ),
+
+            /// INPUT
+            _buildInputArea(context),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildInputArea(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Deep Think Toggle
-
-        // Original Input Area
-        _buildOriginalInputArea(context),
-      ],
-    );
-  }
-
-  Widget _buildOriginalInputArea(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.fromLTRB(12.w, 8.w, 12.w,
+          MediaQuery.of(context).viewInsets.bottom > 0 ? 8.w : 16.w),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            // ✅ Attachment button
-            IconButton(
-              icon: const Icon(Icons.attach_file),
-              onPressed: () => _pickMedia(context),
-              color: Theme.of(context).primaryColor,
-            ),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(24.r),
-                  border: Border.all(
-                    color: Colors.grey.withOpacity(0.2),
-                  ),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.attach_file),
+            onPressed: () => _pickMedia(context),
+          ),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(24.r),
+                border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              ),
+              child: TextField(
+                controller: _textController,
+                minLines: 1,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  hintText: AppLocalizations.of(context).writeYourMessage,
+                  border: InputBorder.none,
                 ),
-                child: TextField(
-                  controller: _textController,
-                  decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context).writeYourMessage,
-                    border: InputBorder.none,
-                  ),
-                  onSubmitted: (_) => _sendMessage(),
-                ),
+                onSubmitted: (_) => _sendMessage(),
               ),
             ),
-            SizedBox(width: 8.w),
-            BlocBuilder<ChatBloc, ChatState>(
-              builder: (context, state) {
-                return CircleAvatar(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  child: IconButton(
-                    icon: state.status == ChatStatus.loading
-                        ? SizedBox(
-                            width: 20.w,
-                            height: 20.w,
-                            child: const CircularProgressIndicator(
-                                color: Colors.white, strokeWidth: 2))
-                        : const Icon(Icons.send, color: Colors.white),
-                    onPressed: state.status == ChatStatus.loading
-                        ? null
-                        : _sendMessage,
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+          ),
+          SizedBox(width: 8.w),
+          BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, state) {
+              return CircleAvatar(
+                backgroundColor: Theme.of(context).primaryColor,
+                child: IconButton(
+                  icon: state.status == ChatStatus.loading
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.send, color: Colors.white),
+                  onPressed:
+                      state.status == ChatStatus.loading ? null : _sendMessage,
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -236,8 +296,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
 class _MessageBubble extends StatelessWidget {
   final ChatMessage message;
+  final bool? fromHistory;
 
-  const _MessageBubble({super.key, required this.message});
+  const _MessageBubble(
+      {super.key, required this.message, required this.fromHistory});
 
   @override
   Widget build(BuildContext context) {
@@ -362,10 +424,11 @@ class _MessageBubble extends StatelessWidget {
               ),
 
               // ✅ Real-time Image Generation Status
-              if (message.visualRequestId != null) ...[
-                SizedBox(height: 12.h),
-                FalImageWidget(requestId: message.visualRequestId!),
-              ],
+              if (message.visualRequestId != null)
+                FalImageWidget(
+                  requestId: message.visualRequestId!,
+                  isLive: fromHistory == true ? false : true,
+                ),
 
               // 📍 Location Permission Request Button
               if (message.requestsLocation) ...[

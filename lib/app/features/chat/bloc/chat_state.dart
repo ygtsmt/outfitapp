@@ -11,6 +11,8 @@ class ChatMessage extends Equatable {
   final List<AgentStep>? agentSteps; // 🤖 Agent adımları
   final String? visualRequestId; // ⏳ Bekleyen görsel isteği
   final bool requestsLocation; // 📍 Konum izni talebi
+    final String? activeSessionId;
+
 
   const ChatMessage({
     required this.text,
@@ -20,6 +22,7 @@ class ChatMessage extends Equatable {
     this.agentSteps,
     this.visualRequestId,
     this.requestsLocation = false,
+    this.activeSessionId,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,6 +34,7 @@ class ChatMessage extends Equatable {
       'agentSteps': agentSteps?.map((x) => x.toMap()).toList(),
       'visualRequestId': visualRequestId,
       'requestsLocation': requestsLocation,
+      'activeSessionId': activeSessionId,
     };
   }
 
@@ -50,6 +54,7 @@ class ChatMessage extends Equatable {
           : null,
       visualRequestId: map['visualRequestId'] as String?,
       requestsLocation: map['requestsLocation'] as bool? ?? false,
+      activeSessionId: map['activeSessionId'] as String?,
     );
   }
 
@@ -61,7 +66,8 @@ class ChatMessage extends Equatable {
         localMediaPaths,
         agentSteps,
         visualRequestId,
-        requestsLocation
+        requestsLocation,
+        activeSessionId,
       ];
 }
 
@@ -72,6 +78,7 @@ class ChatState extends Equatable {
   final List<String>
       selectedMedia; // ✅ Seçili medya dosyaları (henüz gönderilmedi)
   final String? agentThinkingText; // 🤖 Agent'ın o an ne düşündüğü
+  final String? activeSessionId;
 
   const ChatState({
     this.status = ChatStatus.initial,
@@ -79,6 +86,7 @@ class ChatState extends Equatable {
     this.errorMessage,
     this.selectedMedia = const [],
     this.agentThinkingText,
+    this.activeSessionId,
   });
 
   ChatState copyWith({
@@ -87,6 +95,7 @@ class ChatState extends Equatable {
     String? errorMessage,
     List<String>? selectedMedia,
     String? agentThinkingText,
+    String? activeSessionId,
   }) {
     return ChatState(
       status: status ?? this.status,
@@ -94,6 +103,7 @@ class ChatState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       selectedMedia: selectedMedia ?? this.selectedMedia,
       agentThinkingText: agentThinkingText ?? this.agentThinkingText,
+      activeSessionId: activeSessionId ?? this.activeSessionId,
     );
   }
 
@@ -104,5 +114,6 @@ class ChatState extends Equatable {
         errorMessage,
         selectedMedia,
         agentThinkingText,
+        activeSessionId,
       ];
 }

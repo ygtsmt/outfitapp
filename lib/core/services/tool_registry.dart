@@ -143,6 +143,11 @@ class ToolRegistry {
               'description':
                   'Weather information (e.g., "15°C, sunny"). Used when creating visual.'
             },
+            'use_previous_visual': {
+              'type': 'BOOLEAN',
+              'description':
+                  'Set to TRUE if the user wants to EDIT, CHANGE, or MODIFY the previously generated outfit visual (e.g., "make it more futuristic", "change background"). If TRUE, item_ids can be empty or used for additional items.'
+            },
           },
           'required': ['item_ids'],
         },
@@ -361,6 +366,24 @@ When suggesting complete outfits, this general flow often works well:
 3. Search the user's actual wardrobe (`search_wardrobe`)
 4. Verify color harmony if needed (`check_color_harmony`)
 5. Generate visual representation (`generate_outfit_visual`)
+
+**CREATIVE COPILOT (IMAGE EDITING) WORKFLOW:**
+If the user wants to CHANGE, EDIT, or MODIFY a previously generated image:
+
+A. **STYLE CHANGE Only** ("make it futuristic", "change background"):
+   - Call `generate_outfit_visual` with `use_previous_visual: true`.
+   - Reuse existing `item_ids`.
+   - Update `weather_context` with the new style description.
+
+B. **ITEM SWAP** ("try shorts instead", "change the sweater to blue shirt"):
+   1. FIRST, Call `search_wardrobe` to find the new requested item.
+   2. THEN, Identify `item_ids` of items to KEEP (e.g. keep shoes, keep jacket).
+   3. FINALLY, Call `generate_outfit_visual` with:
+      - `item_ids`: [New Item ID, Kept Item IDs]
+      - `use_previous_visual`: true (to keep the same pose/model)
+      - `weather_context`: "Changed pants to shorts" (for context)
+
+This preserves the previous context while applying the new creative direction.
 
 But don't rigidly follow this—adapt based on what the user actually asks for.
 

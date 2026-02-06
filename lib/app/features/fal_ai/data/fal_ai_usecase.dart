@@ -108,8 +108,7 @@ class FalAiUsecase {
       final userId = auth.currentUser!.uid;
       final webhookUrl =
           "https://us-central1-ginowl-ginfit.cloudfunctions.net/falWebhook?userId=$userId";
-      final uri = Uri.parse(
-              'https://queue.fal.run/fal-ai/gemini-3-pro-image-preview/edit')
+      final uri = Uri.parse('https://queue.fal.run/fal-ai/nano-banana-pro/edit')
           .replace(queryParameters: {'fal_webhook': webhookUrl});
 
       var apiKey = await getFalAiApiKey();
@@ -228,6 +227,34 @@ class FalAiUsecase {
     } catch (e) {
       log('Error occurred while generating Gemini Image Edit: $e');
       throw Exception('Error occurred while generating Gemini Image Edit: $e');
+    }
+    return null;
+    return null;
+  }
+
+  /// 🔍 Fetch generated image URL from Firestore by Request ID
+  Future<String?> getGeneratedImageUrl(String requestId) async {
+    try {
+      final userId = auth.currentUser!.uid;
+      final doc = await firestore
+          .collection('users')
+          .doc(userId)
+          .collection('combines')
+          .doc(requestId)
+          .get();
+
+      if (doc.exists && doc.data() != null) {
+        final data = doc.data()!;
+        // Check both 'output' and 'image_url' fields just in case
+        if (data['output'] != null &&
+            data['output'] is Map &&
+            data['output']['images'] != null &&
+            (data['output']['images'] as List).isNotEmpty) {
+          return data['output']['images'][0]['url'] as String;
+        }
+      }
+    } catch (e) {
+      log('❌ Error fetching generated image URL: $e');
     }
     return null;
   }

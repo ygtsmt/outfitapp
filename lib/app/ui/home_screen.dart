@@ -13,9 +13,7 @@ import "package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart"
 import "package:comby/app/features/chat/ui/chat_screen.dart";
 import "package:comby/app/features/payment/ui/payment_screen.dart";
 import "package:comby/app/ui/custom_drawer.dart";
-
 import "package:comby/core/core.dart";
-
 import "package:comby/core/services/paywall_manager.dart";
 import "package:comby/generated/l10n.dart";
 import "package:google_fonts/google_fonts.dart";
@@ -33,270 +31,171 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    super.initState();
+
     getIt<ProfileBloc>()
         .add(FetchProfileInfoEvent(auth.currentUser?.uid ?? ''));
 
-    // Initialize app language
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getIt<AppBloc>().add(InitializeLanguageEvent());
-
-      // 🎯 PAYWALL CONTROL - 1 time per session
-      //  _checkAndShowPaywall();
+      // _checkAndShowPaywall();
     });
-
-    super.initState();
   }
 
-  /// Check and show paywall if required
-  Future<void> _checkAndShowPaywall() async {
-    // Wait a bit (for UX - after screen is fully loaded)
-    await Future.delayed(const Duration(milliseconds: 1500));
-
-    // Check from PaywallManager
-    final shouldShow = await PaywallManager().shouldShowPaywall();
-
-    if (shouldShow && mounted) {
-      // Show as bottom sheet
-      _showPaywallBottomSheet();
-
-      // Mark as shown for this session
-      PaywallManager().markAsShown();
-    }
-  }
-
-  /// Show payment screen as bottom sheet
-  void _showPaywallBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // Full height
-      backgroundColor: Colors.transparent, // Make transparent for backdrop
-      barrierColor: Colors.black.withOpacity(0.5), // Backdrop (fixed!)
-      isDismissible: true, // Can be closed by clicking outside
-      enableDrag: true, // Can be closed by dragging down
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9, // 90% of screen
-        minChildSize: 0.5, // Minimum 50%
-        maxChildSize: 0.95, // Maximum 95%
-        snap: true, // Snap feature (auto closes when closing)
-        snapSizes: const [0.9], // Snap point
-        builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20),
-            ),
-          ),
-          child: Column(
-            children: [
-              // Drag handle (kapatma çubuğu)
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[400],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              // Payment screen - isPaywall: true (back button gizli)
-              const Expanded(
-                child: PaymentsScreen(isPaywall: true),
-              ),
-            ],
-          ),
-        ),
+  /// CHAT → gerçek fullscreen route (Scaffold YOK!)
+  void _showChatModal() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => const ChatScreen(),
       ),
     );
   }
 
-  /// Show chat screen as full screen modal
-  void _showChatModal() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            title: Text(
-              'Comby AI Agent',
-              style: GoogleFonts.balooBhai2(
-                  fontSize: 20.sp, fontWeight: FontWeight.w700),
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.history),
-                onPressed: () {
-                  context.router.push(const ChatHistoryScreenRoute());
-                },
-              ),
-              IconButton(
-                  icon: const Icon(Icons.video_call),
-                  onPressed: () {
-                    context.router.push(const LiveStylistPageRoute());
-                  })
-            ],
-            centerTitle: true,
+  /// PAYWALL
+  void _showPaywallBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        maxChildSize: 0.95,
+        minChildSize: 0.5,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          body: const ChatScreen(),
+          child: const PaymentsScreen(isPaywall: true),
         ),
-        fullscreenDialog: true, // Sliding up from bottom
       ),
     );
   }
 
   @override
-  Widget build(final BuildContext context) {
+  Widget build(BuildContext context) {
     return BlocBuilder<AppBloc, AppState>(
-      builder: (final context, final state) {
+      builder: (context, state) {
         return AutoTabsRouter(
-          routes: [
+          routes: const [
             DashbordTabRouter(),
             ClosetTabRouter(),
             TryOnTabRouter(),
             ProfileTabRouter(),
           ],
-          builder: (final context, final child, final animation) {
+          builder: (context, child, animation) {
             final tabsRouter = AutoTabsRouter.of(context);
+
             return Theme(
               data: Theme.of(context).copyWith(
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                hoverColor: Colors.transparent,
               ),
               child: GestureDetector(
+                behavior: HitTestBehavior.deferToChild,
                 onTap: () {
-                  FocusScope.of(context).unfocus();
+                  // ⚠️ Chat açıkken unfocus tetiklenmez
+                  if (ModalRoute.of(context)?.isCurrent ?? true) {
+                    FocusScope.of(context).unfocus();
+                  }
                 },
-                child: BlocBuilder<LoginBloc, LoginState>(
-                  builder: (context, loginBuilderState) {
-                    return Scaffold(
-                      key: _scaffoldKey,
-                      drawer:
-                          tabsRouter.activeIndex == 3 // Profile is now index 3
-                              ? CustomDrawer(state: state)
-                              : null,
-                      // Update indices: Closet is 1, Try-On is 2, Profile is 3
-                      appBar: ( // Closet
-                              tabsRouter.activeIndex == 1 ||
-                                  tabsRouter.activeIndex == 2) // Profile
-                          ? null
-                          : AppBar(
-                              centerTitle: true,
-                              forceMaterialTransparency: true,
-                              backgroundColor: Colors.red,
-                              leading: GestureDetector(
-                                onTap: () {
-                                  _scaffoldKey.currentState?.openDrawer();
-                                },
-                                child: Icon(
-                                  Icons.menu,
-                                  color: context.baseColor,
-                                ),
-                              ),
-                              leadingWidth: 64.w,
-                              actionsPadding: EdgeInsets.only(right: 12.w),
-                              title: Text(
-                                'Comby',
-                                style: GoogleFonts.balooBhai2(
-                                    fontSize: 24.sp,
-                                    fontWeight: FontWeight.w700),
-                              ),
-                              actions: [
-                                GestureDetector(
-                                  onTap: () {
-                                    context.router
-                                        .push(const SettingsScreenRoute());
-                                  },
-                                  child: Icon(
-                                    Icons.settings,
-                                    color: context.baseColor,
-                                  ),
-                                ),
-                              ],
+                child: Scaffold(
+                  key: _scaffoldKey,
+                  drawer:
+                      tabsRouter.activeIndex == 3 ? CustomDrawer(state: state) : null,
+
+                  appBar: (tabsRouter.activeIndex == 1 ||
+                          tabsRouter.activeIndex == 2)
+                      ? null
+                      : AppBar(
+                          centerTitle: true,
+                          forceMaterialTransparency: true,
+                          leading: IconButton(
+                            icon: const Icon(Icons.menu),
+                            onPressed: () =>
+                                _scaffoldKey.currentState?.openDrawer(),
+                          ),
+                          title: Text(
+                            'Comby',
+                            style: GoogleFonts.balooBhai2(
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.w700,
                             ),
-                      body: SafeArea(
-                        child: AdaptiveBuilder(
-                          defaultBuilder: (final BuildContext context,
-                              final Screen screen) {
-                            return child;
-                          },
-                        ),
-                      ),
-                      floatingActionButton: FloatingActionButton(
-                        onPressed: _showChatModal,
-                        elevation: 4,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        shape: const CircleBorder(),
-                        child: Icon(Icons.chat_bubble,
-                            color: Colors.white, size: 28.sp),
-                      ),
-                      floatingActionButtonLocation:
-                          FloatingActionButtonLocation.centerDocked,
-                      bottomNavigationBar: Container(
-                        decoration: const BoxDecoration(),
-                        child: BottomNavigationBar(
-                          enableFeedback: true,
-                          type: BottomNavigationBarType.fixed,
-                          showSelectedLabels: true,
-                          selectedFontSize: 10.sp,
-                          unselectedFontSize: 9.sp,
-                          showUnselectedLabels: true,
-                          selectedLabelStyle:
-                              const TextStyle(fontWeight: FontWeight.bold),
-                          unselectedLabelStyle:
-                              const TextStyle(fontWeight: FontWeight.w500),
-                          items: <BottomNavigationBarItem>[
-                            BottomNavigationBarItem(
-                              icon: tabsRouter.activeIndex == 0
-                                  ? const Icon(Icons.dashboard)
-                                  : const Icon(Icons.dashboard_outlined),
-                              label: AppLocalizations.of(context).homeDashboard,
-                            ),
-                            BottomNavigationBarItem(
-                              icon: tabsRouter.activeIndex == 1
-                                  ? const Icon(Icons.checkroom)
-                                  : const Icon(Icons.checkroom_outlined),
-                              label: AppLocalizations.of(context).homeCloset,
-                            ),
-                            // Chat Item Removed - Replaced by FAB space
-                            BottomNavigationBarItem(
-                              icon: SizedBox(), // Invisible placeholder
-                              label: '', // Empty label
-                            ),
-                            BottomNavigationBarItem(
-                              icon: tabsRouter.activeIndex == 2
-                                  ? const Icon(Icons.history_edu)
-                                  : const Icon(Icons.history_edu_outlined),
-                              label: AppLocalizations.of(context).homeTryOn,
-                            ),
-                            BottomNavigationBarItem(
-                              icon: tabsRouter.activeIndex == 3
-                                  ? const Icon(
-                                      Icons.person,
-                                    )
-                                  : const Icon(Icons.person_outline),
-                              label: AppLocalizations.of(context).profile,
+                          ),
+                          actions: [
+                            IconButton(
+                              icon: const Icon(Icons.settings),
+                              onPressed: () {
+                                context.router
+                                    .push(const SettingsScreenRoute());
+                              },
                             ),
                           ],
-                          currentIndex:
-                              _getBottomNavIndex(tabsRouter.activeIndex),
-                          onTap: (value) {
-                            if (value == 0) tabsRouter.setActiveIndex(0);
-                            if (value == 1) tabsRouter.setActiveIndex(1);
-                            // Value 2 is empty/FAB
-                            if (value == 3)
-                              tabsRouter.setActiveIndex(
-                                  2); // TryOn (Index 2 in routes)
-                            if (value == 4)
-                              tabsRouter.setActiveIndex(
-                                  3); // Profile (Index 3 in routes)
-                          },
                         ),
+
+                  body: SafeArea(
+                    bottom: true,
+                    child: AdaptiveBuilder(
+                      defaultBuilder: (_, __) => child,
+                    ),
+                  ),
+
+                  floatingActionButton: FloatingActionButton(
+                    onPressed: _showChatModal,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: Icon(Icons.chat_bubble,
+                        color: Colors.white, size: 28.sp),
+                  ),
+
+                  floatingActionButtonLocation:
+                      FloatingActionButtonLocation.centerDocked,
+
+                  bottomNavigationBar: BottomNavigationBar(
+                    type: BottomNavigationBarType.fixed,
+                    selectedFontSize: 10.sp,
+                    unselectedFontSize: 9.sp,
+                    items: [
+                      BottomNavigationBarItem(
+                        icon: Icon(tabsRouter.activeIndex == 0
+                            ? Icons.dashboard
+                            : Icons.dashboard_outlined),
+                        label:
+                            AppLocalizations.of(context).homeDashboard,
                       ),
-                    );
-                  },
+                      BottomNavigationBarItem(
+                        icon: Icon(tabsRouter.activeIndex == 1
+                            ? Icons.checkroom
+                            : Icons.checkroom_outlined),
+                        label: AppLocalizations.of(context).homeCloset,
+                      ),
+                      const BottomNavigationBarItem(
+                        icon: SizedBox(),
+                        label: '',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(tabsRouter.activeIndex == 2
+                            ? Icons.history_edu
+                            : Icons.history_edu_outlined),
+                        label: AppLocalizations.of(context).homeTryOn,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(tabsRouter.activeIndex == 3
+                            ? Icons.person
+                            : Icons.person_outline),
+                        label: AppLocalizations.of(context).profile,
+                      ),
+                    ],
+                    currentIndex: _mapTabIndex(tabsRouter.activeIndex),
+                    onTap: (index) {
+                      if (index == 0) tabsRouter.setActiveIndex(0);
+                      if (index == 1) tabsRouter.setActiveIndex(1);
+                      if (index == 3) tabsRouter.setActiveIndex(2);
+                      if (index == 4) tabsRouter.setActiveIndex(3);
+                    },
+                  ),
                 ),
               ),
             );
@@ -306,14 +205,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  int _getBottomNavIndex(int routerIndex) {
-    if (routerIndex == 0) return 0; // Dashboard
-    if (routerIndex == 1) return 1; // Closet
-    // Index 2 is empty/FAB placeholder in bottom nav
-    if (routerIndex == 2)
-      return 3; // Try-On (router index 2 → bottom nav index 3)
-    if (routerIndex == 3)
-      return 4; // Profile (router index 3 → bottom nav index 4)
+  int _mapTabIndex(int routerIndex) {
+    if (routerIndex == 0) return 0;
+    if (routerIndex == 1) return 1;
+    if (routerIndex == 2) return 3;
+    if (routerIndex == 3) return 4;
     return 0;
   }
 }

@@ -28,6 +28,9 @@ class AgentService {
   // MARATHON AGENT: Aktif Görev (Artık Storage'dan geliyor, burası boş kalabilir)
   Map<String, dynamic>? _activeMission;
 
+  // CREATIVE COPILOT: Last generated visual request ID for context persistence
+  String? _lastVisualRequestId;
+
   // ignore: unused_field
   final ToolRegistry _toolRegistry = ToolRegistry(); // Helper access if needed
 
@@ -563,12 +566,29 @@ class AgentService {
     final selectedItems =
         allItems.where((item) => itemIds.contains(item.id)).toList();
 
+    // State management for context persistence
+    final usePreviousVisual = args['use_previous_visual'] as bool? ?? false;
+
     // Model seçimi yap
     final userModels = await _closetUseCase.getUserModelItems();
     String? modelImageUrl;
     String? modelAiPrompt;
 
-    if (userModels.isNotEmpty) {
+    // CONTEXT HANDLING: If editing previous visual, try to get last image
+    if (usePreviousVisual && _lastVisualRequestId != null) {
+      log('🔄 Creative Copilot: Fetching previous visual for editing...');
+      final prevUrl =
+          await _falAiUsecase.getGeneratedImageUrl(_lastVisualRequestId!);
+      if (prevUrl != null) {
+        modelImageUrl = prevUrl;
+        modelAiPrompt = "the person in the previous image";
+        log('✅ Creative Copilot: Using previous visual as model reference');
+      } else {
+        log('⚠️ Creative Copilot: Previous visual not found, falling back to new model');
+      }
+    }
+
+    if (modelImageUrl == null && userModels.isNotEmpty) {
       // Logic: If there are shoes, prioritize "Full Body" models
       final hasShoes = selectedItems.any((i) =>
           i.category?.toLowerCase() == 'shoes' ||
@@ -590,15 +610,21 @@ class AgentService {
         modelAiPrompt = selectedModel.aiPrompt;
         log('📸 User Model Selected (Random): ${selectedModel.name}');
       }
-    } else {
+    } else if (modelImageUrl == null) {
       log('⚠️ User model not found, using default AI model.');
-      // If no user model, we could pull gender from User Profile and generate modelAiPrompt
-      // Leaving null for now; FalAiUsecase will use "A model wearing..." in prompt
     }
+
+    // DYNAMIC PROMPT ENGINEERING
+    // Base prompt + Context/Style Modifier
+    final weatherContext = args['weather_context'] as String?;
+    final basePrompt = 'Fashion outfit combination, high quality, realistic';
+    final finalPrompt = weatherContext != null && weatherContext.isNotEmpty
+        ? '$basePrompt. Style/Context: $weatherContext'
+        : basePrompt;
 
     final result = await _falAiUsecase.generateGeminiImageEdit(
       imageUrls: selectedItems.map((e) => e.imageUrl).toList(),
-      prompt: 'Fashion outfit combination, high quality, realistic',
+      prompt: finalPrompt,
       sourceId: 5, // Comby AI Agent (chat-based combines)
       usedClosetItems: selectedItems,
       modelImageUrl: modelImageUrl,
@@ -608,6 +634,9 @@ class AgentService {
     if (result == null) {
       throw Exception('Failed to generate visual');
     }
+
+    // Persist this request ID for future edits
+    _lastVisualRequestId = result['id'];
 
     return {
       'request_id': result['id'],

@@ -491,9 +491,14 @@ class _$AppRouter extends RootStackRouter {
       );
     },
     ChatScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ChatScreenRouteArgs>(
+          orElse: () => const ChatScreenRouteArgs());
       return CustomPage<dynamic>(
         routeData: routeData,
-        child: const ChatScreen(),
+        child: ChatScreen(
+          key: args.key,
+          fromHistory: args.fromHistory,
+        ),
         transitionsBuilder: TransitionsBuilders.fadeIn,
         opaque: true,
         barrierDismissible: false,
@@ -1755,14 +1760,36 @@ class ProfileScreenRouteArgs {
 
 /// generated route for
 /// [ChatScreen]
-class ChatScreenRoute extends PageRouteInfo<void> {
-  const ChatScreenRoute()
-      : super(
+class ChatScreenRoute extends PageRouteInfo<ChatScreenRouteArgs> {
+  ChatScreenRoute({
+    Key? key,
+    bool fromHistory = false,
+  }) : super(
           ChatScreenRoute.name,
           path: 'chat-screen',
+          args: ChatScreenRouteArgs(
+            key: key,
+            fromHistory: fromHistory,
+          ),
         );
 
   static const String name = 'ChatScreenRoute';
+}
+
+class ChatScreenRouteArgs {
+  const ChatScreenRouteArgs({
+    this.key,
+    this.fromHistory = false,
+  });
+
+  final Key? key;
+
+  final bool fromHistory;
+
+  @override
+  String toString() {
+    return 'ChatScreenRouteArgs{key: $key, fromHistory: $fromHistory}';
+  }
 }
 
 /// generated route for
