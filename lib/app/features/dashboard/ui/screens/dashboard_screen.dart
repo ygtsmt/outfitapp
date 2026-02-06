@@ -5,17 +5,15 @@ import "package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart"
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
-import 'package:comby/app/features/closet/ui/widgets/wardrobe_analytics_widget.dart';
-import "package:comby/app/features/dashboard/ui/widgets/weather_widget.dart";
+import "package:comby/app/features/dashboard/ui/widgets/compact_weather_widget.dart";
+import "package:comby/app/features/dashboard/ui/widgets/ai_chat_card.dart";
 import 'package:comby/app/features/fit_check/ui/widgets/fit_check_card.dart';
 import "package:comby/core/extensions.dart";
 
 import 'package:comby/app/features/dashboard/ui/widgets/ai_fashion_critique_widget.dart';
 
 import 'package:comby/generated/l10n.dart';
-import 'package:comby/app/features/dashboard/ui/widgets/daily_outfit_card.dart';
 import 'package:comby/app/features/chat/ui/chat_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:comby/core/injection/injection.dart';
 import 'package:comby/core/services/agent_service.dart';
 import 'package:comby/core/services/gemini_rest_service.dart';
@@ -157,12 +155,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
 
-          // Weather Widget
-          const WeatherWidget(),
+          // Compact Weather Widget (collapsed ~120px, expanded ~280px)
+          const CompactWeatherWidget(),
 
           // Live Stylist Entry
           const LiveStylistCard(),
-
+          // AI Chat Card
+          const AIChatCard(),
           // Proactive Agent Card (Moved to Weather Widget)
           // DailyOutfitCard(
           //   onTap: () {},

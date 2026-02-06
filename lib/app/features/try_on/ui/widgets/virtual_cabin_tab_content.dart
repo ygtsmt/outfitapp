@@ -550,6 +550,7 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
             // However, with Expanded flex, the layout fills screen.
             // The FAB is bottom-right. It might overlap the ClothList or StatusCard.
             // StatusCard is at valid bottom.
+            const SizedBox(height: 16),
           ],
         ),
       ),
