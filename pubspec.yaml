@@ -87,6 +87,8 @@ dependencies:
   web_socket_channel: ^3.0.3
   shared_preferences: ^2.5.3
   audio_session: ^0.2.2
+  animate_do: ^4.2.0
+  sound_stream: ^0.4.2
 #  sound_stream: ^0.4.2
 flutter_intl:
   enabled: true

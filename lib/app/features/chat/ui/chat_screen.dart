@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:comby/app/features/chat/widgets/fal_image_widget.dart';
 import 'package:comby/core/routes/app_router.dart';
@@ -54,9 +55,9 @@ class _ChatScreenState extends State<ChatScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent + 80,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeOut,
+          _scrollController.position.maxScrollExtent + 100, // Extra padding
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
         );
       }
     });
@@ -84,143 +85,189 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true, // For glassy effect if needed
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         forceMaterialTransparency: true,
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(Icons.close, size: 20),
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Comby AI Agent',
           style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 18.sp,
+            fontWeight: FontWeight.w800,
+            fontSize: 20.sp,
+            color: Colors.black87,
+            letterSpacing: -0.5,
           ),
         ),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.history),
+            icon: const Icon(Icons.history_rounded),
+            tooltip: 'History',
             onPressed: () {
               context.router.push(const ChatHistoryScreenRoute());
             },
           ),
           IconButton(
-            icon: const Icon(Icons.video_call),
+            icon: const Icon(Icons.video_call_rounded),
+            tooltip: 'Live Stylist',
             onPressed: () {
               context.router.push(const LiveStylistPageRoute());
             },
           ),
+          SizedBox(width: 8.w),
         ],
       ),
-      body: SafeArea(
-        bottom: true,
-        child: Column(
-          children: [
-            /// MESSAGES
-            Expanded(
-              child: BlocListener<ChatBloc, ChatState>(
-                listener: (context, state) {
-                  if (state.status == ChatStatus.failure) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          state.errorMessage ??
-                              AppLocalizations.of(context).errorOccurredChat,
-                        ),
-                      ),
-                    );
-                  }
-                  _scrollToBottom();
-                },
-                child: BlocBuilder<ChatBloc, ChatState>(
-                  builder: (context, state) {
-                    if (state.messages.isEmpty &&
-                        state.status == ChatStatus.initial) {
-                      const welcomeMessage = ChatMessage(
-                        text:
-                            "Hi, I'm Comby! 👋\n\nHow about creating a great outfit based on the weather?",
-                        isUser: false,
-                      );
-
-                      return ListView(
-                        controller: _scrollController,
-                        padding: EdgeInsets.all(12.h),
-                        children: [
-                          _MessageBubble(
-                            message: welcomeMessage,
-                            fromHistory: widget.fromHistory,
+      body: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8F9FE), // Premium soft background
+        ),
+        child: SafeArea(
+          bottom: true,
+          child: Column(
+            children: [
+              /// MESSAGES
+              Expanded(
+                child: BlocListener<ChatBloc, ChatState>(
+                  listener: (context, state) {
+                    if (state.status == ChatStatus.failure) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: Colors.redAccent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r)),
+                          content: Text(
+                            state.errorMessage ??
+                                AppLocalizations.of(context).errorOccurredChat,
+                            style: const TextStyle(color: Colors.white),
                           ),
-                        ],
+                        ),
                       );
                     }
-
-                    return ListView.builder(
-                      controller: _scrollController,
-                      padding: EdgeInsets.all(12.h),
-                      itemCount: state.messages.length +
-                          (state.status == ChatStatus.loading ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == state.messages.length) {
-                          return _LoadingBubble(
-                            message: state.agentThinkingText,
-                          );
-                        }
-
-                        final message = state.messages[index];
-                        return _MessageBubble(
-                          key: ValueKey('$index-${message.text}'),
-                          message: message,
-                          fromHistory: widget.fromHistory,
+                    _scrollToBottom();
+                  },
+                  child: BlocBuilder<ChatBloc, ChatState>(
+                    builder: (context, state) {
+                      if (state.messages.isEmpty &&
+                          state.status == ChatStatus.initial) {
+                        const welcomeMessage = ChatMessage(
+                          text:
+                              "Hi, I'm Comby! 👋\n\nHow about creating a great outfit based on the weather?",
+                          isUser: false,
                         );
-                      },
-                    );
-                  },
-                ),
-              ),
-            ),
 
-            /// MEDIA PREVIEW
-            BlocBuilder<ChatBloc, ChatState>(
-              builder: (context, state) {
-                return MediaPreviewWidget(
-                  mediaPaths: state.selectedMedia,
-                  onClear: () {
-                    context.read<ChatBloc>().add(const ClearMediaEvent());
-                  },
-                );
-              },
-            ),
+                        return ListView(
+                          controller: _scrollController,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16.w, vertical: 24.h),
+                          children: [
+                            FadeInUp(
+                              duration: const Duration(milliseconds: 600),
+                              child: _MessageBubble(
+                                message: welcomeMessage,
+                                fromHistory: widget.fromHistory,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
 
-            /// SUGGESTIONS
-            BlocBuilder<ChatBloc, ChatState>(
-              builder: (context, state) {
-                if (state.status == ChatStatus.loading) {
-                  return const SizedBox.shrink();
-                }
+                      return ListView.builder(
+                        controller: _scrollController,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 24.h),
+                        itemCount: state.messages.length +
+                            (state.status == ChatStatus.loading ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == state.messages.length) {
+                            return FadeInUp(
+                              duration: const Duration(milliseconds: 400),
+                              child: _LoadingBubble(
+                                message: state.agentThinkingText,
+                              ),
+                            );
+                          }
 
-                return Padding(
-                  padding: EdgeInsets.only(bottom: 6.h),
-                  child: ChatSuggestionChips(
-                    hasMedia: state.selectedMedia.isNotEmpty,
-                    onChipSelected: (text) {
-                      context.read<ChatBloc>().add(
-                            SendMessageEvent(
-                              text,
-                              useDeepThink: _useDeepThink,
+                          final message = state.messages[index];
+                          return FadeInUp(
+                            duration: const Duration(milliseconds: 400),
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 16.h),
+                              child: _MessageBubble(
+                                key: ValueKey('$index-${message.text}'),
+                                message: message,
+                                fromHistory: widget.fromHistory,
+                              ),
                             ),
                           );
-                      _scrollToBottom();
+                        },
+                      );
                     },
                   ),
-                );
-              },
-            ),
+                ),
+              ),
 
-            /// INPUT
-            _buildInputArea(context),
-          ],
+              /// MEDIA PREVIEW
+              BlocBuilder<ChatBloc, ChatState>(
+                builder: (context, state) {
+                  return MediaPreviewWidget(
+                    mediaPaths: state.selectedMedia,
+                    onClear: () {
+                      context.read<ChatBloc>().add(const ClearMediaEvent());
+                    },
+                  );
+                },
+              ),
+
+              /// SUGGESTIONS
+              BlocBuilder<ChatBloc, ChatState>(
+                builder: (context, state) {
+                  if (state.status == ChatStatus.loading) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 8.h),
+                    child: ChatSuggestionChips(
+                      hasMedia: state.selectedMedia.isNotEmpty,
+                      onChipSelected: (text) {
+                        context.read<ChatBloc>().add(
+                              SendMessageEvent(
+                                text,
+                                useDeepThink: _useDeepThink,
+                              ),
+                            );
+                        _scrollToBottom();
+                      },
+                    ),
+                  );
+                },
+              ),
+
+              /// INPUT
+              _buildInputArea(context),
+            ],
+          ),
         ),
       ),
     );
@@ -228,62 +275,87 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildInputArea(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(12.w, 8.w, 12.w,
-          MediaQuery.of(context).viewInsets.bottom > 0 ? 8.w : 16.w),
+      padding: EdgeInsets.fromLTRB(16.w, 12.w, 16.w,
+          MediaQuery.of(context).viewInsets.bottom > 0 ? 12.w : 24.w),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
           ),
         ],
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          IconButton(
-            icon: const Icon(Icons.attach_file),
-            onPressed: () => _pickMedia(context),
+          // Attachment Button
+          Container(
+            margin: EdgeInsets.only(bottom: 4.h),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: Icon(Icons.add_photo_alternate_rounded,
+                  color: Colors.grey[600], size: 22.sp),
+              onPressed: () => _pickMedia(context),
+              tooltip: "Add Media",
+            ),
           ),
+          SizedBox(width: 12.w),
+          // Text Input
           Expanded(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
               decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(24.r),
-                border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                color: Colors.grey[50], // Very light grey input
+                borderRadius: BorderRadius.circular(28.r),
+                border: Border.all(color: Colors.grey.withOpacity(0.1)),
               ),
               child: TextField(
                 controller: _textController,
                 minLines: 1,
                 maxLines: 5,
+                style: TextStyle(fontSize: 15.sp, height: 1.4),
                 decoration: InputDecoration(
                   hintText: AppLocalizations.of(context).writeYourMessage,
+                  hintStyle:
+                      TextStyle(color: Colors.grey[400], fontSize: 14.sp),
                   border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 10.h),
                 ),
                 onSubmitted: (_) => _sendMessage(),
               ),
             ),
           ),
-          SizedBox(width: 8.w),
+          SizedBox(width: 12.w),
+          // Send Button
           BlocBuilder<ChatBloc, ChatState>(
             builder: (context, state) {
-              return CircleAvatar(
-                backgroundColor: Theme.of(context).primaryColor,
-                child: IconButton(
-                  icon: state.status == ChatStatus.loading
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Icon(Icons.send, color: Colors.white),
-                  onPressed:
-                      state.status == ChatStatus.loading ? null : _sendMessage,
+              final isLoading = state.status == ChatStatus.loading;
+              return Container(
+                margin: EdgeInsets.only(bottom: 4.h),
+                child: CircleAvatar(
+                  radius: 22.r,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: IconButton(
+                    icon: isLoading
+                        ? SizedBox(
+                            width: 18.w,
+                            height: 18.w,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Icon(Icons.arrow_upward_rounded,
+                            color: Colors.white, size: 22.sp),
+                    onPressed: isLoading ? null : _sendMessage,
+                    tooltip: "Send Message",
+                  ),
                 ),
               );
             },
@@ -305,36 +377,79 @@ class _MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final isUser = message.isUser;
     final align = isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start;
-    final color =
-        isUser ? Theme.of(context).primaryColor : Theme.of(context).cardColor;
-    final textColor =
-        isUser ? Colors.white : Theme.of(context).textTheme.bodyLarge?.color;
+
+    // Premium Styling
+    final userGradient = LinearGradient(
+      colors: [
+        Theme.of(context).primaryColor,
+        Theme.of(context).primaryColor.withOpacity(0.8),
+      ],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
+    final agentColor = Colors.white;
+    final textColor = isUser ? Colors.white : const Color(0xFF2D3748);
+
     final borderRadius = BorderRadius.only(
-      topLeft: Radius.circular(12.r),
-      topRight: Radius.circular(12.r),
-      bottomLeft: isUser ? Radius.circular(12.r) : Radius.zero,
-      bottomRight: isUser ? Radius.zero : Radius.circular(12.r),
+      topLeft: Radius.circular(20.r),
+      topRight: Radius.circular(20.r),
+      bottomLeft: isUser ? Radius.circular(20.r) : Radius.circular(4.r),
+      bottomRight: isUser ? Radius.circular(4.r) : Radius.circular(20.r),
     );
 
     return Column(
       crossAxisAlignment: align,
       children: [
+        // Optional: Agent Name/Icon
+        if (!isUser)
+          Padding(
+            padding: EdgeInsets.only(left: 8.w, bottom: 4.h),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircleAvatar(
+                  radius: 8.r,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  child: Icon(Icons.auto_awesome,
+                      size: 10.sp, color: Colors.white),
+                ),
+                SizedBox(width: 6.w),
+                Text(
+                  "Comby",
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
         Container(
-          margin: EdgeInsets.only(
-              bottom: 8.h, left: isUser ? 50.w : 0, right: isUser ? 0 : 50.w),
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.85,
+          ),
           decoration: BoxDecoration(
-            color: color,
+            gradient: isUser ? userGradient : null,
+            color: isUser ? null : agentColor,
             borderRadius: borderRadius,
             boxShadow: [
-              if (!isUser)
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
+              BoxShadow(
+                color: isUser
+                    ? Theme.of(context).primaryColor.withOpacity(0.2)
+                    : Colors.black.withOpacity(0.04), // Softer shadow
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
             ],
+            // Subtle border for agent messages to pop from white background
+            border: isUser
+                ? null
+                : Border.all(color: const Color(0xFFE2E8F0), width: 1),
           ),
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -346,7 +461,7 @@ class _MessageBubble extends StatelessWidget {
                   runSpacing: 8.h,
                   children: message.localMediaPaths!.map((path) {
                     return ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
+                      borderRadius: BorderRadius.circular(12.r),
                       child: Image.file(
                         File(path),
                         width: 120.w,
@@ -356,8 +471,9 @@ class _MessageBubble extends StatelessWidget {
                           return Container(
                             width: 120.w,
                             height: 120.w,
-                            color: Colors.grey[300],
-                            child: Icon(Icons.broken_image, color: Colors.grey),
+                            color: Colors.grey[200],
+                            child: Icon(Icons.broken_image_rounded,
+                                color: Colors.grey[400]),
                           );
                         },
                       ),
@@ -369,13 +485,12 @@ class _MessageBubble extends StatelessWidget {
               // ✅ Visuals from AI (imageUrls)
               if (message.imageUrls != null &&
                   message.imageUrls!.isNotEmpty) ...[
-                SizedBox(height: 12.h),
                 Wrap(
                   spacing: 8.w,
                   runSpacing: 8.h,
                   children: message.imageUrls!.map((url) {
                     return ClipRRect(
-                      borderRadius: BorderRadius.circular(8.r),
+                      borderRadius: BorderRadius.circular(12.r),
                       child: Image.network(
                         url,
                         width: 120.w,
@@ -385,16 +500,17 @@ class _MessageBubble extends StatelessWidget {
                           return Container(
                             width: 120.w,
                             height: 120.w,
-                            color: Colors.grey[300],
-                            child: Icon(Icons.broken_image, color: Colors.grey),
+                            color: Colors.grey[200],
+                            child: Icon(Icons.broken_image_rounded,
+                                color: Colors.grey[400]),
                           );
                         },
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
                           return Container(
-                            width: 80.w,
-                            height: 80.w,
-                            color: Colors.grey[200],
+                            width: 120.w,
+                            height: 120.w,
+                            color: Colors.grey[100],
                             child: Center(
                               child: CircularProgressIndicator(
                                 value: loadingProgress.expectedTotalBytes !=
@@ -403,6 +519,7 @@ class _MessageBubble extends StatelessWidget {
                                         loadingProgress.expectedTotalBytes!
                                     : null,
                                 strokeWidth: 2,
+                                color: Theme.of(context).primaryColor,
                               ),
                             ),
                           );
@@ -411,28 +528,43 @@ class _MessageBubble extends StatelessWidget {
                     );
                   }).toList(),
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 16.h),
               ],
 
-              // ✅ Text BELOW (description) - with bold support
-              MarkdownText(
-                message.text,
-                style: TextStyle(
-                  color: textColor?.withOpacity(0.8),
-                  fontSize: 12.sp,
+              // ✅ Text BELOW (description)
+              if (message.text.isNotEmpty)
+                MarkdownText(
+                  message.text,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 14.5.sp, // Slightly larger for readability
+                    height: 1.5, // Better line height
+                    fontWeight: isUser ? FontWeight.w500 : FontWeight.w400,
+                  ),
                 ),
-              ),
 
               // ✅ Real-time Image Generation Status
-              if (message.visualRequestId != null)
-                FalImageWidget(
-                  requestId: message.visualRequestId!,
-                  isLive: fromHistory == true ? false : true,
+              if (message.visualRequestId != null) ...[
+                SizedBox(height: 16.h),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(
+                        color: Theme.of(context).primaryColor.withOpacity(0.1)),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12.r),
+                    child: FalImageWidget(
+                      requestId: message.visualRequestId!,
+                      isLive: fromHistory == true ? false : true,
+                    ),
+                  ),
                 ),
+              ],
 
               // 📍 Location Permission Request Button
               if (message.requestsLocation) ...[
-                SizedBox(height: 12.h),
+                SizedBox(height: 16.h),
                 _LocationPermissionButton(
                   onPermissionGranted: () {
                     context.read<ChatBloc>().add(
@@ -497,22 +629,27 @@ class _LocationPermissionButtonState extends State<_LocationPermissionButton> {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      onPressed: _isProcessing ? null : _handlePermission,
-      icon: _isProcessing
-          ? SizedBox(
-              width: 16.w,
-              height: 16.w,
-              child: const CircularProgressIndicator(strokeWidth: 2),
-            )
-          : const Icon(Icons.location_on_rounded),
-      label: const Text("Grant Location Permission"),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.blue[700],
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: _isProcessing ? null : _handlePermission,
+        icon: _isProcessing
+            ? SizedBox(
+                width: 16.w,
+                height: 16.w,
+                child: const CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.location_on_rounded, size: 18),
+        label: const Text("Share Location"),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.blue[50], // Soft accent background
+          foregroundColor: Colors.blue[700],
+          elevation: 0,
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            side: BorderSide(color: Colors.blue.withOpacity(0.3)),
+          ),
         ),
       ),
     );
@@ -530,52 +667,69 @@ class _LoadingBubble extends StatelessWidget {
 
     return Align(
       alignment: Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.only(bottom: 8.h, right: 50.w),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-        decoration: BoxDecoration(
-          color: isThought ? Colors.blue[50] : Theme.of(context).cardColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(12.r),
-            topRight: Radius.circular(12.r),
-            bottomRight: Radius.circular(12.r),
-          ),
-          border:
-              isThought ? Border.all(color: Colors.blue[200]!, width: 1) : null,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (isThought) ...[
-              // Thought signature indicator
-              Text(
-                '🧠',
-                style: TextStyle(fontSize: 20.sp),
-              ),
-            ] else ...[
-              // Loading spinner
-              SizedBox(
-                width: 16.w,
-                height: 16.w,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Theme.of(context).primaryColor),
+      child: Padding(
+        padding: EdgeInsets.only(left: 8.w), // Align with avatar
+        child: Container(
+          margin: EdgeInsets.only(bottom: 16.h, right: 50.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+          decoration: BoxDecoration(
+            color: isThought ? const Color(0xFFF0F4FF) : Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.r),
+              topRight: Radius.circular(20.r),
+              bottomRight: Radius.circular(20.r),
+              bottomLeft: Radius.circular(4.r), // Agent tail
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
-            if (message != null) ...[
-              SizedBox(width: 8.w),
-              Flexible(
-                child: Text(
-                  isThought ? message!.substring(2).trim() : message!,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: isThought ? Colors.blue[900] : Colors.grey[600],
-                    fontStyle: FontStyle.italic,
-                    fontWeight: isThought ? FontWeight.w500 : FontWeight.normal,
+            border: isThought
+                ? Border.all(color: Colors.blue.withOpacity(0.2), width: 1)
+                : Border.all(color: const Color(0xFFE2E8F0), width: 1),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isThought) ...[
+                // Thought signature indicator
+                Text(
+                  '🧠',
+                  style: TextStyle(fontSize: 20.sp),
+                ),
+              ] else ...[
+                // Loading spinner
+                SizedBox(
+                  width: 18.w,
+                  height: 18.w,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Theme.of(context).primaryColor,
                   ),
                 ),
-              ),
+              ],
+              if (message != null) ...[
+                SizedBox(width: 12.w),
+                Flexible(
+                  child: Text(
+                    isThought ? message!.substring(2).trim() : message!,
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: isThought
+                          ? Colors.blue[800]
+                          : Colors.grey[600], // Cleaner grey
+                      fontStyle: FontStyle.italic,
+                      fontWeight:
+                          isThought ? FontWeight.w500 : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

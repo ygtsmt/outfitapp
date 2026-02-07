@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:ui';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:comby/core/injection/injection.dart';
 import 'package:comby/app/features/live_stylist/cubit/live_stylist_cubit.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LiveStylistPage extends StatefulWidget {
   const LiveStylistPage({Key? key}) : super(key: key);
@@ -15,10 +18,13 @@ class LiveStylistPage extends StatefulWidget {
 }
 
 class _LiveStylistPageState extends State<LiveStylistPage>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   CameraController? _controller;
   bool _isCameraInitialized = false;
   DateTime _lastFrameTime = DateTime.now();
+
+  // Animation Controllers
+  late AnimationController _pulseController;
 
   // Available cameras
   List<CameraDescription> cameras = [];
@@ -28,6 +34,11 @@ class _LiveStylistPageState extends State<LiveStylistPage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _initCamera();
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
   }
 
   Future<void> _initCamera() async {
@@ -65,30 +76,11 @@ class _LiveStylistPageState extends State<LiveStylistPage>
     }
   }
 
-  void _processCameraImage(CameraImage image) async {
+  void _processCameraImage(CameraImage image) {
     final now = DateTime.now();
     // Throttle: 1 FPS (Every 1000ms)
     if (now.difference(_lastFrameTime).inMilliseconds < 1000) return;
     _lastFrameTime = now;
-
-    // Process in background if possible, or just keep it simple here
-    // Note: Converting CameraImage to JPEG in Dart is CPU intensive.
-    // Ideally use an isolate. For prototype, we run here but acknowledge jank risk.
-
-    try {
-      // Simple conversion handled by 'image' package if setup right, or custom yuv to rgb
-      // For now, let's assume we can get a simpler JPEG or skip detailed conversion if too slow
-      // Actually, let's just send the image conversion task to the cubit if we can,
-      // but passing CameraImage to other isolates is tricky due to pointers.
-
-      // MVP: Just print "Frame Captured" and implement actual conversion if 'image' package allows easy YUV
-      // NOTE: Implementing full YUV to RGB here is code-heavy.
-      // ALTERNATIVE: Use `_controller.takePicture()` periodically?
-      // `takePicture` writes to disk, which is IO heavy but easier than manual YUV conversion.
-      // Let's try `takePicture` logic instead of stream for lower complexity and reliability in MVP.
-    } catch (e) {
-      debugPrint("Frame processing error: $e");
-    }
   }
 
   // Alternative to stream: Poll pictures
@@ -101,9 +93,6 @@ class _LiveStylistPageState extends State<LiveStylistPage>
         try {
           final XFile file = await _controller!.takePicture();
           final bytes = await file.readAsBytes();
-          // Resize to reduce bandwidth?
-          // For now send raw (ResolutionPreset.medium is already ~480p-720p)
-
           if (mounted) {
             context.read<LiveStylistCubit>().sendVideoFrame(bytes);
           }
@@ -118,6 +107,7 @@ class _LiveStylistPageState extends State<LiveStylistPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _controller?.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
@@ -128,27 +118,52 @@ class _LiveStylistPageState extends State<LiveStylistPage>
       child: Scaffold(
         backgroundColor: Colors.black,
         body: Stack(
+          fit: StackFit.expand,
           children: [
-            // Camera Layer
+            // 1. Camera Layer (Full Screen)
             if (_isCameraInitialized)
-              Center(child: CameraPreview(_controller!))
+              Transform.scale(
+                scale: 1.0, // Aspect ratio fix logic can go here if needed
+                child: Center(
+                  child: CameraPreview(_controller!),
+                ),
+              )
             else
-              const Center(
-                  child: CircularProgressIndicator(color: Colors.white)),
+              Container(
+                color: const Color(0xFF1A1A1A),
+                child: const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
+              ),
 
-            // Overlay Layer
+            // 2. Gradient Overlay for readability
+            IgnorePointer(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withOpacity(0.6),
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.8),
+                    ],
+                    stops: const [0.0, 0.2, 0.7, 1.0],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+              ),
+            ),
+
+            // 3. Main UI Layer
             BlocConsumer<LiveStylistCubit, LiveStylistState>(
               listener: (context, state) {
                 if (state.status == LiveStylistStatus.connected &&
                     _controller != null &&
                     _controller!.value.isInitialized) {
-                  // Start the photo loop if not already started?
-                  // In this simplistic code, re-calling _captureAndSendLoop is fine as it checks mounted.
-                  // But ideally check a flag. For MVP, we call it.
                   _captureAndSendLoop(context);
                 }
 
-                // Show errors
                 if (state.status == LiveStylistStatus.error) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(state.message ?? "Unknown Error"),
@@ -159,110 +174,275 @@ class _LiveStylistPageState extends State<LiveStylistPage>
                 return SafeArea(
                   child: Column(
                     children: [
-                      // Header
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.close,
-                                  color: Colors.white, size: 30),
-                              onPressed: () => Navigator.of(context).pop(),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.black54,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: BoxDecoration(
-                                        color: state.status ==
-                                                LiveStylistStatus.connected
-                                            ? Colors.green
-                                            : Colors.red,
-                                        shape: BoxShape.circle),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text("LIVE AGENT",
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            ),
-                            // Copy Log Button
-                            IconButton(
-                              icon: const Icon(Icons.copy, color: Colors.white),
-                              onPressed: () {
-                                final logs = state.logs.join("\n\n");
-                                // Simple clipboard copy
-                                // Requires 'import 'package:flutter/services.dart';'
-                                // We can use Clipboard.setData
-                                Clipboard.setData(ClipboardData(text: logs))
-                                    .then((_) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content:
-                                            Text("Conversation Log Copied!")),
-                                  );
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
+                      // --- TOP BAR ---
+                      _buildTopBar(context, state),
 
                       const Spacer(),
 
-                      // Logs Preview (Last message)
+                      // --- CENTER FEEDBACK ---
+                      if (state.status == LiveStylistStatus.connecting) ...[
+                        const CircularProgressIndicator(color: Colors.white),
+                        SizedBox(height: 16.h),
+                        Text(
+                          "Connecting to Stylist...",
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.9),
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ] else if (state.status == LiveStylistStatus.connected)
+                        _buildPulseVisualizer(),
+
+                      const Spacer(),
+
+                      // --- LOGS PREVIEW ---
                       if (state.logs.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          child: Text(
-                            state.logs.last,
-                            style: const TextStyle(
-                                color: Colors.white70, fontSize: 12),
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 24.w, vertical: 16.h),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16.r),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                padding: EdgeInsets.all(12.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  border: Border.all(
+                                      color: Colors.white.withOpacity(0.1)),
+                                ),
+                                child: Text(
+                                  state.logs.last,
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 13.sp,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
 
-                      // Status / Visualizer
-                      if (state.status == LiveStylistStatus.connecting)
-                        const Text("Connecting...",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 18)),
-
-                      if (state.status == LiveStylistStatus.connected)
-                        AnimatedOpacity(
-                          opacity: 1.0,
-                          duration: const Duration(milliseconds: 500),
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(30)),
-                            child: const Icon(Icons.mic,
-                                color: Colors.white, size: 40),
-                          ),
-                        ),
-
-                      const SizedBox(height: 50),
+                      // --- BOTTOM CONTROLS ---
+                      _buildBottomControls(context, state),
+                      SizedBox(height: 20.h),
                     ],
                   ),
                 );
               },
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar(BuildContext context, LiveStylistState state) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Minimize / Back
+          ClipOval(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                      color: Colors.white, size: 28),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+            ),
+          ),
+
+          // Status Badge
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(30.r),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 8.w,
+                  height: 8.w,
+                  decoration: BoxDecoration(
+                    color: state.status == LiveStylistStatus.connected
+                        ? const Color(0xFF00E676) // Bright Green
+                        : const Color(0xFFFF3D00), // Deep Orange
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: state.status == LiveStylistStatus.connected
+                            ? const Color(0xFF00E676).withOpacity(0.6)
+                            : Colors.transparent,
+                        blurRadius: 8,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  "LIVE AGENT",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Action: Copy Logs or Help
+          ClipOval(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.sticky_note_2_outlined,
+                      color: Colors.white, size: 22),
+                  onPressed: () {
+                    final logs = state.logs.join("\n\n");
+                    Clipboard.setData(ClipboardData(text: logs)).then((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Conversation Log Copied!"),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    });
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPulseVisualizer() {
+    return AnimatedBuilder(
+      animation: _pulseController,
+      builder: (context, child) {
+        return Container(
+          width: 120.w,
+          height: 120.w,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Colors.white.withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).primaryColor.withOpacity(0.3), // Glow
+                blurRadius: 20 + (_pulseController.value * 20),
+                spreadRadius: 5 + (_pulseController.value * 10),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Icon(
+              Icons.graphic_eq_rounded,
+              color: Colors.white,
+              size: 48.sp,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBottomControls(BuildContext context, LiveStylistState state) {
+    return Container(
+      padding: EdgeInsets.only(bottom: 20.h, left: 30.w, right: 30.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // Mute Toggle
+          _buildControlButton(
+            icon: state.isMicMuted ? Icons.mic_off_rounded : Icons.mic_rounded,
+            color: state.isMicMuted
+                ? Colors.red.withOpacity(0.8)
+                : Colors.white.withOpacity(0.2),
+            onTap: () {
+              context.read<LiveStylistCubit>().toggleMute();
+            },
+          ),
+
+          // End Call (Big Red Button)
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              padding: EdgeInsets.all(24.w),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF3B30),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF3B30).withOpacity(0.5),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.call_end_rounded,
+                  color: Colors.white, size: 32),
+            ),
+          ),
+
+          // Flip Camera (Placeholder)
+          _buildControlButton(
+            icon: Icons.flip_camera_ios_rounded,
+            color: Colors.white.withOpacity(0.2),
+            onTap: () {
+              // Switch camera logic would go here
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Switching camera...")));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildControlButton(
+      {required IconData icon,
+      required Color color,
+      required VoidCallback onTap}) {
+    return ClipOval(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Material(
+          color: color,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: EdgeInsets.all(16.w),
+              child: Icon(icon, color: Colors.white, size: 24.sp),
+            ),
+          ),
         ),
       ),
     );
