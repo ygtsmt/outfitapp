@@ -7,12 +7,24 @@ class LiveStylistState extends Equatable {
   final String? message; // Status info or Error message
   final List<String> logs; // Conversation history
   final bool isMicMuted;
+  final bool isAiSpeaking; // Tracks if AI is currently outputting audio
+  final bool isUserSpeaking; // Tracks if user is currently speaking
+
+  // Thought Signature fields
+  final String? currentThought;
+  final String? currentToolName;
+  final bool hasActiveThought;
 
   const LiveStylistState({
     this.status = LiveStylistStatus.initial,
     this.message,
     this.logs = const [],
     this.isMicMuted = false,
+    this.isAiSpeaking = false,
+    this.isUserSpeaking = false,
+    this.currentThought,
+    this.currentToolName,
+    this.hasActiveThought = false,
   });
 
   LiveStylistState copyWith({
@@ -20,15 +32,35 @@ class LiveStylistState extends Equatable {
     String? message,
     List<String>? logs,
     bool? isMicMuted,
+    bool? isAiSpeaking,
+    bool? isUserSpeaking,
+    String? currentThought,
+    String? currentToolName,
+    bool? hasActiveThought,
   }) {
     return LiveStylistState(
       status: status ?? this.status,
       message: message ?? this.message,
       logs: logs ?? this.logs,
       isMicMuted: isMicMuted ?? this.isMicMuted,
+      isAiSpeaking: isAiSpeaking ?? this.isAiSpeaking,
+      isUserSpeaking: isUserSpeaking ?? this.isUserSpeaking,
+      currentThought: currentThought ?? this.currentThought,
+      currentToolName: currentToolName ?? this.currentToolName,
+      hasActiveThought: hasActiveThought ?? this.hasActiveThought,
     );
   }
 
   @override
-  List<Object?> get props => [status, message, logs, isMicMuted];
+  List<Object?> get props => [
+        status,
+        message,
+        logs,
+        isMicMuted,
+        isAiSpeaking,
+        isUserSpeaking,
+        currentThought,
+        currentToolName,
+        hasActiveThought,
+      ];
 }

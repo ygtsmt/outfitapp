@@ -12,6 +12,7 @@ import 'package:comby/core/services/live_agent_service.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
 import 'package:comby/core/services/weather_service.dart';
 import 'package:comby/core/services/location_service.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
 import 'package:comby/app/features/auth/features/profile/data/profile_usecase.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -93,6 +94,9 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
       _audioInputSubscription = _recorder.audioStream.listen((data) {
         if (!state.isMicMuted) {
           _agentService.sendAudioChunk(data);
+
+          // Detect if user is speaking based on audio amplitude
+          _detectUserSpeaking(data);
         }
       });
 
@@ -114,7 +118,57 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
         logs: List.from(state.logs)..add("[System]: $statusMsg")));
   }
 
+  Timer? _userSpeechStopTimer;
+
+  void _detectUserSpeaking(Uint8List audioData) {
+    // Calculate audio amplitude to detect speech
+    int sum = 0;
+    for (var byte in audioData) {
+      sum += (byte - 128).abs(); // Convert to signed and get absolute value
+    }
+    final avgAmplitude = sum / audioData.length;
+
+    // Threshold for detecting speech (adjust as needed)
+    const speechThreshold = 10.0;
+    final isSpeaking = avgAmplitude > speechThreshold;
+
+    if (isSpeaking && !state.isUserSpeaking) {
+      // User started speaking
+      emit(state.copyWith(isUserSpeaking: true));
+      _userSpeechStopTimer?.cancel();
+    } else if (!isSpeaking && state.isUserSpeaking) {
+      // User might have stopped - wait 1 second to confirm
+      _userSpeechStopTimer?.cancel();
+      _userSpeechStopTimer = Timer(const Duration(seconds: 1), () {
+        if (!isClosed) {
+          emit(state.copyWith(isUserSpeaking: false));
+        }
+      });
+    }
+  }
+
+  Timer? _audioStopTimer;
+
   void _handleAgentEvent(Map<String, dynamic> event) {
+    // Handle Thought Signatures
+    if (event.containsKey('thought')) {
+      final thought = event['thought'] as String;
+      final toolName = event['toolName'] as String?;
+
+      emit(state.copyWith(
+        currentThought: thought,
+        currentToolName: toolName,
+        hasActiveThought: true,
+      ));
+
+      // Auto-hide after 3 seconds
+      Future.delayed(const Duration(seconds: 3), () {
+        if (!isClosed && state.currentThought == thought) {
+          emit(state.copyWith(hasActiveThought: false));
+        }
+      });
+    }
+
     // Log Agent Text
     if (event.containsKey('text')) {
       final text = event['text'];
@@ -129,6 +183,19 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
         String base64Audio = event['audio'];
         Uint8List audioBytes = base64Decode(base64Audio);
         _player.writeChunk(audioBytes);
+
+        // Set AI as speaking
+        if (!state.isAiSpeaking) {
+          emit(state.copyWith(isAiSpeaking: true));
+        }
+
+        // Reset timer - stop animation 500ms after last audio chunk
+        _audioStopTimer?.cancel();
+        _audioStopTimer = Timer(const Duration(milliseconds: 500), () {
+          if (!isClosed) {
+            emit(state.copyWith(isAiSpeaking: false));
+          }
+        });
       } catch (e) {
         log('⚠️ Audio playback error: $e');
       }
@@ -214,13 +281,114 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
 
         if (name == 'get_weather') {
           try {
-            // 1. Get Location
+            // 1. Get Location Service
             final locationService = LocationService();
+
+            // STEP 1: Check and request PERMISSION first
+            final currentPermission = await locationService.checkPermission();
+            log('📍 Current location permission: $currentPermission');
+
+            if (currentPermission == LocationPermission.denied) {
+              log('📍 Requesting permission...');
+
+              emit(state.copyWith(
+                logs: List.from(state.logs)
+                  ..add('[System]: Requesting location permission...'),
+              ));
+
+              final requestedPermission =
+                  await locationService.requestPermission();
+              log('📍 Permission request result: $requestedPermission');
+
+              if (requestedPermission == LocationPermission.denied) {
+                // Permission denied by user - let AI explain in user's language
+                log('📍 Permission denied by user');
+                result = {
+                  "error": "PERMISSION_DENIED",
+                  "error_type": "location_permission",
+                  "context":
+                      "User denied location permission request. Weather-based recommendations require location access."
+                };
+                emit(state.copyWith(
+                  logs: List.from(state.logs)
+                    ..add('[Tool Error]: Location permission denied'),
+                ));
+                return; // Exit early
+              }
+            } else if (currentPermission == LocationPermission.deniedForever) {
+              log('📍 Permission denied forever');
+              result = {
+                "error": "PERMISSION_DENIED_FOREVER",
+                "error_type": "location_permission",
+                "context":
+                    "Location permission is permanently denied. User needs to enable it in app settings."
+              };
+              emit(state.copyWith(
+                logs: List.from(state.logs)
+                  ..add('[Tool Error]: Location permission denied forever'),
+              ));
+              return; // Exit early
+            }
+
+            // STEP 2: Now check GPS (permission is granted at this point)
+            log('📍 Permission granted, checking GPS...');
+            final isGpsEnabled =
+                await locationService.isLocationServiceEnabled();
+
+            if (!isGpsEnabled) {
+              log('📍 GPS is disabled, opening location settings...');
+
+              emit(state.copyWith(
+                logs: List.from(state.logs)
+                  ..add('[System]: GPS is disabled. Opening settings...'),
+              ));
+
+              // Open location settings
+              final opened = await locationService.openLocationSettings();
+              log('📍 Location settings opened: $opened');
+
+              // Poll for GPS status - Check every 2 seconds for up to 20 seconds
+              log('📍 Waiting for user to enable GPS (polling)...');
+
+              bool isNowEnabled = false;
+              for (int i = 0; i < 10; i++) {
+                await Future.delayed(const Duration(seconds: 2));
+                isNowEnabled = await locationService.isLocationServiceEnabled();
+                if (isNowEnabled) {
+                  log('📍 GPS enabled detected after ${i * 2} seconds');
+                  break;
+                }
+              }
+
+              if (!isNowEnabled) {
+                result = {
+                  "error": "GPS_DISABLED",
+                  "error_type": "location_service",
+                  "context":
+                      "GPS/location services are disabled. User needs to enable them to get weather data."
+                };
+                emit(state.copyWith(
+                  logs: List.from(state.logs)
+                    ..add('[Tool Error]: GPS still disabled after waiting'),
+                ));
+                return; // Exit early
+              } else {
+                log('📍 GPS enabled successfully!');
+                emit(state.copyWith(
+                  logs: List.from(state.logs)
+                    ..add('[System]: GPS enabled! Getting location...'),
+                ));
+              }
+            }
+
+            // STEP 3: Get position (both permission and GPS are OK)
+            log('📍 Getting current position...');
             final position = await locationService.getCurrentPosition();
 
             if (position != null) {
-              // 2. Get Weather
-              // Assuming WeatherService is registered in GetIt as per WeatherWidget
+              log('📍 Got position: ${position.latitude}, ${position.longitude}');
+
+              // STEP 4: Get Weather
               final weatherService = GetIt.I<WeatherService>();
               final weather = await weatherService.getWeatherByLocation(
                   position.latitude, position.longitude);
@@ -228,8 +396,7 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
               if (weather != null) {
                 result = {
                   "temperature": weather.temperatureString,
-                  "description": weather
-                      .description, // using description not capitalized for raw
+                  "description": weather.description,
                   "city": weather.cityName,
                 };
 
@@ -239,13 +406,34 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
                         "[Tool Response]: Weather is ${weather.temperatureString} in ${weather.cityName}"),
                 ));
               } else {
-                result = {"error": "Weather service returned null"};
+                result = {
+                  "error": "WEATHER_SERVICE_NULL",
+                  "error_type": "weather_service",
+                  "context":
+                      "Weather service returned no data. This could be a temporary API issue."
+                };
               }
             } else {
-              result = {"error": "Could not get location"};
+              result = {
+                "error": "LOCATION_DATA_UNAVAILABLE",
+                "error_type": "location_service",
+                "context":
+                    "Could not retrieve location data despite permissions being granted."
+              };
+              emit(state.copyWith(
+                logs: List.from(state.logs)
+                  ..add('[Tool Error]: Failed to get position'),
+              ));
             }
           } catch (e) {
-            result = {"error": "Weather fetch failed: $e"};
+            log('📍 Weather fetch error: $e');
+            result = {
+              "error": "WEATHER_FETCH_FAILED",
+              "error_type": "system_error",
+              "context":
+                  "An unexpected error occurred while fetching weather data.",
+              "technical_details": e.toString()
+            };
             emit(state.copyWith(
               logs: List.from(state.logs)
                 ..add("[Tool Error]: Weather failed $e"),

@@ -8,7 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:comby/core/injection/injection.dart';
 import 'package:comby/app/features/live_stylist/cubit/live_stylist_cubit.dart';
+import 'package:comby/app/features/live_stylist/widgets/thought_bubble_widget.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 
 class LiveStylistPage extends StatefulWidget {
   const LiveStylistPage({Key? key}) : super(key: key);
@@ -25,7 +27,6 @@ class _LiveStylistPageState extends State<LiveStylistPage>
 
   // Animation Controllers
   late AnimationController _pulseController;
-  late AnimationController _voiceWaveController;
 
   // Available cameras
   List<CameraDescription> cameras = [];
@@ -34,6 +35,9 @@ class _LiveStylistPageState extends State<LiveStylistPage>
   // Control visibility state
   bool _showControls = true;
   Timer? _hideControlsTimer;
+
+  // Photo capture timer for continuous capture during speech
+  Timer? _photoCaptureTimer;
 
   @override
   void initState() {
@@ -44,11 +48,6 @@ class _LiveStylistPageState extends State<LiveStylistPage>
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
-
-    _voiceWaveController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
     )..repeat(reverse: true);
 
     // Start auto-hide timer
@@ -85,7 +84,7 @@ class _LiveStylistPageState extends State<LiveStylistPage>
 
       _controller = CameraController(
         frontCamera,
-        ResolutionPreset.medium, // Don't need 4K for this
+        ResolutionPreset.high, // Lower resolution for better performance
         enableAudio: false, // We handle audio separately via sound_stream
         imageFormatGroup: ImageFormatGroup
             .yuv420, // Compatible with 'image' package processing usually
@@ -109,8 +108,7 @@ class _LiveStylistPageState extends State<LiveStylistPage>
 
   void _processCameraImage(CameraImage image) {
     final now = DateTime.now();
-    // Throttle: 1 FPS (Every 1000ms)
-    if (now.difference(_lastFrameTime).inMilliseconds < 1000) return;
+    if (now.difference(_lastFrameTime).inMilliseconds < 2000) return;
     _lastFrameTime = now;
   }
 
@@ -177,22 +175,36 @@ class _LiveStylistPageState extends State<LiveStylistPage>
     }
   }
 
-  // Alternative to stream: Poll pictures
-  Future<void> _captureAndSendLoop(BuildContext context) async {
-    while (mounted) {
-      await Future.delayed(const Duration(seconds: 2));
-      if (_controller != null &&
-          _controller!.value.isInitialized &&
-          !_controller!.value.isTakingPicture) {
-        try {
-          final XFile file = await _controller!.takePicture();
-          final bytes = await file.readAsBytes();
-          if (mounted) {
-            context.read<LiveStylistCubit>().sendVideoFrame(bytes);
-          }
-        } catch (e) {
-          debugPrint("Capture error: $e");
+  // Start continuous photo capture every 1 second while speaking
+  void _startContinuousPhotoCapture(BuildContext context) {
+    _photoCaptureTimer?.cancel();
+    // Take first photo immediately
+    _captureAndSendPhoto(context);
+    // Then continue every 1 second
+    _photoCaptureTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _captureAndSendPhoto(context);
+    });
+  }
+
+  void _stopContinuousPhotoCapture() {
+    _photoCaptureTimer?.cancel();
+    _photoCaptureTimer = null;
+  }
+
+  // Capture single photo
+  Future<void> _captureAndSendPhoto(BuildContext context) async {
+    if (_controller != null &&
+        _controller!.value.isInitialized &&
+        !_controller!.value.isTakingPicture) {
+      try {
+        final XFile file = await _controller!.takePicture();
+        final bytes = await file.readAsBytes();
+        if (mounted) {
+          context.read<LiveStylistCubit>().sendVideoFrame(bytes);
+          debugPrint("📸 Photo sent to Live API");
         }
+      } catch (e) {
+        debugPrint("Capture error: $e");
       }
     }
   }
@@ -201,9 +213,9 @@ class _LiveStylistPageState extends State<LiveStylistPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _hideControlsTimer?.cancel();
+    _photoCaptureTimer?.cancel();
     _controller?.dispose();
     _pulseController.dispose();
-    _voiceWaveController.dispose();
     super.dispose();
   }
 
@@ -261,10 +273,12 @@ class _LiveStylistPageState extends State<LiveStylistPage>
               onTap: _toggleControlsVisibility,
               child: BlocConsumer<LiveStylistCubit, LiveStylistState>(
                 listener: (context, state) {
-                  if (state.status == LiveStylistStatus.connected &&
-                      _controller != null &&
-                      _controller!.value.isInitialized) {
-                    _captureAndSendLoop(context);
+                  // Start/stop photo capture based on user speaking
+                  if (state.isUserSpeaking && _photoCaptureTimer == null) {
+                    _startContinuousPhotoCapture(context);
+                  } else if (!state.isUserSpeaking &&
+                      _photoCaptureTimer != null) {
+                    _stopContinuousPhotoCapture();
                   }
 
                   if (state.status == LiveStylistStatus.error) {
@@ -285,6 +299,13 @@ class _LiveStylistPageState extends State<LiveStylistPage>
                           ),
 
                         const Spacer(),
+
+                        // --- THOUGHT BUBBLE ---
+                        ThoughtBubbleWidget(
+                          thought: state.currentThought,
+                          toolName: state.currentToolName,
+                          isVisible: state.hasActiveThought,
+                        ),
 
                         // --- CENTER FEEDBACK ---
                         if (state.status == LiveStylistStatus.connecting) ...[
@@ -416,58 +437,32 @@ class _LiveStylistPageState extends State<LiveStylistPage>
   }
 
   Widget _buildVoiceVisualizer(LiveStylistState state) {
-    // Create animated voice wave bars
-    return AnimatedBuilder(
-      animation: _voiceWaveController,
-      builder: (context, child) {
-        return Container(
-          width: 200.w,
-          height: 120.h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(60.r),
-            gradient: LinearGradient(
-              colors: [
-                Theme.of(context).primaryColor.withOpacity(0.1),
-                Theme.of(context).primaryColor.withOpacity(0.05),
-              ],
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: List.generate(5, (index) {
-              // Create different heights for wave effect
-              final baseHeight = 20.0 + (index % 3) * 15.0;
-              final animatedHeight = baseHeight +
-                  (_voiceWaveController.value * 30 * (1 - index * 0.1));
+    // Don't render at all when not speaking - saves resources
+    if (!state.isAiSpeaking) {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.2,
+        width: MediaQuery.of(context).size.width * 0.9,
+      );
+    }
 
-              return Container(
-                width: 8.w,
-                height: animatedHeight.h,
-                margin: EdgeInsets.symmetric(horizontal: 4.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4.r),
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withOpacity(0.6),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).primaryColor.withOpacity(0.4),
-                      blurRadius: 8,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-              );
-            }),
+    return RepaintBoundary(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.2,
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: Lottie.asset(
+          'assets/gemini-responding-lottie.json',
+          repeat: true,
+          animate: true,
+          fit: BoxFit.contain,
+          // Performance optimizations
+          frameRate: FrameRate(60), // Limit to 60fps instead of unlimited
+          renderCache:
+              RenderCache.raster, // Use raster cache for better performance
+          options: LottieOptions(
+            enableMergePaths: true, // Optimize path rendering
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 

@@ -83,8 +83,86 @@ class LiveAgentService {
 
   /// Initial Setup Message to configure the session
   void _sendSetupMessage({String? userName}) {
+    // STEP 1: Build supreme rules (from chat)
+    final supremeRules = '''
+
+🦾 SUPREME RULES (CRITICAL - NEVER VIOLATE):
+
+1. HALLUCINATION CHECK:
+   - If 'search_wardrobe' returns EMPTY or NO items, you MUST say: "I couldn't find any matching items in your wardrobe."
+   - NEVER make up clothing items that weren't returned by the tool
+   - Only suggest items explicitly listed in the tool response
+
+2. SUPREME HONESTY:
+   - If weather data fails, say: "I couldn't get weather data, but based on typical [season] conditions..."
+   - NEVER guess temperatures or weather conditions
+   - Base all recommendations on actual data or seasonal norms
+
+3. NATURAL LANGUAGE UNDERSTANDING:
+   - Understand user INTENT, not just keywords
+   - Turkish "sıcak" → search for "shorts", "t-shirt", "linen" (English tags)
+   - Turkish "düğün" → search for "suit", "dress", "formal" (English tags)
+   - Adapt context naturally without rigid scripts
+
+4. CREATIVE FALLBACK:
+   - If a tool fails, find an alternative solution
+   - Example: No weather? Use seasonal defaults
+   - Example: Empty wardrobe? Suggest building a basic capsule
+
+5. CONVERSATIONAL FLEXIBILITY:
+   - If user says "hi", respond naturally as a friendly stylist
+   - Don't force tool usage unless contextually needed
+   - Casual chat is perfectly acceptable
+''';
+
+    // STEP 2: Build full system instruction
     final systemInstruction =
-        "You are a helpful AI fashion stylist.${userName != null ? " The user's name is $userName. Address them by name occasionally." : ""} You can see the user's wardrobe. If the user speaks Turkish, you MUST reply in Turkish. \n\nCRITICAL: The wardrobe database uses ENGLISH tags (e.g., 'summer', 'winter', 'cotton', 'formal'). \nWhen the user describes a context (e.g., 'hava çok sıcak', 'düğüne gidiyorum'), DO NOT just translate directly. \nINSTEAD, INFER the relevant clothing attributes in English (e.g., 'hot' -> search for 'shorts', 'linen', 't-shirt'; 'wedding' -> search for 'suit', 'dress'). \nAlways search for these English attribute terms to find the best items.\n\nHALLUCINATION CHECK: \n1. If 'search_wardrobe' returns NO items (empty list), you MUST say 'I found no items matching...'. \n2. DO NOT make up items that are not in the tool result. \n3. Only suggest items that were explicitly returned by the tool.";
+        '''You are "Comby", a professional, friendly, and stylish AI fashion consultant specialized in voice interactions.
+
+${userName != null ? "The user's name is $userName. Address them by name occasionally to create a personal connection." : ""}
+
+### YOUR IDENTITY
+You are a conversational voice assistant who helps users with fashion and styling through natural dialogue. You have real-time access to their wardrobe and can provide personalized outfit recommendations.
+
+### CRITICAL DATABASE INFO
+The wardrobe database uses ENGLISH tags for all attributes (colors, materials, occasions, seasons, styles).
+
+**CONTEXT-AWARE TAG INFERENCE:**
+When users describe their needs in ANY language, you must:
+1. **Understand the CONTEXT** (weather, occasion, season, mood, activity)
+2. **Infer appropriate clothing attributes** in English
+3. **Use multiple related tags** for better search results
+
+**Inference Examples:**
+- Hot weather context → "shorts", "linen", "cotton", "lightweight", "breathable", "summer"
+- Formal event context → "suit", "dress", "formal", "elegant", "dressy", "business"
+- Cold weather context → "winter", "wool", "coat", "sweater", "warm", "insulated"
+- Casual context → "casual", "comfortable", "relaxed", "everyday"
+- Color mentions → Use English color names: "red", "blue", "black", "white", etc.
+
+**Key Principle:** Think about what clothing ATTRIBUTES would be appropriate for the user's situation, then search using those English keywords.
+
+$supremeRules
+
+### YOUR CAPABILITIES
+- Natural voice conversation about fashion and style
+- Personalized outfit recommendations based on weather and user's actual wardrobe
+- Real-time wardrobe search and analysis
+- Style advice and fashion insights
+
+### RESPONSE STYLE
+- Keep responses CONCISE for voice interaction (2-3 sentences max unless explaining outfit)
+- Speak naturally, as if talking to a friend
+- Use Turkish if user speaks Turkish, English if they speak English
+- Be encouraging and positive
+
+### AVAILABLE TOOLS
+You have access to:
+1. **search_wardrobe**: Find clothing items (use English attribute keywords)
+2. **get_weather**: Check current weather for better recommendations
+
+Use tools proactively when they help the user, but don't overuse them in casual conversation.
+''';
 
     final setupMsg = {
       "setup": {
@@ -112,7 +190,7 @@ class LiveAgentService {
               {
                 "name": "search_wardrobe",
                 "description":
-                    "Search for clothing items. CRITICAL: Provide a LIST of keywords and valid English synonyms (e.g. ['trousers', 'pants', 'jeans'] or ['red', 'scarlet']) to ensure matches.",
+                    "Search for clothing items. CRITICAL: Provide a LIST of English keywords and synonyms (e.g. ['trousers', 'pants', 'jeans'] or ['red', 'scarlet']) to ensure matches. The database uses ENGLISH tags only.",
                 "parameters": {
                   "type": "OBJECT",
                   "properties": {
@@ -120,7 +198,7 @@ class LiveAgentService {
                       "type": "ARRAY",
                       "items": {"type": "STRING"},
                       "description":
-                          "List of English search terms and synonyms."
+                          "List of English search terms and synonyms. Example: ['summer', 'shorts', 'linen', 't-shirt'] for hot weather."
                     }
                   },
                   "required": ["queries"]
@@ -129,13 +207,8 @@ class LiveAgentService {
               {
                 "name": "get_weather",
                 "description":
-                    "Get the current weather at the user's location. logic: Use this tool when the user mentions weather-dependent contexts like 'hot', 'cold', 'raining', or explicitly asks for weather. Returns temperature and description.",
-                "parameters": {
-                  "type": "OBJECT",
-                  "properties": {
-                    // No parameters needed as we use device location
-                  }
-                }
+                    "Get current weather at user's location. Use when user mentions weather-dependent contexts ('hot', 'cold', 'raining') or asks for weather-based advice.",
+                "parameters": {"type": "OBJECT", "properties": {}}
               }
             ]
           }
@@ -187,8 +260,50 @@ class LiveAgentService {
             }
           }
 
-          // Handle Tool Calls
+          // Handle Tool Calls with Thought Signatures
           if (data.containsKey('toolCall')) {
+            final toolCall = data['toolCall'];
+            final functionCalls = toolCall['functionCalls'] as List?;
+
+            if (functionCalls != null) {
+              for (var call in functionCalls) {
+                String thoughtSignature = '';
+
+                // Try to get thought signature from API
+                if (call['thoughtSignature'] != null) {
+                  thoughtSignature = call['thoughtSignature'] as String;
+
+                  // Try to decode if base64 (same logic as chat)
+                  if (RegExp(r'^[A-Za-z0-9+/=]+$').hasMatch(thoughtSignature)) {
+                    try {
+                      thoughtSignature =
+                          utf8.decode(base64Decode(thoughtSignature));
+                      log('🔓 Decoded thought signature from base64');
+                    } catch (e) {
+                      log('⚠️ Could not decode thought signature: $e');
+                    }
+                  }
+                }
+
+                // Fallback: Generate human-friendly thought
+                if (thoughtSignature.isEmpty) {
+                  thoughtSignature = _generateThoughtSignature(
+                    call['name'] as String,
+                    call['args'] as Map<String, dynamic>? ?? {},
+                  );
+                  log('🤖 Generated thought signature for: ${call['name']}');
+                }
+
+                // Emit to UI
+                _eventController.add({
+                  'thought': thoughtSignature,
+                  'toolName': call['name'],
+                });
+                log('💭 Thought: $thoughtSignature');
+              }
+            }
+
+            // Continue with existing tool call handling
             _eventController.add({'toolCall': data['toolCall']});
           }
         }
@@ -244,5 +359,32 @@ class LiveAgentService {
   void sendToolResponse(Map<String, dynamic> response) {
     final msg = {"tool_response": response};
     _sendJson(msg);
+  }
+
+  /// Generate dynamic thought signature based on tool context when API doesn't provide one
+  /// This creates context-aware thoughts that reflect actual user queries and tool operations
+  String _generateThoughtSignature(String toolName, Map<String, dynamic> args) {
+    switch (toolName) {
+      case 'search_wardrobe':
+        final queries = args['queries'] as List?;
+        if (queries != null && queries.isNotEmpty) {
+          // Show what we're actually searching for (from AI's inference)
+          final searchTerms = queries.take(3).join(', '); // First 3 terms
+          return '🔍 Searching for: $searchTerms...';
+        }
+        return '🔍 Searching wardrobe...';
+
+      case 'get_weather':
+        // Check if we have location info in args
+        final city = args['city'] as String?;
+        if (city != null && city.isNotEmpty) {
+          return '🌤️ Checking weather in $city...';
+        }
+        return '🌤️ Getting weather data...';
+
+      default:
+        // Generic but informative
+        return '🤔 Processing...';
+    }
   }
 }
