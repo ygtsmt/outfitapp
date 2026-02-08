@@ -7,6 +7,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sound_stream/sound_stream.dart';
 import 'package:comby/core/services/live_agent_service.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
@@ -40,6 +41,12 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
   ) : super(const LiveStylistState());
 
   Future<void> startSession() async {
+    // Check permissions first
+    final hasPermissions = await checkPermissions();
+    if (!hasPermissions) {
+      return;
+    }
+
     emit(state.copyWith(status: LiveStylistStatus.connecting));
     try {
       String? userName;
@@ -74,6 +81,53 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
         message: "Connection failed: $e",
         logs: List.from(state.logs)..add("[System Error]: $e"),
       ));
+    }
+  }
+
+  /// Check if required permissions are granted
+  Future<bool> checkPermissions() async {
+    emit(state.copyWith(status: LiveStylistStatus.checkingPermissions));
+
+    final cameraStatus = await Permission.camera.status;
+    final micStatus = await Permission.microphone.status;
+
+    final isCameraGranted = cameraStatus.isGranted;
+    final isMicGranted = micStatus.isGranted;
+
+    emit(state.copyWith(
+      isCameraPermissionGranted: isCameraGranted,
+      isMicPermissionGranted: isMicGranted,
+    ));
+
+    if (isCameraGranted && isMicGranted) {
+      return true;
+    } else {
+      emit(state.copyWith(status: LiveStylistStatus.permissionsDenied));
+      return false;
+    }
+  }
+
+  /// Request missing permissions
+  Future<void> requestPermissions() async {
+    final Map<Permission, PermissionStatus> statuses = await [
+      Permission.camera,
+      Permission.microphone,
+    ].request();
+
+    final isCameraGranted = statuses[Permission.camera]?.isGranted ?? false;
+    final isMicGranted = statuses[Permission.microphone]?.isGranted ?? false;
+
+    emit(state.copyWith(
+      isCameraPermissionGranted: isCameraGranted,
+      isMicPermissionGranted: isMicGranted,
+    ));
+
+    if (isCameraGranted && isMicGranted) {
+      // If granted, start the session automatically
+      startSession();
+    } else {
+      // Still missing permissions
+      emit(state.copyWith(status: LiveStylistStatus.permissionsDenied));
     }
   }
 

@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:comby/core/injection/injection.dart';
 import 'package:comby/app/features/live_stylist/cubit/live_stylist_cubit.dart';
 import 'package:comby/app/features/live_stylist/widgets/thought_bubble_widget.dart';
+import 'package:comby/app/features/live_stylist/widgets/live_stylist_permission_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 
@@ -43,7 +44,7 @@ class _LiveStylistPageState extends State<LiveStylistPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _initCamera();
+    // _initCamera(); // Wait for permissions
 
     _pulseController = AnimationController(
       vsync: this,
@@ -223,158 +224,191 @@ class _LiveStylistPageState extends State<LiveStylistPage>
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<LiveStylistCubit>()..startSession(),
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            // 1. Camera Layer (Full Screen - no black bars, BoxFit.cover = no distortion)
-            if (_isCameraInitialized)
-              Positioned.fill(
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    width: _controller!.value.previewSize!.height,
-                    height: _controller!.value.previewSize!.width,
-                    child: CameraPreview(_controller!),
+      child: BlocConsumer<LiveStylistCubit, LiveStylistState>(
+        listener: (context, state) {
+          // Initialize camera when active and not initialized
+          if ((state.status == LiveStylistStatus.connecting ||
+                  state.status == LiveStylistStatus.connected) &&
+              !_isCameraInitialized &&
+              _controller == null) {
+            _initCamera();
+          }
+
+          // Start/stop photo capture based on user speaking
+          if (state.isUserSpeaking && _photoCaptureTimer == null) {
+            _startContinuousPhotoCapture(context);
+          } else if (!state.isUserSpeaking && _photoCaptureTimer != null) {
+            _stopContinuousPhotoCapture();
+          }
+
+          if (state.status == LiveStylistStatus.error) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(state.message ?? "Unknown Error"),
+                backgroundColor: Colors.red));
+          }
+        },
+        builder: (context, state) {
+          // 1. Checking Permissions
+          if (state.status == LiveStylistStatus.checkingPermissions) {
+            return const Scaffold(
+              backgroundColor: Colors.black,
+              body:
+                  Center(child: CircularProgressIndicator(color: Colors.white)),
+            );
+          }
+
+          // 2. Permissions Denied -> Show Permission View
+          if (state.status == LiveStylistStatus.permissionsDenied) {
+            return const LiveStylistPermissionView();
+          }
+
+          // 3. Main Live Stylist UI
+          return Scaffold(
+            backgroundColor: Colors.black,
+            body: Stack(
+              fit: StackFit.expand,
+              children: [
+                // 1. Camera Layer (Full Screen - no black bars, BoxFit.cover = no distortion)
+                if (_isCameraInitialized)
+                  Positioned.fill(
+                    child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: _controller!.value.previewSize!.height,
+                        height: _controller!.value.previewSize!.width,
+                        child: CameraPreview(_controller!),
+                      ),
+                    ),
+                  )
+                else
+                  Container(
+                    color: const Color(0xFF1A1A1A),
+                    child: const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    ),
+                  ),
+
+                // 2. Gradient Overlay for readability
+                IgnorePointer(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withOpacity(0.6),
+                          Colors.transparent,
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.8),
+                        ],
+                        stops: const [0.0, 0.2, 0.7, 1.0],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
                   ),
                 ),
-              )
-            else
-              Container(
-                color: const Color(0xFF1A1A1A),
-                child: const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
-                ),
-              ),
 
-            // 2. Gradient Overlay for readability
-            IgnorePointer(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.black.withOpacity(0.6),
-                      Colors.transparent,
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.8),
-                    ],
-                    stops: const [0.0, 0.2, 0.7, 1.0],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-              ),
-            ),
+                // 3. Main UI Layer with Tap-to-Show
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: _toggleControlsVisibility,
+                  child: BlocConsumer<LiveStylistCubit, LiveStylistState>(
+                    listener: (_, __) {}, // Already handled in parent listener
+                    builder: (context, state) {
+                      return SafeArea(
+                        child: Column(
+                          children: [
+                            // --- TOP BAR ---
+                            if (_showControls)
+                              FadeIn(
+                                duration: const Duration(milliseconds: 300),
+                                child: _buildTopBar(context, state),
+                              ),
 
-            // 3. Main UI Layer with Tap-to-Show
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: _toggleControlsVisibility,
-              child: BlocConsumer<LiveStylistCubit, LiveStylistState>(
-                listener: (context, state) {
-                  // Start/stop photo capture based on user speaking
-                  if (state.isUserSpeaking && _photoCaptureTimer == null) {
-                    _startContinuousPhotoCapture(context);
-                  } else if (!state.isUserSpeaking &&
-                      _photoCaptureTimer != null) {
-                    _stopContinuousPhotoCapture();
-                  }
+                            const Spacer(),
 
-                  if (state.status == LiveStylistStatus.error) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(state.message ?? "Unknown Error"),
-                        backgroundColor: Colors.red));
-                  }
-                },
-                builder: (context, state) {
-                  return SafeArea(
-                    child: Column(
-                      children: [
-                        // --- TOP BAR ---
-                        if (_showControls)
-                          FadeIn(
-                            duration: const Duration(milliseconds: 300),
-                            child: _buildTopBar(context, state),
-                          ),
-
-                        const Spacer(),
-
-                        // --- THOUGHT BUBBLE ---
-                        ThoughtBubbleWidget(
-                          thought: state.currentThought,
-                          toolName: state.currentToolName,
-                          isVisible: state.hasActiveThought,
-                        ),
-
-                        // --- CENTER FEEDBACK ---
-                        if (state.status == LiveStylistStatus.connecting) ...[
-                          const CircularProgressIndicator(color: Colors.white),
-                          SizedBox(height: 16.h),
-                          Text(
-                            "Connecting to Stylist...",
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.9),
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w500,
+                            // --- THOUGHT BUBBLE ---
+                            ThoughtBubbleWidget(
+                              thought: state.currentThought,
+                              toolName: state.currentToolName,
+                              isVisible: state.hasActiveThought,
                             ),
-                          ),
-                        ] else if (state.status == LiveStylistStatus.connected)
-                          _buildVoiceVisualizer(state),
 
-                        const Spacer(),
+                            // --- CENTER FEEDBACK ---
+                            if (state.status ==
+                                LiveStylistStatus.connecting) ...[
+                              const CircularProgressIndicator(
+                                  color: Colors.white),
+                              SizedBox(height: 16.h),
+                              Text(
+                                "Connecting to Stylist...",
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ] else if (state.status ==
+                                LiveStylistStatus.connected)
+                              _buildVoiceVisualizer(state),
 
-                        // --- LOGS PREVIEW ---
-                        if (state.logs.isNotEmpty && _showControls)
-                          FadeIn(
-                            duration: const Duration(milliseconds: 300),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 24.w, vertical: 16.h),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16.r),
-                                child: BackdropFilter(
-                                  filter:
-                                      ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                                  child: Container(
-                                    padding: EdgeInsets.all(12.w),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(16.r),
-                                      border: Border.all(
-                                          color: Colors.white.withOpacity(0.1)),
-                                    ),
-                                    child: Text(
-                                      state.logs.last,
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(0.9),
-                                        fontSize: 13.sp,
+                            const Spacer(),
+
+                            // --- LOGS PREVIEW ---
+                            if (state.logs.isNotEmpty && _showControls)
+                              FadeIn(
+                                duration: const Duration(milliseconds: 300),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 24.w, vertical: 16.h),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                          sigmaX: 10, sigmaY: 10),
+                                      child: Container(
+                                        padding: EdgeInsets.all(12.w),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(16.r),
+                                          border: Border.all(
+                                              color: Colors.white
+                                                  .withOpacity(0.1)),
+                                        ),
+                                        child: Text(
+                                          state.logs.last,
+                                          style: TextStyle(
+                                            color:
+                                                Colors.white.withOpacity(0.9),
+                                            fontSize: 13.sp,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
-                                      textAlign: TextAlign.center,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
 
-                        // --- BOTTOM CONTROLS ---
-                        if (_showControls)
-                          FadeIn(
-                            duration: const Duration(milliseconds: 300),
-                            child: _buildBottomControls(context, state),
-                          ),
-                        SizedBox(height: 20.h),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                            // --- BOTTOM CONTROLS ---
+                            if (_showControls)
+                              FadeIn(
+                                duration: const Duration(milliseconds: 300),
+                                child: _buildBottomControls(context, state),
+                              ),
+                            SizedBox(height: 20.h),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

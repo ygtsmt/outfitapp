@@ -161,7 +161,15 @@ You have access to:
 1. **search_wardrobe**: Find clothing items (use English attribute keywords)
 2. **get_weather**: Check current weather for better recommendations
 
-Use tools proactively when they help the user, but don't overuse them in casual conversation.
+**CRITICAL: BE PROACTIVE!**
+- When user asks about outfits → AUTOMATICALLY check weather AND search wardrobe
+- Don't ask "Should I check the weather?" → JUST DO IT
+- Don't ask "Let me look at your wardrobe?" → JUST SEARCH
+- You're a stylist, not an assistant. Take initiative!
+
+Example:
+❌ BAD: "Should I check the weather for you?"
+✅ GOOD: *checks weather automatically* "It's 8°C today, let me find you a warm outfit..."
 ''';
 
     final setupMsg = {
@@ -364,27 +372,29 @@ Use tools proactively when they help the user, but don't overuse them in casual 
   /// Generate dynamic thought signature based on tool context when API doesn't provide one
   /// This creates context-aware thoughts that reflect actual user queries and tool operations
   String _generateThoughtSignature(String toolName, Map<String, dynamic> args) {
-    switch (toolName) {
-      case 'search_wardrobe':
-        final queries = args['queries'] as List?;
-        if (queries != null && queries.isNotEmpty) {
-          // Show what we're actually searching for (from AI's inference)
-          final searchTerms = queries.take(3).join(', '); // First 3 terms
-          return '🔍 Searching for: $searchTerms...';
-        }
-        return '🔍 Searching wardrobe...';
+    // Natural, human-like thinking messages (like a real stylist)
+    final naturalPhrases = {
+      'search_wardrobe': [
+        '👀 Let me check your closet...',
+        '🤔 Hmm, what do you have...',
+        '💭 Looking through your wardrobe...',
+        '✨ Checking your options...',
+      ],
+      'get_weather': [
+        '🌤️ Checking the weather...',
+        '☁️ Let me see what it\'s like outside...',
+        '🌡️ Hmm, what\'s the temperature...',
+      ],
+    };
 
-      case 'get_weather':
-        // Check if we have location info in args
-        final city = args['city'] as String?;
-        if (city != null && city.isNotEmpty) {
-          return '🌤️ Checking weather in $city...';
-        }
-        return '🌤️ Getting weather data...';
-
-      default:
-        // Generic but informative
-        return '🤔 Processing...';
+    final phrases = naturalPhrases[toolName];
+    if (phrases != null && phrases.isNotEmpty) {
+      // Pick a random phrase for variety
+      final randomIndex = DateTime.now().millisecond % phrases.length;
+      return phrases[randomIndex];
     }
+
+    // Default for unknown tools
+    return '🤔 Thinking...';
   }
 }

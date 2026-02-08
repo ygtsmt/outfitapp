@@ -1,6 +1,13 @@
 part of 'live_stylist_cubit.dart';
 
-enum LiveStylistStatus { initial, connecting, connected, error }
+enum LiveStylistStatus {
+  initial,
+  checkingPermissions,
+  permissionsDenied,
+  connecting,
+  connected,
+  error
+}
 
 class LiveStylistState extends Equatable {
   final LiveStylistStatus status;
@@ -9,6 +16,10 @@ class LiveStylistState extends Equatable {
   final bool isMicMuted;
   final bool isAiSpeaking; // Tracks if AI is currently outputting audio
   final bool isUserSpeaking; // Tracks if user is currently speaking
+
+  // Permissions
+  final bool isCameraPermissionGranted;
+  final bool isMicPermissionGranted;
 
   // Thought Signature fields
   final String? currentThought;
@@ -22,6 +33,8 @@ class LiveStylistState extends Equatable {
     this.isMicMuted = false,
     this.isAiSpeaking = false,
     this.isUserSpeaking = false,
+    this.isCameraPermissionGranted = false,
+    this.isMicPermissionGranted = false,
     this.currentThought,
     this.currentToolName,
     this.hasActiveThought = false,
@@ -34,6 +47,8 @@ class LiveStylistState extends Equatable {
     bool? isMicMuted,
     bool? isAiSpeaking,
     bool? isUserSpeaking,
+    bool? isCameraPermissionGranted,
+    bool? isMicPermissionGranted,
     String? currentThought,
     String? currentToolName,
     bool? hasActiveThought,
@@ -45,6 +60,10 @@ class LiveStylistState extends Equatable {
       isMicMuted: isMicMuted ?? this.isMicMuted,
       isAiSpeaking: isAiSpeaking ?? this.isAiSpeaking,
       isUserSpeaking: isUserSpeaking ?? this.isUserSpeaking,
+      isCameraPermissionGranted:
+          isCameraPermissionGranted ?? this.isCameraPermissionGranted,
+      isMicPermissionGranted:
+          isMicPermissionGranted ?? this.isMicPermissionGranted,
       currentThought: currentThought ?? this.currentThought,
       currentToolName: currentToolName ?? this.currentToolName,
       hasActiveThought: hasActiveThought ?? this.hasActiveThought,
@@ -59,6 +78,8 @@ class LiveStylistState extends Equatable {
         isMicMuted,
         isAiSpeaking,
         isUserSpeaking,
+        isCameraPermissionGranted,
+        isMicPermissionGranted,
         currentThought,
         currentToolName,
         hasActiveThought,
