@@ -18,6 +18,7 @@ import "package:comby/app/features/dashboard/ui/screens/dashboard_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/full_screen_image_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/outfit_suggestion_result_screen.dart";
 import "package:comby/app/features/dashboard/ui/screens/user_summary_screen.dart";
+import "package:comby/app/features/dashboard/ui/screens/onboarding_screen.dart";
 import "package:comby/app/features/fit_check/models/fit_check_model.dart";
 import "package:comby/app/features/fit_check/ui/screens/fit_check_result_screen.dart";
 import "package:comby/app/features/fit_check/ui/screens/fit_check_history_screen.dart";
@@ -332,6 +333,13 @@ part "app_router.gr.dart";
     CustomRoute(
       page: StyleWrappedScreen,
       path: "/style-wrapped-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      fullscreenDialog: true,
+    ),
+    // Onboarding
+    CustomRoute(
+      page: OnboardingScreen,
+      path: "/onboarding-screen",
       transitionsBuilder: TransitionsBuilders.fadeIn,
       fullscreenDialog: true,
     ),

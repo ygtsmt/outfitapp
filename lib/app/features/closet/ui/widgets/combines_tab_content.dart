@@ -305,56 +305,47 @@ class AddCombineItemButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
+    final primary = Theme.of(context).primaryColor;
+    final isCompact = crossAxisCount == 4;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: primaryColor.withOpacity(0.1),
-          width: 2,
-        ),
-      ),
+    return Material(
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(20.r),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Icon Area
-            Container(
-              height: crossAxisCount == 4 ? 40.w : 52.w,
-              width: crossAxisCount == 4 ? 40.w : 52.w,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: primaryColor.withOpacity(0.15),
-                    blurRadius: 15,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Icon(
+        borderRadius: BorderRadius.circular(18.r),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: 12.h,
+            horizontal: 16.w,
+          ),
+          decoration: BoxDecoration(
+            color: primary.withOpacity(0.06),
+            borderRadius: BorderRadius.circular(18.r),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.3),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
                 Icons.auto_awesome_rounded,
-                size: crossAxisCount == 4 ? 24.sp : 32.sp,
-                color: primaryColor,
+                size: isCompact ? 28.sp : 34.sp,
+                color: primary,
               ),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              AppLocalizations.of(context).createCombine,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: crossAxisCount == 4 ? 10.sp : 12.sp,
-                fontWeight: FontWeight.w800,
-                color: primaryColor,
-                letterSpacing: -0.2,
+              SizedBox(height: 8.h),
+              Text(
+                AppLocalizations.of(context).createCombine,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: isCompact ? 11.sp : 13.sp,
+                  fontWeight: FontWeight.w700,
+                  color: primary,
+                  letterSpacing: 0.2,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

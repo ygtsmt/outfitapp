@@ -69,22 +69,45 @@ class _CritiquesTabContentState extends State<CritiquesTabContent>
         final docs = snapshot.data?.docs ?? [];
 
         if (docs.isEmpty) {
+          final primary = Theme.of(context).primaryColor;
+
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.auto_awesome_outlined,
-                    size: 64.sp, color: Colors.grey[300]),
-                SizedBox(height: 16.h),
-                Text(
-                  AppLocalizations.of(context).noStyleAnalysisYet,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: 16.h,
+                  horizontal: 12.w,
+                ),
+                decoration: BoxDecoration(
+                  color: primary.withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.3),
                   ),
                 ),
-              ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 42.sp,
+                      color: primary,
+                    ),
+                    SizedBox(height: 12.h),
+                    Text(
+                      AppLocalizations.of(context).noStyleAnalysisYet,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: primary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
         }

@@ -282,7 +282,8 @@ class _StyleWrappedScreenState extends State<StyleWrappedScreen> {
                           decoration: BoxDecoration(
                             color: _currentPage == index
                                 ? Colors.white
-                                : Colors.white.withOpacity(0.3),
+                                : Colors.white
+                                    .withOpacity(0.5), // Increased from 0.3
                             borderRadius: BorderRadius.circular(4.r),
                           ),
                         ),

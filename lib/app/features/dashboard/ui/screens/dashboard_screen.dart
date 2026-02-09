@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:auto_route/auto_route.dart';
+import 'package:comby/core/routes/app_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import "package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart";
 import "package:flutter/material.dart";
@@ -35,7 +38,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkActiveMission();
       _checkLocationPermission();
+      _checkOnboarding();
     });
+  }
+
+  Future<void> _checkOnboarding() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
+
+    if (!hasSeenOnboarding && mounted) {
+      context.router.push(const OnboardingScreenRoute());
+    }
   }
 
   Future<void> _checkLocationPermission() async {

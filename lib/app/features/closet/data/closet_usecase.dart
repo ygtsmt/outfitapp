@@ -80,6 +80,12 @@ class ClosetUseCase {
       final userId = auth.currentUser?.uid;
       if (userId == null) return EventStatus.failure;
 
+      /*   // TEMPORARY: Saving to global mock collection
+      await firestore
+          .collection('mock-model-item')
+          .doc(item.id)
+          .set(item.toMap());
+       */
       await firestore
           .collection('users')
           .doc(userId)
@@ -205,7 +211,13 @@ class ClosetUseCase {
     try {
       final userId = auth.currentUser?.uid;
       if (userId == null) return EventStatus.failure;
-
+/* 
+      // TEMPORARY: Saving to global mock collection
+      await firestore
+          .collection('mock-closet-item')
+          .doc(item.id)
+          .set(item.toMap());
+       */
       await firestore
           .collection('users')
           .doc(userId)

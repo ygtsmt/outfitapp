@@ -199,6 +199,14 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
         type: RequestType.image,
         hasAll: true,
         onlyAll: true,
+        filterOption: FilterOptionGroup(
+          orders: [
+            const OrderOption(
+              type: OrderOptionType.createDate,
+              asc: false, // Descending order - newest first
+            ),
+          ],
+        ),
       );
 
       if (albums.isEmpty) {

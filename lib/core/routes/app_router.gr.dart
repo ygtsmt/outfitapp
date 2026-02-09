@@ -432,6 +432,16 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    OnboardingScreenRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: const OnboardingScreen(),
+        fullscreenDialog: true,
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -794,6 +804,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           StyleWrappedScreenRoute.name,
           path: '/style-wrapped-screen',
+        ),
+        RouteConfig(
+          OnboardingScreenRoute.name,
+          path: '/onboarding-screen',
         ),
       ];
 }
@@ -1703,6 +1717,18 @@ class StyleWrappedScreenRouteArgs {
   String toString() {
     return 'StyleWrappedScreenRouteArgs{key: $key, existingResult: $existingResult, existingImages: $existingImages}';
   }
+}
+
+/// generated route for
+/// [OnboardingScreen]
+class OnboardingScreenRoute extends PageRouteInfo<void> {
+  const OnboardingScreenRoute()
+      : super(
+          OnboardingScreenRoute.name,
+          path: '/onboarding-screen',
+        );
+
+  static const String name = 'OnboardingScreenRoute';
 }
 
 /// generated route for
