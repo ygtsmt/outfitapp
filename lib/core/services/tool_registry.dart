@@ -217,7 +217,7 @@ class ToolRegistry {
   /// 1. Weather Tool
   static FunctionDeclaration get getWeatherDeclaration => FunctionDeclaration(
         'get_weather',
-        'Belirtilen şehir ve tarih için hava durumu bilgisi al. Kullanıcı "yarın", "bugün" gibi ifadeler kullanırsa tarihi hesapla.',
+        'Get weather information for the specified city and date. If the user uses expressions like "tomorrow" or "today," calculate the date.',
         Schema(
           SchemaType.object,
           properties: {

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get_it/get_it.dart';
+import 'dart:async';
 
 /// Compact weather widget for dashboard - shows essential weather info
 class CompactWeatherWidget extends StatefulWidget {
@@ -24,8 +25,10 @@ class _CompactWeatherWidgetState extends State<CompactWeatherWidget> {
   WeatherModel? _weather;
   bool _isLoading = true;
   bool _hasPermission = false;
+  bool _isLocationServiceDisabled = false;
   String? _errorMessage;
   bool _isExpanded = false;
+  Timer? _serviceCheckTimer;
 
   @override
   void initState() {
@@ -33,34 +36,75 @@ class _CompactWeatherWidgetState extends State<CompactWeatherWidget> {
     _checkPermissionAndLoadWeather();
   }
 
+  @override
+  void dispose() {
+    _serviceCheckTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startServiceCheckTimer() {
+    _serviceCheckTimer?.cancel();
+    _serviceCheckTimer =
+        Timer.periodic(const Duration(seconds: 2), (timer) async {
+      final enabled = await _locationService.isLocationServiceEnabled();
+      if (enabled && mounted) {
+        timer.cancel();
+        _checkPermissionAndLoadWeather();
+      }
+    });
+  }
+
   Future<void> _checkPermissionAndLoadWeather() async {
+    _serviceCheckTimer?.cancel();
     setState(() {
       _isLoading = true;
       _errorMessage = null;
+      _isLocationServiceDisabled = false;
     });
+
+    // Check if service is enabled
+    final serviceEnabled = await _locationService.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      setState(() {
+        _isLoading = false;
+        _isLocationServiceDisabled = true;
+      });
+      _startServiceCheckTimer();
+      return;
+    }
 
     _hasPermission = await _locationService.hasPermission();
 
     if (!_hasPermission) {
-      // Automatically request permission on first load
-      final permission = await _locationService.requestPermission();
+      // Only auto-request if onboarding is already seen to avoid race conditions
+      final prefs = await SharedPreferences.getInstance();
+      final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
 
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        // Permission denied - show permission request UI
+      if (hasSeenOnboarding) {
+        final permission = await _locationService.requestPermission();
+
+        if (permission == LocationPermission.denied ||
+            permission == LocationPermission.deniedForever) {
+          setState(() {
+            _isLoading = false;
+            _hasPermission = false;
+          });
+          return;
+        }
+        _hasPermission = true;
+      } else {
+        // Just show permission UI if onboarding not seen yet
         setState(() {
           _isLoading = false;
           _hasPermission = false;
         });
         return;
       }
-
-      // Permission granted
-      _hasPermission = true;
     }
 
     final position = await _locationService.getCurrentPosition();
     if (position == null) {
+      // If position is null but service was enabled, it might be a timeout or other error
       setState(() {
         _isLoading = false;
         _errorMessage = AppLocalizations.of(context).locationNotReceived;
@@ -139,6 +183,10 @@ class _CompactWeatherWidgetState extends State<CompactWeatherWidget> {
       return _buildLoadingCard();
     }
 
+    if (_isLocationServiceDisabled) {
+      return _buildLocationServiceDisabledCard();
+    }
+
     if (!_hasPermission) {
       return _buildPermissionCard();
     }
@@ -147,14 +195,54 @@ class _CompactWeatherWidgetState extends State<CompactWeatherWidget> {
       return _buildErrorCard();
     }
 
-    if (_weather == null) {
-      return const SizedBox.shrink();
+    if (_weather != null) {
+      return _buildWeatherCard();
     }
 
-    return _buildCompactWeatherCard();
+    return const SizedBox.shrink();
   }
 
-  Widget _buildCompactWeatherCard() {
+  Widget _buildLocationServiceDisabledCard() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(20.w),
+      decoration: BoxDecoration(
+        color: Colors.orange.shade400,
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.location_disabled_rounded,
+              color: Colors.white, size: 40.sp),
+          SizedBox(height: 12.h),
+          Text(
+            AppLocalizations.of(context).locationServicesDisabled,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white, fontSize: 14.sp),
+          ),
+          SizedBox(height: 12.h),
+          ElevatedButton(
+            onPressed: () => _locationService.openLocationSettings(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.orange.shade400,
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
+            child: Text(
+              AppLocalizations.of(context).enableInSettings,
+              style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeatherCard() {
     return GestureDetector(
       onTap: () => setState(() => _isExpanded = !_isExpanded),
       child: AnimatedContainer(

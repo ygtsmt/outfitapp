@@ -81,6 +81,9 @@ RETURN THIS EXACT JSON FORMAT:
   "reasoning": "Brief explanation of your choices"
 }
 
+Rules:
+- Reasoning must be in English language.
+
 JSON:''';
 
       final content = [Content.text(prompt)];

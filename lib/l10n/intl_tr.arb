@@ -871,5 +871,7 @@
   "manualAdd": "Manuel Ekle",
   "processingItems": "Eşyalar İşleniyor",
   "failedPhotosTitle": "Başarısız Fotoğraflar ({current}/{total})",
-  "photosNotIdentifiedAsClothing": "{count} fotoğraf kıyafet olarak algılanamadı"
+  "photosNotIdentifiedAsClothing": "{count} fotoğraf kıyafet olarak algılanamadı",
+  "locationServicesDisabled": "Cihazınızda konum servisleri kapalı.",
+  "enableInSettings": "Ayarlardan Etkinleştir"
 }

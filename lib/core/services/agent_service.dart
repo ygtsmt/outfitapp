@@ -1010,7 +1010,7 @@ class AgentService {
         try {
           final alert = jsonDecode(cleanJson);
           _notificationService.showLocalNotification(
-            title: alert['title'] ?? 'Comby Seyahat Uyarısı',
+            title: alert['title'] ?? 'Comby Travel Alert',
             body: alert['message'] ?? '',
             payload: 'mission_alert',
           );

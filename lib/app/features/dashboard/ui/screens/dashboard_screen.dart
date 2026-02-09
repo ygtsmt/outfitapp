@@ -22,8 +22,6 @@ import 'package:comby/core/services/agent_service.dart';
 import 'package:comby/core/services/gemini_rest_service.dart';
 import 'package:comby/app/features/dashboard/ui/widgets/live_stylist_card.dart';
 
-import 'package:permission_handler/permission_handler.dart';
-
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -37,7 +35,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkActiveMission();
-      _checkLocationPermission();
       _checkOnboarding();
     });
   }
@@ -48,13 +45,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (!hasSeenOnboarding && mounted) {
       context.router.push(const OnboardingScreenRoute());
-    }
-  }
-
-  Future<void> _checkLocationPermission() async {
-    final status = await Permission.location.status;
-    if (status.isDenied) {
-      await Permission.location.request();
     }
   }
 

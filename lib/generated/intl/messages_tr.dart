@@ -473,6 +473,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Lütfen geçerli bir e-posta adresi giriniz."),
         "empty_error":
             MessageLookupByLibrary.simpleMessage("Lütfen bu alanı doldurunuz."),
+        "enableInSettings":
+            MessageLookupByLibrary.simpleMessage("Ayarlardan Etkinleştir"),
         "end_of_video": MessageLookupByLibrary.simpleMessage("(Videonun sonu)"),
         "enterNewUsername":
             MessageLookupByLibrary.simpleMessage("Yeni kullanıcı adını girin"),
@@ -726,6 +728,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Konum alınamadı"),
         "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
             "Konumunuza göre hava durumu görmek için konum iznine ihtiyacımız var."),
+        "locationServicesDisabled": MessageLookupByLibrary.simpleMessage(
+            "Cihazınızda konum servisleri kapalı."),
         "login": MessageLookupByLibrary.simpleMessage("Giriş Yap"),
         "loginButton": MessageLookupByLibrary.simpleMessage("Giriş Yap"),
         "loginDescription": MessageLookupByLibrary.simpleMessage(

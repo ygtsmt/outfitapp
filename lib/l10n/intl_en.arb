@@ -884,5 +884,7 @@
   "manualAdd": "Manual Add",
   "processingItems": "Processing Items",
   "failedPhotosTitle": "Failed Photos ({current}/{total})",
-  "photosNotIdentifiedAsClothing": "{count} photos could not be identified as fashion items"
+  "photosNotIdentifiedAsClothing": "{count} photos could not be identified as fashion items",
+  "locationServicesDisabled": "Location services are disabled on your device.",
+  "enableInSettings": "Enable in Settings"
 }

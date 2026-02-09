@@ -475,6 +475,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Please enter a valid email address."),
         "empty_error":
             MessageLookupByLibrary.simpleMessage("Please fill out this field."),
+        "enableInSettings":
+            MessageLookupByLibrary.simpleMessage("Enable in Settings"),
         "end_of_video": MessageLookupByLibrary.simpleMessage("(End of video)"),
         "enterNewUsername":
             MessageLookupByLibrary.simpleMessage("Enter new username"),
@@ -729,6 +731,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Location not received"),
         "locationPermissionRequired": MessageLookupByLibrary.simpleMessage(
             "We need location permission to show the weather for your location."),
+        "locationServicesDisabled": MessageLookupByLibrary.simpleMessage(
+            "Location services are disabled on your device."),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
         "loginButton": MessageLookupByLibrary.simpleMessage("Login"),
         "loginDescription": MessageLookupByLibrary.simpleMessage(

@@ -8269,6 +8269,26 @@ class AppLocalizations {
       args: [count],
     );
   }
+
+  /// `Location services are disabled on your device.`
+  String get locationServicesDisabled {
+    return Intl.message(
+      'Location services are disabled on your device.',
+      name: 'locationServicesDisabled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable in Settings`
+  String get enableInSettings {
+    return Intl.message(
+      'Enable in Settings',
+      name: 'enableInSettings',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -103,7 +103,7 @@ class _StyleWrappedCardState extends State<StyleWrappedCard> {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: Text(
-                      "Your Style Wrapped",
+                      "Your Style Wrapped ${DateTime.now().year.toString()}",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 22.sp,
@@ -114,35 +114,7 @@ class _StyleWrappedCardState extends State<StyleWrappedCard> {
                 ],
               ),
 
-              SizedBox(height: 16.h),
-
               // Year badge
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
-                    width: 2,
-                  ),
-                ),
-                child: Text(
-                  DateTime.now().year.toString(),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32.sp,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 8,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
 
               SizedBox(height: 16.h),
 
@@ -195,8 +167,9 @@ class _StyleWrappedCardState extends State<StyleWrappedCard> {
                   ),
                 ],
               ),
-
-              SizedBox(height: 20.h),
+              SizedBox(
+                height: 8.h,
+              ),
 
               // Action Buttons
               if (_hasWrapped) ...[

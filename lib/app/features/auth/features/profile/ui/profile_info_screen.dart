@@ -209,6 +209,8 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                     lastUpdated: _styleLastUpdated,
                   ),
                   SizedBox(height: 8.h),
+                  StyleWrappedCard(),
+                  SizedBox(height: 8.h),
 
                   // 3. Wardrobe Analytics (Value, Sustainability, Categories)
                   const WardrobeAnalyticsWidget(),
@@ -225,8 +227,6 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                   SizedBox(height: 8.h),
 
                   // 5. Style Wrapped Card
-                  StyleWrappedCard(),
-                  SizedBox(height: 8.h),
 
                   // 6. Settings Button (To open Settings Screen)
                   SettingsButton(

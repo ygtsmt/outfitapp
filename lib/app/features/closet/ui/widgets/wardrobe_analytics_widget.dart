@@ -114,14 +114,7 @@ class _WardrobeAnalyticsWidgetState extends State<WardrobeAnalyticsWidget> {
     }
 
     if (_stats == null || _stats!.totalItems == 0) {
-      return Container(
-        height: 100.h,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: Center(child: Text(AppLocalizations.of(context).wardrobeEmpty)),
-      );
+      return SizedBox();
     }
 
     // Prepare chart data (top 5 colors)

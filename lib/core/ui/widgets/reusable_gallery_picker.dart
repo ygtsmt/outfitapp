@@ -171,15 +171,15 @@ class _ReusableGalleryPickerState extends State<ReusableGalleryPicker> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop(); // Pop gallery picker
+              onPressed: () async {
+                context.router.pop();
+                context.router.pop();
               },
               child: Text(AppLocalizations.of(context).cancel),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                context.router.pop();
                 PhotoManager.openSetting();
                 Future.delayed(const Duration(seconds: 1), () {
                   _requestPermissionAndLoadPhotos();

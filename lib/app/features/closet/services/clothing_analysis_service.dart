@@ -166,7 +166,7 @@ Rules:
 - Be constructive and friendly in the feedback
 - Focus on color matching, fit, and overall aesthetic
 - Return ONLY the JSON object
-- Turkish language for values
+- English language for all values
 ''';
 
       final content = [
@@ -212,12 +212,12 @@ Rules:
 
       // Extract style
       final styleMatch = RegExp(r'"style":\s*"([^"]+)"').firstMatch(jsonText);
-      final style = styleMatch?.group(1) ?? 'Günlük';
+      final style = styleMatch?.group(1) ?? 'Casual';
 
       // Extract colorHarmony
       final harmonyMatch =
           RegExp(r'"colorHarmony":\s*"([^"]+)"').firstMatch(jsonText);
-      final harmony = harmonyMatch?.group(1) ?? 'İyi';
+      final harmony = harmonyMatch?.group(1) ?? 'Good';
 
       // Extract feedback list
       final List<String> feedback = [];
@@ -232,7 +232,7 @@ Rules:
       }
 
       if (feedback.isEmpty) {
-        feedback.add('Kombinin harika görünüyor!');
+        feedback.add('Your outfit looks great!');
       }
 
       // Extract missingPointsReasons list
@@ -259,14 +259,14 @@ Rules:
       // Fallback
       return {
         'score': 80,
-        'style': 'Günlük',
+        'style': 'Casual',
         'feedback': [
-          'Harika görünüyorsun!',
-          'Renkler çok uyumlu.',
-          'Tarzın çok hoş.'
+          'You look great!',
+          'Colors match perfectly.',
+          'Very nice style.'
         ],
         'missingPointsReasons': [],
-        'colorHarmony': 'İyi',
+        'colorHarmony': 'Good',
       };
     }
   }
