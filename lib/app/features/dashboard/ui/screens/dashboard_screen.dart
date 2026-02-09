@@ -30,21 +30,33 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  bool _hasCheckedOnboarding = false; // Prevent duplicate checks
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkActiveMission();
-      _checkOnboarding();
+      if (!_hasCheckedOnboarding) {
+        _checkOnboarding();
+      }
     });
   }
 
   Future<void> _checkOnboarding() async {
+    if (_hasCheckedOnboarding)
+      return; // Double-check to prevent race conditions
+    _hasCheckedOnboarding = true;
+
     final prefs = await SharedPreferences.getInstance();
     final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
 
     if (!hasSeenOnboarding && mounted) {
-      context.router.push(const OnboardingScreenRoute());
+      await context.router.push(const OnboardingScreenRoute());
+      // After returning from onboarding, reload data
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 

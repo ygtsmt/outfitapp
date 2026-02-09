@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:comby/app/features/closet/data/closet_usecase.dart';
+import 'package:comby/app/features/closet/bloc/closet_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:comby/app/features/closet/models/model_item_model.dart';
 import 'package:comby/app/features/closet/models/wardrobe_item_model.dart';
 import 'package:comby/app/features/closet/ui/closet_screen.dart';
@@ -70,55 +72,17 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
     _selectedClothes =
         widget.initialClothes != null ? List.from(widget.initialClothes!) : [];
 
-    // Default controller, will be re-initialized in _loadModels
+    // Default controller
     _pageController = PageController(viewportFraction: 0.85);
     _clothPageController =
         PageController(viewportFraction: 0.4); // Smaller fraction for clothes
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadModels();
-    });
+    // Trigger fetch if needed
+    getIt<ClosetBloc>().add(const GetUserClosetItemsEvent());
+    getIt<ClosetBloc>().add(const GetUserModelItemsEvent());
   }
 
-  Future<void> _loadModels() async {
-    try {
-      final models = await _closetUseCase.getUserModelItems();
-      final clothes = await _closetUseCase.getUserClosetItems();
-      if (mounted) {
-        setState(() {
-          _allModels = models;
-          _allClothes = clothes;
-
-          // Reorder: Move selected clothes to the beginning
-          if (_selectedClothes.isNotEmpty) {
-            final selectedIds = _selectedClothes.map((e) => e.imageUrl).toSet();
-            final selectedItems = _allClothes
-                .where((item) => selectedIds.contains(item.imageUrl))
-                .toList();
-            final otherItems = _allClothes
-                .where((item) => !selectedIds.contains(item.imageUrl))
-                .toList();
-
-            _allClothes = [...selectedItems, ...otherItems];
-          }
-
-          if (_allModels.isNotEmpty) {
-            // Default Start: First Model (after Add Card)
-            _selectedModel = _allModels[0];
-            // Start at 1 because index 0 is "Add Model" card
-            _pageController =
-                PageController(viewportFraction: 0.85, initialPage: 1);
-          }
-
-          // Initialize Cloth Controller
-          _clothPageController = PageController(
-              viewportFraction: 0.3, initialPage: 0); // Tighter spacing
-        });
-      }
-    } catch (e) {
-      print("Error loading data: $e");
-    }
-  }
+  // Removed _loadModels as we will use BlocBuilder
 
   Future<void> _generateImage() async {
     if (_selectedModel == null || _selectedClothes.isEmpty) {
@@ -434,139 +398,169 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
     super.build(context); // Connection to keepalive
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      floatingActionButton: FilledButton(
-        onPressed:
-            _isLoading || _selectedModel == null || _selectedClothes.isEmpty
-                ? () {
-                    if (_selectedModel == null) {
-                      Utils.showToastMessage(
-                        content: 'Please select a model',
-                        context: context,
-                      );
-                    }
-                    if (_selectedClothes.isEmpty) {
-                      Utils.showToastMessage(
-                        content: 'Please select a clothing item',
-                        context: context,
-                      );
-                    }
-                  }
-                : _generateImage,
-        style: FilledButton.styleFrom(
-          backgroundColor:
-              (_isLoading || _selectedModel == null || _selectedClothes.isEmpty)
+    return BlocBuilder<ClosetBloc, ClosetState>(
+      builder: (context, state) {
+        // Update local lists from state if available
+        if (state.closetItems != null) {
+          _allClothes = state.closetItems!;
+
+          // Reorder logic (optional, keep selected first)
+          if (_selectedClothes.isNotEmpty) {
+            final selectedIds = _selectedClothes.map((e) => e.imageUrl).toSet();
+            final selectedItems = _allClothes
+                .where((item) => selectedIds.contains(item.imageUrl))
+                .toList();
+            final otherItems = _allClothes
+                .where((item) => !selectedIds.contains(item.imageUrl))
+                .toList();
+            _allClothes = [...selectedItems, ...otherItems];
+          }
+        }
+
+        if (state.modelItems != null) {
+          _allModels = state.modelItems!;
+          if (_selectedModel == null && _allModels.isNotEmpty) {
+            _selectedModel = _allModels[0];
+          }
+        }
+
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          floatingActionButton: FilledButton(
+            onPressed:
+                _isLoading || _selectedModel == null || _selectedClothes.isEmpty
+                    ? () {
+                        if (_selectedModel == null) {
+                          Utils.showToastMessage(
+                            content: 'Please select a model',
+                            context: context,
+                          );
+                        }
+                        if (_selectedClothes.isEmpty) {
+                          Utils.showToastMessage(
+                            content: 'Please select a clothing item',
+                            context: context,
+                          );
+                        }
+                      }
+                    : _generateImage,
+            style: FilledButton.styleFrom(
+              backgroundColor: (_isLoading ||
+                      _selectedModel == null ||
+                      _selectedClothes.isEmpty)
                   ? context.white
                   : colorScheme.primary,
-          foregroundColor:
-              (_isLoading || _selectedModel == null || _selectedClothes.isEmpty)
+              foregroundColor: (_isLoading ||
+                      _selectedModel == null ||
+                      _selectedClothes.isEmpty)
                   ? colorScheme.primary
                   : colorScheme.onPrimary,
-          elevation: 4,
-          shape: const StadiumBorder(), // yuvarlak-pill görünüm
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        ),
-        child: _isLoading
-            ? SizedBox(
-                width: 20.w,
-                height: 20.h,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: colorScheme.onPrimary,
-                ),
-              )
-            : Text(
-                'Generate',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-      ),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 8.h),
-            _buildSectionTitle(
-                context,
-                AppLocalizations.of(context).model.toUpperCase(),
-                AppLocalizations.of(context).modelSubtitle),
-            const SizedBox(height: 8),
-            Expanded(
-              flex: 5,
-              child: _ModelSelector(
-                models: _allModels,
-                pageController: _pageController,
-                selectedModel: _selectedModel,
-                onPageChanged: (index) {
-                  setState(() {
-                    // Index 0 = Add Card
-                    // Index length + 1 = Add Card
-                    // Valid models are at 1..length
-                    if (index > 0 && index <= _allModels.length) {
-                      _selectedModel = _allModels[index - 1]; // Offset by 1
-                    }
-                  });
-                },
-                onTap: _showModelSelection,
-                onAddPressed: _showModelSelection,
-              ),
+              elevation: 4,
+              shape: const StadiumBorder(), // yuvarlak-pill görünüm
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: _buildSectionTitle(
-                      context,
-                      AppLocalizations.of(context).homeCloset.toUpperCase(),
-                      AppLocalizations.of(context).wardrobeSubtitle),
-                ),
-                if (_selectedClothes.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4, right: 16),
-                    child: Text(
-                      AppLocalizations.of(context)
-                          .nSelected(_selectedClothes.length),
-                      style: TextStyle(
-                          color: colorScheme.onSurface.withOpacity(0.6),
-                          fontSize: 12),
+            child: _isLoading
+                ? SizedBox(
+                    width: 20.w,
+                    height: 20.h,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colorScheme.onPrimary,
+                    ),
+                  )
+                : Text(
+                    'Generate',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+          ),
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 8.h),
+                _buildSectionTitle(
+                    context,
+                    AppLocalizations.of(context).model.toUpperCase(),
+                    AppLocalizations.of(context).modelSubtitle),
+                const SizedBox(height: 8),
+                Expanded(
+                  flex: 5,
+                  child: _ModelSelector(
+                    models: _allModels,
+                    pageController: _pageController,
+                    selectedModel: _selectedModel,
+                    onPageChanged: (index) {
+                      setState(() {
+                        // Index 0 = Add Card
+                        // Index length + 1 = Add Card
+                        // Valid models are at 1..length
+                        if (index > 0 && index <= _allModels.length) {
+                          _selectedModel = _allModels[index - 1]; // Offset by 1
+                        }
+                      });
+                    },
+                    onTap: _showModelSelection,
+                    onAddPressed: _showModelSelection,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: _buildSectionTitle(
+                          context,
+                          AppLocalizations.of(context).homeCloset.toUpperCase(),
+                          AppLocalizations.of(context).wardrobeSubtitle),
+                    ),
+                    if (_selectedClothes.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4, right: 16),
+                        child: Text(
+                          AppLocalizations.of(context)
+                              .nSelected(_selectedClothes.length),
+                          style: TextStyle(
+                              color: colorScheme.onSurface.withOpacity(0.6),
+                              fontSize: 12),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  flex: 1,
+                  child: _ClothList(
+                    allClothes: _allClothes,
+                    selectedClothes: _selectedClothes,
+                    pageController: _clothPageController,
+                    onAdd: _showClothSelection,
+                    onToggleSelection: (item) {
+                      setState(() {
+                        if (_selectedClothes
+                            .any((e) => e.imageUrl == item.imageUrl)) {
+                          _selectedClothes
+                              .removeWhere((e) => e.imageUrl == item.imageUrl);
+                        } else {
+                          _selectedClothes.add(item);
+                        }
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (_statusMessage != null) _buildStatusCard(context),
+                // Replaced button with FAB, so we keep the column clean but might need spacing at bottom if FAB overlaps content too much.
+                // However, with Expanded flex, the layout fills screen.
+                // The FAB is bottom-right. It might overlap the ClothList or StatusCard.
+                // StatusCard is at valid bottom.
+                const SizedBox(height: 16),
               ],
             ),
-            const SizedBox(height: 8),
-            Expanded(
-              flex: 1,
-              child: _ClothList(
-                allClothes: _allClothes,
-                selectedClothes: _selectedClothes,
-                pageController: _clothPageController,
-                onAdd: _showClothSelection,
-                onToggleSelection: (item) {
-                  setState(() {
-                    if (_selectedClothes
-                        .any((e) => e.imageUrl == item.imageUrl)) {
-                      _selectedClothes
-                          .removeWhere((e) => e.imageUrl == item.imageUrl);
-                    } else {
-                      _selectedClothes.add(item);
-                    }
-                  });
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-            if (_statusMessage != null) _buildStatusCard(context),
-            // Replaced button with FAB, so we keep the column clean but might need spacing at bottom if FAB overlaps content too much.
-            // However, with Expanded flex, the layout fills screen.
-            // The FAB is bottom-right. It might overlap the ClothList or StatusCard.
-            // StatusCard is at valid bottom.
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
