@@ -22,10 +22,6 @@ import "package:comby/app/features/dashboard/ui/screens/onboarding_screen.dart";
 import "package:comby/app/features/fit_check/models/fit_check_model.dart";
 import "package:comby/app/features/fit_check/ui/screens/fit_check_result_screen.dart";
 import "package:comby/app/features/fit_check/ui/screens/fit_check_history_screen.dart";
-import "package:comby/app/features/payment/ui/payment_screen.dart";
-import "package:comby/app/features/payment/ui/documents_webview_screen.dart";
-import "package:comby/app/features/payment/ui/watch_ads_screen.dart";
-import "package:comby/app/features/payment/ui/free_credit_screen.dart";
 import "package:comby/app/features/wrapped/models/wrapped_result.dart";
 import "package:comby/app/ui/widgets/feedback_screen.dart";
 import "package:comby/app/features/closet/ui/screens/gallery_selection_screen.dart";
@@ -165,26 +161,6 @@ part "app_router.gr.dart";
       transitionsBuilder: TransitionsBuilders.fadeIn,
     ),
     // Payment & Utility Route Group - Support features
-    CustomRoute(
-      page: PaymentsScreen,
-      path: "/payment-screen",
-      transitionsBuilder: TransitionsBuilders.slideLeft,
-    ),
-    CustomRoute(
-      page: WatchAdsScreen,
-      path: "/watch-ad-screen",
-      transitionsBuilder: TransitionsBuilders.slideLeft,
-    ),
-    CustomRoute(
-      page: FreeCreditScreen,
-      path: "/free-credit-screen",
-      transitionsBuilder: TransitionsBuilders.slideLeft,
-    ),
-    CustomRoute(
-      page: DocumentsWebViewScreen,
-      path: "/document-webview-screen",
-      transitionsBuilder: TransitionsBuilders.slideBottom,
-    ),
     CustomRoute(
       page: FeedbackScreen,
       path: "/feedback-screen",

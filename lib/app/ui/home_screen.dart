@@ -11,7 +11,6 @@ import "package:comby/app/bloc/app_bloc.dart";
 import "package:comby/app/features/auth/features/login/bloc/login_bloc.dart";
 import "package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart";
 import "package:comby/app/features/chat/ui/chat_screen.dart";
-import "package:comby/app/features/payment/ui/payment_screen.dart";
 import "package:comby/app/ui/custom_drawer.dart";
 import "package:comby/core/core.dart";
 import "package:comby/core/services/paywall_manager.dart";
@@ -52,28 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// PAYWALL
-  void _showPaywallBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.5),
-      builder: (_) => DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        maxChildSize: 0.95,
-        minChildSize: 0.5,
-        builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: const PaymentsScreen(isPaywall: true),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,10 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: Scaffold(
                   key: _scaffoldKey,
-                  drawer:
-                      tabsRouter.activeIndex == 3 ? CustomDrawer(state: state) : null,
-
-                  appBar: (tabsRouter.activeIndex == 1 ||
+                  appBar: (tabsRouter.activeIndex == 3 ||
                           tabsRouter.activeIndex == 2)
                       ? null
                       : AppBar(
@@ -115,8 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           forceMaterialTransparency: true,
                           leading: IconButton(
                             icon: const Icon(Icons.menu),
-                            onPressed: () =>
-                                _scaffoldKey.currentState?.openDrawer(),
+                            onPressed: () {},
                           ),
                           title: Text(
                             'Comby',
@@ -135,24 +108,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-
                   body: SafeArea(
                     bottom: true,
                     child: AdaptiveBuilder(
                       defaultBuilder: (_, __) => child,
                     ),
                   ),
-
                   floatingActionButton: FloatingActionButton(
                     onPressed: _showChatModal,
                     backgroundColor: Theme.of(context).primaryColor,
                     child: Icon(Icons.chat_bubble,
                         color: Colors.white, size: 28.sp),
                   ),
-
                   floatingActionButtonLocation:
                       FloatingActionButtonLocation.centerDocked,
-
                   bottomNavigationBar: BottomNavigationBar(
                     type: BottomNavigationBarType.fixed,
                     selectedFontSize: 10.sp,
@@ -162,8 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         icon: Icon(tabsRouter.activeIndex == 0
                             ? Icons.dashboard
                             : Icons.dashboard_outlined),
-                        label:
-                            AppLocalizations.of(context).homeDashboard,
+                        label: AppLocalizations.of(context).homeDashboard,
                       ),
                       BottomNavigationBarItem(
                         icon: Icon(tabsRouter.activeIndex == 1

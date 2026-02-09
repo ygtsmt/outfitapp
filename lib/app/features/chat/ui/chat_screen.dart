@@ -172,7 +172,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           state.status == ChatStatus.initial) {
                         const welcomeMessage = ChatMessage(
                           text:
-                              "Hi, I'm Comby! 👋\n\nHow about creating a great outfit based on the weather?",
+                              "Hi, I'm Comby! 👋\n\nPowered by Gemini 3, I can help you create great outfits based on the weather!",
                           isUser: false,
                         );
 

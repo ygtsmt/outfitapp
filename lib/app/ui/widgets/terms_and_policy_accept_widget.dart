@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:comby/app/bloc/app_bloc.dart';
 import 'package:comby/app/data/models/multi_lang_file.dart';
 import 'package:comby/app/features/auth/features/login/ui/widgets/terms_agreement_text.dart';
-import 'package:comby/app/features/payment/ui/payment_screen.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/generated/l10n.dart';
 

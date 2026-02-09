@@ -66,7 +66,7 @@ class AIChatCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    'Get instant fashion advice from Gemini AI',
+                    'Get instant fashion advice from Gemini 3',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.9),
                       fontSize: 13.sp,

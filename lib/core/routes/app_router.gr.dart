@@ -67,52 +67,6 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
-    PaymentsScreenRoute.name: (routeData) {
-      final args = routeData.argsAs<PaymentsScreenRouteArgs>(
-          orElse: () => const PaymentsScreenRouteArgs());
-      return CustomPage<dynamic>(
-        routeData: routeData,
-        child: PaymentsScreen(
-          key: args.key,
-          isPaywall: args.isPaywall,
-        ),
-        transitionsBuilder: TransitionsBuilders.slideLeft,
-        opaque: true,
-        barrierDismissible: false,
-      );
-    },
-    WatchAdsScreenRoute.name: (routeData) {
-      return CustomPage<dynamic>(
-        routeData: routeData,
-        child: const WatchAdsScreen(),
-        transitionsBuilder: TransitionsBuilders.slideLeft,
-        opaque: true,
-        barrierDismissible: false,
-      );
-    },
-    FreeCreditScreenRoute.name: (routeData) {
-      return CustomPage<dynamic>(
-        routeData: routeData,
-        child: const FreeCreditScreen(),
-        transitionsBuilder: TransitionsBuilders.slideLeft,
-        opaque: true,
-        barrierDismissible: false,
-      );
-    },
-    DocumentsWebViewScreenRoute.name: (routeData) {
-      final args = routeData.argsAs<DocumentsWebViewScreenRouteArgs>();
-      return CustomPage<dynamic>(
-        routeData: routeData,
-        child: DocumentsWebViewScreen(
-          key: args.key,
-          pdfUrl: args.pdfUrl,
-          title: args.title,
-        ),
-        transitionsBuilder: TransitionsBuilders.slideBottom,
-        opaque: true,
-        barrierDismissible: false,
-      );
-    },
     FeedbackScreenRoute.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -682,22 +636,6 @@ class _$AppRouter extends RootStackRouter {
           path: '/all-tools-screen',
         ),
         RouteConfig(
-          PaymentsScreenRoute.name,
-          path: '/payment-screen',
-        ),
-        RouteConfig(
-          WatchAdsScreenRoute.name,
-          path: '/watch-ad-screen',
-        ),
-        RouteConfig(
-          FreeCreditScreenRoute.name,
-          path: '/free-credit-screen',
-        ),
-        RouteConfig(
-          DocumentsWebViewScreenRoute.name,
-          path: '/document-webview-screen',
-        ),
-        RouteConfig(
           FeedbackScreenRoute.name,
           path: '/feedback-screen',
         ),
@@ -894,104 +832,6 @@ class AllToolsScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'AllToolsScreenRoute';
-}
-
-/// generated route for
-/// [PaymentsScreen]
-class PaymentsScreenRoute extends PageRouteInfo<PaymentsScreenRouteArgs> {
-  PaymentsScreenRoute({
-    Key? key,
-    bool? isPaywall = false,
-  }) : super(
-          PaymentsScreenRoute.name,
-          path: '/payment-screen',
-          args: PaymentsScreenRouteArgs(
-            key: key,
-            isPaywall: isPaywall,
-          ),
-        );
-
-  static const String name = 'PaymentsScreenRoute';
-}
-
-class PaymentsScreenRouteArgs {
-  const PaymentsScreenRouteArgs({
-    this.key,
-    this.isPaywall = false,
-  });
-
-  final Key? key;
-
-  final bool? isPaywall;
-
-  @override
-  String toString() {
-    return 'PaymentsScreenRouteArgs{key: $key, isPaywall: $isPaywall}';
-  }
-}
-
-/// generated route for
-/// [WatchAdsScreen]
-class WatchAdsScreenRoute extends PageRouteInfo<void> {
-  const WatchAdsScreenRoute()
-      : super(
-          WatchAdsScreenRoute.name,
-          path: '/watch-ad-screen',
-        );
-
-  static const String name = 'WatchAdsScreenRoute';
-}
-
-/// generated route for
-/// [FreeCreditScreen]
-class FreeCreditScreenRoute extends PageRouteInfo<void> {
-  const FreeCreditScreenRoute()
-      : super(
-          FreeCreditScreenRoute.name,
-          path: '/free-credit-screen',
-        );
-
-  static const String name = 'FreeCreditScreenRoute';
-}
-
-/// generated route for
-/// [DocumentsWebViewScreen]
-class DocumentsWebViewScreenRoute
-    extends PageRouteInfo<DocumentsWebViewScreenRouteArgs> {
-  DocumentsWebViewScreenRoute({
-    Key? key,
-    required String pdfUrl,
-    required String title,
-  }) : super(
-          DocumentsWebViewScreenRoute.name,
-          path: '/document-webview-screen',
-          args: DocumentsWebViewScreenRouteArgs(
-            key: key,
-            pdfUrl: pdfUrl,
-            title: title,
-          ),
-        );
-
-  static const String name = 'DocumentsWebViewScreenRoute';
-}
-
-class DocumentsWebViewScreenRouteArgs {
-  const DocumentsWebViewScreenRouteArgs({
-    this.key,
-    required this.pdfUrl,
-    required this.title,
-  });
-
-  final Key? key;
-
-  final String pdfUrl;
-
-  final String title;
-
-  @override
-  String toString() {
-    return 'DocumentsWebViewScreenRouteArgs{key: $key, pdfUrl: $pdfUrl, title: $title}';
-  }
 }
 
 /// generated route for

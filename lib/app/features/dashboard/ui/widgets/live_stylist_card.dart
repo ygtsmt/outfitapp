@@ -65,7 +65,7 @@ class LiveStylistCard extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    "Show your outfits, get instant feedback!",
+                    "Show your outfits, get instant feedback from Gemini 3!",
                     softWrap: true,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.9),
