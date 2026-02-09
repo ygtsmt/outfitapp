@@ -25,6 +25,7 @@ import "package:comby/app/features/payment/ui/payment_screen.dart";
 import "package:comby/app/features/payment/ui/documents_webview_screen.dart";
 import "package:comby/app/features/payment/ui/watch_ads_screen.dart";
 import "package:comby/app/features/payment/ui/free_credit_screen.dart";
+import "package:comby/app/features/wrapped/models/wrapped_result.dart";
 import "package:comby/app/ui/widgets/feedback_screen.dart";
 import "package:comby/app/features/closet/ui/screens/gallery_selection_screen.dart";
 import "package:comby/app/features/closet/ui/screens/closet_item_form_screen.dart";
@@ -50,6 +51,7 @@ import "package:comby/app/features/chat/ui/chat_screen.dart";
 import "package:comby/app/ui/home_screen.dart";
 import "package:comby/app/features/live_stylist/pages/live_stylist_page.dart";
 import "package:comby/app/features/chat/ui/chat_history_screen.dart";
+import "package:comby/app/features/wrapped/ui/style_wrapped_screen.dart";
 import "package:comby/core/core.dart";
 import "package:comby/core/services/outfit_suggestion_service.dart";
 import "package:flutter/material.dart";
@@ -325,6 +327,13 @@ part "app_router.gr.dart";
       page: ChatHistoryScreen,
       path: "/chat-history-screen",
       transitionsBuilder: TransitionsBuilders.slideLeft,
+    ),
+    // Style Wrapped
+    CustomRoute(
+      page: StyleWrappedScreen,
+      path: "/style-wrapped-screen",
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      fullscreenDialog: true,
     ),
   ],
 )

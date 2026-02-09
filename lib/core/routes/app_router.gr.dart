@@ -416,6 +416,22 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    StyleWrappedScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<StyleWrappedScreenRouteArgs>(
+          orElse: () => const StyleWrappedScreenRouteArgs());
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: StyleWrappedScreen(
+          key: args.key,
+          existingResult: args.existingResult,
+          existingImages: args.existingImages,
+        ),
+        fullscreenDialog: true,
+        transitionsBuilder: TransitionsBuilders.fadeIn,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -774,6 +790,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           ChatHistoryScreenRoute.name,
           path: '/chat-history-screen',
+        ),
+        RouteConfig(
+          StyleWrappedScreenRoute.name,
+          path: '/style-wrapped-screen',
         ),
       ];
 }
@@ -1643,6 +1663,46 @@ class ChatHistoryScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'ChatHistoryScreenRoute';
+}
+
+/// generated route for
+/// [StyleWrappedScreen]
+class StyleWrappedScreenRoute
+    extends PageRouteInfo<StyleWrappedScreenRouteArgs> {
+  StyleWrappedScreenRoute({
+    Key? key,
+    WrappedResult? existingResult,
+    Map<String, String>? existingImages,
+  }) : super(
+          StyleWrappedScreenRoute.name,
+          path: '/style-wrapped-screen',
+          args: StyleWrappedScreenRouteArgs(
+            key: key,
+            existingResult: existingResult,
+            existingImages: existingImages,
+          ),
+        );
+
+  static const String name = 'StyleWrappedScreenRoute';
+}
+
+class StyleWrappedScreenRouteArgs {
+  const StyleWrappedScreenRouteArgs({
+    this.key,
+    this.existingResult,
+    this.existingImages,
+  });
+
+  final Key? key;
+
+  final WrappedResult? existingResult;
+
+  final Map<String, String>? existingImages;
+
+  @override
+  String toString() {
+    return 'StyleWrappedScreenRouteArgs{key: $key, existingResult: $existingResult, existingImages: $existingImages}';
+  }
 }
 
 /// generated route for

@@ -9,6 +9,7 @@ import 'package:comby/app/features/auth/features/profile/ui/widgets/profile_head
 import 'package:comby/app/features/auth/features/profile/ui/widgets/style_dna_widget.dart';
 import 'package:comby/app/features/auth/features/profile/ui/widgets/activity_heatmap_widget.dart';
 import 'package:comby/app/features/auth/features/profile/ui/widgets/settings_button.dart';
+import 'package:comby/app/features/auth/features/profile/ui/widgets/style_wrapped_card.dart';
 import 'package:comby/app/features/closet/ui/widgets/wardrobe_analytics_widget.dart';
 import 'package:comby/app/features/auth/features/profile/services/style_dna_service.dart';
 import 'package:comby/app/ui/widgets/personal_info_card_widget.dart';
@@ -223,7 +224,11 @@ class _ProfileInfoScreenState extends State<ProfileInfoScreen> {
                   ),
                   SizedBox(height: 8.h),
 
-                  // 5. Settings Button (To open Settings Screen)
+                  // 5. Style Wrapped Card
+                  StyleWrappedCard(),
+                  SizedBox(height: 8.h),
+
+                  // 6. Settings Button (To open Settings Screen)
                   SettingsButton(
                     onTap: () {
                       context.router.push(const SettingsScreenRoute());
