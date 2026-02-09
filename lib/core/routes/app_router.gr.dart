@@ -396,15 +396,6 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
-    ShoppingTestScreenRoute.name: (routeData) {
-      return CustomPage<dynamic>(
-        routeData: routeData,
-        child: const ShoppingTestScreen(),
-        transitionsBuilder: TransitionsBuilders.slideLeft,
-        opaque: true,
-        barrierDismissible: false,
-      );
-    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -755,10 +746,6 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           OnboardingScreenRoute.name,
           path: '/onboarding-screen',
-        ),
-        RouteConfig(
-          ShoppingTestScreenRoute.name,
-          path: '/shopping-test-screen',
         ),
       ];
 }
@@ -1582,18 +1569,6 @@ class OnboardingScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'OnboardingScreenRoute';
-}
-
-/// generated route for
-/// [ShoppingTestScreen]
-class ShoppingTestScreenRoute extends PageRouteInfo<void> {
-  const ShoppingTestScreenRoute()
-      : super(
-          ShoppingTestScreenRoute.name,
-          path: '/shopping-test-screen',
-        );
-
-  static const String name = 'ShoppingTestScreenRoute';
 }
 
 /// generated route for

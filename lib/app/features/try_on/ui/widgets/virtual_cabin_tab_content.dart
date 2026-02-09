@@ -89,6 +89,19 @@ class _VirtualCabinTabContentState extends State<VirtualCabinTabContent>
           _allModels = models;
           _allClothes = clothes;
 
+          // Reorder: Move selected clothes to the beginning
+          if (_selectedClothes.isNotEmpty) {
+            final selectedIds = _selectedClothes.map((e) => e.imageUrl).toSet();
+            final selectedItems = _allClothes
+                .where((item) => selectedIds.contains(item.imageUrl))
+                .toList();
+            final otherItems = _allClothes
+                .where((item) => !selectedIds.contains(item.imageUrl))
+                .toList();
+
+            _allClothes = [...selectedItems, ...otherItems];
+          }
+
           if (_allModels.isNotEmpty) {
             // Default Start: First Model (after Add Card)
             _selectedModel = _allModels[0];

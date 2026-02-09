@@ -332,6 +332,52 @@ class _ClosetItemDetailScreenState extends State<ClosetItemDetailScreen> {
                 ),
               ),
 
+              // Try On Button
+              TextButton(
+                onPressed: () {
+                  context.router.navigate(
+                    HomeScreenRoute(
+                      children: [
+                        TryOnTabRouter(
+                          children: [
+                            TryOnScreenRoute(
+                              initialClothes: [item],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                style: TextButton.styleFrom(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  backgroundColor: context.baseColor.withOpacity(0.1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.checkroom,
+                      size: 16.sp,
+                      color: context.baseColor,
+                    ),
+                    SizedBox(width: 6.w),
+                    Text(
+                      'Use in Outfit',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w600,
+                        color: context.baseColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 8.w),
+
               // Sil butonu
               IconButton(
                 icon: Container(
