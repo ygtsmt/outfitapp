@@ -10,17 +10,6 @@ class PngPaths {
   static const String textToVideo = "assets/png/text-to-video.png";
   static const String realtime = "assets/png/realtime.png";
 
-  static const String turkeyFlag = "assets/png/turkey_flag.png";
-  static const String franceFlag = "assets/png/france_flag.png";
-  static const String germanyFlag = "assets/png/germany_flag.png";
-  static const String usaFlag = "assets/png/usa_flag.png";
-  static const String russiaFlag = "assets/png/russia_flag.png";
-  static const String arabicFlag = "assets/png/arabic_flag.png";
-  static const String chineseFlag = "assets/png/chinese_flag.png";
-  static const String spainFlag = "assets/png/spain_flag.png";
-  static const String indiaFlag = "assets/png/india_flag.png";
-  static const String portugalFlag = "assets/png/portugal_flag.png";
-  static const String indonesiaFlag = "assets/png/indonesia_flag.png";
   static const String viralOnTiktok = "assets/png/tiktok.png";
   static const String gift = "assets/png/gift.png";
   static const String beforeAfter = "assets/png/before-after.png";

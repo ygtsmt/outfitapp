@@ -4,14 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:comby/app/bloc/app_bloc.dart';
 import 'package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:comby/app/ui/widgets/language_dropdown.dart';
 import 'package:comby/core/constants/layout_constants.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/generated/l10n.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:comby/core/routes/app_router.dart';
-import 'package:in_app_review/in_app_review.dart';
 
 class CustomDrawer extends StatefulWidget {
   final AppState state;
@@ -77,39 +74,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ],
               ),
               const Divider(),
-              LanguageDropdown(
-                selectedLocale:
-                    widget.state.languageLocale?.languageCode ?? 'en',
-              ),
+
               LayoutConstants.tinyEmptyHeight,
 
               // Rate App - Only show to users who haven't reviewed yet
-              BlocBuilder<ProfileBloc, ProfileState>(
-                builder: (context, profileState) {
-                  // Don't show button if already reviewed
-                  if (profileState.profileInfo?.hasReceivedReviewCredit ==
-                      true) {
-                    return const SizedBox.shrink();
-                  }
-
-                  return ListTile(
-                    leading: const Icon(
-                      Icons.star_rate_rounded,
-                      color: Colors.amber,
-                    ),
-                    title: Text(
-                      AppLocalizations.of(context).rateOurApp,
-                      style: TextStyle(
-                        fontSize: 8.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    onTap: () {
-                      _requestInAppReview(context);
-                    },
-                  );
-                },
-              ),
 
               ListTile(
                 title: FutureBuilder<PackageInfo>(
@@ -175,89 +143,5 @@ class _CustomDrawerState extends State<CustomDrawer> {
         ),
       ),
     );
-  }
-
-  Future<void> _requestInAppReview(BuildContext context) async {
-    try {
-      final InAppReview inAppReview = InAppReview.instance;
-
-      // Check if in-app review is available
-      final isAvailable = await inAppReview.isAvailable();
-      debugPrint('🔍 In-app review available: $isAvailable');
-
-      if (isAvailable) {
-        debugPrint('🚀 Requesting in-app review...');
-        await inAppReview.requestReview();
-        debugPrint('✅ In-app review request completed');
-
-        // Show toast after review completed
-        _showReviewCompletedToast(context);
-      } else {
-        debugPrint('📱 Opening store listing as fallback...');
-        // Fallback: Open store listing
-        await inAppReview.openStoreListing(
-          appStoreId: '6739088765', // iOS App Store ID
-          microsoftStoreId: '', // Not needed for mobile
-        );
-
-        // Show toast after store opened
-        _showReviewCompletedToast(context);
-      }
-    } catch (e) {
-      debugPrint('❌ Error requesting in-app review: $e');
-      // Ultimate fallback: Show a simple message
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${AppLocalizations.of(context).rateOurApp} 🌟'),
-            action: SnackBarAction(
-              label: 'Open Store',
-              onPressed: () async {
-                final inAppReview = InAppReview.instance;
-                await inAppReview.openStoreListing(
-                  appStoreId: '6739088765',
-                );
-                // Store açıldıktan sonra toast mesajı göster
-                _showReviewCompletedToast(context);
-              },
-            ),
-          ),
-        );
-      }
-    }
-  }
-
-  void _showReviewCompletedToast(BuildContext context) {
-    // Kısa bir delay ile toast mesajını göster (review dialog'u kapandıktan sonra)
-    Future.delayed(const Duration(seconds: 2), () {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(
-              children: [
-                const Icon(Icons.star, color: Colors.amber),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Thank you for rating our app! 🌟',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 4),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            margin: const EdgeInsets.all(16),
-          ),
-        );
-      }
-    });
   }
 }

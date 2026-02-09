@@ -6,7 +6,6 @@ export "injection/injection.dart";
 export "keys.dart";
 export "routes/routes.dart";
 export "services/image_format_service.dart";
-export "services/banned_words_service.dart";
 export "services/prompt_suggestions_service.dart";
 export "ui/widgets/banned_words_dialog.dart";
 export "ui/widgets/reusable_gallery_picker.dart";

@@ -13,7 +13,6 @@ import "package:comby/app/features/auth/features/profile/bloc/profile_bloc.dart"
 import "package:comby/app/features/chat/ui/chat_screen.dart";
 import "package:comby/app/ui/custom_drawer.dart";
 import "package:comby/core/core.dart";
-import "package:comby/core/services/paywall_manager.dart";
 import "package:comby/generated/l10n.dart";
 import "package:google_fonts/google_fonts.dart";
 
@@ -50,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {

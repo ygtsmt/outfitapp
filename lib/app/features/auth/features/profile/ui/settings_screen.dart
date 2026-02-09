@@ -2,10 +2,8 @@ import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:comby/app/core/services/revenue_cat_service.dart';
 import 'package:comby/app/features/auth/features/profile/data/profile_usecase.dart';
 import 'package:comby/app/bloc/app_bloc.dart';
-import 'package:comby/app/ui/widgets/language_dropdown.dart';
 import 'package:comby/core/core.dart';
 import 'package:comby/core/data_sources/local_data_source/secure_data_storage.dart';
 import 'package:comby/generated/l10n.dart';
@@ -35,54 +33,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _isRestoring = false;
   final FirebaseAuth auth = FirebaseAuth.instance;
-
-  Future<void> _restorePurchases() async {
-    setState(() => _isRestoring = true);
-
-    try {
-      final success = await RevenueCatService.restorePurchases();
-
-      if (success) {
-        // Refresh profile to get updated subscription status
-        if (auth.currentUser != null) {
-          getIt<ProfileBloc>()
-              .add(FetchProfileInfoEvent(auth.currentUser!.uid));
-        }
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content:
-                  Text(AppLocalizations.of(context).restorePurchasesSuccess),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context).restorePurchasesEmpty),
-              backgroundColor: Colors.orange,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).restorePurchasesError),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isRestoring = false);
-      }
-    }
-  }
 
   void _showDeleteAccountDialog(BuildContext context) {
     showDialog(
@@ -203,51 +153,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             // Yasal & Bilgi Section
             _buildSectionHeader(
                 context, AppLocalizations.of(context).legalAndInfo),
-            SizedBox(height: 12.h),
-            _buildMenuTile(
-              context,
-              icon: Icons.description_outlined,
-              title: AppLocalizations.of(context).termsOfService,
-              onTap: () {
-                context.router.push(
-                  DocumentsWebViewScreenRoute(
-                    pdfUrl: "https://www.comby.ai/#/terms",
-                    title: AppLocalizations.of(context).termsOfService,
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 12.h),
-            _buildMenuTile(
-              context,
-              icon: Icons.privacy_tip_outlined,
-              title: AppLocalizations.of(context).privacyPolicy,
-              onTap: () {
-                context.router.push(
-                  DocumentsWebViewScreenRoute(
-                    pdfUrl: 'https://www.comby.ai/#/privacy',
-                    title: AppLocalizations.of(context).privacyPolicy,
-                  ),
-                );
-              },
-            ),
-            if (Platform.isIOS) ...[
-              SizedBox(height: 12.h),
-              _buildMenuTile(
-                context,
-                icon: Icons.gavel_outlined,
-                title: AppLocalizations.of(context).appleEula,
-                onTap: () {
-                  context.router.push(
-                    DocumentsWebViewScreenRoute(
-                      pdfUrl:
-                          'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/',
-                      title: AppLocalizations.of(context).appleEula,
-                    ),
-                  );
-                },
-              ),
-            ],
 
             SizedBox(height: 32.h),
 
@@ -309,24 +214,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildSectionHeader(
                   context, AppLocalizations.of(context).purchases),
               SizedBox(height: 12.h),
-              _buildMenuTile(
-                context,
-                icon: Icons.restore,
-                title: AppLocalizations.of(context).restorePurchases,
-                trailing: _isRestoring
-                    ? SizedBox(
-                        width: 16.w,
-                        height: 16.h,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(context.baseColor),
-                        ),
-                      )
-                    : Icon(Icons.arrow_forward_ios,
-                        size: 14.sp, color: Colors.grey[300]),
-                onTap: _isRestoring ? null : _restorePurchases,
-              ),
               SizedBox(height: 32.h),
             ],
             // Logout Button
@@ -521,50 +408,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 20),
               // Language list with scroll
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: languages.map((LanguageItem lang) {
-                      final isSelected = lang.code == selectedLanguage;
-                      return ListTile(
-                        leading: Image.asset(
-                          lang.flagAsset,
-                          width: 32,
-                          height: 32,
-                        ),
-                        title: Text(
-                          lang.name,
-                          style: TextStyle(
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            color: isSelected
-                                ? Theme.of(context).primaryColor
-                                : null,
-                          ),
-                        ),
-                        trailing: isSelected
-                            ? Icon(
-                                Icons.check_circle,
-                                color: Theme.of(context).primaryColor,
-                              )
-                            : null,
-                        onTap: () async {
-                          setState(() {
-                            selectedLanguage = lang.code;
-                          });
-                          // Dil ayarını kalıcı olarak sakla
-                          await getIt<SecureDataStorage>()
-                              .setAppLanguage(Locale(lang.code));
-                          getIt<AppBloc>()
-                              .add(SetLanguageEvent(Locale(lang.code)));
-                          Navigator.of(context).pop();
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
             ],
           ),
         );

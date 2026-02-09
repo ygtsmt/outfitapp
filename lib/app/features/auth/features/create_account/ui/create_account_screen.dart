@@ -10,7 +10,6 @@ import "package:flutter/material.dart";
 import "package:flutter_adaptive_ui/flutter_adaptive_ui.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:comby/generated/l10n.dart";
-import "package:comby/app/core/services/revenue_cat_service.dart";
 
 class CreateAccountScreen extends StatelessWidget {
   final bool? isUpgrade;
@@ -33,7 +32,7 @@ class CreateAccountScreen extends StatelessWidget {
                 content: AppLocalizations.of(context).successfully);
 
             // Account oluşturulduğunda RevenueCat'i Firebase ile sync et
-            RevenueCatService.syncWithFirebase();
+          
 
             context.router.navigate(const LoginScreenRoute());
           } else if (state.createAccountStatus == EventStatus.failure) {

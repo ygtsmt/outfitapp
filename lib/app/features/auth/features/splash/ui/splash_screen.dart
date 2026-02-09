@@ -12,9 +12,7 @@ import "package:comby/app/ui/widgets/comby_logo.dart";
 import "package:comby/core/core.dart";
 import "package:comby/core/services/language_service.dart";
 import "package:comby/core/services/theme_service.dart";
-import "package:comby/app/core/services/revenue_cat_service.dart";
 import "package:comby/generated/l10n.dart";
-import "package:google_mobile_ads/google_mobile_ads.dart";
 
 import "package:photo_manager/photo_manager.dart";
 
@@ -52,13 +50,6 @@ class _SplashScreenState extends State<SplashScreen> {
           getIt<LanguageService>().setSavedLanuage(),
 
           // Ağır işlemler - hata kontrolü ile
-          MobileAds.instance.initialize().catchError((e) {
-            debugPrint("MobileAds error: $e");
-            return InitializationStatus({});
-          }),
-          RevenueCatService.initialize().catchError((e) {
-            debugPrint("RevenueCat error: $e");
-          }),
         ]);
 
         // Progress güncellemeleri
@@ -84,9 +75,6 @@ class _SplashScreenState extends State<SplashScreen> {
       // Login durumunu kontrol et
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // 🔥 RevenueCat'i Firebase User ID ile sync et
-        await RevenueCatService.syncWithFirebase();
-
         if (mounted) {
           context.router.replace(const HomeScreenRoute());
         }

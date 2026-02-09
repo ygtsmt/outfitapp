@@ -53,7 +53,6 @@ import "package:comby/core/core.dart";
 import "package:comby/core/services/outfit_suggestion_service.dart";
 import "package:flutter/material.dart";
 import "package:injectable/injectable.dart";
-import "package:video_player/video_player.dart";
 
 part "app_router.gr.dart";
 

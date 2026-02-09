@@ -46,25 +46,7 @@ class TermsAndPolicyAcceptWidget extends StatelessWidget {
                     .add(CheckedTermsAndPolicyEvent(value ?? false));
               },
             ),
-            Expanded(
-                child: TermsAgreementText(
-              onTermsTap: () {
-                context.router.push(
-                  DocumentsWebViewScreenRoute(
-                    pdfUrl: 'https://www.comby.ai/#/terms',
-                    title: AppLocalizations.of(context).termsOfService,
-                  ),
-                );
-              },
-              onPrivacyTap: () {
-                context.router.push(
-                  DocumentsWebViewScreenRoute(
-                    pdfUrl: 'https://www.comby.ai/#/privacy',
-                    title: AppLocalizations.of(context).privacyPolicy,
-                  ),
-                );
-              },
-            ))
+          
           ],
         );
       },
