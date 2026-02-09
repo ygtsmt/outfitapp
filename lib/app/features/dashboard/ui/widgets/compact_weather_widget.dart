@@ -42,10 +42,21 @@ class _CompactWeatherWidgetState extends State<CompactWeatherWidget> {
     _hasPermission = await _locationService.hasPermission();
 
     if (!_hasPermission) {
-      setState(() {
-        _isLoading = false;
-      });
-      return;
+      // Automatically request permission on first load
+      final permission = await _locationService.requestPermission();
+
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        // Permission denied - show permission request UI
+        setState(() {
+          _isLoading = false;
+          _hasPermission = false;
+        });
+        return;
+      }
+
+      // Permission granted
+      _hasPermission = true;
     }
 
     final position = await _locationService.getCurrentPosition();

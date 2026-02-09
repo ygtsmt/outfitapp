@@ -51,19 +51,20 @@ class _LiveStylistPageState extends State<LiveStylistPage>
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
 
-    // Start auto-hide timer
-    _resetHideControlsTimer();
+    // Auto-hide timer disabled - controls always visible
+    // _resetHideControlsTimer();
   }
 
   void _resetHideControlsTimer() {
     _hideControlsTimer?.cancel();
     setState(() => _showControls = true);
 
-    _hideControlsTimer = Timer(const Duration(seconds: 5), () {
-      if (mounted) {
-        setState(() => _showControls = false);
-      }
-    });
+    // Auto-hide disabled - controls stay visible
+    // _hideControlsTimer = Timer(const Duration(seconds: 5), () {
+    //   if (mounted) {
+    //     setState(() => _showControls = false);
+    //   }
+    // });
   }
 
   void _toggleControlsVisibility() {
@@ -353,45 +354,6 @@ class _LiveStylistPageState extends State<LiveStylistPage>
 
                             const Spacer(),
 
-                            // --- LOGS PREVIEW ---
-                            if (state.logs.isNotEmpty && _showControls)
-                              FadeIn(
-                                duration: const Duration(milliseconds: 300),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 24.w, vertical: 16.h),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(16.r),
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(
-                                          sigmaX: 10, sigmaY: 10),
-                                      child: Container(
-                                        padding: EdgeInsets.all(12.w),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.1),
-                                          borderRadius:
-                                              BorderRadius.circular(16.r),
-                                          border: Border.all(
-                                              color: Colors.white
-                                                  .withOpacity(0.1)),
-                                        ),
-                                        child: Text(
-                                          state.logs.last,
-                                          style: TextStyle(
-                                            color:
-                                                Colors.white.withOpacity(0.9),
-                                            fontSize: 13.sp,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
                             // --- BOTTOM CONTROLS ---
                             if (_showControls)
                               FadeIn(
@@ -405,6 +367,14 @@ class _LiveStylistPageState extends State<LiveStylistPage>
                     },
                   ),
                 ),
+
+                // 4. Conversation Preview - Bottom Left
+                if (_showControls)
+                  Positioned(
+                    left: 16.w,
+                    bottom: 100.h,
+                    child: _buildConversationPreview(state),
+                  ),
               ],
             ),
           );
@@ -471,14 +441,7 @@ class _LiveStylistPageState extends State<LiveStylistPage>
   }
 
   Widget _buildVoiceVisualizer(LiveStylistState state) {
-    // Don't render at all when not speaking - saves resources
-    if (!state.isAiSpeaking) {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.2,
-        width: MediaQuery.of(context).size.width * 0.9,
-      );
-    }
-
+    // Keep animation always visible, but only animate when AI is speaking
     return RepaintBoundary(
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.2,
@@ -486,7 +449,7 @@ class _LiveStylistPageState extends State<LiveStylistPage>
         child: Lottie.asset(
           'assets/gemini-responding-lottie.json',
           repeat: true,
-          animate: true,
+          animate: state.isAiSpeaking, // Only animate when AI is speaking
           fit: BoxFit.contain,
           // Performance optimizations
           frameRate: FrameRate(60), // Limit to 60fps instead of unlimited
@@ -495,6 +458,101 @@ class _LiveStylistPageState extends State<LiveStylistPage>
           options: LottieOptions(
             enableMergePaths: true, // Optimize path rendering
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConversationPreview(LiveStylistState state) {
+    final logs = state.logs
+        .where((log) => log.startsWith('[Agent]:') || log.startsWith('[Tool]:'))
+        .toList();
+
+    if (logs.isEmpty) return const SizedBox.shrink();
+
+    final visibleLogs = logs.length > 3 ? logs.sublist(logs.length - 3) : logs;
+
+    return FadeInUp(
+      duration: const Duration(milliseconds: 350),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Row(
+              children: [
+                Text(
+                  "Agent Reasoning",
+                  style: TextStyle(
+                    color: Color(0xFF00E676),
+                    fontSize: 8.sp,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0,
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 4.h),
+
+            // Steps
+            ...visibleLogs.map((log) {
+              final isTool = log.startsWith('[Tool]:');
+              final text = log
+                  .replaceFirst('[Agent]:', '')
+                  .replaceFirst('[Tool]:', '')
+                  .replaceAll('**', '')
+                  .trim();
+
+              return Padding(
+                padding: EdgeInsets.only(bottom: 2.h),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Dot
+                    Container(
+                      margin: EdgeInsets.only(top: 4.h),
+                      width: 4.w,
+                      height: 4.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isTool
+                            ? const Color(0xFF42A5F5)
+                            : const Color(0xFF00E676),
+                        boxShadow: [
+                          BoxShadow(
+                            color: (isTool
+                                    ? const Color(0xFF42A5F5)
+                                    : const Color(0xFF00E676))
+                                .withOpacity(0.6),
+                            blurRadius: 6,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(width: 8.w),
+
+                    Expanded(
+                      child: Text(
+                        text,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.95),
+                          fontSize: 8.sp,
+                          fontWeight:
+                              isTool ? FontWeight.w600 : FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
         ),
       ),
     );
