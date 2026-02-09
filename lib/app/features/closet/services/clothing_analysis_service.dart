@@ -40,7 +40,7 @@ Return ONLY a valid JSON object with these exact fields:
 {
   "isValidFashionItem": "true if this is clothing, shoes, bags, jewelry, watches, accessories, or any fashion/wearable item. false if this is NOT a fashion item (e.g. animals, cars, food, landscapes, people without focus on clothing, electronics, furniture, etc.)",
   "invalidReason": "if isValidFashionItem is false, describe what the image shows (e.g. 'This appears to be a cat', 'This is a car', 'This is food'). null if isValidFashionItem is true",
-  "subcategory": "one of: bag, belt, blazer, blouse, boots, bracelet, cardigan, chain, coat, earrings, flats, gloves, hat, heels, hoodie, jacket, jeans, jewelry, leggings, necklace, pants, pendant, ring, sandals, scarf, shirt, shoes, shorts, skirt, slippers, sneakers, sunglasses, sweater, tank top, t-shirt, trousers, vest, watch. null if isValidFashionItem is false",
+  "subcategory": "one of: bag, belt, bikini, blazer, blouse, boots, bow tie, bra, bracelet, cardigan, chain, coat, dress, earrings, flats, gloves, hat, heels, hoodie, jacket, jeans, jewelry, jumpsuit, leggings, lingerie, necklace, pants, pendant, polo shirt, ring, romper, sandals, scarf, shirt, shoes, shorts, skirt, slippers, sneakers, socks, suit, sunglasses, sweater, swimsuit, tank top, tie, t-shirt, trousers, vest, watch. null if isValidFashionItem is false",
   "color": "one of: black, white, beige, gray, red, blue, green, yellow, orange, pink, purple, brown, navy, khaki, silver, gold. null if isValidFashionItem is false",
   "pattern": "one of: plain, striped, floral, logo, checkered, graphic, polka dot, geometric. null if isValidFashionItem is false",
   "season": "one of: summer, winter, spring, autumn, all. null if isValidFashionItem is false",

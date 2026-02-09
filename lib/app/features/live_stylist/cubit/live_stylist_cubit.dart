@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 
 import 'package:audio_session/audio_session.dart';
 import 'package:bloc/bloc.dart';
@@ -284,6 +285,17 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
           logs: List.from(state.logs)..add("[Tool Call]: $name ($args)"),
         ));
 
+        if (name == 'search_online_shopping') {
+          final query = args['query'] as String;
+          // Asynchronously handle shopping search without blocking loop significantly
+          // Note: _handleShoppingSearch sends its own tool response.
+          // We use 'unawaited' or just call it if we want parallel execution,
+          // but since we want to ensure ordering of responses if crucial, await might be safer.
+          // However, the original loop processes sequentially.
+          await _handleShoppingSearch(query, id);
+          continue;
+        }
+
         Map<String, dynamic> result = {};
         if (name == 'search_wardrobe') {
           // Agent provides list of terms/synonyms directly
@@ -531,8 +543,109 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
     await _agentService.disconnect();
     return super.close();
   }
-}
 
+  void closeShoppingCarousel() {
+    emit(state.copyWith(showShoppingCarousel: false));
+  }
+
+  // Helper method to handle shopping search
+  Future<void> _handleShoppingSearch(String query, String id) async {
+    // 1. Get API Key (Hardcoded)
+    const String serpApiKey =
+        'b28fa56a220c2684f774b3cc4d576666bacecdb53c4962e24b446231248a954c';
+    final gl = 'tr';
+    final hl = 'tr';
+    final googleDomain = 'google.com.tr';
+
+    try {
+      final url = Uri.parse('https://serpapi.com/search.json');
+      final response = await http.get(url.replace(queryParameters: {
+        'engine': 'google_shopping',
+        'q': query,
+        'api_key': serpApiKey,
+        'google_domain': googleDomain,
+        'gl': gl,
+        'hl': hl,
+        'num': '5',
+      }));
+
+      Map<String, dynamic> result = {};
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final shoppingResults = data['shopping_results'] as List?;
+
+        if (shoppingResults != null && shoppingResults.isNotEmpty) {
+          final products = shoppingResults
+              .take(5)
+              .map((item) {
+                return {
+                  'title': item['title'],
+                  'price': item['price'],
+                  'source': item['source'],
+                  'link': item['link'] ??
+                      item['product_link'] ??
+                      item['serpapi_product_api'],
+                  'thumbnail': item['thumbnail'],
+                };
+              })
+              .toList()
+              .cast<Map<String, dynamic>>();
+
+          // Build a text summary for the Agent
+          final summary =
+              products.map((e) => "${e['title']} (${e['price']})").join(", ");
+          result = {
+            "message": "Found products: $summary. Showing carousel to user.",
+            "count": products.length
+          };
+
+          // Update UI state
+          emit(state.copyWith(
+            shoppingItems: products,
+            showShoppingCarousel: true,
+            logs: List.from(state.logs)
+              ..add(
+                  "[Tool Response]: Found ${products.length} shopping items."),
+          ));
+        } else {
+          result = {'message': 'No products found online for "$query".'};
+          emit(state.copyWith(
+            logs: List.from(state.logs)
+              ..add("[Tool Response]: No products found."),
+          ));
+        }
+      } else {
+        result = {'error': 'SerpApi Error: ${response.statusCode}'};
+      }
+
+      final toolResponse = {
+        "function_responses": [
+          {
+            "name": "search_online_shopping",
+            "response": {"result": result},
+            "id": id
+          }
+        ]
+      };
+      _agentService.sendToolResponse(toolResponse);
+    } catch (e) {
+      log('❌ Shopping Search Error: $e');
+      final toolResponse = {
+        "function_responses": [
+          {
+            "name": "search_online_shopping",
+            "response": {
+              "result": {"error": e.toString()}
+            },
+            "id": id
+          }
+        ]
+      };
+      _agentService.sendToolResponse(toolResponse);
+    }
+  }
+}
 
 /* 
 
@@ -778,6 +891,12 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
           }
         }
 
+        if (name == 'search_online_shopping') {
+          final query = args['query'] as String;
+          _handleShoppingSearch(query, id);
+          continue;
+        }
+
         final toolResponse = {
           "function_responses": [
             {
@@ -814,6 +933,99 @@ class LiveStylistCubit extends Cubit<LiveStylistState> {
     await _agentService.disconnect();
     return super.close();
   }
-}
+  void closeShoppingCarousel() {
+    emit(state.copyWith(showShoppingCarousel: false));
+  }
 
- */
+  // Helper method to handle shopping search
+  Future<void> _handleShoppingSearch(String query, String id) async {
+    // 1. Get API Key (Hardcoded)
+    const String serpApiKey =
+        'b28fa56a220c2684f774b3cc4d576666bacecdb53c4962e24b446231248a954c';
+    final gl = 'tr';
+    final hl = 'tr';
+    final googleDomain = 'google.com.tr';
+
+    try {
+      final url = Uri.parse('https://serpapi.com/search.json');
+      final response = await http.get(url.replace(queryParameters: {
+        'engine': 'google_shopping',
+        'q': query,
+        'api_key': serpApiKey,
+        'google_domain': googleDomain,
+        'gl': gl,
+        'hl': hl,
+        'num': '5',
+      }));
+
+      Map<String, dynamic> result = {};
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final shoppingResults = data['shopping_results'] as List?;
+
+        if (shoppingResults != null && shoppingResults.isNotEmpty) {
+          final products = shoppingResults.take(5).map((item) {
+            return {
+              'title': item['title'],
+              'price': item['price'],
+              'source': item['source'],
+              'link': item['link'] ??
+                  item['product_link'] ??
+                  item['serpapi_product_api'],
+              'thumbnail': item['thumbnail'],
+            };
+          }).toList().cast<Map<String, dynamic>>();
+
+          // Build a text summary for the Agent
+          final summary =
+              products.map((e) => "${e['title']} (${e['price']})").join(", ");
+          result = {
+            "message": "Found products: $summary. Showing carousel to user.",
+            "count": products.length
+          };
+
+          // Update UI state
+          emit(state.copyWith(
+            shoppingItems: products,
+            showShoppingCarousel: true,
+            logs: List.from(state.logs)
+              ..add(
+                  "[Tool Response]: Found ${products.length} shopping items."),
+          ));
+        } else {
+          result = {'message': 'No products found online for "$query".'};
+          emit(state.copyWith(
+            logs: List.from(state.logs)
+              ..add("[Tool Response]: No products found."),
+          ));
+        }
+      } else {
+        result = {'error': 'SerpApi Error: ${response.statusCode}'};
+      }
+
+      final toolResponse = {
+        "function_responses": [
+          {
+            "name": "search_online_shopping",
+            "response": {"result": result},
+            "id": id
+          }
+        ]
+      };
+      _agentService.sendToolResponse(toolResponse);
+    } catch (e) {
+      log('❌ Shopping Search Error: $e');
+      final toolResponse = {
+        "function_responses": [
+          {
+            "name": "search_online_shopping",
+            "response": {"result": {"error": e.toString()}},
+            "id": id
+          }
+        ]
+      };
+      _agentService.sendToolResponse(toolResponse);
+    }
+  }
+}*/

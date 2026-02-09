@@ -396,6 +396,20 @@ class _$AppRouter extends RootStackRouter {
         barrierDismissible: false,
       );
     },
+    ShoppingItemDetailScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<ShoppingItemDetailScreenRouteArgs>();
+      return CustomPage<dynamic>(
+        routeData: routeData,
+        child: ShoppingItemDetailScreen(
+          key: args.key,
+          product: args.product,
+        ),
+        fullscreenDialog: true,
+        transitionsBuilder: TransitionsBuilders.slideTop,
+        opaque: true,
+        barrierDismissible: false,
+      );
+    },
     DashbordTabRouter.name: (routeData) {
       return CustomPage<dynamic>(
         routeData: routeData,
@@ -746,6 +760,10 @@ class _$AppRouter extends RootStackRouter {
         RouteConfig(
           OnboardingScreenRoute.name,
           path: '/onboarding-screen',
+        ),
+        RouteConfig(
+          ShoppingItemDetailScreenRoute.name,
+          path: '/shopping-item-detail-screen',
         ),
       ];
 }
@@ -1569,6 +1587,41 @@ class OnboardingScreenRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'OnboardingScreenRoute';
+}
+
+/// generated route for
+/// [ShoppingItemDetailScreen]
+class ShoppingItemDetailScreenRoute
+    extends PageRouteInfo<ShoppingItemDetailScreenRouteArgs> {
+  ShoppingItemDetailScreenRoute({
+    Key? key,
+    required Map<String, dynamic> product,
+  }) : super(
+          ShoppingItemDetailScreenRoute.name,
+          path: '/shopping-item-detail-screen',
+          args: ShoppingItemDetailScreenRouteArgs(
+            key: key,
+            product: product,
+          ),
+        );
+
+  static const String name = 'ShoppingItemDetailScreenRoute';
+}
+
+class ShoppingItemDetailScreenRouteArgs {
+  const ShoppingItemDetailScreenRouteArgs({
+    this.key,
+    required this.product,
+  });
+
+  final Key? key;
+
+  final Map<String, dynamic> product;
+
+  @override
+  String toString() {
+    return 'ShoppingItemDetailScreenRouteArgs{key: $key, product: $product}';
+  }
 }
 
 /// generated route for

@@ -113,6 +113,11 @@ class LiveAgentService {
    - If user says "hi", respond naturally as a friendly stylist
    - Don't force tool usage unless contextually needed
    - Casual chat is perfectly acceptable
+
+6. AUTOMATIC SHOPPING (CRITICAL):
+   - If `search_wardrobe` returns EMPTY or NO items, do NOT ask: "Should I look online?"
+   - IMMEDIATELY call `search_online_shopping` with the same query.
+   - Example: *wardrobe search empty* -> *call search_online_shopping* -> "I couldn't find that in your closet, but here are some great options online..."
 ''';
 
     // STEP 2: Build full system instruction
@@ -217,6 +222,22 @@ Example:
                 "description":
                     "Get current weather at user's location. Use when user mentions weather-dependent contexts ('hot', 'cold', 'raining') or asks for weather-based advice.",
                 "parameters": {"type": "OBJECT", "properties": {}}
+              },
+              {
+                "name": "search_online_shopping",
+                "description":
+                    "Search for products online when the user asks to buy or find an item that is NOT in their wardrobe. Returns a list of products with prices and links.",
+                "parameters": {
+                  "type": "OBJECT",
+                  "properties": {
+                    "query": {
+                      "type": "STRING",
+                      "description":
+                          "The search query for the product (e.g., 'red party dress', 'men's linen suit', 'nike running shoes')."
+                    }
+                  },
+                  "required": ["query"]
+                }
               }
             ]
           }
@@ -383,7 +404,14 @@ Example:
       'get_weather': [
         '🌤️ Checking the weather...',
         '☁️ Let me see what it\'s like outside...',
+        '☁️ Let me see what it\'s like outside...',
         '🌡️ Hmm, what\'s the temperature...',
+      ],
+      'search_online_shopping': [
+        '🛍️ Shopping time! Searching online...',
+        '👗 Looking for the best options for you...',
+        '🛒 Checking online stores...',
+        '💸 Finding the best deals...',
       ],
     };
 

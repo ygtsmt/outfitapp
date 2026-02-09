@@ -22,6 +22,7 @@ import "package:comby/app/features/dashboard/ui/screens/onboarding_screen.dart";
 import "package:comby/app/features/fit_check/models/fit_check_model.dart";
 import "package:comby/app/features/fit_check/ui/screens/fit_check_result_screen.dart";
 import "package:comby/app/features/fit_check/ui/screens/fit_check_history_screen.dart";
+import "package:comby/app/features/live_stylist/pages/shopping_item_detail_screen.dart";
 import "package:comby/app/features/wrapped/models/wrapped_result.dart";
 import "package:comby/app/ui/widgets/feedback_screen.dart";
 import "package:comby/app/features/closet/ui/screens/gallery_selection_screen.dart";
@@ -317,6 +318,12 @@ part "app_router.gr.dart";
       page: OnboardingScreen,
       path: "/onboarding-screen",
       transitionsBuilder: TransitionsBuilders.fadeIn,
+      fullscreenDialog: true,
+    ),
+    CustomRoute(
+      page: ShoppingItemDetailScreen,
+      path: "/shopping-item-detail-screen",
+      transitionsBuilder: TransitionsBuilders.slideTop,
       fullscreenDialog: true,
     ),
   ],

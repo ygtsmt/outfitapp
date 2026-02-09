@@ -12,6 +12,7 @@ import 'package:comby/app/features/live_stylist/widgets/thought_bubble_widget.da
 import 'package:comby/app/features/live_stylist/widgets/live_stylist_permission_view.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
+import 'package:comby/app/features/chat/widgets/shopping_carousel_widget.dart';
 
 class LiveStylistPage extends StatefulWidget {
   const LiveStylistPage({Key? key}) : super(key: key);
@@ -368,12 +369,21 @@ class _LiveStylistPageState extends State<LiveStylistPage>
                   ),
                 ),
 
-                // 4. Conversation Preview - Bottom Left
+                // 4. Conversation Preview or Shopping Carousel
                 if (_showControls)
                   Positioned(
-                    left: 16.w,
+                    left: 0,
+                    right: 0,
                     bottom: 100.h,
-                    child: _buildConversationPreview(state),
+                    child: state.showShoppingCarousel
+                        ? _buildShoppingCarousel(context, state)
+                        : Padding(
+                            padding: EdgeInsets.only(left: 16.w),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: _buildConversationPreview(state),
+                            ),
+                          ),
                   ),
               ],
             ),
@@ -644,6 +654,49 @@ class _LiveStylistPageState extends State<LiveStylistPage>
             child: Icon(icon, color: Colors.white, size: 24.sp),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildShoppingCarousel(BuildContext context, LiveStylistState state) {
+    return FadeInUp(
+      duration: const Duration(milliseconds: 350),
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topRight,
+        children: [
+          Container(
+            height: 200.h,
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
+            child: ShoppingCarouselWidget(
+              products: state.shoppingItems,
+            ),
+          ),
+          Positioned(
+            top: 0.h,
+            right: 8.w,
+            child: GestureDetector(
+              onTap: () {
+                context.read<LiveStylistCubit>().closeShoppingCarousel();
+              },
+              child: Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 20.sp,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

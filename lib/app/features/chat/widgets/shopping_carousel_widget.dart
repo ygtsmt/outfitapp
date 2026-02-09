@@ -1,6 +1,8 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:comby/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:comby/app/features/live_stylist/pages/shopping_item_detail_screen.dart';
 
 class ShoppingCarouselWidget extends StatelessWidget {
   final List<Map<String, dynamic>> products;
@@ -17,19 +19,8 @@ class ShoppingCarouselWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-          child: Text(
-            '🛒 Purchasing Options',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-        ),
         SizedBox(
-          height: 220.h,
+          height: 180.h,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: products.length,
@@ -40,9 +31,6 @@ class ShoppingCarouselWidget extends StatelessWidget {
               final price = product['price'] as String? ?? '';
               final source = product['source'] as String? ?? '';
               final thumbnail = product['thumbnail'] as String?;
-              final link = product['link'] ??
-                  product['product_link'] ??
-                  product['serpapi_product_api'];
 
               return Container(
                 width: 160.w,
@@ -60,39 +48,49 @@ class ShoppingCarouselWidget extends StatelessWidget {
                   border: Border.all(color: const Color(0xFFF0F0F0)),
                 ),
                 child: InkWell(
-                  onTap: () async {
-                    if (link != null) {
-                      launch(link);
-                    }
+                  onTap: () {
+                   /*  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ShoppingItemDetailScreen(product: product),
+                      ),
+                    ); */
+                    context.router
+                        .push(ShoppingItemDetailScreenRoute(product: product));
                   },
                   borderRadius: BorderRadius.circular(16.r),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Image
-                      ClipRRect(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(16.r)),
-                        child: Container(
-                          height: 100.h,
-                          width: double.infinity,
-                          color: Colors.grey[50],
-                          child: thumbnail != null
-                              ? Image.network(
-                                  thumbnail,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Icon(Icons.shopping_bag_outlined,
-                                          color: Colors.grey[400]),
-                                )
-                              : Icon(Icons.shopping_bag_outlined,
-                                  color: Colors.grey[400]),
+                      // Image - Flexible height (takes remaining space)
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(16.r)),
+                          child: Container(
+                            width: double.infinity,
+                            color: Colors.grey[50],
+                            child: thumbnail != null
+                                ? Image.network(
+                                    thumbnail,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Icon(
+                                            Icons.shopping_bag_outlined,
+                                            color: Colors.grey[400]),
+                                  )
+                                : Icon(Icons.shopping_bag_outlined,
+                                    color: Colors.grey[400]),
+                          ),
                         ),
                       ),
-                      // Info
+                      // Info - Fixed needed space
                       Padding(
-                        padding: EdgeInsets.all(10.w),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 8.w, vertical: 8.h),
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -100,16 +98,16 @@ class ShoppingCarouselWidget extends StatelessWidget {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontSize: 13.sp,
+                                fontSize: 11.sp,
                                 fontWeight: FontWeight.w600,
-                                height: 1.2,
+                                height: 1.1,
                               ),
                             ),
-                            SizedBox(height: 6.h),
+                            SizedBox(height: 4.h),
                             Text(
                               price,
                               style: TextStyle(
-                                fontSize: 14.sp,
+                                fontSize: 12.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).primaryColor,
                               ),
@@ -118,13 +116,13 @@ class ShoppingCarouselWidget extends StatelessWidget {
                             Row(
                               children: [
                                 Icon(Icons.store,
-                                    size: 12.sp, color: Colors.grey[600]),
+                                    size: 10.sp, color: Colors.grey[600]),
                                 SizedBox(width: 4.w),
                                 Expanded(
                                   child: Text(
                                     source,
                                     style: TextStyle(
-                                      fontSize: 11.sp,
+                                      fontSize: 10.sp,
                                       color: Colors.grey[600],
                                     ),
                                     maxLines: 1,

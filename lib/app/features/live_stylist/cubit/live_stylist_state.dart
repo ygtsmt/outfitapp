@@ -26,6 +26,10 @@ class LiveStylistState extends Equatable {
   final String? currentToolName;
   final bool hasActiveThought;
 
+  // Shopping fields
+  final List<Map<String, dynamic>> shoppingItems;
+  final bool showShoppingCarousel;
+
   const LiveStylistState({
     this.status = LiveStylistStatus.initial,
     this.message,
@@ -38,6 +42,8 @@ class LiveStylistState extends Equatable {
     this.currentThought,
     this.currentToolName,
     this.hasActiveThought = false,
+    this.shoppingItems = const [],
+    this.showShoppingCarousel = false,
   });
 
   LiveStylistState copyWith({
@@ -52,6 +58,8 @@ class LiveStylistState extends Equatable {
     String? currentThought,
     String? currentToolName,
     bool? hasActiveThought,
+    List<Map<String, dynamic>>? shoppingItems,
+    bool? showShoppingCarousel,
   }) {
     return LiveStylistState(
       status: status ?? this.status,
@@ -67,6 +75,8 @@ class LiveStylistState extends Equatable {
       currentThought: currentThought ?? this.currentThought,
       currentToolName: currentToolName ?? this.currentToolName,
       hasActiveThought: hasActiveThought ?? this.hasActiveThought,
+      shoppingItems: shoppingItems ?? this.shoppingItems,
+      showShoppingCarousel: showShoppingCarousel ?? this.showShoppingCarousel,
     );
   }
 
@@ -83,5 +93,7 @@ class LiveStylistState extends Equatable {
         currentThought,
         currentToolName,
         hasActiveThought,
+        shoppingItems,
+        showShoppingCarousel,
       ];
 }

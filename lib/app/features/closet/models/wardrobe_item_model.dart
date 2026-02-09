@@ -153,6 +153,7 @@ class WardrobeItem {
       'hoodie',
       'top',
       'tee',
+      'polo shirt',
     ];
     if (topSubcategories.contains(subcategoryLower)) {
       return 'top';
@@ -171,6 +172,20 @@ class WardrobeItem {
     ];
     if (bottomSubcategories.contains(subcategoryLower)) {
       return 'bottom';
+    }
+
+    // One Piece / Full Body kategorisi
+    const onePieceSubcategories = [
+      'dress',
+      'jumpsuit',
+      'romper',
+      'swimsuit',
+      'bikini',
+      'one piece',
+      'full body',
+    ];
+    if (onePieceSubcategories.contains(subcategoryLower)) {
+      return 'one_piece';
     }
 
     // Shoes kategorisi
@@ -194,6 +209,17 @@ class WardrobeItem {
       return 'shoes';
     }
 
+    // Underwear / Lingerie kategorisi
+    const underwearSubcategories = [
+      'bra',
+      'activewear',
+      'lingerie',
+      'underwear',
+    ];
+    if (underwearSubcategories.contains(subcategoryLower)) {
+      return 'underwear';
+    }
+
     // Outerwear kategorisi
     const outerwearSubcategories = [
       'jacket',
@@ -203,6 +229,7 @@ class WardrobeItem {
       'cardigan',
       'vest',
       'outerwear',
+      'suit',
     ];
     if (outerwearSubcategories.contains(subcategoryLower)) {
       return 'outerwear';
@@ -219,6 +246,11 @@ class WardrobeItem {
       'jewellery',
       'accessory',
       'accessories',
+      'tie',
+      'bow tie',
+      'socks',
+      'glasses',
+      'sunglasses',
     ];
     if (accessorySubcategories.contains(subcategoryLower)) {
       return 'accessory';
