@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'dart:developer';
 import 'dart:io';
 import 'package:injectable/injectable.dart';
@@ -429,6 +430,8 @@ class AgentService {
         return _analyzeStyleDNA(call.args);
       case 'start_travel_mission':
         return _startTravelMission(call.args);
+      case 'search_online_shopping':
+        return _searchOnlineShopping(call.args);
       default:
         throw Exception('Unknown tool: ${call.name}');
     }
@@ -508,16 +511,37 @@ class AgentService {
   Future<Map<String, dynamic>> _searchWardrobe(
       Map<String, dynamic> args) async {
     final category = args['category'] as String?;
+    final keywords = args['keywords'] as String?;
     final limit = args['limit'] as int? ?? 5;
 
     final allItems = await _closetUseCase.getUserClosetItems();
 
     final filteredItems = allItems
-        .where((item) =>
-            category == null ||
-            (item.category ?? '')
-                .toLowerCase()
-                .contains(category.toLowerCase()))
+        .where((item) {
+          // 1. Category Filter
+          if (category != null &&
+              !(item.category?.toLowerCase().contains(category.toLowerCase()) ??
+                  false)) {
+            return false;
+          }
+
+          // 2. Keyword Filter (Color, Subcategory, Brand, Pattern)
+          if (keywords != null && keywords.isNotEmpty) {
+            final query = keywords.toLowerCase();
+            final itemText = [
+              item.subcategory,
+              item.color,
+              item.brand,
+              item.pattern,
+              item.material
+            ].where((e) => e != null).join(' ').toLowerCase();
+
+            // Check if item metadata contains the keyword
+            return itemText.contains(query);
+          }
+
+          return true;
+        })
         .take(limit)
         .toList();
 
@@ -802,14 +826,100 @@ class AgentService {
     final topColors = getTopStats(colorCounts);
     final topCategories = getTopStats(categoryCounts);
 
-    // 4. Return Results
     return {
       'total_items': totalItems,
       'top_colors': topColors,
       'top_categories': topCategories,
       'message':
-          'Wardrobe analysis completed. Provide insights based on statistics.',
+          'Analysis complete. You have $totalItems items. Your wardrobe is dominated by ${topColors.map((e) => e['name']).join(', ')} colors and mostly consists of ${topCategories.map((e) => e['name']).join(', ')}.',
     };
+  }
+
+  Future<Map<String, dynamic>> _searchOnlineShopping(
+      Map<String, dynamic> args) async {
+    final query = args['query'] as String;
+    final gl = args['gl'] as String? ?? 'tr'; // Default to TR
+    final hl = gl == 'tr' ? 'tr' : 'en'; // Language based on country
+    final googleDomain = gl == 'tr' ? 'google.com.tr' : 'google.com';
+
+    log('🛍️ Shopping Search: $query (Location: $gl)');
+
+    // 1. Get API Key (Hardcoded for Hackathon)
+    const String serpApiKey =
+        'b28fa56a220c2684f774b3cc4d576666bacecdb53c4962e24b446231248a954c';
+
+    if (serpApiKey.isEmpty) {
+      log('⚠️ SerpApi Key missing or invalid. Returning MOCK data for demo.');
+      // Mock Data
+      return {
+        'products': [
+          {
+            'title': 'Mock - ${query} Option 1',
+            'price': '\$49.99',
+            'source': 'Trendyol',
+            'link': 'https://google.com',
+            'thumbnail': 'https://via.placeholder.com/150'
+          },
+          {
+            'title': 'Mock - ${query} Option 2',
+            'price': '\$79.50',
+            'source': 'Zara',
+            'link': 'https://google.com',
+            'thumbnail': 'https://via.placeholder.com/150'
+          },
+        ],
+        'message':
+            'Found some ${query} options for you (Mock Data - Add valid API Key to enable real search).',
+      };
+    }
+
+    try {
+      final url = Uri.parse('https://serpapi.com/search.json');
+      final response = await http.get(url.replace(queryParameters: {
+        'engine': 'google_shopping',
+        'q': query,
+        'api_key': serpApiKey,
+        'google_domain': googleDomain,
+        'gl': gl,
+        'hl': hl,
+        'num': '5',
+      }));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final shoppingResults = data['shopping_results'] as List?;
+
+        if (shoppingResults == null || shoppingResults.isEmpty) {
+          return {'message': 'No products found online for "$query".'};
+        }
+
+        final products = shoppingResults.take(4).map((item) {
+          return {
+            'title': item['title'],
+            'price': item['price'],
+            'source': item['source'],
+            'link': item['link'] ??
+                item['product_link'] ??
+                item['serpapi_product_api'], // Try link, then product_link
+            'thumbnail': item['thumbnail'],
+          };
+        }).toList();
+
+        return {
+          'products': products,
+          'message':
+              'I found these purchasing options for you: ${products.map((p) => "${p['title']} (${p['price']})").join(", ")}',
+        };
+      } else {
+        log('❌ SerpApi Error: ${response.statusCode} - ${response.body}');
+        return {
+          'error': 'Failed to fetch shopping results. API Error.',
+        };
+      }
+    } catch (e) {
+      log('❌ Shopping Search Exception: $e');
+      return {'error': 'An error occurred while searching for products.'};
+    }
   }
 
   Future<Map<String, dynamic>> _startTravelMission(

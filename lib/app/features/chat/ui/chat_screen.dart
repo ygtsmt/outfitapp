@@ -10,9 +10,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:comby/app/features/chat/bloc/chat_bloc.dart';
-import 'package:comby/app/features/chat/widgets/chat_suggestion_chips.dart';
-import 'package:comby/app/features/chat/widgets/media_preview_widget.dart';
 import 'package:comby/app/features/chat/widgets/markdown_text.dart';
+import 'package:comby/app/features/chat/widgets/shopping_carousel_widget.dart';
+import 'package:comby/app/features/chat/widgets/wardrobe_carousel_widget.dart';
+import 'package:comby/app/features/chat/widgets/media_preview_widget.dart';
+import 'package:comby/app/features/chat/widgets/chat_suggestion_chips.dart';
+import 'package:comby/app/features/chat/models/agent_models.dart';
 import 'package:comby/core/ui/widgets/reusable_gallery_picker.dart';
 import 'package:comby/generated/l10n.dart';
 import 'package:geolocator/geolocator.dart';
@@ -416,7 +419,7 @@ class _MessageBubble extends StatelessWidget {
                 ),
                 SizedBox(width: 6.w),
                 Text(
-                  "Comby",
+                  "Comby - Gemini 3 Flash",
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w600,
@@ -542,6 +545,67 @@ class _MessageBubble extends StatelessWidget {
                     fontWeight: isUser ? FontWeight.w500 : FontWeight.w400,
                   ),
                 ),
+
+              // 🛍️ WARDROBE CAROUSEL
+              // Check if any agent step was a wardrobe search with results
+              Builder(builder: (context) {
+                if (message.agentSteps == null || message.agentSteps!.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                final wardrobeStep = message.agentSteps!.firstWhere(
+                  (step) =>
+                      (step.toolName == 'search_wardrobe' ||
+                          step.toolName == 'analyze_style_dna') &&
+                      step.result.containsKey('items'),
+                  orElse: () => AgentStep(
+                      toolName: '', arguments: {}, result: {}), // Dummy
+                );
+
+                if (wardrobeStep.toolName.isEmpty)
+                  return const SizedBox.shrink();
+
+                final items = (wardrobeStep.result['items'] as List?)
+                        ?.cast<Map<String, dynamic>>() ??
+                    [];
+
+                if (items.isEmpty) return const SizedBox.shrink();
+
+                return Padding(
+                  padding: EdgeInsets.only(top: 16.h),
+                  child: WardrobeCarouselWidget(items: items),
+                );
+              }),
+
+              // 🛍️ SHOPPING CAROUSEL
+              // Check if any agent step was a shopping search with results
+              Builder(builder: (context) {
+                if (message.agentSteps == null || message.agentSteps!.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                final shoppingStep = message.agentSteps!.firstWhere(
+                  (step) =>
+                      step.toolName == 'search_online_shopping' &&
+                      step.result.containsKey('products'),
+                  orElse: () => AgentStep(
+                      toolName: '', arguments: {}, result: {}), // Dummy
+                );
+
+                if (shoppingStep.toolName.isEmpty)
+                  return const SizedBox.shrink();
+
+                final products = (shoppingStep.result['products'] as List?)
+                        ?.cast<Map<String, dynamic>>() ??
+                    [];
+
+                if (products.isEmpty) return const SizedBox.shrink();
+
+                return Padding(
+                  padding: EdgeInsets.only(top: 16.h),
+                  child: ShoppingCarouselWidget(products: products),
+                );
+              }),
 
               // ✅ Real-time Image Generation Status
               if (message.visualRequestId != null) ...[

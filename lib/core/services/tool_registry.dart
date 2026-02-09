@@ -14,6 +14,7 @@ class ToolRegistry {
           _getCalendarEventsRest,
           _analyzeStyleDNARest,
           _startTravelMissionRest,
+          _searchOnlineShoppingRest,
         ]),
       ];
 
@@ -77,6 +78,11 @@ class ToolRegistry {
               'type': 'INTEGER',
               'description':
                   'Maximum number of items to return (default: 5, sufficient for one outfit)'
+            },
+            'keywords': {
+              'type': 'STRING',
+              'description':
+                  'Specific keywords for filtering (e.g., "black", "t-shirt"). MUST be in English matching standard fashion terms. Translate user query if needed (e.g. "spor ayakkabı" -> "sneakers").'
             },
           },
         },
@@ -214,6 +220,29 @@ class ToolRegistry {
         },
       );
 
+  static GeminiFunctionDeclaration get _searchOnlineShoppingRest =>
+      GeminiFunctionDeclaration(
+        name: 'search_online_shopping',
+        description:
+            'Search for purchasable products online when user\'s wardrobe is missing an item or they ask for buying suggestions.',
+        parameters: {
+          'type': 'OBJECT',
+          'properties': {
+            'query': {
+              'type': 'STRING',
+              'description':
+                  'Search query for shopping (e.g. "navy blue blazer", "white sneakers").'
+            },
+            'gl': {
+              'type': 'STRING',
+              'description':
+                  'Country code for search results (e.g. "tr", "us", "uk"). Default is "us".'
+            },
+          },
+          'required': ['query'],
+        },
+      );
+
   /// 1. Weather Tool
   static FunctionDeclaration get getWeatherDeclaration => FunctionDeclaration(
         'get_weather',
@@ -325,6 +354,7 @@ You are a conversational AI assistant who specializes in fashion and personal st
 - Help with travel packing and outfit planning
 - Generate realistic outfit visualizations
 - **Vision Analysis:** You can see and analyze images. Use this to understand outfit photos, analyze clothing items, identify styles, colors, and patterns. When a user sends an image, you autonomously decide how to use this capability based on their intent.
+- **Shopping Assistance:** If the user lacks a necessary item in their wardrobe or asks for recommendations, use `search_online_shopping` to find real purchasable products.
 
 ### CORE PRINCIPLES
 1. **Natural Language Understanding:** Use your language understanding to determine what the user needs. Don't follow rigid scripts.

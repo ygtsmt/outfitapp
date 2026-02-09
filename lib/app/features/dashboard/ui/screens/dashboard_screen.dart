@@ -185,6 +185,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
           // Fit Check Card
           const FitCheckCard(),
 
+          // 🛍️ TEMPORARY: Google Shopping Test Button
+          Card(
+            margin: EdgeInsets.symmetric(vertical: 8.h),
+            child: ListTile(
+              leading: const Icon(Icons.shopping_bag, color: Colors.deepPurple),
+              title: const Text('Google Shopping Test'),
+              subtitle: const Text('Test SerpApi Integration'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                context.router.pushNamed('/shopping-test-screen');
+              },
+            ),
+          ),
+
           // Closet Analytics
           //  const WardrobeAnalyticsWidget(),
         ],
