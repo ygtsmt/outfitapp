@@ -19,7 +19,7 @@ class WardrobeCarouselWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
+        /*  Padding(
           padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
           child: Row(
             children: [
@@ -159,7 +159,7 @@ class WardrobeCarouselWidget extends StatelessWidget {
               );
             },
           ),
-        ),
+        ), */
       ],
     );
   }

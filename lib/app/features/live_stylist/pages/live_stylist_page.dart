@@ -451,7 +451,11 @@ class _LiveStylistPageState extends State<LiveStylistPage>
   }
 
   Widget _buildVoiceVisualizer(LiveStylistState state) {
-    // Keep animation always visible, but only animate when AI is speaking
+    // Only show animation when AI is speaking
+    if (!state.isAiSpeaking) {
+      return const SizedBox.shrink(); // Hide completely when not speaking
+    }
+
     return RepaintBoundary(
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.2,
@@ -459,7 +463,7 @@ class _LiveStylistPageState extends State<LiveStylistPage>
         child: Lottie.asset(
           'assets/gemini-responding-lottie.json',
           repeat: true,
-          animate: state.isAiSpeaking, // Only animate when AI is speaking
+          animate: true, // Always animate when visible
           fit: BoxFit.contain,
           // Performance optimizations
           frameRate: FrameRate(60), // Limit to 60fps instead of unlimited

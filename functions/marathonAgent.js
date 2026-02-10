@@ -9,11 +9,11 @@ if (admin.apps.length === 0) {
 
 /**
  * MARATHON AGENT CHRON JOB
- * Runs every 1 minute for testing (Production: every day 08:00).
+ * Runs every 1 hour for production.
  * Checks all active missions, fetches weather, analyzes with Gemini, and sends notifications.
  */
 exports.checkActiveMissions = functions.pubsub
-    .schedule('every 1 minutes')
+    .schedule('every 1 hours')
     .timeZone('Europe/Istanbul')
     .onRun(async (context) => {
         console.log('🏁 Marathon Agent: Starting daily mission check...');
